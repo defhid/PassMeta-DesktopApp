@@ -102,4 +102,22 @@
     <data name="ERR_URL" xml:space="preserve">
         <value>Incorrect url! Please, check app settings.</value>
     </data>
+    <data name="AUTH__TITLE" xml:space="preserve">
+        <value>Authorization</value>
+    </data>
+    <data name="AUTH__LOGIN_PLACEHOLDER" xml:space="preserve">
+        <value>Login</value>
+    </data>
+    <data name="AUTH__PASSWORD_PLACEHOLDER" xml:space="preserve">
+        <value>Password</value>
+    </data>
+    <data name="AUTH__SIGN_IN_BTN" xml:space="preserve">
+        <value>Sign In</value>
+    </data>
+    <data name="AUTH__SIGN_UP_BTN" xml:space="preserve">
+        <value>Sign Up</value>
+    </data>
+    <data name="AUTH_REQUIRED__TITLE" xml:space="preserve">
+        <value>Authorize to view this page</value>
+    </data>
 </root>

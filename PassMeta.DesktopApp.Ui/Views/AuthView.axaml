@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
+             x:Class="PassMeta.DesktopApp.Ui.Views.AuthView"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             d:DataContext="{d:DesignInstance vm:AuthViewModel}">
+    <Grid>
+        <TextBlock VerticalAlignment="Top" 
+                   HorizontalAlignment="Center" 
+                   Margin="0 40 0 0"
+                   FontSize="30" 
+                   Text="{Binding Title}"/>
+        
+        <Grid Margin="0 40 0 0">
+            <TextBox VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Margin="0 0 0 140"
+                     Width="300"
+                     Watermark="{Binding LoginInputPlaceholder}"/>
+            
+            <TextBox VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Margin="0 0 0 30"
+                     PasswordChar="*"
+                     Width="300"
+                     Watermark="{Binding PasswordInputPlaceholder}"/>
+            
+            <Button VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="0 80 0 0"
+                    FontSize="16"
+                    Content="{Binding SignInBtnContent}"
+                    Click="SignInBtn_OnClick"/>
+            
+            <Button VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    Margin="0 0 10 10"
+                    FontSize="16"
+                    Opacity="0.7"
+                    Content="{Binding SignUpBtnContent}"
+                    Click="SignUpBtn_OnClick"/>
+        </Grid>
+    </Grid>
+</UserControl>

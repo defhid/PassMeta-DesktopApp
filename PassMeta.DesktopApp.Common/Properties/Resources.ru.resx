@@ -95,4 +95,22 @@
     <data name="ERR_URL" xml:space="preserve">
         <value>Некорректный url адрес, проверьте настройки приложения.</value>
     </data>
+    <data name="AUTH__TITLE" xml:space="preserve">
+        <value>Авторизация</value>
+    </data>
+    <data name="AUTH__LOGIN_PLACEHOLDER" xml:space="preserve">
+        <value>Логин</value>
+    </data>
+    <data name="AUTH__PASSWORD_PLACEHOLDER" xml:space="preserve">
+        <value>Пароль</value>
+    </data>
+    <data name="AUTH__SIGN_IN_BTN" xml:space="preserve">
+        <value>Войти</value>
+    </data>
+    <data name="AUTH__SIGN_UP_BTN" xml:space="preserve">
+        <value>Зарегистрироваться</value>
+    </data>
+    <data name="AUTH_REQUIRED__TITLE" xml:space="preserve">
+        <value>Авторизуйтесь, чтобы просматривать эту страницу</value>
+    </data>
 </root>

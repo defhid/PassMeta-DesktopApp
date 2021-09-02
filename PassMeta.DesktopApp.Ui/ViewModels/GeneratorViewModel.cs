@@ -2,10 +2,9 @@ using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    public class GeneratorViewModel : ViewModelBase, IRoutableViewModel
+    public class GeneratorViewModel : ViewModelPage
     {
-        public string UrlPathSegment => "/generator";
-        public IScreen HostScreen { get; }
+        public override string UrlPathSegment => "/generator";
 
         public GeneratorViewModel(IScreen hostScreen)
         {

@@ -4,16 +4,17 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
+using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.Services;
 using PassMeta.DesktopApp.Ui.ViewModels;
 using ReactiveUI;
-using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
     public class MainWindow : Window
     {
+        private bool _loaded;
+        
         public MainWindow()
         {
             AvaloniaXamlLoader.Load(this);
@@ -46,21 +47,26 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         private void AccountBtn_OnClick(object? sender, RoutedEventArgs e)
         {
             _SetActiveMainPaneButton(0);
-            _NavigateTo(context => new AccountViewModel(context));
+            if (AppConfig.Current.User is null)
+                _NavigateTo(context => new AuthViewModel(context));
+            else
+                _NavigateTo(context => new AccountViewModel(context));
         }
         
         private void StorageBtn_OnClick(object? sender, RoutedEventArgs e)
         {
             _SetActiveMainPaneButton(1);
-            _NavigateTo(context => new StorageViewModel(context));
+            
+            if (AppConfig.Current.User is null)
+                _NavigateTo(context => new AuthRequiredViewModel(context));
+            else
+                _NavigateTo(context => new StorageViewModel(context));
         }
         
         private void GeneratorBtn_OnClick(object? sender, RoutedEventArgs e)
         {
             _SetActiveMainPaneButton(2);
             _NavigateTo(context => new GeneratorViewModel(context));
-            Locator.Current.GetService<IDialogService>().ShowErrorAsync("My Error!!!!!!!!!!")
-                .GetAwaiter().GetResult();
         }
         
         private void SettingsBtn_OnClick(object? sender, RoutedEventArgs e)
@@ -72,6 +78,15 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         private async void Window_OnOpened(object? sender, EventArgs e)
         {
             await DialogService.SetCurrentWindowAsync(this);
+
+            if (_loaded) return;
+            
+            if (AppConfig.Current.User is null)
+                _NavigateTo(context => new AuthViewModel(context));
+            else
+                _NavigateTo(context => new StorageViewModel(context));
+
+            _loaded = true;
         }
     }
 }

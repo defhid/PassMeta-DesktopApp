@@ -61,6 +61,60 @@ namespace PassMeta.DesktopApp.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string AUTH__LOGIN_PLACEHOLDER {
+            get {
+                return ResourceManager.GetString("AUTH__LOGIN_PLACEHOLDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string AUTH__PASSWORD_PLACEHOLDER {
+            get {
+                return ResourceManager.GetString("AUTH__PASSWORD_PLACEHOLDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign In.
+        /// </summary>
+        public static string AUTH__SIGN_IN_BTN {
+            get {
+                return ResourceManager.GetString("AUTH__SIGN_IN_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign Up.
+        /// </summary>
+        public static string AUTH__SIGN_UP_BTN {
+            get {
+                return ResourceManager.GetString("AUTH__SIGN_UP_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authorization.
+        /// </summary>
+        public static string AUTH__TITLE {
+            get {
+                return ResourceManager.GetString("AUTH__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authorize to view this page.
+        /// </summary>
+        public static string AUTH_REQUIRED__TITLE {
+            get {
+                return ResourceManager.GetString("AUTH_REQUIRED__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string DIALOG__BTN_CANCEL {

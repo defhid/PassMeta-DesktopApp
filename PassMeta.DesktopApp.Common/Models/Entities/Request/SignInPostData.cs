@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.Request
 {
-    public class SignUpPostData : SignInPostData
+    public class SignInPostData
     {
         [JsonProperty("login")]
         [NotNull]
@@ -12,13 +12,5 @@ namespace PassMeta.DesktopApp.Common.Models.Entities.Request
         [JsonProperty("password")]
         [NotNull]
         public string Password { get; set; }
-        
-        [JsonProperty("first_name")]
-        [NotNull]
-        public string FirstName { get; set; }
-        
-        [JsonProperty("last_name")]
-        [NotNull]
-        public string LastName { get; set; }
     }
 }

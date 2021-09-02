@@ -7,7 +7,7 @@ using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, IScreen
+    public class MainWindowViewModel : ReactiveObject, IScreen
     {
         private bool _isMainPaneOpened;
         public bool IsMainPaneOpened
@@ -25,7 +25,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private void _MainPaneOpenedOrClosed()
         {
-            // Colors.LightSkyBlue
             MainPaneButtons = _isMainPaneOpened 
                 ? MainPaneButtons.WhenOpened 
                 : MainPaneButtons.WhenClosed;
@@ -55,8 +54,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public MainWindowViewModel()
         {
-            this.WhenAnyValue(vm => vm.IsMainPaneOpened).Subscribe(_ => _MainPaneOpenedOrClosed());
-            Router.Navigate.Execute(new AccountViewModel(this));
+            this.WhenAnyValue(vm => vm.IsMainPaneOpened)
+                .Subscribe(_ => _MainPaneOpenedOrClosed());
         }
     }
     
@@ -70,11 +69,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public HorizontalAlignment HorizontalContentAlignment { get; set; }
         
-        public FontFamily? FontFamily { get; set; }
+        public FontFamily FontFamily { get; set; }
         
         public int FontSize { get; set; }
         
-        public string[]? Content { get; set; }
+        public string[] Content { get; set; }
 
         public static readonly MainPaneButtons WhenOpened = new()
         {

@@ -2,10 +2,9 @@ using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    public class SettingsViewModel : ViewModelBase, IRoutableViewModel
+    public class SettingsViewModel : ViewModelPage
     {
-        public string UrlPathSegment => "/settings";
-        public IScreen HostScreen { get; }
+        public override string UrlPathSegment => "/settings";
 
         public SettingsViewModel(IScreen hostScreen)
         {

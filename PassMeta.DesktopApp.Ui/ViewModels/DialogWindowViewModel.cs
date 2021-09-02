@@ -2,10 +2,11 @@ using System;
 using System.Linq;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Ui.Models.DialogWindow.Components;
+using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    public class DialogWindowViewModel : ViewModelBase
+    public class DialogWindowViewModel : ReactiveObject
     {
         public string Title { get; }
         
