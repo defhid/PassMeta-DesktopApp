@@ -1,0 +1,103 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PassMeta.DesktopApp.Ui.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:reactiveUi="http://reactiveui.net"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="PassMeta.DesktopApp.Ui.Views.Main.MainWindow"
+        Icon="/Assets/PassMeta.ico"
+        Title="PassMeta"
+        MinWidth="600"
+        MinHeight="350"
+        WindowStartupLocation="CenterScreen"
+        Activated="Window_OnOpened">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <SplitView IsPaneOpen="{Binding IsMainPaneOpened}"
+               DisplayMode="CompactInline"
+               OpenPaneLength="188"
+               CompactPaneLength="48">
+        <SplitView.Pane>
+            <Grid>
+                <Grid.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Height" Value="40" />
+                        <Setter Property="Margin" Value="4 0 4 0" />
+                        <Setter Property="VerticalAlignment" Value="Top" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="{Binding MainPaneButtons.Padding}" />
+                        <Setter Property="Width" Value="{Binding MainPaneButtons.Width}" />
+                        <Setter Property="FontSize" Value="{Binding MainPaneButtons.FontSize}" />
+                        <Setter Property="HorizontalContentAlignment" Value="{Binding MainPaneButtons.HorizontalContentAlignment}" />
+                        <Setter Property="FontFamily" Value="{Binding MainPaneButtons.FontFamily}" />
+                    </Style>
+                    <Style Selector="Button:disabled">
+                        <Setter Property="Template">
+                            <ControlTemplate>
+                                <ContentPresenter Name="PART_ContentPresenter"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  Content="{TemplateBinding Content}"
+                                                  Padding="{TemplateBinding Padding}"
+                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  TextBlock.Foreground="LightSkyBlue"
+                                                  TextBlock.FontWeight="Bold"/>
+                            </ControlTemplate>
+                        </Setter>
+                    </Style>
+                </Grid.Styles>
+                
+                <ToggleButton Click="MainPaneOpenCloseBtn_OnClick"
+                              IsChecked="{Binding IsMainPaneOpened}"
+                              VerticalAlignment="Top"
+                              Margin="4 5 4 4"
+                              Padding="0 0 0 0"
+                              Width="{Binding MainPaneButtons.Width}"
+                              Height="40"
+                              FontSize="24"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              FontFamily="Segoe MDL2 Assets"
+                              Content="&#xE700;"/>
+                
+                <StackPanel Spacing="{Binding MainPaneButtons.Spacing}"
+                            Margin="0 57 0 0"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Left">
+                    <Button Click="AccountBtn_OnClick"
+                            IsEnabled="{Binding !MainPaneButtonsActive[0]}"
+                            Content="{Binding MainPaneButtons.Content[0]}"/>
+                
+                    <Button Click="StorageBtn_OnClick"
+                            IsEnabled="{Binding !MainPaneButtonsActive[1]}"
+                            Content="{Binding MainPaneButtons.Content[1]}"/>
+                    
+                    <Button Click="GeneratorBtn_OnClick"
+                            IsEnabled="{Binding !MainPaneButtonsActive[2]}"
+                            Content="{Binding MainPaneButtons.Content[2]}"/>
+                </StackPanel>
+                
+                <Button Click="SettingsBtn_OnClick"
+                        IsEnabled="{Binding !MainPaneButtonsActive[3]}"
+                        Content="{Binding MainPaneButtons.Content[3]}"
+                        VerticalAlignment="Bottom"
+                        Margin="4 4 4 5"
+                        Opacity="0.8"/>
+            </Grid>
+        </SplitView.Pane>
+        
+        <reactiveUi:RoutedViewHost Router="{Binding Router}">
+            <reactiveUi:RoutedViewHost.DefaultContent>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24">
+                    ...
+                </TextBlock>
+            </reactiveUi:RoutedViewHost.DefaultContent>
+        </reactiveUi:RoutedViewHost>
+    </SplitView>
+</Window>

@@ -1,0 +1,98 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="DIALOG__BTN_NO" xml:space="preserve">
+        <value>Нет</value>
+    </data>
+    <data name="DIALOG__BTN_OK" xml:space="preserve">
+        <value>Ок</value>
+    </data>
+    <data name="DIALOG__BTN_YES" xml:space="preserve">
+        <value>Да</value>
+    </data>
+    <data name="MAIN_MENU__ACCOUNT_BTN" xml:space="preserve">
+        <value>Аккаунт</value>
+    </data>
+    <data name="MAIN_MENU__GENERATOR_BTN" xml:space="preserve">
+        <value>Генератор</value>
+    </data>
+    <data name="MAIN_MENU__SETTINGS_BTN" xml:space="preserve">
+        <value>Настройки</value>
+    </data>
+    <data name="MAIN_MENU__STORAGE_BTN" xml:space="preserve">
+        <value>Хранилище</value>
+    </data>
+    <data name="ERR__CONFIG_LOAD" xml:space="preserve">
+        <value>Ошибка чтения файла конфигурации! Создание нового...</value>
+    </data>
+    <data name="ERR__CONFIG_SAVE" xml:space="preserve">
+        <value>Ошибка сохранения файла конфигурации!</value>
+    </data>
+    <data name="ERR__PASSFILE_DECRYPTION" xml:space="preserve">
+        <value>Неверный пароль (не удаётся расшифровать файл)</value>
+    </data>
+    <data name="ERR__INVALID_API_RESPONSE" xml:space="preserve">
+        <value>Невалидный ответ сервера!</value>
+    </data>
+    <data name="ERR__CONNECTION_FAILURE" xml:space="preserve">
+        <value>Ошибка подключения к серверу!</value>
+    </data>
+    <data name="ERR__CONNECTION_TIMEOUT" xml:space="preserve">
+        <value>Превышено допустимое время ожидания ответа сервера!</value>
+    </data>
+    <data name="ERR__HTTP_UNAUTHORIZED" xml:space="preserve">
+        <value>Ошибка авторизации! Пожалуйста, попробуйте войти в систему заново.</value>
+    </data>
+    <data name="ERR__HTTP_FORBIDDEN" xml:space="preserve">
+        <value>Ошибка доступа!</value>
+    </data>
+    <data name="ERR__HTTP_INTERNAL_SERVER" xml:space="preserve">
+        <value>Ошибка сервера!</value>
+    </data>
+    <data name="OKBAD_MORE__ALLOWED" xml:space="preserve">
+        <value>Разрешено</value>
+    </data>
+    <data name="OKBAD_MORE__DISALLOWED" xml:space="preserve">
+        <value>Запрещено</value>
+    </data>
+    <data name="OKBAD_MORE__INFO" xml:space="preserve">
+        <value>Доп. информация</value>
+    </data>
+    <data name="OKBAD_MORE__MAX_ALLOWED" xml:space="preserve">
+        <value>Разрешено (макс.)</value>
+    </data>
+    <data name="OKBAD_MORE__MIN_ALLOWED" xml:space="preserve">
+        <value>Разрешено (мин.)</value>
+    </data>
+    <data name="OKBAD_MORE__REQUIRED" xml:space="preserve">
+        <value>Требуется</value>
+    </data>
+    <data name="DIALOG__BTN_CANCEL" xml:space="preserve">
+        <value>Отмена</value>
+    </data>
+    <data name="DIALOG__DEFAULT_ERROR_TITLE" xml:space="preserve">
+        <value>Ошибка</value>
+    </data>
+    <data name="DIALOG__DEFAULT_INFO_TITLE" xml:space="preserve">
+        <value>Информация</value>
+    </data>
+    <data name="DIALOG__BTN_CLOSE" xml:space="preserve">
+        <value>Закрыть</value>
+    </data>
+    <data name="DIALOG__DEFAULT_FAILURE_TITLE" xml:space="preserve">
+        <value>Ошибка</value>
+    </data>
+    <data name="ERR_URL" xml:space="preserve">
+        <value>Некорректный url адрес, проверьте настройки приложения.</value>
+    </data>
+</root>

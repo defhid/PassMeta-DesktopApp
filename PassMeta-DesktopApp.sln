@@ -1,6 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopApp", "DesktopApp\DesktopApp.csproj", "{F3B476D3-5508-4E72-828C-83F799E24012}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassMeta.DesktopApp.Ui", "PassMeta.DesktopApp.Ui\PassMeta.DesktopApp.Ui.csproj", "{F3B476D3-5508-4E72-828C-83F799E24012}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassMeta.DesktopApp.Core", "PassMeta.DesktopApp.Core\PassMeta.DesktopApp.Core.csproj", "{CDBC6D2D-7F8B-412B-B05B-575187DC7AA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassMeta.DesktopApp.Common", "PassMeta.DesktopApp.Common\PassMeta.DesktopApp.Common.csproj", "{6E246CD2-FBB0-4388-905C-6FF6274CABAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +16,13 @@ Global
 		{F3B476D3-5508-4E72-828C-83F799E24012}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3B476D3-5508-4E72-828C-83F799E24012}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3B476D3-5508-4E72-828C-83F799E24012}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDBC6D2D-7F8B-412B-B05B-575187DC7AA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDBC6D2D-7F8B-412B-B05B-575187DC7AA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDBC6D2D-7F8B-412B-B05B-575187DC7AA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDBC6D2D-7F8B-412B-B05B-575187DC7AA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E246CD2-FBB0-4388-905C-6FF6274CABAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E246CD2-FBB0-4388-905C-6FF6274CABAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E246CD2-FBB0-4388-905C-6FF6274CABAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E246CD2-FBB0-4388-905C-6FF6274CABAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

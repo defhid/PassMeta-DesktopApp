@@ -1,0 +1,87 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PassMeta.DesktopApp.Ui.ViewModels"
+        xmlns:ut="using:PassMeta.DesktopApp.Ui.Utils"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Width="500"
+        Height="200"
+        MinWidth="500"
+        MinHeight="200"
+        MaxWidth="750"
+        MaxHeight="300"
+        x:Class="PassMeta.DesktopApp.Ui.Views.Main.DialogWindow"
+        Icon="/Assets/PassMeta.ico"
+        Title="{Binding Title}"
+        WindowStartupLocation="CenterOwner">
+    
+    <Design.DataContext>
+        <vm:DialogWindowViewModel/>
+    </Design.DataContext>
+    
+    <Window.Resources>
+        <ut:ImageConverter x:Key="ImageConverter"/>
+    </Window.Resources>
+    
+    <Grid RowDefinitions="Auto,Auto,*">
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*"
+              Margin="20 22 20 14">
+            <Image Grid.Column="0"
+                   IsVisible="{Binding WindowIcon.Visible}"
+                   Source="{Binding WindowIcon.Source, Converter={StaticResource ImageConverter}}"
+                   Width="50"
+                   Height="50"/>
+            
+            <TextBlock Grid.Column="1"
+                       TextWrapping="Wrap"
+                       Text="{Binding Text}"
+                       TextAlignment="Right"
+                       HorizontalAlignment="Right"
+                       FontSize="16"/>
+        </Grid>
+        
+        <StackPanel Grid.Row="1">
+            <TextBox IsVisible="{Binding WindowTextBox.Visible}" 
+                     Text="{Binding WindowTextBox.DefaultValue}"
+                     Watermark="{Binding WindowTextBox.Placeholder}"/>
+            
+            <NumericUpDown IsVisible="{Binding WindowNumericBox.Visible}"
+                           Value="{Binding WindowNumericBox.DefaultValue}"
+                           AllowSpin="False"
+                           ShowButtonSpinner="False"
+                           Watermark="{Binding WindowNumericBox.Placeholder}"/>
+        </StackPanel>
+        
+        <Grid Grid.Row="2">
+            <Grid.Styles>
+                <Style Selector="Button">
+                    <Setter Property="HorizontalAlignment" Value="Right" />
+                    <Setter Property="VerticalAlignment" Value="Bottom"/>
+                    <Setter Property="Margin" Value="15 10 20 20"/>
+                </Style>
+            </Grid.Styles>
+            
+            <Button IsVisible="{Binding WindowBtnOk.Visible}" 
+                    Content="{Binding WindowBtnOk.Text}"
+                    Click="OkButton_OnClick"/>
+            
+            <Button IsVisible="{Binding WindowBtnYes.Visible}" 
+                    Content="{Binding WindowBtnYes.Text}"
+                    Click="YesButton_OnClick"/>
+            
+            <Button IsVisible="{Binding WindowBtnNo.Visible}" 
+                    Content="{Binding WindowBtnNo.Text}"
+                    Click="NoButton_OnClick"/>
+            
+            <Button IsVisible="{Binding WindowBtnCancel.Visible}" 
+                    Content="{Binding WindowBtnCancel.Text}"
+                    Click="CancelButton_OnClick"/>
+            
+            <Button IsVisible="{Binding WindowBtnClose.Visible}" 
+                    Content="{Binding WindowBtnClose.Text}"
+                    Click="CloseButton_OnClick"/>
+        </Grid>
+    </Grid>
+</Window>

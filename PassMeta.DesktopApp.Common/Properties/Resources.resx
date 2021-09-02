@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="DIALOG__BTN_OK" xml:space="preserve">
+        <value>Ok</value>
+    </data>
+    <data name="DIALOG__BTN_YES" xml:space="preserve">
+        <value>Yes</value>
+    </data>
+    <data name="DIALOG__BTN_NO" xml:space="preserve">
+        <value>No</value>
+    </data>
+    <data name="MAIN_MENU__ACCOUNT_BTN" xml:space="preserve">
+        <value>Account</value>
+    </data>
+    <data name="MAIN_MENU__STORAGE_BTN" xml:space="preserve">
+        <value>Storage</value>
+    </data>
+    <data name="MAIN_MENU__GENERATOR_BTN" xml:space="preserve">
+        <value>Generator</value>
+    </data>
+    <data name="MAIN_MENU__SETTINGS_BTN" xml:space="preserve">
+        <value>Settings</value>
+    </data>
+    <data name="ERR__CONFIG_LOAD" xml:space="preserve">
+        <value>Configuration file reading failed! Creating a new one...</value>
+    </data>
+    <data name="ERR__CONFIG_SAVE" xml:space="preserve">
+        <value>Configuration file saving error!</value>
+    </data>
+    <data name="ERR__PASSFILE_DECRYPTION" xml:space="preserve">
+        <value>Password is wrong (file decryption failed)</value>
+    </data>
+    <data name="ERR__INVALID_API_RESPONSE" xml:space="preserve">
+        <value>Invalid server response!</value>
+    </data>
+    <data name="ERR__CONNECTION_FAILURE" xml:space="preserve">
+        <value>Server connection error!</value>
+    </data>
+    <data name="ERR__CONNECTION_TIMEOUT" xml:space="preserve">
+        <value>Connection timeout error!</value>
+    </data>
+    <data name="ERR__HTTP_UNAUTHORIZED" xml:space="preserve">
+        <value>Authorization error! Please, try re-login.</value>
+    </data>
+    <data name="ERR__HTTP_FORBIDDEN" xml:space="preserve">
+        <value>Access error!</value>
+    </data>
+    <data name="ERR__HTTP_INTERNAL_SERVER" xml:space="preserve">
+        <value>Server error!</value>
+    </data>
+    <data name="OKBAD_MORE__INFO" xml:space="preserve">
+        <value>Additional info: </value>
+    </data>
+    <data name="OKBAD_MORE__ALLOWED" xml:space="preserve">
+        <value>Allowed</value>
+    </data>
+    <data name="OKBAD_MORE__DISALLOWED" xml:space="preserve">
+        <value>Disallowed</value>
+    </data>
+    <data name="OKBAD_MORE__REQUIRED" xml:space="preserve">
+        <value>Required</value>
+    </data>
+    <data name="OKBAD_MORE__MIN_ALLOWED" xml:space="preserve">
+        <value>Min allowed</value>
+    </data>
+    <data name="OKBAD_MORE__MAX_ALLOWED" xml:space="preserve">
+        <value>Max allowed</value>
+    </data>
+    <data name="DIALOG__BTN_CANCEL" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+    <data name="DIALOG__DEFAULT_ERROR_TITLE" xml:space="preserve">
+        <value>Error</value>
+    </data>
+    <data name="DIALOG__DEFAULT_INFO_TITLE" xml:space="preserve">
+        <value>Information</value>
+    </data>
+    <data name="DIALOG__BTN_CLOSE" xml:space="preserve">
+        <value>Close</value>
+    </data>
+    <data name="DIALOG__DEFAULT_FAILURE_TITLE" xml:space="preserve">
+        <value>Failure</value>
+    </data>
+    <data name="ERR_URL" xml:space="preserve">
+        <value>Incorrect url! Please, check app settings.</value>
+    </data>
+</root>
