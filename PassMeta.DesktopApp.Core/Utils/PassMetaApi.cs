@@ -13,6 +13,11 @@ namespace PassMeta.DesktopApp.Core.Utils
 {
     public static class PassMetaApi
     {
+        static PassMetaApi()
+        {
+            ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+        }
+        
         public static async Task<OkBadResponse<TData>> GetAsync<TData>(string url, 
             bool handleBad = false)
         {

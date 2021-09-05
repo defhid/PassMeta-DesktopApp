@@ -68,6 +68,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         public AccountViewModel(IScreen hostScreen) : base(hostScreen)
         {
+            if (AppConfig.Current.User is null) return;
+            
             Refresh();
             this.WhenAnyValue(
                     vm => vm.FirstName,
@@ -103,9 +105,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public void Refresh()
         {
-            FirstName = AppConfig.Current.User?.FirstName;
-            LastName = AppConfig.Current.User?.LastName;
-            Login = AppConfig.Current.User?.Login;
+            FirstName = AppConfig.Current.User.FirstName;
+            LastName = AppConfig.Current.User.LastName;
+            Login = AppConfig.Current.User.Login;
             Password = "";
             PasswordConfirm = "";
         }
