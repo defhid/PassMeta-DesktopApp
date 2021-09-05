@@ -223,6 +223,15 @@ namespace PassMeta.DesktopApp.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Data validation error!.
+        /// </summary>
+        public static string ERR__DATA_VALIDATION {
+            get {
+                return ResourceManager.GetString("ERR__DATA_VALIDATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Access error!.
         /// </summary>
         public static string ERR__HTTP_FORBIDDEN {
@@ -270,9 +279,27 @@ namespace PassMeta.DesktopApp.Core {
         /// <summary>
         ///   Looks up a localized string similar to Incorrect url! Please, check app settings..
         /// </summary>
-        public static string ERR_URL {
+        public static string ERR__URL {
             get {
-                return ResourceManager.GetString("ERR_URL", resourceCulture);
+                return ResourceManager.GetString("ERR__URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        public static string LANG__EN {
+            get {
+                return ResourceManager.GetString("LANG__EN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Russian.
+        /// </summary>
+        public static string LANG__RU {
+            get {
+                return ResourceManager.GetString("LANG__RU", resourceCulture);
             }
         }
         
@@ -363,6 +390,51 @@ namespace PassMeta.DesktopApp.Core {
         public static string OKBAD_MORE__REQUIRED {
             get {
                 return ResourceManager.GetString("OKBAD_MORE__REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL is incorrect!.
+        /// </summary>
+        public static string SETTINGS__INCORRECT_API {
+            get {
+                return ResourceManager.GetString("SETTINGS__INCORRECT_API", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string SETTINGS__LOCALIZATION {
+            get {
+                return ResourceManager.GetString("SETTINGS__LOCALIZATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string SETTINGS__SAVE_BTN {
+            get {
+                return ResourceManager.GetString("SETTINGS__SAVE_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The settings have been saved successfully!.
+        /// </summary>
+        public static string SETTINGS__SAVE_SUCCESS {
+            get {
+                return ResourceManager.GetString("SETTINGS__SAVE_SUCCESS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string SETTINGS__TITLE {
+            get {
+                return ResourceManager.GetString("SETTINGS__TITLE", resourceCulture);
             }
         }
     }

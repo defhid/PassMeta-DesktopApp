@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models.Entities.Response;
 using PassMeta.DesktopApp.Core.Services;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.Services;
@@ -34,24 +33,26 @@ namespace PassMeta.DesktopApp.Ui
             base.OnFrameworkInitializationCompleted();
         }
 
-        private static void BeforeLaunch()
+        public static void Restart()
+        {
+            var window = new MainWindow
+            {
+                DataContext = new MainWindowViewModel(),
+            };
+            window.Show();
+            
+            var desktop = (IClassicDesktopStyleApplicationLifetime)Current.ApplicationLifetime;
+            desktop.MainWindow.Close(true);
+            desktop.MainWindow = window;
+        }
+
+        private void BeforeLaunch()
         {
             Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
             
-            AppConfig.Load();
+            AppConfig.LoadAndSetCurrentAsync().GetAwaiter().GetResult();
 
-            PassMetaInfo? info = null;
-
-            if (AppConfig.Current.IsServerUrlCorrect)
-            {
-                info = PassMetaApi.GetAsync<PassMetaInfo>("/info", true)
-                    .GetAwaiter().GetResult()?.Data;
-            }
-            
-            if (info is not null)
-                AppConfig.LoadPassMetaInfo(info);
-            
-            Locator.CurrentMutable.RegisterConstant<IOkBadService>(new OkBadService(info?.OkBadMessagesTranslatePack));
+            Locator.CurrentMutable.RegisterConstant<IOkBadService>(new OkBadService());
 
             Locator.CurrentMutable.RegisterConstant<IAuthService>(new AuthService());
 

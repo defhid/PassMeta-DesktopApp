@@ -20,14 +20,19 @@
                      HorizontalAlignment="Center"
                      Margin="0 0 0 140"
                      Width="300"
-                     Watermark="{Binding LoginInputPlaceholder}"/>
+                     Watermark="{Binding LoginInputPlaceholder}"
+                     Text="{Binding Login}"
+                     KeyDown="Input_OnKeyDown"
+                     AttachedToVisualTree="LoginTextBox__OnAttachedToVisualTree"/>
             
             <TextBox VerticalAlignment="Center"
                      HorizontalAlignment="Center"
                      Margin="0 0 0 30"
                      PasswordChar="*"
                      Width="300"
-                     Watermark="{Binding PasswordInputPlaceholder}"/>
+                     Watermark="{Binding PasswordInputPlaceholder}"
+                     Text="{Binding Password}"
+                     KeyDown="Input_OnKeyDown"/>
             
             <Button VerticalAlignment="Center"
                     HorizontalAlignment="Center"

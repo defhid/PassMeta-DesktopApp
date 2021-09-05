@@ -99,7 +99,7 @@
     <data name="DIALOG__DEFAULT_FAILURE_TITLE" xml:space="preserve">
         <value>Failure</value>
     </data>
-    <data name="ERR_URL" xml:space="preserve">
+    <data name="ERR__URL" xml:space="preserve">
         <value>Incorrect url! Please, check app settings.</value>
     </data>
     <data name="AUTH__TITLE" xml:space="preserve">
@@ -119,5 +119,29 @@
     </data>
     <data name="AUTH_REQUIRED__TITLE" xml:space="preserve">
         <value>Authorize to view this page</value>
+    </data>
+    <data name="ERR__DATA_VALIDATION" xml:space="preserve">
+        <value>Data validation error!</value>
+    </data>
+    <data name="SETTINGS__TITLE" xml:space="preserve">
+        <value>Settings</value>
+    </data>
+    <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
+        <value>Save</value>
+    </data>
+    <data name="LANG__RU" xml:space="preserve">
+        <value>Russian</value>
+    </data>
+    <data name="LANG__EN" xml:space="preserve">
+        <value>English</value>
+    </data>
+    <data name="SETTINGS__LOCALIZATION" xml:space="preserve">
+        <value>Language</value>
+    </data>
+    <data name="SETTINGS__INCORRECT_API" xml:space="preserve">
+        <value>URL is incorrect!</value>
+    </data>
+    <data name="SETTINGS__SAVE_SUCCESS" xml:space="preserve">
+        <value>The settings have been saved successfully!</value>
     </data>
 </root>

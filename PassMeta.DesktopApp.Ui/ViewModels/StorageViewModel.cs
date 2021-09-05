@@ -1,3 +1,4 @@
+using PassMeta.DesktopApp.Core.Utils;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
@@ -6,9 +7,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     {
         public override string UrlPathSegment => "/storage";
 
-        public StorageViewModel(IScreen hostScreen)
+        public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            HostScreen = hostScreen;
+        }
+
+        public override void Navigate()
+        {
+            if (AppConfig.Current.User is null)
+            {
+                FakeNavigated();
+                NavigateTo<AuthRequiredViewModel>();
+            }
+            else
+            {
+                base.Navigate();
+            }
         }
     }
 }

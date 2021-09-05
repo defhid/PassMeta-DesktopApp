@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Ui.Models.DialogWindow.Components;
 using ReactiveUI;
 
@@ -13,6 +14,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         public DialogWindowIcon WindowIcon { get; }
         
         public string Text { get; }
+        
+        public string? Details { get; }
+
+        public bool DetailsVisible => Details is not null;
         
         public DialogWindowTextBox WindowTextBox { get; }
         
@@ -27,6 +32,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         public DialogWindowBtn WindowBtnCancel { get; }
         
         public DialogWindowBtn WindowBtnClose { get; }
+        
+        public string BtnFocusedTag { get; }
 
         public DialogWindowViewModel()
         {
@@ -40,17 +47,20 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             WindowBtnNo = DialogWindowBtn.Hidden;
             WindowBtnCancel = DialogWindowBtn.Hidden;
             WindowBtnClose = DialogWindowBtn.Hidden;
+            BtnFocusedTag = ((int)DialogButton.Hidden).ToString();
         }
         
         public DialogWindowViewModel(string title,
             string text,
+            string? details,
             DialogButton[] buttons,
             DialogWindowIcon? icon,
             IDialogWindowInputBox? input)
         {
             Title = title;
             WindowIcon = icon ?? DialogWindowIcon.Hidden;
-            Text = text;
+            Text = text.Capitalize();
+            Details = details.Capitalize();
             
             WindowTextBox = input is DialogWindowTextBox textBox
                 ? textBox
@@ -77,6 +87,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             WindowBtnClose = buttons.Any(b => b == DialogButton.Close)
                 ? DialogWindowBtn.Close
                 : DialogWindowBtn.Hidden;
+
+            BtnFocusedTag = buttons.Min(btn => (int)btn).ToString();
         }
     }
 }

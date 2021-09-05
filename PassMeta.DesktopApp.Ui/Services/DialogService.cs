@@ -52,33 +52,36 @@ namespace PassMeta.DesktopApp.Ui.Services
             ActiveCount -= deferred.Length;
         }
         
-        public async Task ShowInfoAsync(string message, string? title = null, string? more = null)
+        public void ShowInfo(string message, string? title = null, string? more = null)
         {
-            await _ShowOrDeferAsync(new DialogWindowViewModel(
+            _ShowOrDefer(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_INFO_TITLE,
                 message,
+                more,
                 new[] { DialogButton.Close },
                 DialogWindowIcon.Info,
                 null)
             );
         }
 
-        public async Task ShowErrorAsync(string message, string? title = null, string? more = null)
+        public void ShowError(string message, string? title = null, string? more = null)
         {
-            await _ShowOrDeferAsync(new DialogWindowViewModel(
+            _ShowOrDefer(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_ERROR_TITLE,
                 message,
+                more,
                 new[] { DialogButton.Close },
                 DialogWindowIcon.Error,
                 null)
             );
         }
 
-        public async Task ShowFailureAsync(string message)
+        public void ShowFailure(string message)
         {
-            await _ShowOrDeferAsync(new DialogWindowViewModel(
+            _ShowOrDefer(new DialogWindowViewModel(
                 Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                 message,
+                null,
                 new[] { DialogButton.Close },
                 DialogWindowIcon.Failure,
                 null)
@@ -95,7 +98,7 @@ namespace PassMeta.DesktopApp.Ui.Services
             throw new System.NotImplementedException();
         }
         
-        private static async Task _ShowOrDeferAsync(DialogWindowViewModel context)
+        private static void _ShowOrDefer(DialogWindowViewModel context)
         {
             if (_win is null)
             {
@@ -103,23 +106,20 @@ namespace PassMeta.DesktopApp.Ui.Services
             }
             else
             {
-                await _ShowAsync(context);
+                _Show(context);
             }
         }
 
-        private static async Task<DialogWindow> _ShowAsync(DialogWindowViewModel context)
+        private static DialogWindow _Show(DialogWindowViewModel context)
         {
             var dialog = new DialogWindow { DataContext = context };
-            
-            ActiveCount += 1;
-            try
-            {
-                await dialog.ShowDialog(_win);
-            }
-            finally
+            dialog.Closed += (_, _) =>
             {
                 ActiveCount -= 1;
-            }
+            };
+            
+            dialog.Show();
+            ActiveCount += 1;
 
             return dialog;
         }

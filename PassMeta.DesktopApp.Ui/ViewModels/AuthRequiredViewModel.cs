@@ -9,9 +9,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public string Title => Resources.AUTH_REQUIRED__TITLE;
 
-        public AuthRequiredViewModel(IScreen hostScreen)
+        public AuthRequiredViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            HostScreen = hostScreen;
         }
     }
 }

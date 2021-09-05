@@ -7,7 +7,6 @@ using Avalonia.Markup.Xaml;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.Services;
 using PassMeta.DesktopApp.Ui.ViewModels;
-using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
@@ -17,76 +16,70 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         
         public MainWindow()
         {
+            _SubscribeOnPageEvents();
+            Opened += _OnOpened;
+            
             AvaloniaXamlLoader.Load(this);
 #if DEBUG
             this.AttachDevTools();
 #endif
         }
 
-        private MainWindowViewModel _GetDataContext() => (MainWindowViewModel)DataContext!;
-
-        private void _SetActiveMainPaneButton(int buttonIndex)
+        public new MainWindowViewModel DataContext
         {
-            var context = _GetDataContext();
-            context.ActiveMainPaneButtonIndex = buttonIndex;
-            context.IsMainPaneOpened = false;
-        }
-
-        private void _NavigateTo(Func<MainWindowViewModel, IRoutableViewModel> vmBuilder)
-        {
-            var context = _GetDataContext();
-            context.Router.Navigate.Execute(vmBuilder(context));
+            get => (MainWindowViewModel)base.DataContext!;
+            set => base.DataContext = value;
         }
 
         private void MainPaneOpenCloseBtn_OnClick(object? sender, RoutedEventArgs e)
         {
-            var context = _GetDataContext();
-            context.IsMainPaneOpened = ((ToggleButton)sender!).IsChecked ?? false;
+            DataContext.IsMainPaneOpened = ((ToggleButton)sender!).IsChecked is true;
         }
 
-        private void AccountBtn_OnClick(object? sender, RoutedEventArgs e)
-        {
-            _SetActiveMainPaneButton(0);
-            if (AppConfig.Current.User is null)
-                _NavigateTo(context => new AuthViewModel(context));
-            else
-                _NavigateTo(context => new AccountViewModel(context));
-        }
-        
+        private void AccountBtn_OnClick(object? sender, RoutedEventArgs e) 
+            => new AccountViewModel(DataContext).Navigate();
+
         private void StorageBtn_OnClick(object? sender, RoutedEventArgs e)
-        {
-            _SetActiveMainPaneButton(1);
-            
-            if (AppConfig.Current.User is null)
-                _NavigateTo(context => new AuthRequiredViewModel(context));
-            else
-                _NavigateTo(context => new StorageViewModel(context));
-        }
-        
-        private void GeneratorBtn_OnClick(object? sender, RoutedEventArgs e)
-        {
-            _SetActiveMainPaneButton(2);
-            _NavigateTo(context => new GeneratorViewModel(context));
-        }
-        
-        private void SettingsBtn_OnClick(object? sender, RoutedEventArgs e)
-        {
-            _SetActiveMainPaneButton(3);
-            _NavigateTo(context => new SettingsViewModel(context));
-        }
+            => new StorageViewModel(DataContext).Navigate();
 
-        private async void Window_OnOpened(object? sender, EventArgs e)
+        private void GeneratorBtn_OnClick(object? sender, RoutedEventArgs e)
+            => new GeneratorViewModel(DataContext).Navigate();
+
+        private void SettingsBtn_OnClick(object? sender, RoutedEventArgs e)
+            => new SettingsViewModel(DataContext).Navigate();
+
+        private async void _OnOpened(object? sender, EventArgs e)
         {
             await DialogService.SetCurrentWindowAsync(this);
 
-            if (_loaded) return;
-            
-            if (AppConfig.Current.User is null)
-                _NavigateTo(context => new AuthViewModel(context));
-            else
-                _NavigateTo(context => new StorageViewModel(context));
+            if (!_loaded)
+            {
+                if (AppConfig.Current.User is null)
+                    new AuthViewModel(DataContext).Navigate();
+                else
+                    new StorageViewModel(DataContext).Navigate();
+            }
 
             _loaded = true;
+        }
+
+        private void _SubscribeOnPageEvents()
+        {
+            ViewModelPage.OnNavigated += (page) =>
+            {
+                DataContext.ActiveMainPaneButtonIndex = page switch
+                {
+                    AuthViewModel => 0,
+                    AccountViewModel => 0,
+                    StorageViewModel => 1,
+                    GeneratorViewModel => 2,
+                    SettingsViewModel => 3,
+                    _ => DataContext.ActiveMainPaneButtonIndex
+                };
+                DataContext.IsMainPaneOpened = false;
+            };
+
+            SettingsView.OnCultureChanged += App.Restart;
         }
     }
 }

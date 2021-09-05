@@ -92,7 +92,7 @@
     <data name="DIALOG__DEFAULT_FAILURE_TITLE" xml:space="preserve">
         <value>Ошибка</value>
     </data>
-    <data name="ERR_URL" xml:space="preserve">
+    <data name="ERR__URL" xml:space="preserve">
         <value>Некорректный url адрес, проверьте настройки приложения.</value>
     </data>
     <data name="AUTH__TITLE" xml:space="preserve">
@@ -112,5 +112,29 @@
     </data>
     <data name="AUTH_REQUIRED__TITLE" xml:space="preserve">
         <value>Авторизуйтесь, чтобы просматривать эту страницу</value>
+    </data>
+    <data name="ERR__DATA_VALIDATION" xml:space="preserve">
+        <value>Ошибка валидации данных!</value>
+    </data>
+    <data name="SETTINGS__TITLE" xml:space="preserve">
+        <value>Настройки</value>
+    </data>
+    <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
+        <value>Сохранить</value>
+    </data>
+    <data name="LANG__EN" xml:space="preserve">
+        <value>Английский</value>
+    </data>
+    <data name="LANG__RU" xml:space="preserve">
+        <value>Русский</value>
+    </data>
+    <data name="SETTINGS__LOCALIZATION" xml:space="preserve">
+        <value>Язык</value>
+    </data>
+    <data name="SETTINGS__INCORRECT_API" xml:space="preserve">
+        <value>Некорректный URL-адрес!</value>
+    </data>
+    <data name="SETTINGS__SAVE_SUCCESS" xml:space="preserve">
+        <value>Настройки были успешно сохранены!</value>
     </data>
 </root>

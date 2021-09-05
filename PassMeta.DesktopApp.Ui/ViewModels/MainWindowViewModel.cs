@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Layout;
 using Avalonia.Media;
+using DynamicData;
 using PassMeta.DesktopApp.Core;
 using ReactiveUI;
 
@@ -9,6 +10,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     public class MainWindowViewModel : ReactiveObject, IScreen
     {
+        public RoutingState Router { get; } = new();
+        
+        private readonly MainPaneButtons _mainPaneButtonsWhenClosed = MainPaneButtons.WhenClosed;
+        private readonly MainPaneButtons _mainPaneButtonsWhenOpened = MainPaneButtons.WhenOpened;
+        
         private bool _isMainPaneOpened;
         public bool IsMainPaneOpened
         {
@@ -16,21 +22,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isMainPaneOpened, value);
         }
 
-        private MainPaneButtons _mainPaneButtons = MainPaneButtons.WhenClosed;
+        private MainPaneButtons _mainPaneButtons;
         public MainPaneButtons MainPaneButtons
         {
             get => _mainPaneButtons;
             set => this.RaiseAndSetIfChanged(ref _mainPaneButtons, value);
         }
-        
-        private void _MainPaneOpenedOrClosed()
-        {
-            MainPaneButtons = _isMainPaneOpened 
-                ? MainPaneButtons.WhenOpened 
-                : MainPaneButtons.WhenClosed;
-        }
 
-        private bool[] _mainPaneButtonsActive = { true, false, false, false };
+        private bool[] _mainPaneButtonsActive;
         public bool[] MainPaneButtonsActive
         {
             get => _mainPaneButtonsActive;
@@ -39,6 +38,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public int ActiveMainPaneButtonIndex
         {
+            get => _mainPaneButtonsActive.IndexOf(true);
             set
             {
                 var activeNew = new bool[MainPaneButtonsActive.Length];
@@ -49,16 +49,19 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                 MainPaneButtonsActive = activeNew;
             }
         }
-        
-        public RoutingState Router { get; } = new();
 
         public MainWindowViewModel()
         {
+            _mainPaneButtons = _mainPaneButtonsWhenClosed;
+            _mainPaneButtonsActive = new [] { false, false, false, false };
+            
             this.WhenAnyValue(vm => vm.IsMainPaneOpened)
-                .Subscribe(_ => _MainPaneOpenedOrClosed());
+                .Subscribe(_ => MainPaneButtons = _isMainPaneOpened 
+                    ? _mainPaneButtonsWhenOpened
+                    : _mainPaneButtonsWhenClosed);
         }
     }
-    
+
     public class MainPaneButtons
     {
         public int Width { get; set; }
@@ -75,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         public string[] Content { get; set; }
 
-        public static readonly MainPaneButtons WhenOpened = new()
+        public static MainPaneButtons WhenOpened => new()
         {
             Width = 180,
             Spacing = 8,
@@ -92,7 +95,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             },
         };
         
-        public static readonly MainPaneButtons WhenClosed = new()
+        public static MainPaneButtons WhenClosed => new()
         {
             Width = 40,
             Spacing = 8,

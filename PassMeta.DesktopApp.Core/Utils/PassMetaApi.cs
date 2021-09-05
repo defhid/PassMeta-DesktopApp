@@ -15,21 +15,17 @@ namespace PassMeta.DesktopApp.Core.Utils
         public static async Task<OkBadResponse<TData>> GetAsync<TData>(string url, 
             bool handleBad = false)
         {
-            var request = await _CreateRequestAsync(url);
+            var request = _CreateRequest(url);
             if (request is null) return null;
-            
-            request.Method = "GET";
-            
+
             return await _ExecuteRequest<OkBadResponse<TData>>(request, handleBad);
         }
         
         public static async Task<OkBadResponse<TResponseData>> PostAsync<TPostData, TResponseData>(string url, 
             TPostData data, bool handleBad = false)
         {
-            var request = await _CreateRequestWithDataAsync(url, data);
+            var request = await _CreateRequestWithDataAsync(url, "POST", data);
             if (request is null) return null;
-            
-            request.Method = "POST";
 
             return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
         }
@@ -37,15 +33,13 @@ namespace PassMeta.DesktopApp.Core.Utils
         public static async Task<OkBadResponse<TResponseData>> PatchAsync<TPatchData, TResponseData>(string url, 
             TPatchData data, bool handleBad = false)
         {
-            var request = await _CreateRequestWithDataAsync(url, data);
+            var request = await _CreateRequestWithDataAsync(url, "PATCH", data);
             if (request is null) return null;
-            
-            request.Method = "PATCH";
 
             return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
         }
 
-        private static async Task<HttpWebRequest> _CreateRequestAsync(string url)
+        private static HttpWebRequest _CreateRequest(string url)
         {
             try
             {
@@ -53,24 +47,24 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (UriFormatException)
             {
-                await Locator.Current.GetService<IDialogService>()
-                    .ShowErrorAsync(Resources.ERR_URL);
+                Locator.Current.GetService<IDialogService>()!.ShowError(Resources.ERR__URL);
                 return null;
             }
             catch (Exception ex)
             {
-                await Locator.Current.GetService<IDialogService>().ShowErrorAsync(ex.Message);
+                Locator.Current.GetService<IDialogService>()!.ShowError(ex.Message);
                 return null;
             }
         }
 
-        private static async Task<HttpWebRequest> _CreateRequestWithDataAsync<TData>(string url, TData data)
+        private static async Task<HttpWebRequest> _CreateRequestWithDataAsync<TData>(string url, string method, TData data)
         {
             try
             {
                 var request = WebRequest.CreateHttp(AppConfig.Current.ServerUrl + url);
                 var dataBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
-                
+
+                request.Method = method;
                 request.ContentType = "application/json";
                 request.ContentLength = dataBytes.Length;
 
@@ -81,7 +75,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (Exception ex)
             {
-                await Locator.Current.GetService<IDialogService>().ShowErrorAsync(ex.Message);
+                Locator.Current.GetService<IDialogService>()!.ShowError(ex.Message);
                 return null;
             }
         }
@@ -91,10 +85,16 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             string responseBody;
             string errMessage;
+
+            request.CookieContainer = new CookieContainer();
+            foreach (var (name, value) in AppConfig.Current.Cookies)
+            {
+                request.CookieContainer.Add(new Cookie(name, value, null, AppConfig.Current.Domain));
+            }
             
             try
             {
-                using var response = (HttpWebResponse) await request.GetResponseAsync();
+                var response = (HttpWebResponse)request.GetResponse();
 
                 await using var stream = response.GetResponseStream();
                 using var reader = new StreamReader(stream!);
@@ -109,6 +109,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                     HttpStatusCode.InternalServerError => Resources.ERR__HTTP_INTERNAL_SERVER,
                     _ => response.StatusCode.ToString()
                 };
+                
+                AppConfig.Current.RefreshCookies(response.Cookies);
             }
             catch (WebException ex)
             {
@@ -119,8 +121,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                     _ => ex.Message
                 };
                 
-                await Locator.Current.GetService<IDialogService>()
-                    .ShowErrorAsync(errMessage, more: ReferenceEquals(errMessage, ex.Message) ? null : ex.Message);
+                Locator.Current.GetService<IDialogService>()!
+                    .ShowError(errMessage, more: ReferenceEquals(errMessage, ex.Message) ? null : ex.Message);
                 return null;
             }
             
@@ -133,25 +135,22 @@ namespace PassMeta.DesktopApp.Core.Utils
                         throw new FormatException();
                     
                     if (handleBad && data.Failure)
-                        await Locator.Current.GetService<IDialogService>().ShowFailureAsync(
+                        Locator.Current.GetService<IDialogService>()!.ShowFailure(
                             data.ToFullLocalizedString(Locator.Current.GetService<IOkBadService>()));
                     
                     return data;
                 }
 
                 if (data is null)
-                    await Locator.Current.GetService<IDialogService>().ShowErrorAsync(errMessage);
+                    Locator.Current.GetService<IDialogService>()!.ShowError(errMessage);
                 else 
-                    await Locator.Current.GetService<IDialogService>().ShowErrorAsync(
+                    Locator.Current.GetService<IDialogService>()!.ShowError(
                         data.ToFullLocalizedString(Locator.Current.GetService<IOkBadService>()));
             }
             catch
             {
-                if (errMessage is not null)
-                    await Locator.Current.GetService<IDialogService>().ShowErrorAsync(errMessage, more: responseBody);
-                else 
-                    await Locator.Current.GetService<IDialogService>()
-                        .ShowErrorAsync(Resources.ERR__INVALID_API_RESPONSE, more: responseBody);
+                Locator.Current.GetService<IDialogService>()!
+                    .ShowError(errMessage ?? Resources.ERR__INVALID_API_RESPONSE, responseBody);
             }
 
             return null;

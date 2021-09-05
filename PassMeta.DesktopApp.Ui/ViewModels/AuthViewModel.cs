@@ -1,4 +1,5 @@
 using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Core.Utils;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
@@ -15,10 +16,25 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         public string SignInBtnContent => Resources.AUTH__SIGN_IN_BTN;
         
         public string SignUpBtnContent => Resources.AUTH__SIGN_UP_BTN;
+        
+        public string? Login { get; set; }
+        
+        public string? Password { get; set; }
 
-        public AuthViewModel(IScreen hostScreen)
+        public AuthViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            HostScreen = hostScreen;
+        }
+        
+        public override void Navigate()
+        {
+            if (AppConfig.Current.User is not null)
+            {
+                NavigateTo<AccountViewModel>();
+            }
+            else
+            {
+                base.Navigate();
+            }
         }
     }
 }

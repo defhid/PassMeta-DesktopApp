@@ -12,8 +12,7 @@
         Title="PassMeta"
         MinWidth="600"
         MinHeight="350"
-        WindowStartupLocation="CenterScreen"
-        Activated="Window_OnOpened">
+        WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -94,7 +93,7 @@
         
         <reactiveUi:RoutedViewHost Router="{Binding Router}">
             <reactiveUi:RoutedViewHost.DefaultContent>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24">
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="40">
                     ...
                 </TextBlock>
             </reactiveUi:RoutedViewHost.DefaultContent>

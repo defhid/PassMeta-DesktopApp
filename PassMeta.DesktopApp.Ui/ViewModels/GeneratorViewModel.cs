@@ -6,9 +6,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     {
         public override string UrlPathSegment => "/generator";
 
-        public GeneratorViewModel(IScreen hostScreen)
+        public GeneratorViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            HostScreen = hostScreen;
         }
     }
 }
