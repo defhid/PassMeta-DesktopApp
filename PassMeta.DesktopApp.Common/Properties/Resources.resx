@@ -144,4 +144,40 @@
     <data name="SETTINGS__SAVE_SUCCESS" xml:space="preserve">
         <value>The settings have been saved successfully!</value>
     </data>
+    <data name="ACCOUNT__TITLE" xml:space="preserve">
+        <value>Account</value>
+    </data>
+    <data name="ACCOUNT__LOGIN_LABEL" xml:space="preserve">
+        <value>Login</value>
+    </data>
+    <data name="ACCOUNT__PASSWORD_LABEL" xml:space="preserve">
+        <value>Password</value>
+    </data>
+    <data name="ACCOUNT__FIRST_NAME_LABEL" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="ACCOUNT__LAST_NAME_LABEL" xml:space="preserve">
+        <value>Surname</value>
+    </data>
+    <data name="ACCOUNT__PASSWORD_CONFIRM_LABEL" xml:space="preserve">
+        <value>Current password</value>
+    </data>
+    <data name="ACCOUNT__SAVE_BTN" xml:space="preserve">
+        <value>Save</value>
+    </data>
+    <data name="WARN__PASSWORD_CONFIRM_MISSED" xml:space="preserve">
+        <value>Current password is missed!</value>
+    </data>
+    <data name="ACCOUNT__SAVE_SUCCESS" xml:space="preserve">
+        <value>The data has been save successfully!</value>
+    </data>
+    <data name="ACCOUNT__SIGN_OUT_BTN" xml:space="preserve">
+        <value>Sign out</value>
+    </data>
+    <data name="ACCOUNT__SIGN_OUT_CONFIRM" xml:space="preserve">
+        <value>Are you sure you want to sign out?</value>
+    </data>
+    <data name="DIALOG__DEFAULT_CONFIRM_TITLE" xml:space="preserve">
+        <value>Confirmation</value>
+    </data>
 </root>

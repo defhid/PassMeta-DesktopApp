@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Core;
 
 namespace PassMeta.DesktopApp.Common.Models
 {
@@ -24,23 +20,6 @@ namespace PassMeta.DesktopApp.Common.Models
         public OkBadMore More { get; set; }
 
         public bool Success => Message == "OK";
-
-        public bool Failure => Message != "OK";
-
-        public string ToFullLocalizedString([AllowNull] IOkBadService okBadService)
-        {
-            var message = okBadService?.GetLocalizedMessage(Message) ?? Message;
-            
-            var builder = new List<string> { What is null ? message : (message + $" ({What})") };
-
-            if (More is not null)
-                builder.Add(More.ToString());
-
-            if (Sub is not null)
-                builder.AddRange(Sub.Select(okBad => "--" + Environment.NewLine + okBad.ToFullLocalizedString(okBadService)));
-
-            return string.Join(Environment.NewLine, builder);
-        }
     }
 
     public class OkBadResponse<TData> : OkBadResponse

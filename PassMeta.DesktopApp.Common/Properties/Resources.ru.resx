@@ -137,4 +137,40 @@
     <data name="SETTINGS__SAVE_SUCCESS" xml:space="preserve">
         <value>Настройки были успешно сохранены!</value>
     </data>
+    <data name="ACCOUNT__TITLE" xml:space="preserve">
+        <value>Аккаунт</value>
+    </data>
+    <data name="ACCOUNT__FIRST_NAME_LABEL" xml:space="preserve">
+        <value>Имя</value>
+    </data>
+    <data name="ACCOUNT__LAST_NAME_LABEL" xml:space="preserve">
+        <value>Фамилия</value>
+    </data>
+    <data name="ACCOUNT__LOGIN_LABEL" xml:space="preserve">
+        <value>Логин</value>
+    </data>
+    <data name="ACCOUNT__PASSWORD_CONFIRM_LABEL" xml:space="preserve">
+        <value>Текущий пароль</value>
+    </data>
+    <data name="ACCOUNT__PASSWORD_LABEL" xml:space="preserve">
+        <value>Пароль</value>
+    </data>
+    <data name="ACCOUNT__SAVE_BTN" xml:space="preserve">
+        <value>Сохранить</value>
+    </data>
+    <data name="WARN__PASSWORD_CONFIRM_MISSED" xml:space="preserve">
+        <value>Для сохранения данных необходимо заполнить текущий пароль!</value>
+    </data>
+    <data name="ACCOUNT__SAVE_SUCCESS" xml:space="preserve">
+        <value>Данные были успешно сохранены!</value>
+    </data>
+    <data name="ACCOUNT__SIGN_OUT_BTN" xml:space="preserve">
+        <value>Выйти</value>
+    </data>
+    <data name="ACCOUNT__SIGN_OUT_CONFIRM" xml:space="preserve">
+        <value>Вы уверены, что хотите выйти из аккаунта?</value>
+    </data>
+    <data name="DIALOG__DEFAULT_CONFIRM_TITLE" xml:space="preserve">
+        <value>Подтверждение</value>
+    </data>
 </root>

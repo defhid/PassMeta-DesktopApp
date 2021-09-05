@@ -1,10 +1,11 @@
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Ui.ViewModels;
+using PassMeta.DesktopApp.Ui.Views.Base;
 
 namespace PassMeta.DesktopApp.Ui.Views
 {
-    public class AuthRequiredView : ReactiveUserControl<AuthRequiredViewModel>
+    // ReSharper disable once UnusedType.Global
+    public class AuthRequiredView : ViewPage<AuthRequiredViewModel>
     {
         public AuthRequiredView()
         {

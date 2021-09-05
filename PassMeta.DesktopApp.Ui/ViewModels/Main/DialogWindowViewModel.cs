@@ -5,7 +5,7 @@ using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Ui.Models.DialogWindow.Components;
 using ReactiveUI;
 
-namespace PassMeta.DesktopApp.Ui.ViewModels
+namespace PassMeta.DesktopApp.Ui.ViewModels.Main
 {
     public class DialogWindowViewModel : ReactiveObject
     {

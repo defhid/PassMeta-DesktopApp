@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
@@ -112,9 +114,17 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Set current app <see cref="User"/>.
         /// </summary>
-        public void SetUser(User user)
+        public Task SetUserAsync(User user)
         {
             Current.User = user;
+
+            if (user is null && Cookies.Any())
+            {
+                Cookies.Clear();
+                return _SaveToFileAsync(Current);
+            }
+            
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -188,6 +198,11 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             _CorrectConfig(config);
 
+            if (config.ServerUrl == Current.ServerUrl)
+            {
+                config.Cookies = Current.Cookies;
+            }
+
             if (!await _SaveToFileAsync(config))
                 return new Result<AppConfig>(false);
             
@@ -214,6 +229,9 @@ namespace PassMeta.DesktopApp.Core.Utils
                 Current.OkBadMessagesTranslatePack = null;
             }
             
+            Current.Cookies = Current.User is null 
+                ? new Dictionary<string, string>() 
+                : Current.Cookies;
             Current.OkBadMessagesTranslatePack ??= new Dictionary<string, Dictionary<string, string>>();
         }
 

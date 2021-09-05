@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using PassMeta.DesktopApp.Ui.ViewModels;
+using PassMeta.DesktopApp.Ui.ViewModels.Base;
 
 namespace PassMeta.DesktopApp.Ui
 {

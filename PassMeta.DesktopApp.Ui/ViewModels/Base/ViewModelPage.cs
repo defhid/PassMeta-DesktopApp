@@ -1,7 +1,7 @@
 ﻿using System;
 using ReactiveUI;
 
-namespace PassMeta.DesktopApp.Ui.ViewModels
+namespace PassMeta.DesktopApp.Ui.ViewModels.Base
 {
     public abstract class ViewModelPage : ReactiveObject, IRoutableViewModel
     {

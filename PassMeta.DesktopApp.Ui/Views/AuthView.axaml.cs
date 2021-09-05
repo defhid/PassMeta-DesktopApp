@@ -4,18 +4,19 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Entities.Request;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.ViewModels;
+using PassMeta.DesktopApp.Ui.Views.Base;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Views
 {
-    public class AuthView : ReactiveUserControl<AuthViewModel>
+    // ReSharper disable once UnusedType.Global
+    public class AuthView : ViewPage<AuthViewModel>
     {
         public AuthView()
         {
@@ -32,15 +33,15 @@ namespace PassMeta.DesktopApp.Ui.Views
             var result = ValidateAndGetData<SignUpPostData>();
             if (!result.Ok)
             {
-                Locator.Current.GetService<IDialogService>()!.ShowError(Core.Resources.ERR__DATA_VALIDATION);
+                Locator.Current.GetService<IDialogService>()!.ShowError(Common.Resources.ERR__DATA_VALIDATION);
             }
             else
             {
                 var response = await PassMetaApi.PostAsync<SignUpPostData, User>("/users/new", result.Data, true);
                 if (response?.Success is not true) return;
                 
-                AppConfig.Current.SetUser(response.Data);
-                new AccountViewModel(((AuthViewModel)DataContext!).HostScreen).Navigate();
+                await AppConfig.Current.SetUserAsync(response.Data);
+                NavigateTo<AccountViewModel>();
             }
         }
 
@@ -50,22 +51,22 @@ namespace PassMeta.DesktopApp.Ui.Views
             if (!result.Ok)
             {
                 if (silent) return;
-                Locator.Current.GetService<IDialogService>()!.ShowError(Core.Resources.ERR__DATA_VALIDATION);
+                Locator.Current.GetService<IDialogService>()!.ShowError(Common.Resources.ERR__DATA_VALIDATION);
             }
             else
             {
                 var response = await PassMetaApi.PostAsync<SignInPostData, User>("/auth/sign-in", result.Data, true);
                 if (response?.Success is not true) return;
                 
-                AppConfig.Current.SetUser(response.Data);
-                new AccountViewModel(((AuthViewModel)DataContext!).HostScreen).Navigate();
+                await AppConfig.Current.SetUserAsync(response.Data);
+                NavigateTo<AccountViewModel>();
             }
         }
 
         private Result<TData> ValidateAndGetData<TData>()
             where TData : SignInPostData
         {
-            var context = (AuthViewModel)DataContext!;
+            var context = DataContext!;
             SignInPostData data;
             
             if (typeof(TData) == typeof(SignInPostData))

@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
+using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Core.Utils;
 

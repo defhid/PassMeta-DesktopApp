@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
 using PassMeta.DesktopApp.Common.Models;
 using Splat;
@@ -134,23 +135,21 @@ namespace PassMeta.DesktopApp.Core.Utils
                     if (data is null)
                         throw new FormatException();
                     
-                    if (handleBad && data.Failure)
-                        Locator.Current.GetService<IDialogService>()!.ShowFailure(
-                            data.ToFullLocalizedString(Locator.Current.GetService<IOkBadService>()));
+                    if (handleBad && !data.Success)
+                        Locator.Current.GetService<IOkBadService>()!.ShowResponseFailure(data);
                     
                     return data;
                 }
 
                 if (data is null)
                     Locator.Current.GetService<IDialogService>()!.ShowError(errMessage);
-                else 
-                    Locator.Current.GetService<IDialogService>()!.ShowError(
-                        data.ToFullLocalizedString(Locator.Current.GetService<IOkBadService>()));
+                else
+                    Locator.Current.GetService<IOkBadService>()!.ShowResponseFailure(data);
             }
             catch
             {
                 Locator.Current.GetService<IDialogService>()!
-                    .ShowError(errMessage ?? Resources.ERR__INVALID_API_RESPONSE, responseBody);
+                    .ShowError(errMessage ?? Resources.ERR__INVALID_API_RESPONSE, null, responseBody);
             }
 
             return null;

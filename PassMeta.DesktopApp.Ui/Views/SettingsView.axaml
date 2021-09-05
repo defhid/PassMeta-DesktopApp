@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
+             xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
              x:Class="PassMeta.DesktopApp.Ui.Views.SettingsView"
              mc:Ignorable="d"
              d:DesignWidth="800"
@@ -13,7 +14,7 @@
                    HorizontalAlignment="Center" 
                    Margin="0 40 0 0"
                    FontSize="30"
-                   Text="{Binding Title}"/>
+                   Text="{x:Static com:Resources.SETTINGS__TITLE}"/>
         
         <TextBlock VerticalAlignment="Top"
                    HorizontalAlignment="Left"
@@ -32,7 +33,7 @@
                    HorizontalAlignment="Left"
                    Margin="23 180 0 0"
                    FontSize="16"
-                   Text="{Binding LocalizationLabel}"/>
+                   Text="{x:Static com:Resources.SETTINGS__LOCALIZATION}"/>
         
         <ComboBox VerticalAlignment="Top"
                   HorizontalAlignment="Left"
@@ -46,7 +47,7 @@
         <Button VerticalAlignment="Top"
                 HorizontalAlignment="Left"
                 Margin="20 270 0 0"
-                Content="{Binding SaveBtnContent}"
+                Content="{x:Static com:Resources.SETTINGS__SAVE_BTN}"
                 Click="SaveBtn_OnClick"/>
     </Grid>
 </UserControl>

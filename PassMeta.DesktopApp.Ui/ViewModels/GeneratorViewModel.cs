@@ -1,3 +1,4 @@
+using PassMeta.DesktopApp.Ui.ViewModels.Base;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Ui.Models.DialogWindow.Components;
-using PassMeta.DesktopApp.Ui.ViewModels;
+using PassMeta.DesktopApp.Ui.ViewModels.Main;
 using PassMeta.DesktopApp.Ui.Views.Main;
 
 namespace PassMeta.DesktopApp.Ui.Services
@@ -76,21 +76,41 @@ namespace PassMeta.DesktopApp.Ui.Services
             );
         }
 
-        public void ShowFailure(string message)
+        public void ShowFailure(string message, string? more = null)
         {
             _ShowOrDefer(new DialogWindowViewModel(
                 Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                 message,
-                null,
+                more,
                 new[] { DialogButton.Close },
                 DialogWindowIcon.Failure,
                 null)
             );
         }
 
-        public Task<Result<bool>> Ask(string message, string? title = null)
+        public async Task<Result> Confirm(string message, string? title = null)
         {
-            throw new System.NotImplementedException();
+            if (_win is null) return new Result(false);
+            
+            var dialog = new DialogWindow 
+            { 
+                DataContext = new DialogWindowViewModel(
+                    title ?? Resources.DIALOG__DEFAULT_CONFIRM_TITLE,
+                    message,
+                    null,
+                    new[] { DialogButton.Yes, DialogButton.Cancel },
+                    DialogWindowIcon.Confirm,
+                    null)
+            };
+            dialog.Closed += (_, _) =>
+            {
+                ActiveCount -= 1;
+            };
+            
+            ActiveCount += 1;
+            await dialog.ShowDialog(_win);
+            
+            return new Result(dialog.ResultButton == DialogButton.Yes);
         }
 
         public Task<Result<string>> AskString(string message, string? title = null)

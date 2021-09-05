@@ -1,10 +1,11 @@
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Ui.ViewModels;
+using PassMeta.DesktopApp.Ui.Views.Base;
 
 namespace PassMeta.DesktopApp.Ui.Views
 {
-    public class GeneratorView : ReactiveUserControl<GeneratorViewModel>
+    // ReSharper disable once UnusedType.Global
+    public class GeneratorView : ViewPage<GeneratorViewModel>
     {
         public GeneratorView()
         {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PassMeta.DesktopApp.Core {
+namespace PassMeta.DesktopApp.Common {
     using System;
     
     
@@ -57,6 +57,96 @@ namespace PassMeta.DesktopApp.Core {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string ACCOUNT__FIRST_NAME_LABEL {
+            get {
+                return ResourceManager.GetString("ACCOUNT__FIRST_NAME_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Surname.
+        /// </summary>
+        public static string ACCOUNT__LAST_NAME_LABEL {
+            get {
+                return ResourceManager.GetString("ACCOUNT__LAST_NAME_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string ACCOUNT__LOGIN_LABEL {
+            get {
+                return ResourceManager.GetString("ACCOUNT__LOGIN_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current password.
+        /// </summary>
+        public static string ACCOUNT__PASSWORD_CONFIRM_LABEL {
+            get {
+                return ResourceManager.GetString("ACCOUNT__PASSWORD_CONFIRM_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string ACCOUNT__PASSWORD_LABEL {
+            get {
+                return ResourceManager.GetString("ACCOUNT__PASSWORD_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string ACCOUNT__SAVE_BTN {
+            get {
+                return ResourceManager.GetString("ACCOUNT__SAVE_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The data has been save successfully!.
+        /// </summary>
+        public static string ACCOUNT__SAVE_SUCCESS {
+            get {
+                return ResourceManager.GetString("ACCOUNT__SAVE_SUCCESS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign out.
+        /// </summary>
+        public static string ACCOUNT__SIGN_OUT_BTN {
+            get {
+                return ResourceManager.GetString("ACCOUNT__SIGN_OUT_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to sign out?.
+        /// </summary>
+        public static string ACCOUNT__SIGN_OUT_CONFIRM {
+            get {
+                return ResourceManager.GetString("ACCOUNT__SIGN_OUT_CONFIRM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account.
+        /// </summary>
+        public static string ACCOUNT__TITLE {
+            get {
+                return ResourceManager.GetString("ACCOUNT__TITLE", resourceCulture);
             }
         }
         
@@ -156,6 +246,15 @@ namespace PassMeta.DesktopApp.Core {
         public static string DIALOG__BTN_YES {
             get {
                 return ResourceManager.GetString("DIALOG__BTN_YES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmation.
+        /// </summary>
+        public static string DIALOG__DEFAULT_CONFIRM_TITLE {
+            get {
+                return ResourceManager.GetString("DIALOG__DEFAULT_CONFIRM_TITLE", resourceCulture);
             }
         }
         
@@ -435,6 +534,15 @@ namespace PassMeta.DesktopApp.Core {
         public static string SETTINGS__TITLE {
             get {
                 return ResourceManager.GetString("SETTINGS__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current password is missed!.
+        /// </summary>
+        public static string WARN__PASSWORD_CONFIRM_MISSED {
+            get {
+                return ResourceManager.GetString("WARN__PASSWORD_CONFIRM_MISSED", resourceCulture);
             }
         }
     }

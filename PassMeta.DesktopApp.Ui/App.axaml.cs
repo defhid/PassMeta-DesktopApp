@@ -6,6 +6,7 @@ using PassMeta.DesktopApp.Core.Services;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.Services;
 using PassMeta.DesktopApp.Ui.ViewModels;
+using PassMeta.DesktopApp.Ui.ViewModels.Main;
 using PassMeta.DesktopApp.Ui.Views.Main;
 using Splat;
 

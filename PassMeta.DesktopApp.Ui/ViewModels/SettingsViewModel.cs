@@ -1,5 +1,5 @@
-using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Ui.ViewModels.Base;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
@@ -7,12 +7,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     public class SettingsViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/settings";
-
-        public string Title => Resources.SETTINGS__TITLE;
-
-        public string SaveBtnContent => Resources.SETTINGS__SAVE_BTN;
-
-        public string LocalizationLabel => Resources.SETTINGS__LOCALIZATION;
 
         public string[][] Lang { get; } = AppConfig.Cultures;
 

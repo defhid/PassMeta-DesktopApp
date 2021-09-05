@@ -7,6 +7,8 @@ using Avalonia.Markup.Xaml;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.Services;
 using PassMeta.DesktopApp.Ui.ViewModels;
+using PassMeta.DesktopApp.Ui.ViewModels.Base;
+using PassMeta.DesktopApp.Ui.ViewModels.Main;
 
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {

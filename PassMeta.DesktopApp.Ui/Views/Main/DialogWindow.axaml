@@ -1,9 +1,9 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:PassMeta.DesktopApp.Ui.ViewModels"
         xmlns:ut="using:PassMeta.DesktopApp.Ui.Utils"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:main="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main"
         mc:Ignorable="d"
         Width="500"
         Height="200"
@@ -17,7 +17,7 @@
         WindowStartupLocation="CenterScreen">
     
     <Design.DataContext>
-        <vm:DialogWindowViewModel/>
+        <main:DialogWindowViewModel/>
     </Design.DataContext>
     
     <Window.Resources>
@@ -43,6 +43,7 @@
                            FontSize="16"/>
                 
                 <TextBlock IsVisible="{Binding DetailsVisible}"
+                           HorizontalAlignment="Right"
                            Margin="0 10 0 0"
                            TextWrapping="Wrap"
                            Text="{Binding Details}"
@@ -63,40 +64,48 @@
                            Watermark="{Binding WindowNumericBox.Placeholder}"/>
         </StackPanel>
         
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2"
+              ColumnDefinitions="Auto,Auto,Auto,Auto,Auto"
+              HorizontalAlignment="Right">
             <Grid.Styles>
                 <Style Selector="Button">
                     <Setter Property="HorizontalAlignment" Value="Right" />
                     <Setter Property="VerticalAlignment" Value="Bottom"/>
-                    <Setter Property="Margin" Value="15 10 20 20"/>
+                    <Setter Property="Margin" Value="10 10 20 20"/>
+                    <Setter Property="Padding" Value="12 7 12 7"/>
                 </Style>
             </Grid.Styles>
             
-            <Button IsVisible="{Binding WindowBtnOk.Visible}" 
+            <Button Grid.Column="0"
+                    IsVisible="{Binding WindowBtnOk.Visible}" 
                     Content="{Binding WindowBtnOk.Text}"
                     Tag="1"
                     Click="OkButton_OnClick"
                     AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
             
-            <Button IsVisible="{Binding WindowBtnYes.Visible}" 
+            <Button Grid.Column="1"
+                    IsVisible="{Binding WindowBtnYes.Visible}" 
                     Content="{Binding WindowBtnYes.Text}"
                     Tag="2"
                     Click="YesButton_OnClick"
                     AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
             
-            <Button IsVisible="{Binding WindowBtnNo.Visible}" 
+            <Button Grid.Column="2"
+                    IsVisible="{Binding WindowBtnNo.Visible}" 
                     Content="{Binding WindowBtnNo.Text}"
                     Tag="3"
                     Click="NoButton_OnClick"
                     AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
             
-            <Button IsVisible="{Binding WindowBtnCancel.Visible}" 
+            <Button Grid.Column="3"
+                    IsVisible="{Binding WindowBtnCancel.Visible}" 
                     Content="{Binding WindowBtnCancel.Text}"
                     Tag="4"
                     Click="CancelButton_OnClick"
                     AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
             
-            <Button IsVisible="{Binding WindowBtnClose.Visible}" 
+            <Button Grid.Column="4"
+                    IsVisible="{Binding WindowBtnClose.Visible}" 
                     Content="{Binding WindowBtnClose.Text}"
                     Tag="5"
                     Click="CloseButton_OnClick"

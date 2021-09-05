@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
+             xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
              x:Class="PassMeta.DesktopApp.Ui.Views.AuthView"
              mc:Ignorable="d"
              d:DesignWidth="800"
@@ -13,14 +14,14 @@
                    HorizontalAlignment="Center" 
                    Margin="0 40 0 0"
                    FontSize="30" 
-                   Text="{Binding Title}"/>
+                   Text="{x:Static com:Resources.AUTH__TITLE}"/>
         
         <Grid Margin="0 40 0 0">
             <TextBox VerticalAlignment="Center"
                      HorizontalAlignment="Center"
                      Margin="0 0 0 140"
                      Width="300"
-                     Watermark="{Binding LoginInputPlaceholder}"
+                     Watermark="{x:Static com:Resources.AUTH__LOGIN_PLACEHOLDER}"
                      Text="{Binding Login}"
                      KeyDown="Input_OnKeyDown"
                      AttachedToVisualTree="LoginTextBox__OnAttachedToVisualTree"/>
@@ -30,7 +31,7 @@
                      Margin="0 0 0 30"
                      PasswordChar="*"
                      Width="300"
-                     Watermark="{Binding PasswordInputPlaceholder}"
+                     Watermark="{x:Static com:Resources.AUTH__PASSWORD_PLACEHOLDER}"
                      Text="{Binding Password}"
                      KeyDown="Input_OnKeyDown"/>
             
@@ -38,7 +39,7 @@
                     HorizontalAlignment="Center"
                     Margin="0 80 0 0"
                     FontSize="16"
-                    Content="{Binding SignInBtnContent}"
+                    Content="{x:Static com:Resources.AUTH__SIGN_IN_BTN}"
                     Click="SignInBtn_OnClick"/>
             
             <Button VerticalAlignment="Bottom"
@@ -46,7 +47,7 @@
                     Margin="0 0 10 10"
                     FontSize="16"
                     Opacity="0.7"
-                    Content="{Binding SignUpBtnContent}"
+                    Content="{x:Static com:Resources.AUTH__SIGN_UP_BTN}"
                     Click="SignUpBtn_OnClick"/>
         </Grid>
     </Grid>

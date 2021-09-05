@@ -3,10 +3,10 @@ using Avalonia;
 using Avalonia.Layout;
 using Avalonia.Media;
 using DynamicData;
-using PassMeta.DesktopApp.Core;
 using ReactiveUI;
+using PassMeta.DesktopApp.Common;
 
-namespace PassMeta.DesktopApp.Ui.ViewModels
+namespace PassMeta.DesktopApp.Ui.ViewModels.Main
 {
     public class MainWindowViewModel : ReactiveObject, IScreen
     {

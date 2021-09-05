@@ -9,6 +9,6 @@
              d:DesignHeight="450"
              d:DataContext="{d:DesignInstance viewModels:StorageViewModel}">
     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">
-        Here is your password storage!
+        Here is your passwords storage!
     </TextBlock>
 </UserControl>

@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using PassMeta.DesktopApp.Common.Enums;
-using PassMeta.DesktopApp.Ui.ViewModels;
+using PassMeta.DesktopApp.Ui.ViewModels.Main;
 
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {

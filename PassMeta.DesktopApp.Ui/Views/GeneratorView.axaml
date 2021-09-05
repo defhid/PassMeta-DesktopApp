@@ -9,6 +9,6 @@
              d:DesignHeight="450"
              d:DataContext="{d:DesignInstance viewModels:GeneratorViewModel}">
     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">
-        Here is your password generator!
+        Here is your passwords generator!
     </TextBlock>
 </UserControl>
