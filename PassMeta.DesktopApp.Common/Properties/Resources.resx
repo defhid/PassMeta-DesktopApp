@@ -180,4 +180,19 @@
     <data name="DIALOG__DEFAULT_CONFIRM_TITLE" xml:space="preserve">
         <value>Confirmation</value>
     </data>
+    <data name="GENERATOR__TITLE" xml:space="preserve">
+        <value>Password generator</value>
+    </data>
+    <data name="GENERATOR__BTN" xml:space="preserve">
+        <value>Generate</value>
+    </data>
+    <data name="GENERATOR__PASSWORD_LENGTH" xml:space="preserve">
+        <value>Length</value>
+    </data>
+    <data name="GENERATOR__INCLUDE_DIGITS" xml:space="preserve">
+        <value>Numbers</value>
+    </data>
+    <data name="GENERATOR__INCLUDE_SPECIAL" xml:space="preserve">
+        <value>Spec. symbols</value>
+    </data>
 </root>

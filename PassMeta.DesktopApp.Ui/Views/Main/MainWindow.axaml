@@ -45,6 +45,7 @@
                                                   Padding="{TemplateBinding Padding}"
                                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                   HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  CornerRadius="{TemplateBinding CornerRadius}"
                                                   TextBlock.Foreground="LightSkyBlue"
                                                   TextBlock.FontWeight="Bold"/>
                             </ControlTemplate>

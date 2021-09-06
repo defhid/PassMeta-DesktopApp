@@ -385,6 +385,51 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate.
+        /// </summary>
+        public static string GENERATOR__BTN {
+            get {
+                return ResourceManager.GetString("GENERATOR__BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Numbers.
+        /// </summary>
+        public static string GENERATOR__INCLUDE_DIGITS {
+            get {
+                return ResourceManager.GetString("GENERATOR__INCLUDE_DIGITS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spec. symbols.
+        /// </summary>
+        public static string GENERATOR__INCLUDE_SPECIAL {
+            get {
+                return ResourceManager.GetString("GENERATOR__INCLUDE_SPECIAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length.
+        /// </summary>
+        public static string GENERATOR__PASSWORD_LENGTH {
+            get {
+                return ResourceManager.GetString("GENERATOR__PASSWORD_LENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password generator.
+        /// </summary>
+        public static string GENERATOR__TITLE {
+            get {
+                return ResourceManager.GetString("GENERATOR__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to English.
         /// </summary>
         public static string LANG__EN {

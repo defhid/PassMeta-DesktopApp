@@ -173,4 +173,19 @@
     <data name="DIALOG__DEFAULT_CONFIRM_TITLE" xml:space="preserve">
         <value>Подтверждение</value>
     </data>
+    <data name="GENERATOR__TITLE" xml:space="preserve">
+        <value>Генератор паролей</value>
+    </data>
+    <data name="GENERATOR__BTN" xml:space="preserve">
+        <value>Сгенерировать</value>
+    </data>
+    <data name="GENERATOR__PASSWORD_LENGTH" xml:space="preserve">
+        <value>Длина</value>
+    </data>
+    <data name="GENERATOR__INCLUDE_DIGITS" xml:space="preserve">
+        <value>Числа</value>
+    </data>
+    <data name="GENERATOR__INCLUDE_SPECIAL" xml:space="preserve">
+        <value>Спец. символы</value>
+    </data>
 </root>

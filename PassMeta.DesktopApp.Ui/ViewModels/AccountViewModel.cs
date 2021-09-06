@@ -1,3 +1,4 @@
+using System;
 using System.Reactive;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Core.Utils;
@@ -77,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                     vm => vm.Login,
                     vm => vm.Password,
                     vm => vm.PasswordConfirm)
-                .Subscribe(new AnonymousObserver<(string?, string?, string?, string?, string?)>(data =>
+                .Subscribe(data =>
                     {
                         var user = AppConfig.Current.User;
                         var changed = data.Item1 != user.FirstName || 
@@ -88,7 +89,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                         IsPasswordConfirmVisible = changed;
                         PasswordConfirmLabelForeground = changed ? Brushes.LightSkyBlue : Brushes.Transparent;
                         IsBtnSaveVisible = changed && !string.IsNullOrEmpty(data.Item5);
-                    }));
+                    });
         }
 
         public override void Navigate()

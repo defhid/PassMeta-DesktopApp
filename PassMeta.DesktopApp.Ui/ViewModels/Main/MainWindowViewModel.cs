@@ -56,7 +56,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main
             _mainPaneButtonsActive = new [] { false, false, false, false };
             
             this.WhenAnyValue(vm => vm.IsMainPaneOpened)
-                .Subscribe(_ => MainPaneButtons = _isMainPaneOpened 
+                .Subscribe(isMainPaneOpened => MainPaneButtons = isMainPaneOpened 
                     ? _mainPaneButtonsWhenOpened
                     : _mainPaneButtonsWhenClosed);
         }

@@ -3,12 +3,82 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
+             xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
              x:Class="PassMeta.DesktopApp.Ui.Views.GeneratorView"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
              d:DataContext="{d:DesignInstance viewModels:GeneratorViewModel}">
-    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">
-        Here is your passwords generator!
-    </TextBlock>
+    <Grid>
+        <TextBlock VerticalAlignment="Top" 
+                   HorizontalAlignment="Center" 
+                   Margin="0 40 0 0"
+                   FontSize="30" 
+                   Text="{x:Static com:Resources.GENERATOR__TITLE}"/>
+        
+        <Grid ColumnDefinitions="Auto,Auto"
+              RowDefinitions="Auto,Auto,Auto"
+              Margin="30 125 0 0"
+              VerticalAlignment="Top"
+              HorizontalAlignment="Left">
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                       Margin="0 5 30 0"
+                       FontSize="18"
+                       Text="{x:Static com:Resources.GENERATOR__PASSWORD_LENGTH}"/>
+            
+            <NumericUpDown Grid.Row="0" Grid.Column="1"
+                           Value="{Binding Length}"/>
+            
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                       Margin="0 25 30 0"
+                       FontSize="18"
+                       Text="{x:Static com:Resources.GENERATOR__INCLUDE_DIGITS}"/>
+            
+            <CheckBox Grid.Row="1" Grid.Column="1"
+                      Margin="0 18 30 0"
+                      IsChecked="{Binding IncludeDigits}"/>
+            
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                       Margin="0 25 30 0"
+                       FontSize="18"
+                       Text="{x:Static com:Resources.GENERATOR__INCLUDE_SPECIAL}"/>
+            
+            <CheckBox Grid.Row="2" Grid.Column="1"
+                      Margin="0 18 30 0"
+                      IsChecked="{Binding IncludeSpecial}"/>
+        </Grid>
+        
+        <Grid ColumnDefinitions="Auto,Auto,Auto"
+              VerticalAlignment="Top"
+              HorizontalAlignment="Center"
+              Margin="0 300 0 0">
+            <TextBox Grid.Column="0"
+                     HorizontalContentAlignment="Center"
+                     Width="300"
+                     Margin="0 0 30 0"
+                     IsReadOnly="True"
+                     Focusable="False"
+                     BorderThickness="0"
+                     IsVisible="{Binding Generated}"
+                     Text="{Binding Result}"/>
+            
+            <Button Grid.Column="1"
+                    Margin="0 0 15 0"
+                    Padding="6 6 6 6"
+                    FontSize="22"
+                    FontFamily="Segoe MDL2 Assets"
+                    Content="&#xE8C8;"
+                    IsVisible="{Binding Generated}"
+                    Click="CopyBtn_OnClick"/>
+            
+            <Button Grid.Column="2"
+                    ToolTip.Tip="{x:Static com:Resources.GENERATOR__BTN}"
+                    Margin="0 0 15 0"
+                    Padding="6 6 6 6"
+                    FontSize="22"
+                    FontFamily="Segoe MDL2 Assets"
+                    Content="&#xE8D7;"
+                    Click="GenerateBtn_OnClick"/>
+        </Grid>
+    </Grid>
 </UserControl>
