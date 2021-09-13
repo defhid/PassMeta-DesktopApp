@@ -5,7 +5,6 @@ using PassMeta.DesktopApp.Common.Interfaces.Services;
 using PassMeta.DesktopApp.Core.Services;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.Services;
-using PassMeta.DesktopApp.Ui.ViewModels;
 using PassMeta.DesktopApp.Ui.ViewModels.Main;
 using PassMeta.DesktopApp.Ui.Views.Main;
 using Splat;
@@ -60,6 +59,8 @@ namespace PassMeta.DesktopApp.Ui
             Locator.CurrentMutable.RegisterConstant<IAccountService>(new AccountService());
             
             Locator.CurrentMutable.RegisterConstant<IPassFileService>(new PassFileService());
+            
+            Locator.CurrentMutable.RegisterConstant<ICryptoService>(new CryptoService());
         }
     }
 }

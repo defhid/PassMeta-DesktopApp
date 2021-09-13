@@ -27,6 +27,8 @@
                        Text="{x:Static com:Resources.GENERATOR__PASSWORD_LENGTH}"/>
             
             <NumericUpDown Grid.Row="0" Grid.Column="1"
+                           Minimum="4"
+                           Maximum="100"
                            Value="{Binding Length}"/>
             
             <TextBlock Grid.Row="1" Grid.Column="0"
@@ -55,17 +57,18 @@
             <TextBox Grid.Column="0"
                      HorizontalContentAlignment="Center"
                      Width="300"
-                     Margin="0 0 30 0"
+                     Margin="0 5 30 0"
                      IsReadOnly="True"
                      Focusable="False"
                      BorderThickness="0"
+                     FontSize="18"
                      IsVisible="{Binding Generated}"
                      Text="{Binding Result}"/>
             
             <Button Grid.Column="1"
                     Margin="0 0 15 0"
-                    Padding="6 6 6 6"
-                    FontSize="22"
+                    Padding="8 8 8 8"
+                    FontSize="26"
                     FontFamily="Segoe MDL2 Assets"
                     Content="&#xE8C8;"
                     IsVisible="{Binding Generated}"
@@ -74,8 +77,8 @@
             <Button Grid.Column="2"
                     ToolTip.Tip="{x:Static com:Resources.GENERATOR__BTN}"
                     Margin="0 0 15 0"
-                    Padding="6 6 6 6"
-                    FontSize="22"
+                    Padding="8 8 8 8"
+                    FontSize="26"
                     FontFamily="Segoe MDL2 Assets"
                     Content="&#xE8D7;"
                     Click="GenerateBtn_OnClick"/>
