@@ -195,4 +195,40 @@
     <data name="GENERATOR__INCLUDE_SPECIAL" xml:space="preserve">
         <value>Spec. symbols</value>
     </data>
+    <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
+        <value>Packages</value>
+    </data>
+    <data name="STORAGE__PASSWORDS_TITLE" xml:space="preserve">
+        <value>Passwords</value>
+    </data>
+    <data name="ERR__INVALID_PASSFILE_FOUND" xml:space="preserve">
+        <value>Invalid passfile found on disk! Delete it?</value>
+    </data>
+    <data name="ERR__PASSFILES_READ" xml:space="preserve">
+        <value>Passfiles reading error!</value>
+    </data>
+    <data name="INFO__PASSFILES_MERGED" xml:space="preserve">
+        <value>Defferent versions of passfile '{0}' ('{1}') have been merged</value>
+    </data>
+    <data name="ERR__PASSFILE_SAVE_LOCAL" xml:space="preserve">
+        <value>Passfile '{0}' local saving error!</value>
+    </data>
+    <data name="ERR__PASSFILE_SAVE_REMOTE" xml:space="preserve">
+        <value>Passfile '{0}' remote saving error!</value>
+    </data>
+    <data name="ERR__PASSFILE_DELETE_LOCAL" xml:space="preserve">
+        <value>Passfile '{0}' local deleting error!</value>
+    </data>
+    <data name="ERR__PASSFILE_DELETE_REMOTE" xml:space="preserve">
+        <value>Passfile '{0}' remote delete error!</value>
+    </data>
+    <data name="ERR__PASSFILE_ARCHIVE_REMOTE" xml:space="preserve">
+        <value>Passfile '{0}' remote archiving error!</value>
+    </data>
+    <data name="ERR__PASSFILE_UNARCHIVE_REMOTE" xml:space="preserve">
+        <value>Passfile '{0}' remote unarchive error!</value>
+    </data>
+    <data name="INFO__PASSFILES_LOCAL_MODE" xml:space="preserve">
+        <value>Local mode</value>
+    </data>
 </root>

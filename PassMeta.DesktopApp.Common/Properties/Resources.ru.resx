@@ -188,4 +188,40 @@
     <data name="GENERATOR__INCLUDE_SPECIAL" xml:space="preserve">
         <value>Спец. символы</value>
     </data>
+    <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
+        <value>Пакеты</value>
+    </data>
+    <data name="STORAGE__PASSWORDS_TITLE" xml:space="preserve">
+        <value>Пароли</value>
+    </data>
+    <data name="ERR__INVALID_PASSFILE_FOUND" xml:space="preserve">
+        <value>На диске найден некорректный файл паролей! Удалить его?</value>
+    </data>
+    <data name="ERR__PASSFILES_READ" xml:space="preserve">
+        <value>Ошибка чтения файлов паролей!</value>
+    </data>
+    <data name="INFO__PASSFILES_MERGED" xml:space="preserve">
+        <value>Отличающиеся версии файла паролей '{0}' ('{1}') были слиты</value>
+    </data>
+    <data name="ERR__PASSFILE_SAVE_LOCAL" xml:space="preserve">
+        <value>Ошибка локального сохранения файла паролей '{0}'!</value>
+    </data>
+    <data name="ERR__PASSFILE_SAVE_REMOTE" xml:space="preserve">
+        <value>Ошибка сохранения файла паролей '{0}' на сервере!</value>
+    </data>
+    <data name="ERR__PASSFILE_DELETE_LOCAL" xml:space="preserve">
+        <value>Ошибка локального удаления файла паролей '{0}'!</value>
+    </data>
+    <data name="ERR__PASSFILE_DELETE_REMOTE" xml:space="preserve">
+        <value>Ошибка удаления файла паролей '{0}' с сервера!</value>
+    </data>
+    <data name="ERR__PASSFILE_ARCHIVE_REMOTE" xml:space="preserve">
+        <value>Ошибка архивирования файла паролей '{0}' на сервере!</value>
+    </data>
+    <data name="ERR__PASSFILE_UNARCHIVE_REMOTE" xml:space="preserve">
+        <value>Ошибка разархивирования файла паролей '{0}' на сервере!</value>
+    </data>
+    <data name="INFO__PASSFILES_LOCAL_MODE" xml:space="preserve">
+        <value>Remote mode</value>
+    </data>
 </root>

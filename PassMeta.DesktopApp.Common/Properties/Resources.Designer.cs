@@ -367,11 +367,83 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid passfile found on disk! Delete it?.
+        /// </summary>
+        public static string ERR__INVALID_PASSFILE_FOUND {
+            get {
+                return ResourceManager.GetString("ERR__INVALID_PASSFILE_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; remote archiving error!.
+        /// </summary>
+        public static string ERR__PASSFILE_ARCHIVE_REMOTE {
+            get {
+                return ResourceManager.GetString("ERR__PASSFILE_ARCHIVE_REMOTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password is wrong (file decryption failed).
         /// </summary>
         public static string ERR__PASSFILE_DECRYPTION {
             get {
                 return ResourceManager.GetString("ERR__PASSFILE_DECRYPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; local deleting error!.
+        /// </summary>
+        public static string ERR__PASSFILE_DELETE_LOCAL {
+            get {
+                return ResourceManager.GetString("ERR__PASSFILE_DELETE_LOCAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; remote delete error!.
+        /// </summary>
+        public static string ERR__PASSFILE_DELETE_REMOTE {
+            get {
+                return ResourceManager.GetString("ERR__PASSFILE_DELETE_REMOTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; local saving error!.
+        /// </summary>
+        public static string ERR__PASSFILE_SAVE_LOCAL {
+            get {
+                return ResourceManager.GetString("ERR__PASSFILE_SAVE_LOCAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; remote saving error!.
+        /// </summary>
+        public static string ERR__PASSFILE_SAVE_REMOTE {
+            get {
+                return ResourceManager.GetString("ERR__PASSFILE_SAVE_REMOTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; remote unarchive error!.
+        /// </summary>
+        public static string ERR__PASSFILE_UNARCHIVE_REMOTE {
+            get {
+                return ResourceManager.GetString("ERR__PASSFILE_UNARCHIVE_REMOTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfiles reading error!.
+        /// </summary>
+        public static string ERR__PASSFILES_READ {
+            get {
+                return ResourceManager.GetString("ERR__PASSFILES_READ", resourceCulture);
             }
         }
         
@@ -426,6 +498,24 @@ namespace PassMeta.DesktopApp.Common {
         public static string GENERATOR__TITLE {
             get {
                 return ResourceManager.GetString("GENERATOR__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local mode.
+        /// </summary>
+        public static string INFO__PASSFILES_LOCAL_MODE {
+            get {
+                return ResourceManager.GetString("INFO__PASSFILES_LOCAL_MODE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Defferent versions of passfile &apos;{0}&apos; (&apos;{1}&apos;) have been merged.
+        /// </summary>
+        public static string INFO__PASSFILES_MERGED {
+            get {
+                return ResourceManager.GetString("INFO__PASSFILES_MERGED", resourceCulture);
             }
         }
         
@@ -579,6 +669,24 @@ namespace PassMeta.DesktopApp.Common {
         public static string SETTINGS__TITLE {
             get {
                 return ResourceManager.GetString("SETTINGS__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Packages.
+        /// </summary>
+        public static string STORAGE__PASSFILES_TITLE {
+            get {
+                return ResourceManager.GetString("STORAGE__PASSFILES_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passwords.
+        /// </summary>
+        public static string STORAGE__PASSWORDS_TITLE {
+            get {
+                return ResourceManager.GetString("STORAGE__PASSWORDS_TITLE", resourceCulture);
             }
         }
         

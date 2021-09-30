@@ -18,16 +18,16 @@ namespace PassMeta.DesktopApp.Core.Utils
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
         }
         
-        public static async Task<OkBadResponse<TData>> GetAsync<TData>(string url, 
+        public static async Task<OkBadResponse<TData>?> GetAsync<TData>(string url, 
             bool handleBad = false)
         {
-            var request = _CreateRequest(url);
+            var request = _CreateRequest(url, "GET");
             if (request is null) return null;
 
             return await _ExecuteRequest<OkBadResponse<TData>>(request, handleBad);
         }
         
-        public static async Task<OkBadResponse<TResponseData>> PostAsync<TPostData, TResponseData>(string url, 
+        public static async Task<OkBadResponse<TResponseData>?> PostAsync<TPostData, TResponseData>(string url, 
             TPostData data, bool handleBad = false)
         {
             var request = await _CreateRequestWithDataAsync(url, "POST", data);
@@ -36,7 +36,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
         }
         
-        public static async Task<OkBadResponse<TResponseData>> PatchAsync<TPatchData, TResponseData>(string url, 
+        public static async Task<OkBadResponse<TResponseData>?> PatchAsync<TPatchData, TResponseData>(string url, 
             TPatchData data, bool handleBad = false)
         {
             var request = await _CreateRequestWithDataAsync(url, "PATCH", data);
@@ -44,12 +44,30 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
         }
+        
+        public static async Task<OkBadResponse<TResponseData>?> PutAsync<TResponseData>(string url, bool handleBad = false)
+        {
+            var request = _CreateRequest(url, "PUT");
+            if (request is null) return null;
 
-        private static HttpWebRequest _CreateRequest(string url)
+            return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
+        }
+        
+        public static async Task<OkBadResponse<TResponseData>?> DeleteAsync<TResponseData>(string url, bool handleBad = false)
+        {
+            var request = _CreateRequest(url, "DELETE");
+            if (request is null) return null;
+
+            return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
+        }
+
+        private static HttpWebRequest? _CreateRequest(string url, string method)
         {
             try
             {
-                return WebRequest.CreateHttp(AppConfig.Current.ServerUrl + url);
+                var request = WebRequest.CreateHttp(AppConfig.Current.ServerUrl + url);
+                request.Method = method;
+                return request;
             }
             catch (UriFormatException)
             {
@@ -63,7 +81,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
         }
 
-        private static async Task<HttpWebRequest> _CreateRequestWithDataAsync<TData>(string url, string method, TData data)
+        private static async Task<HttpWebRequest?> _CreateRequestWithDataAsync<TData>(string url, string method, TData data)
         {
             try
             {
@@ -86,11 +104,11 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
         }
 
-        private static async Task<TResponse> _ExecuteRequest<TResponse>(HttpWebRequest request, bool handleBad)
+        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, bool handleBad)
             where TResponse : OkBadResponse
         {
             string responseBody;
-            string errMessage;
+            string? errMessage;
 
             request.CookieContainer = new CookieContainer();
             foreach (var (name, value) in AppConfig.Current.Cookies)
@@ -103,7 +121,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 var response = (HttpWebResponse)request.GetResponse();
 
                 await using var stream = response.GetResponseStream();
-                using var reader = new StreamReader(stream!);
+                using var reader = new StreamReader(stream);
                 
                 responseBody = await reader.ReadToEndAsync();
 
@@ -127,11 +145,25 @@ namespace PassMeta.DesktopApp.Core.Utils
                     _ => ex.Message
                 };
                 
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(errMessage, more: ReferenceEquals(errMessage, ex.Message) ? null : ex.Message);
+                var more = ReferenceEquals(errMessage, ex.Message) ? null : ex.Message;
+
+                try
+                {
+                    await using var stream = ex.Response.GetResponseStream();
+                    using var reader = new StreamReader(stream);
+
+                    responseBody = await reader.ReadToEndAsync();
+                    more = responseBody;
+                }
+                catch
+                {
+                    // ignored
+                }
+                
+                Locator.Current.GetService<IDialogService>()!.ShowError(errMessage, more: more);
                 return null;
             }
-            
+
             try
             {
                 var data = JsonConvert.DeserializeObject<TResponse>(responseBody);

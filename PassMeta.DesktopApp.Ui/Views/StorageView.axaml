@@ -3,12 +3,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
+             xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
              x:Class="PassMeta.DesktopApp.Ui.Views.StorageView"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
              d:DataContext="{d:DesignInstance viewModels:StorageViewModel}">
-    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">
-        Here is your passwords storage!
-    </TextBlock>
+    <SplitView DisplayMode="CompactInline"
+               OpenPaneLength="250"
+               CompactPaneLength="50">
+        <SplitView.Pane>
+            <Grid RowDefinitions="Auto,*">
+                <TextBlock Grid.Row="0"
+                         Margin="0 10 0 14"
+                         Text="{x:Static com:Resources.STORAGE__PASSFILES_TITLE}"/>
+            
+                <ListBox Grid.Row="1" Items="{Binding PassFiles}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <ToggleButton Content="{Binding Name}"
+                                          Foreground="{Binding Foreground}"
+                                          Tag="{Binding Id}"
+                                          Checked="PassFileBtn_OnChecked"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </SplitView.Pane>
+        
+        <ListBox>
+            
+        </ListBox>
+    </SplitView>
 </UserControl>

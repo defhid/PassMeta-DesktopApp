@@ -65,6 +65,7 @@
         </StackPanel>
         
         <Grid Grid.Row="2"
+              MinHeight="50"
               ColumnDefinitions="Auto,Auto,Auto,Auto,Auto"
               HorizontalAlignment="Right">
             <Grid.Styles>
