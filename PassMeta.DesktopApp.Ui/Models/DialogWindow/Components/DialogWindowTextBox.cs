@@ -5,21 +5,30 @@ namespace PassMeta.DesktopApp.Ui.Models.DialogWindow.Components
         public bool Visible { get; }
         
         public string Placeholder { get; }
-        
-        public string DefaultValue { get; }
+
+        public string? Value
+        {
+            get => _value; 
+            set => _value = value == string.Empty ? null : value;
+        }
+
+        public char? PasswordChar { get; }
+
+        private string? _value;
 
         public DialogWindowTextBox(bool visible)
         {
             Visible = visible;
             Placeholder = "";
-            DefaultValue = "";
+            PasswordChar = null;
         }
 
-        public DialogWindowTextBox(bool visible, string placeholder, string defaultValue)
+        public DialogWindowTextBox(bool visible, string placeholder, string? defaultValue, char passwordChar)
         {
             Visible = visible;
             Placeholder = placeholder;
-            DefaultValue = defaultValue;
+            Value = defaultValue;
+            PasswordChar = passwordChar;
         }
     }
 }

@@ -224,4 +224,10 @@
     <data name="INFO__PASSFILES_LOCAL_MODE" xml:space="preserve">
         <value>Remote mode</value>
     </data>
+    <data name="ASK__PASSPHRASE" xml:space="preserve">
+        <value>Введите мастер-пароль</value>
+    </data>
+    <data name="DIALOG__DEFAULT_ASK_TITLE" xml:space="preserve">
+        <value>Форма ввода</value>
+    </data>
 </root>

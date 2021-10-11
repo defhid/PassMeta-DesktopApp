@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
@@ -11,16 +10,16 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <summary>
         /// Logging in.
         /// </summary>
-        Task<Result<User>> SignIn([NotNull] string login, [NotNull] string password);
+        Task<Result<User>> SignInAsync(SignInPostData data);
         
         /// <summary>
         /// Logging out.
         /// </summary>
-        Task<Result> SignOut();
+        Task SignOutAsync();
 
         /// <summary>
         /// Registration.
         /// </summary>
-        Task<Result<User>> SignUp([NotNull] SignUpPostData postData);
+        Task<Result<User>> SignUpAsync(SignUpPostData data);
     }
 }

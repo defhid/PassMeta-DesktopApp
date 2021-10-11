@@ -56,7 +56,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     continue;
                 }
 
-                var remoteFull = response.Data;
+                var remoteFull = response.Data!;
                 
                 if (local is not null && local.IsChanged)
                 {
@@ -205,7 +205,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 Locator.Current.GetService<IDialogService>()!
                     .ShowError(string.Format(Resources.ERR__PASSFILE_SAVE_LOCAL, passFile.Name), more: ex.ToString());
 
-                return new Result(false);
+                return Result.Failure;
             }
 
             return new Result();
@@ -216,30 +216,25 @@ namespace PassMeta.DesktopApp.Core.Services
             try
             {
                 passFile.Encrypt();
-                
-                var postData = new PassFIlePostData
-                {
-                    Name = passFile.Name,
-                    Color = passFile.Color,
-                    Smth = passFile.DataEncrypted!
-                };
+
+                var postData = new PassFIlePostData(passFile.Name, passFile.Color, passFile.DataEncrypted!);
 
                 var response = await PassMetaApi.PatchAsync<PassFIlePostData, PassFileLight>($"/passfiles/{passFile.Id}", 
                     postData, true);
 
                 if (response?.Success is not true)
                 {
-                    return new Result(false);
+                    return Result.Failure;
                 }
                 
-                passFile.Refresh(response.Data);
+                passFile.Refresh(response.Data!);
             }
             catch (Exception ex)
             {
                 Locator.Current.GetService<IDialogService>()!
                     .ShowError(string.Format(Resources.ERR__PASSFILE_SAVE_REMOTE, passFile.Name), more: ex.ToString());
 
-                return new Result(false);
+                return Result.Failure;
             }
 
             return new Result();
@@ -260,7 +255,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 Locator.Current.GetService<IDialogService>()!
                     .ShowError(string.Format(Resources.ERR__PASSFILE_DELETE_LOCAL, passFile.Name), more: ex.ToString());
 
-                return new Result(false);
+                return Result.Failure;
             }
 
             return new Result();
@@ -278,7 +273,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 Locator.Current.GetService<IDialogService>()!
                     .ShowError(string.Format(Resources.ERR__PASSFILE_DELETE_REMOTE, passFile.Name), more: ex.ToString());
 
-                return new Result(false);
+                return Result.Failure;
             }
         }
 
@@ -294,7 +289,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 Locator.Current.GetService<IDialogService>()!
                     .ShowError(string.Format(Resources.ERR__PASSFILE_ARCHIVE_REMOTE, passFile.Name), more: ex.ToString());
 
-                return new Result(false);
+                return Result.Failure;
             }
         }
         
@@ -310,7 +305,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 Locator.Current.GetService<IDialogService>()!
                     .ShowError(string.Format(Resources.ERR__PASSFILE_UNARCHIVE_REMOTE, passFile.Name), more: ex.ToString());
 
-                return new Result(false);
+                return Result.Failure;
             }
         }
 

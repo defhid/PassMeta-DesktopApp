@@ -16,7 +16,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             var aes = Aes.Create();
             aes.IV = AppConfig.PassFileSalt;
-            aes.Key = Encoding.UTF8.GetBytes(keyPhrase);
+            aes.Key = Encoding.UTF8.GetBytes(SHA256.Create(keyPhrase)!.ToString()!);
             
             var crypt = aes.CreateEncryptor(aes.Key, aes.IV);
             

@@ -39,7 +39,7 @@ namespace PassMeta.DesktopApp.Ui.Views
             var result = await AppConfig.CreateAndSetCurrentAsync(serverUrl, lang);
             if (result.Bad) return;
 
-            var current = result.Data;
+            var current = result.Data!;
             
             if (current.CultureCode != oldConfig.CultureCode)
             {

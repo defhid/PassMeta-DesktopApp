@@ -149,7 +149,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 try
                 {
-                    await using var stream = ex.Response.GetResponseStream();
+                    await using var stream = ex.Response!.GetResponseStream();
                     using var reader = new StreamReader(stream);
 
                     responseBody = await reader.ReadToEndAsync();

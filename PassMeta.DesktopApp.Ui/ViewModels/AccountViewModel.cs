@@ -106,9 +106,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public void Refresh()
         {
-            FirstName = AppConfig.Current.User.FirstName;
-            LastName = AppConfig.Current.User.LastName;
-            Login = AppConfig.Current.User.Login;
+            FirstName = AppConfig.Current.User!.FirstName;
+            LastName = AppConfig.Current.User!.LastName;
+            Login = AppConfig.Current.User!.Login;
             Password = "";
             PasswordConfirm = "";
         }

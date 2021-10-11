@@ -1,11 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace PassMeta.DesktopApp.Common.Models
 {
     public readonly struct Result
     {
         public readonly bool Ok;
-        [AllowNull] public readonly string? Message;
+        public readonly string? Message;
 
         public bool Bad => !Ok;
         
@@ -14,13 +12,16 @@ namespace PassMeta.DesktopApp.Common.Models
             Ok = ok;
             Message = message;
         }
+        
+        public static Result Success => new(true);
+        public static Result Failure => new(false);
     }
     
     public readonly struct Result<TData>
     {
         public readonly bool Ok;
-        [AllowNull] public readonly string? Message;
-        [AllowNull] public readonly TData Data;
+        public readonly string? Message;
+        public readonly TData? Data;
         
         public bool Bad => !Ok;
 

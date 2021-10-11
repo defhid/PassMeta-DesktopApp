@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.Models.Storage;
@@ -59,18 +60,36 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             set => this.RaiseAndSetIfChanged(ref _passFilesMode, value ?? "");
         }
 
+        private BarBtn _passFilesBarBtn = new();
+        public BarBtn PassFilesBarBtn { 
+            get => _passFilesBarBtn;
+            set => this.RaiseAndSetIfChanged(ref _passFilesBarBtn, value);
+        }
+        
+        private BarBtn _sectionsBarBtn = new();
+        public BarBtn SectionsBarBtn { 
+            get => _sectionsBarBtn;
+            set => this.RaiseAndSetIfChanged(ref _sectionsBarBtn, value);
+        }
+
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
+            _SetPassFilesBarBtnWidth(false);
+            _SetSectionsBarBtnWidth(true);
         }
 
         public void SetPassFileList(IEnumerable<PassFile> passFiles, int activeId = 0, bool shortMode = false)
         {
+            _SetPassFilesBarBtnWidth(shortMode);
+            
             PassFiles = passFiles.Select(pf => 
                 new PassFileBtn(pf, shortMode, pf.Id == activeId)).ToArray();
         }
         
         public void SetPassFileSectionList(int activeIndex, bool shortMode = false)
         {
+            _SetSectionsBarBtnWidth(true);
+            
             PassFileSections = _passFiles.First(pf => pf.Active)
                 .Sections.Select((s, i) => 
                     new PassFileSectionBtn(s, i, shortMode, i == activeIndex)).ToArray();
@@ -95,5 +114,29 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                 base.Navigate();
             }
         }
+
+        private void _SetPassFilesBarBtnWidth(bool shortMode)
+        {
+            PassFilesBarBtn = new BarBtn
+            {
+                Width = shortMode ? 50 : 230,
+                Content = shortMode ? Resources.STORAGE__PASSFILES_TITLE[..1] : Resources.STORAGE__PASSFILES_TITLE
+            };
+        }
+        
+        private void _SetSectionsBarBtnWidth(bool shortMode)
+        {
+            SectionsBarBtn = new BarBtn
+            {
+                Width = shortMode ? 50 : 230,
+                Content = shortMode ? Resources.STORAGE__PASSWORDS_TITLE[..1] : Resources.STORAGE__PASSWORDS_TITLE
+            };
+        }
+    }
+
+    public class BarBtn
+    {
+        public double Width { get; set; }
+        public string? Content { get; set; }
     }
 }

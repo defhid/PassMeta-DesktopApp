@@ -231,4 +231,10 @@
     <data name="INFO__PASSFILES_LOCAL_MODE" xml:space="preserve">
         <value>Local mode</value>
     </data>
+    <data name="ASK__PASSPHRASE" xml:space="preserve">
+        <value>Input your passphrase</value>
+    </data>
+    <data name="DIALOG__DEFAULT_ASK_TITLE" xml:space="preserve">
+        <value>Input form</value>
+    </data>
 </root>

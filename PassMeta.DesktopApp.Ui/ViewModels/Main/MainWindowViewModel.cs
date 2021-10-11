@@ -62,6 +62,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main
         }
     }
 
+#pragma warning disable 8618
     public class MainPaneButtons
     {
         public int Width { get; set; }
@@ -73,7 +74,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main
         public HorizontalAlignment HorizontalContentAlignment { get; set; }
         
         public FontFamily FontFamily { get; set; }
-        
+
         public int FontSize { get; set; }
         
         public string[] Content { get; set; }
@@ -112,4 +113,5 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main
             },
         };
     }
+#pragma warning restore 8618
 }

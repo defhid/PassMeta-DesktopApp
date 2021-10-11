@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+#pragma warning disable 8618
 
 namespace PassMeta.DesktopApp.Common.Models
 {
@@ -11,13 +12,13 @@ namespace PassMeta.DesktopApp.Common.Models
         public string Message { get; set; }
         
         [JsonProperty("what")]
-        public string What { get; set; }
+        public string? What { get; set; }
         
         [JsonProperty("sub")]
-        public List<OkBadResponse> Sub { get; set; }
+        public List<OkBadResponse>? Sub { get; set; }
         
         [JsonProperty("more")]
-        public OkBadMore More { get; set; }
+        public OkBadMore? More { get; set; }
 
         public bool Success => Message == "OK";
     }
@@ -25,25 +26,25 @@ namespace PassMeta.DesktopApp.Common.Models
     public class OkBadResponse<TData> : OkBadResponse
     {
         [JsonProperty("data")]
-        public TData Data { get; set; }
+        public TData? Data { get; set; }
     }
     
     public class OkBadMore
     {
         [JsonProperty("text")]
-        public string Text { get; set; }
+        public string? Text { get; set; }
             
         [JsonProperty("info")]
-        public JObject Info { get; set; }
+        public JObject? Info { get; set; }
             
         [JsonProperty("allowed")]
-        public JArray Allowed { get; set; }
+        public JArray? Allowed { get; set; }
             
         [JsonProperty("disallowed")]
-        public JArray Disallowed { get; set; }
+        public JArray? Disallowed { get; set; }
 
         [JsonProperty("required")]
-        public JArray Required { get; set; }
+        public JArray? Required { get; set; }
 
         [JsonProperty("min_allowed")]
         public double? MinAllowed { get; set; }

@@ -151,6 +151,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Input your passphrase.
+        /// </summary>
+        public static string ASK__PASSPHRASE {
+            get {
+                return ResourceManager.GetString("ASK__PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string AUTH__LOGIN_PLACEHOLDER {
@@ -246,6 +255,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string DIALOG__BTN_YES {
             get {
                 return ResourceManager.GetString("DIALOG__BTN_YES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input form.
+        /// </summary>
+        public static string DIALOG__DEFAULT_ASK_TITLE {
+            get {
+                return ResourceManager.GetString("DIALOG__DEFAULT_ASK_TITLE", resourceCulture);
             }
         }
         

@@ -13,6 +13,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
 
         public Task<Result> Confirm(string message, string? title = null);
 
-        public Task<Result<string>> AskString(string message, string? title = null);
+        public Task<Result<string?>> AskString(string message, string? title = null);
     }
 }

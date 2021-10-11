@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
-             xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
              x:Class="PassMeta.DesktopApp.Ui.Views.StorageView"
              mc:Ignorable="d"
              d:DesignWidth="800"
@@ -11,20 +10,24 @@
              d:DataContext="{d:DesignInstance viewModels:StorageViewModel}">
     <SplitView DisplayMode="CompactInline"
                OpenPaneLength="250"
-               CompactPaneLength="50">
+               CompactPaneLength="50"
+               IsPaneOpen="True">
         <SplitView.Pane>
             <Grid RowDefinitions="Auto,*">
-                <TextBlock Grid.Row="0"
-                         Margin="0 10 0 14"
-                         Text="{x:Static com:Resources.STORAGE__PASSFILES_TITLE}"/>
+                <ToggleButton Grid.Row="0"
+                           Margin="10 10 10 10"
+                           Width="{Binding PassFilesBarBtn.Width}"
+                           HorizontalContentAlignment="Center"
+                           Content="{Binding PassFilesBarBtn.Content}"
+                           Click="PassFilesBarBtn_OnClick"/>
             
-                <ListBox Grid.Row="1" Items="{Binding PassFiles}">
+                <ListBox Grid.Row="1" 
+                         Items="{Binding PassFiles}" 
+                         SelectionChanged="PassFiles_OnSelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <ToggleButton Content="{Binding Name}"
-                                          Foreground="{Binding Foreground}"
-                                          Tag="{Binding Id}"
-                                          Checked="PassFileBtn_OnChecked"/>
+                            <TextBlock Text="{Binding Name}"
+                                       Foreground="{Binding Foreground}"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

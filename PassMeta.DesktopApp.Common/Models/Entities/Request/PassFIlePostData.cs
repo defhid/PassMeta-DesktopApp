@@ -12,5 +12,12 @@ namespace PassMeta.DesktopApp.Common.Models.Entities.Request
         
         [JsonProperty("smth")]
         public string Smth { get; set; }
+
+        public PassFIlePostData(string name, string? color, string smth)
+        {
+            Name = name;
+            Color = color;
+            Smth = smth;
+        }
     }
 }

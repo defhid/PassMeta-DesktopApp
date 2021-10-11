@@ -16,23 +16,23 @@
         Title="{Binding Title}"
         WindowStartupLocation="CenterScreen">
     
-    <Design.DataContext>
-        <main:DialogWindowViewModel/>
+    <Design.DataContext>_OnAttachedToVisualTreeewModel/>
     </Design.DataContext>
     
     <Window.Resources>
         <ut:ImageConverter x:Key="ImageConverter"/>
     </Window.Resources>
     
-    <Grid RowDefinitions="Auto,Auto,*">
-        <Grid Grid.Row="0"
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" 
               ColumnDefinitions="100,*"
               Margin="20 22 20 14">
             <Image Grid.Column="0"
                    IsVisible="{Binding WindowIcon.Visible}"
                    Source="{Binding WindowIcon.Source, Converter={StaticResource ImageConverter}}"
                    HorizontalAlignment="Center"
-                   Margin="0 0 20 0"
+                   VerticalAlignment="Top"
+                   Margin="0 10 20 0"
                    Width="50"
                    Height="50"/>
             
@@ -40,8 +40,8 @@
                 <TextBlock TextWrapping="Wrap"
                            Text="{Binding Text}"
                            TextAlignment="Right"
-                           FontSize="16"/>
-                
+                           FontSize="16" />
+            
                 <TextBlock IsVisible="{Binding DetailsVisible}"
                            HorizontalAlignment="Right"
                            Margin="0 10 0 0"
@@ -52,65 +52,76 @@
             </StackPanel>
         </Grid>
         
-        <StackPanel Grid.Row="1">
-            <TextBox IsVisible="{Binding WindowTextBox.Visible}" 
-                     Text="{Binding WindowTextBox.DefaultValue}"
-                     Watermark="{Binding WindowTextBox.Placeholder}"/>
+        <Grid Grid.Row="1" RowDefinitions="*,Auto">
+            <StackPanel Grid.Row="0">
+                <TextBox IsVisible="{Binding WindowTextBox.Visible}" 
+                         Text="{Binding WindowTextBox.Value}"
+                         Watermark="{Binding WindowTextBox.Placeholder}"
+                         PasswordChar="{Binding WindowTextBox.PasswordChar}"
+                         Margin="80 0 20 0"
+                         VerticalAlignment="Bottom"
+                         KeyDown="Input_OnKeyDown"
+                         AttachedToVisualTree="Input_OnAttachedToVisualTree"/>
+                
+                <NumericUpDown IsVisible="{Binding WindowNumericBox.Visible}"
+                               Value="{Binding WindowNumericBox.Value}"
+                               AllowSpin="False"
+                               ShowButtonSpinner="False"
+                               Watermark="{Binding WindowNumericBox.Placeholder}"
+                               Margin="80 0 20 0"
+                               VerticalAlignment="Bottom"
+                               KeyDown="Input_OnKeyDown"
+                               AttachedToVisualTree="Input_OnAttachedToVisualTree"/>
+            </StackPanel>
             
-            <NumericUpDown IsVisible="{Binding WindowNumericBox.Visible}"
-                           Value="{Binding WindowNumericBox.DefaultValue}"
-                           AllowSpin="False"
-                           ShowButtonSpinner="False"
-                           Watermark="{Binding WindowNumericBox.Placeholder}"/>
-        </StackPanel>
-        
-        <Grid Grid.Row="2"
-              MinHeight="50"
-              ColumnDefinitions="Auto,Auto,Auto,Auto,Auto"
-              HorizontalAlignment="Right">
-            <Grid.Styles>
-                <Style Selector="Button">
-                    <Setter Property="HorizontalAlignment" Value="Right" />
-                    <Setter Property="VerticalAlignment" Value="Bottom"/>
-                    <Setter Property="Margin" Value="10 10 20 20"/>
-                    <Setter Property="Padding" Value="12 7 12 7"/>
-                </Style>
-            </Grid.Styles>
-            
-            <Button Grid.Column="0"
-                    IsVisible="{Binding WindowBtnOk.Visible}" 
-                    Content="{Binding WindowBtnOk.Text}"
-                    Tag="1"
-                    Click="OkButton_OnClick"
-                    AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
-            
-            <Button Grid.Column="1"
-                    IsVisible="{Binding WindowBtnYes.Visible}" 
-                    Content="{Binding WindowBtnYes.Text}"
-                    Tag="2"
-                    Click="YesButton_OnClick"
-                    AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
-            
-            <Button Grid.Column="2"
-                    IsVisible="{Binding WindowBtnNo.Visible}" 
-                    Content="{Binding WindowBtnNo.Text}"
-                    Tag="3"
-                    Click="NoButton_OnClick"
-                    AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
-            
-            <Button Grid.Column="3"
-                    IsVisible="{Binding WindowBtnCancel.Visible}" 
-                    Content="{Binding WindowBtnCancel.Text}"
-                    Tag="4"
-                    Click="CancelButton_OnClick"
-                    AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
-            
-            <Button Grid.Column="4"
-                    IsVisible="{Binding WindowBtnClose.Visible}" 
-                    Content="{Binding WindowBtnClose.Text}"
-                    Tag="5"
-                    Click="CloseButton_OnClick"
-                    AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
+            <Grid Grid.Row="1"
+                  MinHeight="50"
+                  ColumnDefinitions="Auto,Auto,Auto,Auto,Auto"
+                  HorizontalAlignment="Right">
+                <Grid.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                        <Setter Property="VerticalAlignment" Value="Bottom"/>
+                        <Setter Property="Margin" Value="10 10 20 20"/>
+                        <Setter Property="Padding" Value="12 7 12 7"/>
+                    </Style>
+                </Grid.Styles>
+                
+                <Button Grid.Column="0"
+                        IsVisible="{Binding WindowBtnOk.Visible}" 
+                        Content="{Binding WindowBtnOk.Text}"
+                        Tag="1"
+                        Click="OkButton_OnClick"
+                        AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
+                
+                <Button Grid.Column="1"
+                        IsVisible="{Binding WindowBtnYes.Visible}" 
+                        Content="{Binding WindowBtnYes.Text}"
+                        Tag="2"
+                        Click="YesButton_OnClick"
+                        AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
+                
+                <Button Grid.Column="2"
+                        IsVisible="{Binding WindowBtnNo.Visible}" 
+                        Content="{Binding WindowBtnNo.Text}"
+                        Tag="3"
+                        Click="NoButton_OnClick"
+                        AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
+                
+                <Button Grid.Column="3"
+                        IsVisible="{Binding WindowBtnCancel.Visible}" 
+                        Content="{Binding WindowBtnCancel.Text}"
+                        Tag="4"
+                        Click="CancelButton_OnClick"
+                        AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
+                
+                <Button Grid.Column="4"
+                        IsVisible="{Binding WindowBtnClose.Visible}" 
+                        Content="{Binding WindowBtnClose.Text}"
+                        Tag="5"
+                        Click="CloseButton_OnClick"
+                        AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

@@ -6,20 +6,20 @@ namespace PassMeta.DesktopApp.Ui.Models.DialogWindow.Components
         
         public string Placeholder { get; }
         
-        public double DefaultValue { get; }
+        public double Value { get; }
 
         public DialogWindowNumericBox(bool visible)
         {
             Visible = visible;
             Placeholder = "";
-            DefaultValue = 0d;
+            Value = 0d;
         }
 
         public DialogWindowNumericBox(bool visible, string placeholder, double defaultValue)
         {
             Visible = visible;
             Placeholder = placeholder;
-            DefaultValue = defaultValue;
+            Value = defaultValue;
         }
     }
 }

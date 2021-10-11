@@ -15,12 +15,15 @@ namespace PassMeta.DesktopApp.Core.Extensions
         /// Decrypts <see cref="PassFile.DataEncrypted"/> and returns result.
         /// </summary>
         /// <remarks>
-        /// <see cref="PassFile.KeyPhrase"/> must be not null.
+        /// <see cref="AppConfig.PassFilesKeyPhrase"/> must be not null.
         /// </remarks>
         public static void Decrypt(this PassFile passFile)
         {
             if (string.IsNullOrEmpty(AppConfig.Current.PassFilesKeyPhrase))
                 throw new NullReferenceException("Using Decrypt method without key phrase!");
+            
+            if (string.IsNullOrEmpty(passFile.DataEncrypted))
+                throw new NullReferenceException("Using Decrypt method without encrypted data!");
             
             var service = Locator.Current.GetService<ICryptoService>();
             var content = service!.Decrypt(passFile.DataEncrypted, AppConfig.Current.PassFilesKeyPhrase);
@@ -39,12 +42,15 @@ namespace PassMeta.DesktopApp.Core.Extensions
         /// Encrypts <paramref name="passFile.Data"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
         /// </summary>
         /// <remarks>
-        /// <see cref="PassFile.KeyPhrase"/> must be not null.
+        /// <see cref="AppConfig.PassFilesKeyPhrase"/> must be not null.
         /// </remarks>
         public static void Encrypt(this PassFile passFile)
         {
             if (string.IsNullOrEmpty(AppConfig.Current.PassFilesKeyPhrase))
                 throw new NullReferenceException("Using Encrypt method without key phrase!");
+            
+            if (passFile.Data is null)
+                throw new NullReferenceException("Using Encrypt method without decrypted data!");
 
             var service = Locator.Current.GetService<ICryptoService>();
             passFile.DataEncrypted = service!.Encrypt(JsonConvert.SerializeObject(passFile.Data), 

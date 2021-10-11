@@ -13,17 +13,22 @@ namespace PassMeta.DesktopApp.Core.Services
     {
         public string GetLocalizedMessage(string message)
         {
-            Dictionary<string, string> dict = null;
+            Dictionary<string, string>? dict = null;
             
+            // ReSharper disable once ConstantConditionalAccessQualifier
             if (AppConfig.Current?.OkBadMessagesTranslatePack.TryGetValue(message, out dict) is true)
             {
-                return dict.TryGetValue(Resources.Culture.Name, out var result) ? result : dict["default"];
+                return dict!.TryGetValue(Resources.Culture.Name, out var result)
+                    ? result
+                    : dict.TryGetValue("default", out result)
+                        ? result
+                        : message;
             }
 
             return message;
         }
 
-        public void ShowResponseFailure(OkBadResponse response, IDictionary<string, string> whatMapper = null)
+        public void ShowResponseFailure(OkBadResponse response, IDictionary<string, string>? whatMapper = null)
         {
             var lines = _ResponseToText(response, whatMapper);
             
@@ -31,9 +36,9 @@ namespace PassMeta.DesktopApp.Core.Services
                 .ShowFailure(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
         }
 
-        private List<string> _ResponseToText(OkBadResponse response, IDictionary<string, string> whatMapper)
+        private List<string> _ResponseToText(OkBadResponse response, IDictionary<string, string>? whatMapper)
         {
-            var message = GetLocalizedMessage(response.Message) ?? response.Message;
+            var message = GetLocalizedMessage(response.Message);
             List<string> builder;
             
             if (response.What is null)
