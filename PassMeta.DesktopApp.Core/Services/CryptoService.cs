@@ -10,14 +10,14 @@ namespace PassMeta.DesktopApp.Core.Services
 {
     public class CryptoService : ICryptoService
     {
-        private static Random _random = new();
+        private static readonly Random Random = new();
         
         public string Encrypt(string data, string keyPhrase)
         {
             var aes = Aes.Create();
             aes.IV = AppConfig.PassFileSalt;
-            aes.Key = Encoding.UTF8.GetBytes(SHA256.Create(keyPhrase)!.ToString()!);
-            
+            aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(keyPhrase));
+
             var crypt = aes.CreateEncryptor(aes.Key, aes.IV);
             
             using var ms = new MemoryStream();
@@ -32,7 +32,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             var aes = Aes.Create();
             aes.IV = AppConfig.PassFileSalt;
-            aes.Key = Encoding.UTF8.GetBytes(keyPhrase);
+            aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(keyPhrase));
             
             var crypt = aes.CreateDecryptor(aes.Key, aes.IV);
 
@@ -55,7 +55,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 chars += "*-_!@*-_!@";
             
             return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[_random.Next(s.Length)]).ToArray());
+                .Select(s => s[Random.Next(s.Length)]).ToArray());
         }
     }
 }

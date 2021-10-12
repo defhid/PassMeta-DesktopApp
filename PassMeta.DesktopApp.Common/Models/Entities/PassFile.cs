@@ -35,7 +35,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         [JsonProperty("changed_local_on")]
         public DateTime? ChangedLocalOn { get; set; }
         
-        [JsonProperty("data")]
+        [JsonProperty("smth")]
         public string? DataEncrypted { get; set; }
         
         [JsonIgnore]
