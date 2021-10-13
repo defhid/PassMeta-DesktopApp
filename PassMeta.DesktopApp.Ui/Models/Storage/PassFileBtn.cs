@@ -18,7 +18,8 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
             ? Brushes.AliceBlue 
             : Brush.Parse( "#" + _passFile.Color);
 
-        public List<PassFile.Section> Sections => _passFile.Data!;
+        public List<PassFile.Section> Sections => 
+            _passFile.Data ?? new List<PassFile.Section>();
         
         public bool Active { get; }
 

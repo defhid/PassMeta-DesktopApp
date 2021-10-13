@@ -6,10 +6,8 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
     public class PassFileSectionBtn
     {
         private readonly PassFile.Section _section;
-        
-        private readonly bool _shortMode;
 
-        public string Name => _shortMode ? _section.Name[..2] : _section.Name;
+        public string Name => _section.Name;
 
         public List<PassFile.Section.Item> Items => _section.Items;
         
@@ -17,10 +15,9 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
         
         public bool Active { get; }
 
-        public PassFileSectionBtn(PassFile.Section section, int index, bool shortMode = false, bool active = false)
+        public PassFileSectionBtn(PassFile.Section section, int index, bool active = false)
         {
             _section = section;
-            _shortMode = shortMode;
             Index = index;
             Active = active;
         }

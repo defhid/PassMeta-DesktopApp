@@ -8,34 +8,65 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              d:DataContext="{d:DesignInstance viewModels:StorageViewModel}">
-    <SplitView DisplayMode="CompactInline"
-               OpenPaneLength="250"
-               CompactPaneLength="50"
-               IsPaneOpen="True">
-        <SplitView.Pane>
-            <Grid RowDefinitions="Auto,*">
-                <ToggleButton Grid.Row="0"
-                           Margin="10 10 10 10"
-                           Width="{Binding PassFilesBarBtn.Width}"
-                           HorizontalContentAlignment="Center"
-                           Content="{Binding PassFilesBarBtn.Content}"
-                           Click="PassFilesBarBtn_OnClick"/>
+    <Grid>
+        <SplitView DisplayMode="CompactInline"
+                   OpenPaneLength="250"
+                   CompactPaneLength="50"
+                   IsPaneOpen="{Binding IsPassFilesBarOpened}">
+            <SplitView.Pane>
+                <Grid RowDefinitions="Auto,*">
+                    <ToggleButton Grid.Row="0"
+                               Margin="5 5 0 12"
+                               Padding="0 0 0 0"
+                               Height="40"
+                               HorizontalContentAlignment="Center"
+                               VerticalContentAlignment="Center"
+                               Width="{Binding PassFilesBarBtn.Width}"
+                               Content="{Binding PassFilesBarBtn.Content}"
+                               FontSize="{Binding PassFilesBarBtn.FontSize}"
+                               FontFamily="{Binding PassFilesBarBtn.FontFamily}"
+                               Click="PassFilesBarBtn_OnClick"/>
+
+                    <ListBox Grid.Row="1"
+                             CornerRadius="5"
+                             Margin="5 0 5 5"
+                             SelectionMode="Toggle"
+                             Items="{Binding PassFiles}"
+                             SelectionChanged="PassFiles_OnSelectionChanged">
+                        <ListBox.ItemTemplate> 
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"
+                                           Foreground="{Binding Foreground}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </SplitView.Pane>
             
-                <ListBox Grid.Row="1" 
-                         Items="{Binding PassFiles}" 
-                         SelectionChanged="PassFiles_OnSelectionChanged">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"
-                                       Foreground="{Binding Foreground}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+            <Grid>
+                <SplitView DisplayMode="CompactInline"
+                           OpenPaneLength="250"
+                           IsPaneOpen="True"
+                           IsVisible="{Binding IsSectionsBarVisible}">
+                    <SplitView.Pane>
+                        <ListBox Grid.Row="1"
+                                 CornerRadius="4"
+                                 Margin="5 6 5 5"
+                                 Items="{Binding PassFileSections}" 
+                                 SelectionChanged="PassFileSections_OnSelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </SplitView.Pane>
+            
+                    <Grid>
+                        
+                    </Grid>
+                </SplitView>
             </Grid>
-        </SplitView.Pane>
-        
-        <ListBox>
-            
-        </ListBox>
-    </SplitView>
+        </SplitView>
+    </Grid>
 </UserControl>

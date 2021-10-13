@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Media;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Core.Utils;
@@ -65,17 +66,24 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             get => _passFilesBarBtn;
             set => this.RaiseAndSetIfChanged(ref _passFilesBarBtn, value);
         }
+
+        private bool _isPassFilesBarOpened = false;
+        public bool IsPassFilesBarOpened
+        {
+            get => _isPassFilesBarOpened;
+            set => this.RaiseAndSetIfChanged(ref _isPassFilesBarOpened, value);
+        }
         
-        private BarBtn _sectionsBarBtn = new();
-        public BarBtn SectionsBarBtn { 
-            get => _sectionsBarBtn;
-            set => this.RaiseAndSetIfChanged(ref _sectionsBarBtn, value);
+        private bool _isSectionsBarVisible = false;
+        public bool IsSectionsBarVisible
+        {
+            get => _isSectionsBarVisible;
+            set => this.RaiseAndSetIfChanged(ref _isSectionsBarVisible, value);
         }
 
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
             _SetPassFilesBarBtnWidth(false);
-            _SetSectionsBarBtnWidth(true);
         }
 
         public void SetPassFileList(IEnumerable<PassFile> passFiles, int activeId = 0, bool shortMode = false)
@@ -84,15 +92,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             
             PassFiles = passFiles.Select(pf => 
                 new PassFileBtn(pf, shortMode, pf.Id == activeId)).ToArray();
+
+            IsPassFilesBarOpened = !shortMode;
+            IsSectionsBarVisible = activeId > 0;
         }
         
-        public void SetPassFileSectionList(int activeIndex, bool shortMode = false)
+        public void SetPassFileSectionList(int activeIndex)
         {
-            _SetSectionsBarBtnWidth(true);
-            
             PassFileSections = _passFiles.First(pf => pf.Active)
                 .Sections.Select((s, i) => 
-                    new PassFileSectionBtn(s, i, shortMode, i == activeIndex)).ToArray();
+                    new PassFileSectionBtn(s, i, i == activeIndex)).ToArray();
         }
         
         public void SetPassFileSectionItemList(int activeIndex)
@@ -119,17 +128,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         {
             PassFilesBarBtn = new BarBtn
             {
-                Width = shortMode ? 50 : 230,
-                Content = shortMode ? Resources.STORAGE__PASSFILES_TITLE[..1] : Resources.STORAGE__PASSFILES_TITLE
-            };
-        }
-        
-        private void _SetSectionsBarBtnWidth(bool shortMode)
-        {
-            SectionsBarBtn = new BarBtn
-            {
-                Width = shortMode ? 50 : 230,
-                Content = shortMode ? Resources.STORAGE__PASSWORDS_TITLE[..1] : Resources.STORAGE__PASSWORDS_TITLE
+                Width = shortMode ? 40 : 240,
+                Content = shortMode ? "\uE72b\uE72a" : Resources.STORAGE__PASSFILES_TITLE,
+                FontFamily = shortMode ? "Segoe MDL2 Assets" : FontFamily.Default,
+                FontSize = shortMode ? 14 : 18
             };
         }
     }
@@ -138,5 +140,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     {
         public double Width { get; set; }
         public string? Content { get; set; }
+        public FontFamily? FontFamily { get; set; }
+        public double FontSize { get; set; }
     }
 }

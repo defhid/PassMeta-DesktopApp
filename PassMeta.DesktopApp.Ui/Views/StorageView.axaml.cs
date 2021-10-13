@@ -23,8 +23,6 @@ namespace PassMeta.DesktopApp.Ui.Views
         private bool _passFilesShortMode = false;
 
         private int _passFileSectionsActiveIndex = 0;
-        private bool _passFileSectionsShortMode = false;
-        
         private int _passFileSectionItemsActiveIndex = 0;
         
         public StorageView()
@@ -35,14 +33,13 @@ namespace PassMeta.DesktopApp.Ui.Views
 
         private void PassFiles_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            _passFilesActiveId = ((PassFileBtn)((ListBox)sender!).SelectedItem!).Id;
-            
-            Locator.Current.GetService<IDialogService>()!.ShowInfo(_passFilesActiveId.ToString());
+            var item = ((ListBox)sender!).SelectedItem as PassFileBtn;
+            _passFilesActiveId = item?.Id ?? 0;
 
             _RefreshPassFileList();
         }
         
-        private void PassFileSectionBtn_OnChecked(object? sender, RoutedEventArgs e)
+        private void PassFileSections_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             _passFileSectionsActiveIndex = ((PassFileSectionBtn)((ListBox)sender!).SelectedItem!).Index;
             
@@ -62,6 +59,8 @@ namespace PassMeta.DesktopApp.Ui.Views
         
         private async void _OnAttachedToLogicalTree(object? sender, EventArgs e)
         {
+            DataContext!.SetPassFileList(Array.Empty<PassFile>(), 0, true);
+            
             if (AppConfig.Current.PassFilesKeyPhrase is null)
             {
                 var passPhrase = await Locator.Current.GetService<IDialogService>()!
@@ -90,7 +89,7 @@ namespace PassMeta.DesktopApp.Ui.Views
             => DataContext!.SetPassFileList(_passFiles, _passFilesActiveId, _passFilesShortMode);
         
         private void _RefreshPassFileSectionsList() 
-            => DataContext!.SetPassFileSectionList(_passFileSectionsActiveIndex, _passFileSectionsShortMode);
+            => DataContext!.SetPassFileSectionList(_passFileSectionsActiveIndex);
         
         private void _RefreshPassFileSectionItemsList() 
             => DataContext!.SetPassFileSectionItemList(_passFileSectionItemsActiveIndex);
