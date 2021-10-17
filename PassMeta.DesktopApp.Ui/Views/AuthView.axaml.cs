@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -18,6 +19,11 @@ namespace PassMeta.DesktopApp.Ui.Views
         public AuthView()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+        
+        public override Task RefreshAsync()
+        {
+            throw new NotImplementedException();
         }
 
         private async void SignInBtn_OnClick(object? sender, RoutedEventArgs e)

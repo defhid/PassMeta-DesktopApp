@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Controls;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Models.Entities;
@@ -15,18 +16,28 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     {
         public override string UrlPathSegment => "/storage";
 
+        public override ContentControl[] RightBarButtons => new [] { _MakeSaveBtn() };
+
+        #region Lists
+
         private PassFileBtn[] _passFiles = Array.Empty<PassFileBtn>();
         public PassFileBtn[] PassFiles
         {
             get => _passFiles;
-            set {
+            private set {
                 this.RaiseAndSetIfChanged(ref _passFiles, value);
                 
                 var active = value.FirstOrDefault(pf => pf.Active);
-            
-                PassFileSections = active is null 
-                    ? Array.Empty<PassFileSectionBtn>()
-                    : active.Sections.Select((s, i) => new PassFileSectionBtn(s, i)).ToArray();
+                if (active is null)
+                {
+                    IsSectionsBarVisible = false;
+                    PassFileSections = Array.Empty<PassFileSectionBtn>();
+                }
+                else
+                {
+                    IsSectionsBarVisible = true;
+                    PassFileSections = active.Sections.Select((s, i) => new PassFileSectionBtn(s, i)).ToArray();
+                }
             }
         }
 
@@ -34,15 +45,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         public PassFileSectionBtn[] PassFileSections
         {
             get => _passFileSections;
-            set
+            private set
             {
                 this.RaiseAndSetIfChanged(ref _passFileSections, value);
                 
                 var active = value.FirstOrDefault(pf => pf.Active);
-            
-                PassFileSectionItems = active is null 
-                    ? Array.Empty<PassFileSectionItemBtn>()
-                    : active.Items.Select((item, i) => new PassFileSectionItemBtn(item, i)).ToArray();
+                if (active is null)
+                {
+                    IsItemsBarVisible = false;
+                    PassFileSectionItems = Array.Empty<PassFileSectionItemBtn>();
+                }
+                else
+                {
+                    IsItemsBarVisible = true;
+                    PassFileSectionItems = active.Items.Select((item, i) => new PassFileSectionItemBtn(item, i)).ToArray();
+                }
             }
         }
         
@@ -50,56 +67,78 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         public PassFileSectionItemBtn[] PassFileSectionItems
         {
             get => _passFileSectionItems;
-            set => this.RaiseAndSetIfChanged(ref _passFileSectionItems, value);
+            private set => this.RaiseAndSetIfChanged(ref _passFileSectionItems, value);
         }
 
-        private string _passFilesMode = "";
-
-        public string? PassFilesMode
+        private int? _passFilesSelectedIndex;
+        public int? PassFilesSelectedIndex
         {
-            get => _passFilesMode;
-            set => this.RaiseAndSetIfChanged(ref _passFilesMode, value ?? "");
+            get => _passFilesSelectedIndex;
+            set
+            {
+                // TODO
+                this.RaiseAndSetIfChanged(ref _passFilesSelectedIndex, value);
+            }
         }
+        
+        #endregion
+
+        #region Navigation
 
         private BarBtn _passFilesBarBtn = new();
         public BarBtn PassFilesBarBtn { 
             get => _passFilesBarBtn;
-            set => this.RaiseAndSetIfChanged(ref _passFilesBarBtn, value);
+            private set => this.RaiseAndSetIfChanged(ref _passFilesBarBtn, value);
         }
 
-        private bool _isPassFilesBarOpened = false;
+        private bool _isPassFilesBarOpened;
         public bool IsPassFilesBarOpened
         {
             get => _isPassFilesBarOpened;
             set => this.RaiseAndSetIfChanged(ref _isPassFilesBarOpened, value);
         }
         
-        private bool _isSectionsBarVisible = false;
+        private bool _isSectionsBarVisible;
         public bool IsSectionsBarVisible
         {
             get => _isSectionsBarVisible;
             set => this.RaiseAndSetIfChanged(ref _isSectionsBarVisible, value);
         }
 
+        private bool _isItemsBarVisible;
+        public bool IsItemsBarVisible
+        {
+            get => _isItemsBarVisible;
+            set => this.RaiseAndSetIfChanged(ref _isItemsBarVisible, value);
+        }
+        
+        #endregion
+        
+        private string? _mode;
+        public string? Mode
+        {
+            get => _mode;
+            set => this.RaiseAndSetIfChanged(ref _mode, value);
+        }
+
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            _SetPassFilesBarBtnWidth(false);
+            _SetPassFilesBarBtn(false);
         }
 
         public void SetPassFileList(IEnumerable<PassFile> passFiles, int activeId = 0, bool shortMode = false)
         {
-            _SetPassFilesBarBtnWidth(shortMode);
+            _SetPassFilesBarBtn(shortMode);
             
             PassFiles = passFiles.Select(pf => 
                 new PassFileBtn(pf, shortMode, pf.Id == activeId)).ToArray();
 
             IsPassFilesBarOpened = !shortMode;
-            IsSectionsBarVisible = activeId > 0;
         }
         
         public void SetPassFileSectionList(int activeIndex)
         {
-            PassFileSections = _passFiles.First(pf => pf.Active)
+            PassFileSections = PassFiles.First(pf => pf.Active)
                 .Sections.Select((s, i) => 
                     new PassFileSectionBtn(s, i, i == activeIndex)).ToArray();
         }
@@ -124,15 +163,25 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             }
         }
 
-        private void _SetPassFilesBarBtnWidth(bool shortMode)
+        private void _SetPassFilesBarBtn(bool shortMode)
         {
             PassFilesBarBtn = new BarBtn
             {
-                Width = shortMode ? 40 : 240,
+                Width = shortMode ? 40 : 190,
                 Content = shortMode ? "\uE72b\uE72a" : Resources.STORAGE__PASSFILES_TITLE,
                 FontFamily = shortMode ? "Segoe MDL2 Assets" : FontFamily.Default,
                 FontSize = shortMode ? 14 : 18
             };
+        }
+
+        private ContentControl _MakeSaveBtn()
+        {
+            var btnSave = new Button { Content = "\uE74E" };
+            btnSave.Click += (sender, ev) =>
+            {  
+                // TODO
+            };
+            return btnSave;
         }
     }
 

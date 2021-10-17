@@ -230,4 +230,19 @@
     <data name="DIALOG__DEFAULT_ASK_TITLE" xml:space="preserve">
         <value>Форма ввода</value>
     </data>
+    <data name="STORAGE__NO_SECTIONS" xml:space="preserve">
+        <value>Пусто</value>
+    </data>
+    <data name="STORAGE__NO_ITEMS" xml:space="preserve">
+        <value>Пусто</value>
+    </data>
+    <data name="STORAGE__CONTEXT_RENAME" xml:space="preserve">
+        <value>Переименовать</value>
+    </data>
+    <data name="STORAGE__CONTEXT_DELETE" xml:space="preserve">
+        <value>Удалить</value>
+    </data>
+    <data name="STORAGE__CONTEXT_ARCHIVE" xml:space="preserve">
+        <value>Архивировать</value>
+    </data>
 </root>

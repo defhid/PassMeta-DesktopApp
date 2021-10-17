@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
+             xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
              x:Class="PassMeta.DesktopApp.Ui.Views.StorageView"
              mc:Ignorable="d"
              d:DesignWidth="800"
@@ -10,8 +11,9 @@
              d:DataContext="{d:DesignInstance viewModels:StorageViewModel}">
     <Grid>
         <SplitView DisplayMode="CompactInline"
-                   OpenPaneLength="250"
+                   OpenPaneLength="200"
                    CompactPaneLength="50"
+                   PaneBackground="Transparent"
                    IsPaneOpen="{Binding IsPassFilesBarOpened}">
             <SplitView.Pane>
                 <Grid RowDefinitions="Auto,*">
@@ -19,6 +21,7 @@
                                Margin="5 5 0 12"
                                Padding="0 0 0 0"
                                Height="40"
+                               IsChecked="True"
                                HorizontalContentAlignment="Center"
                                VerticalContentAlignment="Center"
                                Width="{Binding PassFilesBarBtn.Width}"
@@ -28,44 +31,82 @@
                                Click="PassFilesBarBtn_OnClick"/>
 
                     <ListBox Grid.Row="1"
-                             CornerRadius="5"
                              Margin="5 0 5 5"
-                             SelectionMode="Toggle"
+                             SelectionMode="Toggle,AlwaysSelected"
+                             CornerRadius="4"
+                             SelectedIndex="{Binding PassFilesSelectedIndex}"
                              Items="{Binding PassFiles}"
                              SelectionChanged="PassFiles_OnSelectionChanged">
-                        <ListBox.ItemTemplate> 
+                        <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}"
                                            Foreground="{Binding Foreground}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
+                        
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="CornerRadius" Value="4"/>
+                                <Setter Property="Height" Value="40"/>
+                                <Setter Property="Margin" Value="0 0 0 8"/>
+                                <Setter Property="ContextMenu">
+                                    <ContextMenu PlacementAnchor="Bottom">
+                                        <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
+                                                  Click="PassFileContextMenuRename_OnClick"/>
+                                        
+                                        <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ARCHIVE}"
+                                                  Click="PassFileContextMenuArchive_OnClick"/>
+                                        
+                                        <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
+                                                  Click="PassFileContextMenuDelete_OnClick"/>
+                                    </ContextMenu>
+                                </Setter>
+                            </Style>
+                        </ListBox.Styles>
                     </ListBox>
                 </Grid>
             </SplitView.Pane>
             
-            <Grid>
-                <SplitView DisplayMode="CompactInline"
-                           OpenPaneLength="250"
-                           IsPaneOpen="True"
-                           IsVisible="{Binding IsSectionsBarVisible}">
-                    <SplitView.Pane>
-                        <ListBox Grid.Row="1"
-                                 CornerRadius="4"
-                                 Margin="5 6 5 5"
-                                 Items="{Binding PassFileSections}" 
-                                 SelectionChanged="PassFileSections_OnSelectionChanged">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </SplitView.Pane>
-            
-                    <Grid>
+            <Grid ColumnDefinitions="*,*">
+                <ListBox Grid.Column="0"
+                         CornerRadius="4"
+                         Margin="0 6 5 5"
+                         Items="{Binding PassFileSections}"
+                         IsVisible="{Binding IsSectionsBarVisible}"
+                         SelectionChanged="PassFileSections_OnSelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                         
-                    </Grid>
-                </SplitView>
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="ContextMenu">
+                                <ContextMenu PlacementAnchor="Bottom">
+                                    <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
+                                              Click="SectionContextMenuRename_OnClick"/>
+                                        
+                                    <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
+                                              Click="SectionContextMenuDelete_OnClick"/>
+                                </ContextMenu>
+                            </Setter>
+                        </Style>
+                    </ListBox.Styles>
+                </ListBox>
+                
+                <ListBox Grid.Column="1"
+                         CornerRadius="4"
+                         Margin="0 6 5 5"
+                         Items="{Binding PassFileSectionItems}" 
+                         IsVisible="{Binding IsItemsBarVisible}"
+                         SelectionChanged="PassFileSectionItems_OnSelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding What}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
         </SplitView>
     </Grid>

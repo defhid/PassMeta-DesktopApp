@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
@@ -28,36 +29,15 @@ namespace PassMeta.DesktopApp.Ui.Views
         public StorageView()
         {
             AvaloniaXamlLoader.Load(this);
-            AttachedToLogicalTree += _OnAttachedToLogicalTree;
-        }
-
-        private void PassFiles_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            var item = ((ListBox)sender!).SelectedItem as PassFileBtn;
-            _passFilesActiveId = item?.Id ?? 0;
-
-            _RefreshPassFileList();
+            AttachedToLogicalTree += OnAttachedToLogicalTree;
         }
         
-        private void PassFileSections_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        public override Task RefreshAsync()
         {
-            _passFileSectionsActiveIndex = ((PassFileSectionBtn)((ListBox)sender!).SelectedItem!).Index;
-            
-            Locator.Current.GetService<IDialogService>()!.ShowInfo(_passFileSectionsActiveIndex.ToString());
-            
-            _RefreshPassFileSectionsList();
+            throw new NotImplementedException();
         }
         
-        private void PassFileSectionItemBtn_OnChecked(object? sender, RoutedEventArgs e)
-        {
-            _passFileSectionItemsActiveIndex = ((PassFileSectionItemBtn)((ListBox)sender!).SelectedItem!).Index;
-            
-            Locator.Current.GetService<IDialogService>()!.ShowInfo(_passFileSectionItemsActiveIndex.ToString());
-            
-            _RefreshPassFileSectionItemsList();
-        }
-        
-        private async void _OnAttachedToLogicalTree(object? sender, EventArgs e)
+        private async void OnAttachedToLogicalTree(object? sender, EventArgs e)
         {
             DataContext!.SetPassFileList(Array.Empty<PassFile>(), 0, true);
             
@@ -74,24 +54,83 @@ namespace PassMeta.DesktopApp.Ui.Views
             if (result.Bad) return;
             
             _passFiles = result.Data!;
-            DataContext!.PassFilesMode = result.Message;
+            DataContext!.Mode = result.Message;
             DataContext!.SetPassFileList(_passFiles);
         }
-
+        
         private void PassFilesBarBtn_OnClick(object? sender, RoutedEventArgs e)
         {
             var button = (ToggleButton)sender!;
-            _passFilesShortMode = button.IsChecked ?? false;
+            _passFilesShortMode = !(button.IsChecked ?? false);
             _RefreshPassFileList();
         }
+        
+        #region Selection Change
 
+        private void PassFiles_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            var item = ((ListBox)sender!).SelectedItem as PassFileBtn;
+            _passFilesActiveId = item?.Id ?? 0;
+            
+            _RefreshPassFileList();
+        }
+        
+        private void PassFileSections_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            _passFileSectionsActiveIndex = ((PassFileSectionBtn)((ListBox)sender!).SelectedItem!).Index;
+            
+            Locator.Current.GetService<IDialogService>()!.ShowInfo(_passFileSectionsActiveIndex.ToString());
+            
+            _RefreshPassFileSectionsList();
+        }
+        
+        private void PassFileSectionItems_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            _passFileSectionItemsActiveIndex = ((PassFileSectionItemBtn)((ListBox)sender!).SelectedItem!).Index;
+            
+            Locator.Current.GetService<IDialogService>()!.ShowInfo(_passFileSectionItemsActiveIndex.ToString());
+            
+            _RefreshPassFileSectionItemsList();
+        }
+        
+        #endregion
+
+        #region Context Menu
+        
+        private void PassFileContextMenuRename_OnClick(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+        
+        private void PassFileContextMenuArchive_OnClick(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+        
+        private void PassFileContextMenuDelete_OnClick(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void SectionContextMenuRename_OnClick(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+        
+        private void SectionContextMenuDelete_OnClick(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        #endregion
+        
         private void _RefreshPassFileList() 
-            => DataContext!.SetPassFileList(_passFiles, _passFilesActiveId, _passFilesShortMode);
+            => DataContext?.SetPassFileList(_passFiles, _passFilesActiveId, _passFilesShortMode);
         
         private void _RefreshPassFileSectionsList() 
-            => DataContext!.SetPassFileSectionList(_passFileSectionsActiveIndex);
+            => DataContext?.SetPassFileSectionList(_passFileSectionsActiveIndex);
         
         private void _RefreshPassFileSectionItemsList() 
-            => DataContext!.SetPassFileSectionItemList(_passFileSectionItemsActiveIndex);
+            => DataContext?.SetPassFileSectionItemList(_passFileSectionItemsActiveIndex);
     }
 }

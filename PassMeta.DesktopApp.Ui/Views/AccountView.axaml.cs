@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
@@ -14,6 +16,11 @@ namespace PassMeta.DesktopApp.Ui.Views
         public AccountView()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+        
+        public override Task RefreshAsync()
+        {
+            throw new NotImplementedException();
         }
 
         private async void SaveBtn_OnClick(object? sender, RoutedEventArgs e)

@@ -691,6 +691,51 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archive.
+        /// </summary>
+        public static string STORAGE__CONTEXT_ARCHIVE {
+            get {
+                return ResourceManager.GetString("STORAGE__CONTEXT_ARCHIVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string STORAGE__CONTEXT_DELETE {
+            get {
+                return ResourceManager.GetString("STORAGE__CONTEXT_DELETE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename.
+        /// </summary>
+        public static string STORAGE__CONTEXT_RENAME {
+            get {
+                return ResourceManager.GetString("STORAGE__CONTEXT_RENAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No items.
+        /// </summary>
+        public static string STORAGE__NO_ITEMS {
+            get {
+                return ResourceManager.GetString("STORAGE__NO_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No sections.
+        /// </summary>
+        public static string STORAGE__NO_SECTIONS {
+            get {
+                return ResourceManager.GetString("STORAGE__NO_SECTIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Packages.
         /// </summary>
         public static string STORAGE__PASSFILES_TITLE {

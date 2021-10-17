@@ -9,6 +9,8 @@ using PassMeta.DesktopApp.Ui.Services;
 using PassMeta.DesktopApp.Ui.ViewModels;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.ViewModels.Main;
+using PassMeta.DesktopApp.Ui.Views.Base;
+using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
@@ -18,8 +20,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         
         public MainWindow()
         {
-            _SubscribeOnPageEvents();
-            Opened += _OnOpened;
+            SubscribeOnPageEvents();
+            Opened += OnOpened;
             
             AvaloniaXamlLoader.Load(this);
 #if DEBUG
@@ -50,7 +52,18 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         private void SettingsBtn_OnClick(object? sender, RoutedEventArgs e)
             => new SettingsViewModel(DataContext).Navigate();
 
-        private async void _OnOpened(object? sender, EventArgs e)
+        private async void RefreshBtn_OnClick(object? sender, RoutedEventArgs e)
+        {
+            // TODO ...
+
+            var current = DataContext.Router.GetCurrentViewModel() as IViewPage;
+            if (current is not null)
+            {
+                await current.RefreshAsync();
+            }
+        }
+
+        private async void OnOpened(object? sender, EventArgs e)
         {
             await DialogService.SetCurrentWindowAsync(this);
 
@@ -65,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             _loaded = true;
         }
 
-        private void _SubscribeOnPageEvents()
+        private void SubscribeOnPageEvents()
         {
             ViewModelPage.OnNavigated += (page) =>
             {
@@ -79,6 +92,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
                     _ => DataContext.ActiveMainPaneButtonIndex
                 };
                 DataContext.IsMainPaneOpened = false;
+                DataContext.RightBarButtons = page.RightBarButtons;
             };
 
             SettingsView.OnCultureChanged += App.Restart;

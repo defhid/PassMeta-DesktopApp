@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using DynamicData;
@@ -48,6 +49,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main
                 }
                 MainPaneButtonsActive = activeNew;
             }
+        }
+
+        private ContentControl[]? _rightBarButtons;
+        public ContentControl[]? RightBarButtons
+        {
+            get => _rightBarButtons;
+            set => this.RaiseAndSetIfChanged(ref _rightBarButtons, value);
         }
 
         public MainWindowViewModel()
