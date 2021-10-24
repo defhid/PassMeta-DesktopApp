@@ -14,28 +14,14 @@ namespace PassMeta.DesktopApp.Ui.Services
     public class DialogService : IDialogService
     {
         private static Window? _win;
-        private static int _count;
-        private static readonly List<DialogWindowViewModel> Deferred = new();
-        
-        public static int ActiveCount
-        {
-            get => _count;
-            private set
-            {
-                _count = value;
-                if (_win is not null)
-                    _win.IsEnabled = value == 0;
-            }
-        }
+        private static List<DialogWindowViewModel> _deferred = new();
 
         public static async Task SetCurrentWindowAsync(Window window)
         {
             _win = window;
-            
-            var deferred = Deferred.ToArray();
-                
-            Deferred.Clear();
-            ActiveCount += deferred.Length;
+
+            var deferred = _deferred;
+            _deferred = new List<DialogWindowViewModel>();
             
             foreach (var context in deferred)
             {
@@ -48,13 +34,10 @@ namespace PassMeta.DesktopApp.Ui.Services
                     // ignored
                 }
             }
-
-            ActiveCount -= deferred.Length;
         }
         
-        public void ShowInfo(string message, string? title = null, string? more = null)
-        {
-            _ShowOrDefer(new DialogWindowViewModel(
+        public Task ShowInfoAsync(string message, string? title = null, string? more = null) 
+            => _ShowOrDeferAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_INFO_TITLE,
                 message,
                 more,
@@ -62,11 +45,9 @@ namespace PassMeta.DesktopApp.Ui.Services
                 DialogWindowIcon.Info,
                 null)
             );
-        }
 
-        public void ShowError(string message, string? title = null, string? more = null)
-        {
-            _ShowOrDefer(new DialogWindowViewModel(
+        public Task ShowErrorAsync(string message, string? title = null, string? more = null)
+            => _ShowOrDeferAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_ERROR_TITLE,
                 message,
                 more,
@@ -74,11 +55,9 @@ namespace PassMeta.DesktopApp.Ui.Services
                 DialogWindowIcon.Error,
                 null)
             );
-        }
 
-        public void ShowFailure(string message, string? more = null)
-        {
-            _ShowOrDefer(new DialogWindowViewModel(
+        public Task ShowFailureAsync(string message, string? more = null)
+            => _ShowOrDeferAsync(new DialogWindowViewModel(
                 Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                 message,
                 more,
@@ -86,30 +65,19 @@ namespace PassMeta.DesktopApp.Ui.Services
                 DialogWindowIcon.Failure,
                 null)
             );
-        }
 
         public async Task<Result> Confirm(string message, string? title = null)
         {
             if (_win is null) return Result.Failure;
-            
-            var dialog = new DialogWindow 
-            { 
-                DataContext = new DialogWindowViewModel(
-                    title ?? Resources.DIALOG__DEFAULT_CONFIRM_TITLE,
-                    message,
-                    null,
-                    new[] { DialogButton.Yes, DialogButton.Cancel },
-                    DialogWindowIcon.Confirm,
-                    null)
-            };
-            dialog.Closed += (_, _) =>
-            {
-                ActiveCount -= 1;
-            };
-            
-            ActiveCount += 1;
-            await dialog.ShowDialog(_win);
-            
+
+            var dialog = await _ShowAsync(new DialogWindowViewModel(
+                title ?? Resources.DIALOG__DEFAULT_CONFIRM_TITLE,
+                message,
+                null,
+                new[] { DialogButton.Yes, DialogButton.Cancel },
+                DialogWindowIcon.Confirm,
+                null));
+
             return new Result(dialog.ResultButton == DialogButton.Yes);
         }
 
@@ -117,26 +85,15 @@ namespace PassMeta.DesktopApp.Ui.Services
         {
             if (_win is null) return new Result<string?>(false);
 
-            var dialog = new DialogWindow
-            {
-                DataContext = new DialogWindowViewModel(
-                    title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
-                    message,
-                    null,
-                    new[] { DialogButton.Ok, DialogButton.Cancel },
-                    null,
-                    new DialogWindowTextBox(true, "", "", null))
-            };
-            
-            dialog.Closed += (_, _) =>
-            {
-                ActiveCount -= 1;
-            };
-            
-            ActiveCount += 1;
-            await dialog.ShowDialog(_win);
+            var dialog = await _ShowAsync(new DialogWindowViewModel(
+                title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
+                message,
+                null,
+                new[] { DialogButton.Ok, DialogButton.Cancel },
+                null,
+                new DialogWindowTextBox(true, "", "", null)));
 
-            var value = ((DialogWindowViewModel)dialog.DataContext).WindowTextBox.Value;
+            var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextBox.Value;
 
             return dialog.ResultButton == DialogButton.Ok && !string.IsNullOrEmpty(value)
                 ? new Result<string?>(value)
@@ -147,55 +104,33 @@ namespace PassMeta.DesktopApp.Ui.Services
         {
             if (_win is null) return new Result<string?>(false);
 
-            var dialog = new DialogWindow
-            {
-                DataContext = new DialogWindowViewModel(
-                    title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
-                    message,
-                    null,
-                    new[] { DialogButton.Ok, DialogButton.Cancel },
-                    null,
-                    new DialogWindowTextBox(true, "", "", '*'))
-            };
-            
-            dialog.Closed += (_, _) =>
-            {
-                ActiveCount -= 1;
-            };
-            
-            ActiveCount += 1;
-            await dialog.ShowDialog(_win);
+            var dialog = await _ShowAsync(new DialogWindowViewModel(
+                title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
+                message,
+                null,
+                new[] { DialogButton.Ok, DialogButton.Cancel },
+                null,
+                new DialogWindowTextBox(true, "", "", '*')));
 
-            var value = ((DialogWindowViewModel)dialog.DataContext).WindowTextBox.Value;
+            var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextBox.Value;
 
             return dialog.ResultButton == DialogButton.Ok && !string.IsNullOrEmpty(value)
                 ? new Result<string?>(value)
                 : new Result<string?>(false);
         }
         
-        private static void _ShowOrDefer(DialogWindowViewModel context)
+        private static Task _ShowOrDeferAsync(DialogWindowViewModel context)
         {
-            if (_win is null)
-            {
-                Deferred.Add(context);
-            }
-            else
-            {
-                _Show(context);
-            }
+            if (_win is not null) return _ShowAsync(context);
+            
+            _deferred.Add(context);
+            return Task.CompletedTask;
         }
 
-        private static DialogWindow _Show(DialogWindowViewModel context)
+        private static async Task<DialogWindow> _ShowAsync(DialogWindowViewModel context)
         {
             var dialog = new DialogWindow { DataContext = context };
-            dialog.Closed += (_, _) =>
-            {
-                ActiveCount -= 1;
-            };
-            
-            dialog.Show();
-            ActiveCount += 1;
-
+            await dialog.ShowDialog(_win);
             return dialog;
         }
     }

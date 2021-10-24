@@ -45,7 +45,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         private async Task SaveAsync()
         {
-            Locator.Current.GetService<IDialogService>()!.ShowInfo("SAVING...");
+            await Locator.Current.GetService<IDialogService>()!.ShowInfoAsync("SAVING...");
         }
 
         private async Task PassFileAddAsync()
@@ -74,7 +74,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         
         private async Task PassFileRenameAsync()
         {
-            
+            await Locator.Current.GetService<IDialogService>()!.ShowInfoAsync("LALALA");
         }
         
         private async Task PassFileArchiveAsync()

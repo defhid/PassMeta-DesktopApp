@@ -15,7 +15,8 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (!_Validate(data).Ok)
             {
-                Locator.Current.GetService<IDialogService>()!.ShowError(Common.Resources.ERR__DATA_VALIDATION);
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(Common.Resources.ERR__DATA_VALIDATION);
                 return new Result<User>(false);
             }
             
@@ -43,7 +44,8 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (!_Validate(data).Ok)
             {
-                Locator.Current.GetService<IDialogService>()!.ShowError(Common.Resources.ERR__DATA_VALIDATION);
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(Common.Resources.ERR__DATA_VALIDATION);
                 return new Result<User>(false);
             }
             

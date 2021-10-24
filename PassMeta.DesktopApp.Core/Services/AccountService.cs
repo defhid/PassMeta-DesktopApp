@@ -30,17 +30,19 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (data.PasswordConfirm is null || data.PasswordConfirm.Length == 0)
             {
-                Locator.Current.GetService<IDialogService>()!.ShowFailure(Common.Resources.WARN__PASSWORD_CONFIRM_MISSED);
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowFailureAsync(Common.Resources.WARN__PASSWORD_CONFIRM_MISSED);
                 return Result.Failure;
             }
 
-            var response = await PassMetaApi.PatchAsync<UserPatchData, User>("/users/me", data, true);
+            var response = await PassMetaApi.PatchAsync<UserPatchData, User>("/users/me", data);
             if (response is null) 
                 return Result.Failure;
             
             if (response.Success)
             {
-                Locator.Current.GetService<IDialogService>()!.ShowInfo(Common.Resources.ACCOUNT__SAVE_SUCCESS);
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowInfoAsync(Common.Resources.ACCOUNT__SAVE_SUCCESS);
                 
                 var user = response.Data;
                 await AppConfig.Current.SetUserAsync(user);
@@ -48,7 +50,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Success;
             }
 
-            Locator.Current.GetService<IOkBadService>()!.ShowResponseFailure(response, _whatMapper);
+            await Locator.Current.GetService<IOkBadService>()!.ShowResponseFailureAsync(response, _whatMapper);
             return Result.Failure;
         }
     }

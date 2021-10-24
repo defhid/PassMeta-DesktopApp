@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Models;
 
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
@@ -7,6 +8,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
     {
         string? GetLocalizedMessage(string message);
 
-        void ShowResponseFailure(OkBadResponse response, IDictionary<string, string>? whatMapper = null);
+        Task ShowResponseFailureAsync(OkBadResponse response, IDictionary<string, string>? whatMapper = null);
     }
 }

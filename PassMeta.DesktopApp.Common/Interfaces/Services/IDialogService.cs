@@ -5,11 +5,11 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
     public interface IDialogService
     {
-        public void ShowInfo(string message, string? title = null, string? more = null);
+        public Task ShowInfoAsync(string message, string? title = null, string? more = null);
 
-        public void ShowError(string message, string? title = null, string? more = null);
+        public Task ShowErrorAsync(string message, string? title = null, string? more = null);
         
-        public void ShowFailure(string message, string? more = null);
+        public Task ShowFailureAsync(string message, string? more = null);
 
         public Task<Result> Confirm(string message, string? title = null);
 

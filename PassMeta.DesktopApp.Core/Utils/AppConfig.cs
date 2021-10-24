@@ -227,8 +227,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                 }
                 catch (Exception ex)
                 {
-                    Locator.Current.GetService<IDialogService>()!
-                        .ShowError(Resources.ERR__CONFIG_LOAD, more: ex.Message);
+                    await Locator.Current.GetService<IDialogService>()!
+                        .ShowErrorAsync(Resources.ERR__CONFIG_LOAD, more: ex.Message);
                 }
             }
             
@@ -291,8 +291,8 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(Resources.ERR__CONFIG_SAVE, more: ex.Message);
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(Resources.ERR__CONFIG_SAVE, more: ex.Message);
                 return false;
             }
         }

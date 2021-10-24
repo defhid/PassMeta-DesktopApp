@@ -45,7 +45,8 @@ namespace PassMeta.DesktopApp.Ui.Views
                 OnCultureChanged?.Invoke();
             }
             
-            Locator.Current.GetService<IDialogService>()!.ShowInfo(Common.Resources.SETTINGS__SAVE_SUCCESS);
+            await Locator.Current.GetService<IDialogService>()!
+                .ShowFailureAsync(Common.Resources.SETTINGS__SAVE_SUCCESS);
         }
     }
 }

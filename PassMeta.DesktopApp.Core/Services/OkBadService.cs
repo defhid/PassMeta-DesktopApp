@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
 using PassMeta.DesktopApp.Common.Models;
@@ -28,12 +29,12 @@ namespace PassMeta.DesktopApp.Core.Services
             return message;
         }
 
-        public void ShowResponseFailure(OkBadResponse response, IDictionary<string, string>? whatMapper = null)
+        public Task ShowResponseFailureAsync(OkBadResponse response, IDictionary<string, string>? whatMapper = null)
         {
             var lines = _ResponseToText(response, whatMapper);
             
-            Locator.Current.GetService<IDialogService>()!
-                .ShowFailure(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
+            return Locator.Current.GetService<IDialogService>()!
+                .ShowFailureAsync(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
         }
 
         private List<string> _ResponseToText(OkBadResponse response, IDictionary<string, string>? whatMapper)

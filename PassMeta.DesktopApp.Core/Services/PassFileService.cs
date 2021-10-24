@@ -73,7 +73,7 @@ namespace PassMeta.DesktopApp.Core.Services
                         
                         if ((await _SavePassFileLocalAsync(result.Data.Item1)).Bad) continue;
                         
-                        Locator.Current.GetService<IDialogService>()!.ShowInfo(
+                        await Locator.Current.GetService<IDialogService>()!.ShowInfoAsync(
                             string.Format(Resources.INFO__PASSFILES_MERGED, remote.Name, local.Name), 
                             null, 
                             string.Join('\n', result.Data.Item2.Select(s => s.Name)));
@@ -109,7 +109,7 @@ namespace PassMeta.DesktopApp.Core.Services
             var res = await _ArchivePassFileRemoteAsync(passFile);
             if (res.Bad) return res;
 
-            _DeletePassFileLocal(passFile);
+            await _DeletePassFileLocalAsync(passFile);
             return res;
         }
         
@@ -129,7 +129,7 @@ namespace PassMeta.DesktopApp.Core.Services
             var res = await _DeletePassFileRemoteAsync(passFile);
             if (res.Bad) return res;
             
-            _DeletePassFileLocal(passFile);
+            await _DeletePassFileLocalAsync(passFile);
             return res;
         }
         
@@ -177,8 +177,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(Resources.ERR__PASSFILES_READ, more: ex.ToString());
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(Resources.ERR__PASSFILES_READ, more: ex.ToString());
             }
 
             return passFiles;
@@ -202,8 +202,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(string.Format(Resources.ERR__PASSFILE_SAVE_LOCAL, passFile.Name), more: ex.ToString());
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(string.Format(Resources.ERR__PASSFILE_SAVE_LOCAL, passFile.Name), more: ex.ToString());
 
                 return Result.Failure;
             }
@@ -231,8 +231,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(string.Format(Resources.ERR__PASSFILE_SAVE_REMOTE, passFile.Name), more: ex.ToString());
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(string.Format(Resources.ERR__PASSFILE_SAVE_REMOTE, passFile.Name), more: ex.ToString());
 
                 return Result.Failure;
             }
@@ -240,7 +240,7 @@ namespace PassMeta.DesktopApp.Core.Services
             return new Result();
         }
 
-        private static Result _DeletePassFileLocal(PassFileLight passFile)
+        private static async Task<Result> _DeletePassFileLocalAsync(PassFileLight passFile)
         {
             try
             {
@@ -252,8 +252,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(string.Format(Resources.ERR__PASSFILE_DELETE_LOCAL, passFile.Name), more: ex.ToString());
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(string.Format(Resources.ERR__PASSFILE_DELETE_LOCAL, passFile.Name), more: ex.ToString());
 
                 return Result.Failure;
             }
@@ -270,8 +270,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(string.Format(Resources.ERR__PASSFILE_DELETE_REMOTE, passFile.Name), more: ex.ToString());
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(string.Format(Resources.ERR__PASSFILE_DELETE_REMOTE, passFile.Name), more: ex.ToString());
 
                 return Result.Failure;
             }
@@ -286,8 +286,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(string.Format(Resources.ERR__PASSFILE_ARCHIVE_REMOTE, passFile.Name), more: ex.ToString());
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(string.Format(Resources.ERR__PASSFILE_ARCHIVE_REMOTE, passFile.Name), more: ex.ToString());
 
                 return Result.Failure;
             }
@@ -302,8 +302,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<IDialogService>()!
-                    .ShowError(string.Format(Resources.ERR__PASSFILE_UNARCHIVE_REMOTE, passFile.Name), more: ex.ToString());
+                await Locator.Current.GetService<IDialogService>()!
+                    .ShowErrorAsync(string.Format(Resources.ERR__PASSFILE_UNARCHIVE_REMOTE, passFile.Name), more: ex.ToString());
 
                 return Result.Failure;
             }
@@ -357,7 +357,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 else
                 {
                     var mergeSection = currentSection.Copy();
-                    foreach (var item in section.Items)
+                    foreach (var item in section.Items)  // TODO null handling
                     {
                         var currentItem = mergeSection.Items.FirstOrDefault(i => i.What == item.What);
                         if (currentItem is null || currentItem.Value != item.Value)
