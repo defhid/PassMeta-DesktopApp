@@ -124,15 +124,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sign out.
-        /// </summary>
-        public static string ACCOUNT__SIGN_OUT_BTN {
-            get {
-                return ResourceManager.GetString("ACCOUNT__SIGN_OUT_BTN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to sign out?.
         /// </summary>
         public static string ACCOUNT__SIGN_OUT_CONFIRM {
@@ -687,6 +678,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string SETTINGS__TITLE {
             get {
                 return ResourceManager.GetString("SETTINGS__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        public static string STORAGE__CONTEXT_ADD {
+            get {
+                return ResourceManager.GetString("STORAGE__CONTEXT_ADD", resourceCulture);
             }
         }
         

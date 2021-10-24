@@ -6,6 +6,7 @@ using Avalonia.Media;
 using DynamicData;
 using ReactiveUI;
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Constants;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Main
 {
@@ -93,7 +94,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main
             Spacing = 8,
             Padding = Thickness.Parse("10 0 5 0"),
             HorizontalContentAlignment = HorizontalAlignment.Left,
-            FontFamily = FontFamily.Default,
+            FontFamily = FontFamilies.Default,
             FontSize = 20,
             Content = new[]
             {
@@ -110,7 +111,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main
             Spacing = 8,
             Padding = Thickness.Parse("0 0 0 0"),
             HorizontalContentAlignment = HorizontalAlignment.Center,
-            FontFamily = "Segoe MDL2 Assets",
+            FontFamily = FontFamilies.SegoeMdl2,
             FontSize = 24,
             Content = new[]
             {

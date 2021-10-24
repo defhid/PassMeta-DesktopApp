@@ -1,15 +1,30 @@
 using System;
-using System.Reactive;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Avalonia.Controls;
 using Avalonia.Media;
+using PassMeta.DesktopApp.Common.Interfaces.Services;
+using PassMeta.DesktopApp.Common.Models.Entities.Request;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
 using ReactiveUI;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     public class AccountViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/account";
+
+        public override ContentControl[] RightBarButtons => new ContentControl[]
+        {
+            new Button
+            {
+                Opacity = 0.8,
+                Content = "\uF3B1",
+                Command = SignOutCommand
+            }
+        };
 
         private string? _firstName;
         public string? FirstName
@@ -66,12 +81,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             get => _isBtnSaveVisible;
             private set => this.RaiseAndSetIfChanged(ref _isBtnSaveVisible, value);
         }
+
+        public ICommand SignOutCommand => ReactiveCommand.CreateFromTask(_SignOutAsync);
+
+        public ICommand SaveCommand => ReactiveCommand.CreateFromTask(_SaveAsync);
         
         public AccountViewModel(IScreen hostScreen) : base(hostScreen)
         {
             if (AppConfig.Current.User is null) return;
             
-            Refresh();
+            _Refresh();
             this.WhenAnyValue(
                     vm => vm.FirstName,
                     vm => vm.LastName,
@@ -104,13 +123,46 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             }
         }
 
-        public void Refresh()
+        public override async Task RefreshAsync()
+        {
+            var result = await Locator.Current.GetService<IAccountService>()!.GetUserDataAsync();
+            if (result.Ok)
+                await AppConfig.Current.SetUserAsync(result.Data);
+
+            _Refresh();
+        }
+
+        private void _Refresh()
         {
             FirstName = AppConfig.Current.User!.FirstName;
             LastName = AppConfig.Current.User!.LastName;
             Login = AppConfig.Current.User!.Login;
             Password = "";
             PasswordConfirm = "";
+        }
+
+        private async Task _SaveAsync()
+        {
+            var data = new UserPatchData
+            {
+                FirstName = FirstName ?? "",
+                LastName = LastName ?? "",
+                Login = string.IsNullOrEmpty(Login?.Trim()) ? null : Login.Trim(),
+                Password = string.IsNullOrEmpty(Password) ? null : Password,
+                PasswordConfirm = PasswordConfirm ?? "",
+            };
+
+            var service = Locator.Current.GetService<IAccountService>()!;
+            var result = await service.UpdateUserDataAsync(data);
+
+            if (result.Ok) await RefreshAsync();
+        }
+
+        private async Task _SignOutAsync()
+        {
+            var service = Locator.Current.GetService<IAuthService>()!;
+            await service.SignOutAsync();
+            NavigateTo<AuthViewModel>();
         }
     }
 }

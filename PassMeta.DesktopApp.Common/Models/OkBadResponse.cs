@@ -27,6 +27,10 @@ namespace PassMeta.DesktopApp.Common.Models
     {
         [JsonProperty("data")]
         public TData? Data { get; set; }
+
+        public Result<TData> ToResult() => Success
+            ? new Result<TData>(Data!, Message)
+            : new Result<TData>(false, Message);
     }
     
     public class OkBadMore

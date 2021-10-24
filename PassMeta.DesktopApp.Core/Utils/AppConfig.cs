@@ -110,7 +110,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// App supported languages (pairs: name-code).
         /// </summary>
-        public static string[][] Cultures => new[]
+        public static string[][] AppCultures => new[]
         { 
             new[] { Resources.LANG__RU, "ru" },
             new[] { Resources.LANG__EN, "en" }
@@ -156,24 +156,47 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         public void RefreshCookies(CookieCollection cookies)
         {
-            lock (Current.Cookies)
+            lock (Cookies)
             {
                 var changed = false;
             
                 for (var i = 0; i < cookies.Count; ++i)
                 {
-                    if (!Current.Cookies.TryGetValue(cookies[i].Name, out var cookie) || cookies[i].Value != cookie)
+                    if (!Cookies.TryGetValue(cookies[i].Name, out var cookie) || cookies[i].Value != cookie)
                     {
-                        Current.Cookies[cookies[i].Name] = cookies[i].Value;
+                        Cookies[cookies[i].Name] = cookies[i].Value;
                         changed = true;
                     }
                 }
 
                 if (changed)
                 {
-                    _SaveToFileAsync(Current).GetAwaiter().GetResult();
+                    _SaveToFileAsync(this).GetAwaiter().GetResult();
                 }
             }
+        }
+        
+        /// <summary>
+        /// Refresh information from server.
+        /// </summary>
+        public async Task RefreshFromServerAsync()
+        {
+            if (ServerUrl?.Length > 10)
+            {
+                var info = (await PassMetaApi.GetAsync<PassMetaInfo>("/info", true))?.Data;
+                ServerVersion = info?.AppVersion;
+                User = info?.User ?? User;
+                OkBadMessagesTranslatePack = info?.OkBadMessagesTranslatePack 
+                                             ?? new Dictionary<string, Dictionary<string, string>>();
+            }
+            else
+            {
+                ServerVersion = null;
+            }
+            
+            Cookies = User is null 
+                ? new Dictionary<string, string>() 
+                : Current.Cookies;
         }
         
         /// <summary>
@@ -232,27 +255,12 @@ namespace PassMeta.DesktopApp.Core.Utils
             return new Result<AppConfig>(config);
         }
 
-        private static async Task _SetCurrentAsync(AppConfig config)
+        private static Task _SetCurrentAsync(AppConfig config)
         {
             Current = config;
             Resources.Culture = new CultureInfo(config.CultureCode);
-            
-            if (config.ServerUrl?.Length > 10)
-            {
-                var info = (await PassMetaApi.GetAsync<PassMetaInfo>("/info", true))?.Data;
-                Current.ServerVersion = info?.AppVersion;
-                Current.User = info?.User ?? Current.User;
-                Current.OkBadMessagesTranslatePack = info?.OkBadMessagesTranslatePack 
-                                                     ?? new Dictionary<string, Dictionary<string, string>>();
-            }
-            else
-            {
-                Current.ServerVersion = null;
-            }
-            
-            Current.Cookies = Current.User is null 
-                ? new Dictionary<string, string>() 
-                : Current.Cookies;
+
+            return Current.RefreshFromServerAsync();
         }
 
         private static async Task<bool> _SaveToFileAsync(AppConfig config)
@@ -281,7 +289,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             var corrected = false;
 
-            if (Cultures.All(c => c[1] != config.CultureCode))
+            if (AppCultures.All(c => c[1] != config.CultureCode))
             {
                 config.CultureCode = "ru";
                 corrected = true;

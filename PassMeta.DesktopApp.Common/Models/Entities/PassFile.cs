@@ -47,7 +47,6 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         public class Section
         {
             private string? _name;
-            private List<Item>? _items;
             
             [JsonProperty("name")]
             public string Name { 
@@ -56,16 +55,12 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             }
 
             [JsonProperty("items")]
-            public List<Item> Items
-            {
-                get => _items ?? new List<Item>(); 
-                set => _items = value;
-            }
+            public List<Item>? Items { get; set; }
             
             public Section Copy() => new()
             {
                 Name = Name,
-                Items = Items.Select(i => i.Copy()).ToList()
+                Items = Items?.Select(i => i.Copy()).ToList()
             };
 
             public class Item

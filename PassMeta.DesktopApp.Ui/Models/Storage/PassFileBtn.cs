@@ -1,33 +1,38 @@
-using System.Collections.Generic;
+using System.Reactive.Linq;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Common.Models.Entities;
+using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.Storage
 {
-    public class PassFileBtn
+    public class PassFileBtn : ReactiveObject
     {
-        private readonly PassFile _passFile;
+        public readonly PassFile PassFile;
+
+        public int Index { get; }
         
-        private readonly bool _shortMode;
-
-        public int Id => _passFile.Id;
-
-        public string Name => _shortMode ? _passFile.Name[..2] : _passFile.Name;
-
-        public IBrush Foreground => _passFile.Color is null 
+        public IBrush Foreground => PassFile.Color is null 
             ? Brushes.AliceBlue 
-            : Brush.Parse( "#" + _passFile.Color);
-
-        public List<PassFile.Section> Sections => 
-            _passFile.Data ?? new List<PassFile.Section>();
+            : Brush.Parse( "#" + PassFile.Color);
         
-        public bool Active { get; }
-
-        public PassFileBtn(PassFile passFile, bool shortMode, bool active = false)
+        private bool _shortMode;
+        public bool ShortMode
         {
-            _passFile = passFile;
-            _shortMode = shortMode;
-            Active = active;
+            get => _shortMode;
+            set => this.RaiseAndSetIfChanged(ref _shortMode, value);
+        }
+
+        private readonly ObservableAsPropertyHelper<string> _name;
+        public string Name => _name.Value;
+        
+        public PassFileBtn(PassFile passFile, int index)
+        {
+            PassFile = passFile;
+            Index = index;
+            
+            _name = this.WhenAnyValue(btn => btn.ShortMode)
+                .Select(isShort => isShort ? PassFile.Name[..2] : PassFile.Name)
+                .ToProperty(this, btn => btn.Name);
         }
     }
 }

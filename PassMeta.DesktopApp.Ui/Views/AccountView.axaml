@@ -68,14 +68,7 @@
                     Margin="40 30 0 0"
                     Content="{x:Static com:Resources.ACCOUNT__SAVE_BTN}"
                     IsVisible="{Binding IsBtnSaveVisible}"
-                    Click="SaveBtn_OnClick"/>
+                    Command="{Binding SaveCommand}"/>
         </Grid>
-        
-        <Button Margin="0 0 10 10"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                Opacity="0.7"
-                Content="{x:Static com:Resources.ACCOUNT__SIGN_OUT_BTN}"
-                Click="SignOutBtn_OnClick"/>
     </Grid>
 </UserControl>

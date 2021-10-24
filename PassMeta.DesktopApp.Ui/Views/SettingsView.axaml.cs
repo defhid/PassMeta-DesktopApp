@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
@@ -10,7 +9,6 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Views
 {
-    // ReSharper disable once UnusedType.Global
     public class SettingsView : ViewPage<SettingsViewModel>
     {
         public static event Action? OnCultureChanged;
@@ -19,12 +17,7 @@ namespace PassMeta.DesktopApp.Ui.Views
         {
             AvaloniaXamlLoader.Load(this);
         }
-        
-        public override Task RefreshAsync()
-        {
-            throw new NotImplementedException();
-        }
-        
+
         private async void SaveBtn_OnClick(object? sender, RoutedEventArgs e)
         {
             var context = DataContext!;

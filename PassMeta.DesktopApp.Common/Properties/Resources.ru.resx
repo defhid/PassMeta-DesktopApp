@@ -164,9 +164,6 @@
     <data name="ACCOUNT__SAVE_SUCCESS" xml:space="preserve">
         <value>Данные были успешно сохранены!</value>
     </data>
-    <data name="ACCOUNT__SIGN_OUT_BTN" xml:space="preserve">
-        <value>Выйти</value>
-    </data>
     <data name="ACCOUNT__SIGN_OUT_CONFIRM" xml:space="preserve">
         <value>Вы уверены, что хотите выйти из аккаунта?</value>
     </data>
@@ -244,5 +241,8 @@
     </data>
     <data name="STORAGE__CONTEXT_ARCHIVE" xml:space="preserve">
         <value>Архивировать</value>
+    </data>
+    <data name="STORAGE__CONTEXT_ADD" xml:space="preserve">
+        <value>Добавить</value>
     </data>
 </root>

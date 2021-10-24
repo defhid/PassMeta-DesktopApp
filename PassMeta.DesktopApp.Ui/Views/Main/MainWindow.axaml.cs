@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -9,8 +10,7 @@ using PassMeta.DesktopApp.Ui.Services;
 using PassMeta.DesktopApp.Ui.ViewModels;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.ViewModels.Main;
-using PassMeta.DesktopApp.Ui.Views.Base;
-using ReactiveUI;
+using PassMeta.DesktopApp.Ui.ViewModels.Storage;
 
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
@@ -54,13 +54,14 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
         private async void RefreshBtn_OnClick(object? sender, RoutedEventArgs e)
         {
-            // TODO ...
-
-            var current = DataContext.Router.GetCurrentViewModel() as IViewPage;
-            if (current is not null)
+            if (AppConfig.Current.ServerVersion is null)
             {
-                await current.RefreshAsync();
+                await AppConfig.Current.RefreshFromServerAsync();
             }
+
+            DataContext.Router.CurrentViewModel!.OfType<ViewModelPage>()
+                .FirstAsync()
+                .Subscribe(vm => vm.RefreshAsync());
         }
 
         private async void OnOpened(object? sender, EventArgs e)

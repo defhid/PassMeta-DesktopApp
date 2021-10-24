@@ -72,7 +72,7 @@
                     FontFamily="Segoe MDL2 Assets"
                     Content="&#xE8C8;"
                     IsVisible="{Binding Generated}"
-                    Click="CopyBtn_OnClick"/>
+                    Command="{Binding CopyCommand}"/>
             
             <Button Grid.Column="2"
                     ToolTip.Tip="{x:Static com:Resources.GENERATOR__BTN}"
@@ -81,7 +81,7 @@
                     FontSize="26"
                     FontFamily="Segoe MDL2 Assets"
                     Content="&#xE8D7;"
-                    Click="GenerateBtn_OnClick"/>
+                    Command="{Binding GenerateCommand}"/>
         </Grid>
     </Grid>
 </UserControl>

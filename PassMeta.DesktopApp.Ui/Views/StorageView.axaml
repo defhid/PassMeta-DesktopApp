@@ -2,13 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
              xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+             xmlns:storage="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage"
              x:Class="PassMeta.DesktopApp.Ui.Views.StorageView"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             d:DataContext="{d:DesignInstance viewModels:StorageViewModel}">
+             d:DataContext="{d:DesignInstance storage:StorageViewModel}">
     <Grid>
         <SplitView DisplayMode="CompactInline"
                    OpenPaneLength="200"
@@ -21,25 +21,25 @@
                                Margin="5 5 0 12"
                                Padding="0 0 0 0"
                                Height="40"
-                               IsChecked="True"
+                               IsChecked="{Binding IsPassFilesBarOpened}"
                                HorizontalContentAlignment="Center"
                                VerticalContentAlignment="Center"
                                Width="{Binding PassFilesBarBtn.Width}"
                                Content="{Binding PassFilesBarBtn.Content}"
                                FontSize="{Binding PassFilesBarBtn.FontSize}"
-                               FontFamily="{Binding PassFilesBarBtn.FontFamily}"
-                               Click="PassFilesBarBtn_OnClick"/>
+                               FontFamily="{Binding PassFilesBarBtn.FontFamily}"/>
 
+                    <!-- PassFileList -->
                     <ListBox Grid.Row="1"
                              Margin="5 0 5 5"
-                             SelectionMode="Toggle,AlwaysSelected"
+                             SelectionMode="Toggle"
                              CornerRadius="4"
                              SelectedIndex="{Binding PassFilesSelectedIndex}"
-                             Items="{Binding PassFiles}"
-                             SelectionChanged="PassFiles_OnSelectionChanged">
+                             Items="{Binding PassFileList}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}"
+                                <TextBlock Name="TextBlock"
+                                           Text="{Binding Name}"
                                            Foreground="{Binding Foreground}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -52,28 +52,39 @@
                                 <Setter Property="ContextMenu">
                                     <ContextMenu PlacementAnchor="Bottom">
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
-                                                  Click="PassFileContextMenuRename_OnClick"/>
+                                                  Command="{Binding RenamePassFileCommand}"
+                                                  CommandParameter="{RelativeSource Self}"/>
                                         
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ARCHIVE}"
-                                                  Click="PassFileContextMenuArchive_OnClick"/>
+                                                  Command="{Binding ArchivePassFileCommand}"
+                                                  CommandParameter="{RelativeSource Self}"/>
                                         
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
-                                                  Click="PassFileContextMenuDelete_OnClick"/>
+                                                  Command="{Binding DeletePassFileCommand}"
+                                                  CommandParameter="{RelativeSource Self}"/>
                                     </ContextMenu>
                                 </Setter>
                             </Style>
                         </ListBox.Styles>
+                        
+                        <ListBox.ContextMenu>
+                            <ContextMenu PlacementAnchor="Bottom">
+                                <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ADD}"
+                                          Command="{Binding AddPassFileCommand}"/>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
                     </ListBox>
                 </Grid>
             </SplitView.Pane>
             
             <Grid ColumnDefinitions="*,*">
+                <!-- PassFileSectionList -->
                 <ListBox Grid.Column="0"
                          CornerRadius="4"
                          Margin="0 6 5 5"
-                         Items="{Binding PassFileSections}"
-                         IsVisible="{Binding IsSectionsBarVisible}"
-                         SelectionChanged="PassFileSections_OnSelectionChanged">
+                         SelectedIndex="{Binding PassFilesSelectedSectionIndex}"
+                         Items="{Binding PassFileSectionList}"
+                         IsVisible="{Binding IsSectionsBarVisible}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}"/>
@@ -85,22 +96,29 @@
                             <Setter Property="ContextMenu">
                                 <ContextMenu PlacementAnchor="Bottom">
                                     <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
-                                              Click="SectionContextMenuRename_OnClick"/>
+                                              />
                                         
                                     <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
-                                              Click="SectionContextMenuDelete_OnClick"/>
+                                              />
                                 </ContextMenu>
                             </Setter>
                         </Style>
                     </ListBox.Styles>
+                    
+                    <ListBox.ContextMenu>
+                        <ContextMenu PlacementAnchor="Bottom">
+                            <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ADD}"
+                                      Command="{Binding AddSectionCommand}"/>
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
                 </ListBox>
                 
+                <!-- PassFileSectionItemList -->
                 <ListBox Grid.Column="1"
                          CornerRadius="4"
                          Margin="0 6 5 5"
-                         Items="{Binding PassFileSectionItems}" 
-                         IsVisible="{Binding IsItemsBarVisible}"
-                         SelectionChanged="PassFileSectionItems_OnSelectionChanged">
+                         Items="{Binding PassFileSectionItemList}" 
+                         IsVisible="{Binding IsItemsBarVisible}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding What}"/>

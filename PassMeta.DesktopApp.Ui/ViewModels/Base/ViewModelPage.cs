@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using ReactiveUI;
 
@@ -7,7 +8,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Base
     public abstract class ViewModelPage : ReactiveObject, IRoutableViewModel
     {
         public static event Action<ViewModelPage>? OnNavigated;
-        
+
         public abstract string? UrlPathSegment { get; }
         
         public IScreen HostScreen { get; }
@@ -25,6 +26,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Base
             var vm = (TViewModel) Activator.CreateInstance(typeof(TViewModel), HostScreen)!;
             vm.Navigate();
         }
+
+        public abstract Task RefreshAsync();
 
         public virtual void Navigate()
         {

@@ -19,8 +19,14 @@ namespace PassMeta.DesktopApp.Core.Services
             ["password"] = Common.Resources.ACCOUNT__PASSWORD_LABEL.ToLower(),
             ["password_confirm"] = Common.Resources.ACCOUNT__PASSWORD_CONFIRM_LABEL.ToLower(),
         };
-        
-        public async Task<Result> UpdateUserData(UserPatchData data)
+
+        public async Task<Result<User>> GetUserDataAsync()
+        {
+            var response = await PassMetaApi.GetAsync<User>("users/me", true);
+            return response?.ToResult() ?? new Result<User>(false);
+        }
+
+        public async Task<Result> UpdateUserDataAsync(UserPatchData data)
         {
             if (data.PasswordConfirm is null || data.PasswordConfirm.Length == 0)
             {

@@ -35,20 +35,25 @@
                      Text="{Binding Password}"
                      KeyDown="Input_OnKeyDown"/>
             
-            <Button VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Margin="0 80 0 0"
-                    FontSize="16"
-                    Content="{x:Static com:Resources.AUTH__SIGN_IN_BTN}"
-                    Click="SignInBtn_OnClick"/>
+            <Grid VerticalAlignment="Center"
+                  Margin="0 80 0 0"
+                  Width="300">
+                <Button HorizontalAlignment="Left"
+                        HorizontalContentAlignment="Center"
+                        Margin="0 0 10 0"
+                        MinWidth="75"
+                        FontSize="16"
+                        Content="{x:Static com:Resources.AUTH__SIGN_IN_BTN}"
+                        Command="{Binding SignInCommand}"/>
             
-            <Button VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"
-                    Margin="0 0 10 10"
-                    FontSize="16"
-                    Opacity="0.7"
-                    Content="{x:Static com:Resources.AUTH__SIGN_UP_BTN}"
-                    Click="SignUpBtn_OnClick"/>
+                <Button HorizontalAlignment="Right"
+                        HorizontalContentAlignment="Center"
+                        Margin="10 0 0 0"
+                        MinWidth="150"
+                        FontSize="16"
+                        Content="{x:Static com:Resources.AUTH__SIGN_UP_BTN}"
+                        Command="{Binding SignUpCommand}"/>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

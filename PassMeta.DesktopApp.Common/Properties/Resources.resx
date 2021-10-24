@@ -171,9 +171,6 @@
     <data name="ACCOUNT__SAVE_SUCCESS" xml:space="preserve">
         <value>The data has been save successfully!</value>
     </data>
-    <data name="ACCOUNT__SIGN_OUT_BTN" xml:space="preserve">
-        <value>Sign out</value>
-    </data>
     <data name="ACCOUNT__SIGN_OUT_CONFIRM" xml:space="preserve">
         <value>Are you sure you want to sign out?</value>
     </data>
@@ -251,5 +248,8 @@
     </data>
     <data name="STORAGE__CONTEXT_ARCHIVE" xml:space="preserve">
         <value>Archive</value>
+    </data>
+    <data name="STORAGE__CONTEXT_ADD" xml:space="preserve">
+        <value>Add</value>
     </data>
 </root>
