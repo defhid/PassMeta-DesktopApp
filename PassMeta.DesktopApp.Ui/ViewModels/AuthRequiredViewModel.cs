@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
@@ -8,16 +9,20 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     public class AuthRequiredViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/auth-required";
+        
+        /// <summary><see cref="ViewModelPage"/></summary>
+        public Type ForViewModelPageType { get; }
 
-        public AuthRequiredViewModel(IScreen hostScreen) : base(hostScreen)
+        public AuthRequiredViewModel(IScreen hostScreen, Type forPage) : base(hostScreen)
         {
+            ForViewModelPageType = forPage;
         }
 
         public override Task RefreshAsync()
         {
             if (AppConfig.Current.User is not null)
             {
-                HostScreen.Router.NavigateBack.Execute();
+                NavigateTo(ForViewModelPageType);
             }
             
             return Task.CompletedTask;

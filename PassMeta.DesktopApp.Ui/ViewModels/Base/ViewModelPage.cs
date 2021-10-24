@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using ReactiveUI;
@@ -20,10 +21,17 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Base
             HostScreen = hostScreen;
         }
         
-        protected void NavigateTo<TViewModel>() 
+        protected void NavigateTo<TViewModel>(params object?[]? args) 
             where TViewModel : ViewModelPage
         {
-            var vm = (TViewModel) Activator.CreateInstance(typeof(TViewModel), HostScreen)!;
+            args ??= Array.Empty<object>();
+            var vm = (TViewModel)Activator.CreateInstance(typeof(TViewModel), new object[] {HostScreen}.Concat(args).ToArray())!;
+            vm.Navigate();
+        }
+        
+        protected void NavigateTo(Type viewModelType)
+        {
+            var vm = (ViewModelPage)Activator.CreateInstance(viewModelType, HostScreen)!;
             vm.Navigate();
         }
 

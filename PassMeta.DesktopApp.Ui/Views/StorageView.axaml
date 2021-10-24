@@ -18,8 +18,8 @@
             <SplitView.Pane>
                 <Grid RowDefinitions="Auto,*">
                     <ToggleButton Grid.Row="0"
-                               Margin="5 5 0 12"
-                               Padding="0 0 0 0"
+                               Margin="4 5 0 12"
+                               Padding="0"
                                Height="40"
                                IsChecked="{Binding IsPassFilesBarOpened}"
                                HorizontalContentAlignment="Center"
@@ -31,9 +31,9 @@
 
                     <!-- PassFileList -->
                     <ListBox Grid.Row="1"
-                             Margin="5 0 5 5"
+                             Margin="4 0 5 5"
                              SelectionMode="Toggle"
-                             CornerRadius="4"
+                             CornerRadius="3"
                              SelectedIndex="{Binding PassFilesSelectedIndex}"
                              Items="{Binding PassFileList}">
                         <ListBox.ItemTemplate>
@@ -46,22 +46,19 @@
                         
                         <ListBox.Styles>
                             <Style Selector="ListBoxItem">
-                                <Setter Property="CornerRadius" Value="4"/>
+                                <Setter Property="CornerRadius" Value="3"/>
                                 <Setter Property="Height" Value="40"/>
                                 <Setter Property="Margin" Value="0 0 0 8"/>
                                 <Setter Property="ContextMenu">
                                     <ContextMenu PlacementAnchor="Bottom">
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
-                                                  Command="{Binding RenamePassFileCommand}"
-                                                  CommandParameter="{RelativeSource Self}"/>
+                                                  Command="{Binding PassFileRenameAsync}"/>
                                         
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ARCHIVE}"
-                                                  Command="{Binding ArchivePassFileCommand}"
-                                                  CommandParameter="{RelativeSource Self}"/>
+                                                  Command="{Binding PassFileRenameAsync}"/>
                                         
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
-                                                  Command="{Binding DeletePassFileCommand}"
-                                                  CommandParameter="{RelativeSource Self}"/>
+                                                  Command="{Binding PassFileDeleteAsync}"/>
                                     </ContextMenu>
                                 </Setter>
                             </Style>
@@ -70,18 +67,18 @@
                         <ListBox.ContextMenu>
                             <ContextMenu PlacementAnchor="Bottom">
                                 <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ADD}"
-                                          Command="{Binding AddPassFileCommand}"/>
+                                          Command="{Binding PassFileAddAsync}"/>
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
                 </Grid>
             </SplitView.Pane>
             
-            <Grid ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="2*,3*">
                 <!-- PassFileSectionList -->
                 <ListBox Grid.Column="0"
-                         CornerRadius="4"
                          Margin="0 6 5 5"
+                         SelectionMode="Toggle"
                          SelectedIndex="{Binding PassFilesSelectedSectionIndex}"
                          Items="{Binding PassFileSectionList}"
                          IsVisible="{Binding IsSectionsBarVisible}">
@@ -96,10 +93,10 @@
                             <Setter Property="ContextMenu">
                                 <ContextMenu PlacementAnchor="Bottom">
                                     <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
-                                              />
+                                              Command="{Binding SectionRenameAsync}"/>
                                         
                                     <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
-                                              />
+                                              Command="{Binding SectionDeleteAsync}"/>
                                 </ContextMenu>
                             </Setter>
                         </Style>
@@ -108,14 +105,21 @@
                     <ListBox.ContextMenu>
                         <ContextMenu PlacementAnchor="Bottom">
                             <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ADD}"
-                                      Command="{Binding AddSectionCommand}"/>
+                                      Command="{Binding  SectionAddAsync}"/>
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
                 
+                <TextBlock Grid.Column="0"
+                           FontSize="16"
+                           Foreground="DarkGray"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Text="{x:Static com:Resources.STORAGE__NO_SECTIONS}"
+                           IsVisible="{Binding IsNoSectionsTextVisible}"/>
+                
                 <!-- PassFileSectionItemList -->
                 <ListBox Grid.Column="1"
-                         CornerRadius="4"
                          Margin="0 6 5 5"
                          Items="{Binding PassFileSectionItemList}" 
                          IsVisible="{Binding IsItemsBarVisible}">
@@ -125,6 +129,14 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                
+                <TextBlock Grid.Column="1"
+                           FontSize="16"
+                           Foreground="DarkGray"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Text="{x:Static com:Resources.STORAGE__NO_ITEMS}"
+                           IsVisible="{Binding IsNoItemsTextVisible}"/>
             </Grid>
         </SplitView>
     </Grid>

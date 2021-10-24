@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
+using DynamicData.Binding;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Models.Entities;
@@ -20,17 +22,28 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         public override ContentControl[] RightBarButtons => new ContentControl[]
         {
-            new Button { Content = "\uE74E", Command = SaveCommand }
+            new Button { Content = "\uE74E", Command = ReactiveCommand.CreateFromTask(SaveAsync) }
         };
 
-        private List<PassFile>? _passFiles;
+        private static List<PassFile>? _passFiles;
+        private static int? _userId;
+        private static string? _mode;
+
+        #region Texts
         
-        private string? _mode;
         public string? Mode
         {
             get => _mode;
             set => this.RaiseAndSetIfChanged(ref _mode, value);
         }
+        
+        private readonly ObservableAsPropertyHelper<bool> _isNoSectionsTextVisible;
+        public bool IsNoSectionsTextVisible => _isNoSectionsTextVisible.Value;
+        
+        private readonly ObservableAsPropertyHelper<bool> _isNoItemsTextVisible;
+        public bool IsNoItemsTextVisible => _isNoItemsTextVisible.Value;
+        
+        #endregion
 
         #region Lists
 
@@ -73,8 +86,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             set
             {
                 this.RaiseAndSetIfChanged(ref _passFilesSelectedIndex, value);
-                PassFileSectionList = 
-                    value == -1 ? null : _MakePassFileSectionList(PassFileList[value].PassFile);
+                _SetPassFileSectionList();
             }
         }
 
@@ -85,10 +97,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             set
             {
                 this.RaiseAndSetIfChanged(ref _passFilesSelectedSectionIndex, value);
-                PassFileSectionItemList =
-                    value == -1 ? null : _MakePassFileSectionItemList(PassFileSectionList![value].Section);
+                _SetPassFileSectionItemList();
             }
         }
+
+        public PassFile? SelectedPassFile =>
+            _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex].PassFile;
+        
+        public PassFile.Section? SelectedSection =>
+            _passFilesSelectedSectionIndex == -1 ? null : _passFileSectionList![_passFilesSelectedSectionIndex].Section;
 
         #endregion
 
@@ -114,18 +131,25 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            SaveCommand = ReactiveCommand.CreateFromTask(_SaveAsync);
+            _passFileList = _MakePassFileList();
 
-            AddPassFileCommand = ReactiveCommand.CreateFromTask(_PassFileAddAsync);
-            RenamePassFileCommand = ReactiveCommand.CreateFromTask<MenuItem>(_PassFileRenameAsync);
-            ArchivePassFileCommand = ReactiveCommand.CreateFromTask<MenuItem>(_PassFileArchiveAsync);
-            DeletePassFileCommand = ReactiveCommand.CreateFromTask<MenuItem>(_PassFileDeleteAsync);
-
-            AddSectionCommand = ReactiveCommand.CreateFromTask(_SectionAddAsync);
-            RenameSectionCommand = ReactiveCommand.CreateFromTask<MenuItem>(_SectionRenameAsync);
-            DeleteSectionCommand = ReactiveCommand.CreateFromTask<MenuItem>(_SectionDeleteAsync);
-
-            _passFilesBarBtn = this.WhenAnyValue(vm => vm.IsPassFilesBarOpened)
+            _isSectionsBarVisible = this.WhenValueChanged(vm => vm.PassFileSectionList)
+                .Select(arr => arr is not null)
+                .ToProperty(this, vm => vm.IsSectionsBarVisible);
+            
+            _isItemsBarVisible = this.WhenValueChanged(vm => vm.PassFileSectionItemList)
+                .Select(arr => arr is not null)
+                .ToProperty(this, vm => vm.IsItemsBarVisible);
+            
+            _isNoSectionsTextVisible = this.WhenValueChanged(vm => vm.PassFileSectionList)
+                .Select(arr => arr?.Any() is false)
+                .ToProperty(this, vm => vm.IsNoSectionsTextVisible);
+            
+            _isNoItemsTextVisible = this.WhenValueChanged(vm => vm.PassFileSectionItemList)
+                .Select(arr => arr?.Any() is false)
+                .ToProperty(this, vm => vm.IsNoItemsTextVisible);
+            
+            _passFilesBarBtn = this.WhenValueChanged(vm => vm.IsPassFilesBarOpened)
                 .Select(isOpened => new BarBtn
                 {
                     Width = isOpened ? 190 : 40,
@@ -135,36 +159,46 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                 })
                 .ToProperty(this, vm => vm.PassFilesBarBtn);
             
-            _isSectionsBarVisible = this.WhenAnyValue(vm => vm.PassFileSectionList)
-                .Select(arr => arr is not null)
-                .ToProperty(this, vm => vm.IsSectionsBarVisible);
+            this.WhenValueChanged(vm => vm.IsPassFilesBarOpened)
+                .Subscribe(isOpened =>
+                {
+                    foreach (var passFileBtn in PassFileList)
+                    {
+                        passFileBtn.ShortMode = !isOpened;
+                    }
+                });
             
-            _isItemsBarVisible = this.WhenAnyValue(vm => vm.PassFileSectionItemList)
-                .Select(arr => arr is not null)
-                .ToProperty(this, vm => vm.IsItemsBarVisible);
-
-            _passFiles = null;
-            _passFileList = _MakePassFileList();
-
             this.WhenNavigatedToObservable()
                 .InvokeCommand(ReactiveCommand.CreateFromTask(_LoadPassFilesAsync));
         }
 
-        private PassFileBtn[] _MakePassFileList()
+        private static PassFileBtn[] _MakePassFileList()
             => (_passFiles ?? new List<PassFile>()).Select((passFile, i) => new PassFileBtn(passFile, i)).ToArray();
-        
-        private static PassFileSectionBtn[] _MakePassFileSectionList(PassFile passFile)
-            => (passFile.Data ?? new List<PassFile.Section>()).Select((section, i) => new PassFileSectionBtn(section, i)).ToArray();
 
-        private static PassFileSectionItemBtn[] _MakePassFileSectionItemList(PassFile.Section section)
-            => (section.Items ?? new List<PassFile.Section.Item>()).Select((item, i) => new PassFileSectionItemBtn(item, i)).ToArray();
+        private void _SetPassFileSectionList()
+        {
+            var passFile = SelectedPassFile;
+            if (passFile is null) PassFileSectionList = null;
+            else if (passFile.Data is null) PassFileSectionList = Array.Empty<PassFileSectionBtn>();
+            else PassFileSectionList = 
+                passFile.Data.Select((section, i) => new PassFileSectionBtn(section, i)).ToArray();
+        }
+
+        private void _SetPassFileSectionItemList()
+        {
+            var section = SelectedSection;
+            if (section is null) PassFileSectionItemList = null;
+            else if (section.Items is null) PassFileSectionItemList = Array.Empty<PassFileSectionItemBtn>();
+            else PassFileSectionItemList = 
+                section.Items.Select((item, i) => new PassFileSectionItemBtn(item, i)).ToArray();
+        }
 
         public override void Navigate()
         {
             if (AppConfig.Current.User is null)
             {
                 FakeNavigated();
-                NavigateTo<AuthRequiredViewModel>();
+                NavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
             }
             else
             {
@@ -175,6 +209,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         public override Task RefreshAsync()
         {
             Navigate();
+            
+            _userId = null;
+            _passFiles = null;
+            
             return _LoadPassFilesAsync();
         } 
     }

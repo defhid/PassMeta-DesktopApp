@@ -183,20 +183,32 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             if (ServerUrl?.Length > 10)
             {
-                var info = (await PassMetaApi.GetAsync<PassMetaInfo>("/info", true))?.Data;
-                ServerVersion = info?.AppVersion;
-                User = info?.User ?? User;
-                OkBadMessagesTranslatePack = info?.OkBadMessagesTranslatePack 
-                                             ?? new Dictionary<string, Dictionary<string, string>>();
+                var infoResponse = await PassMetaApi.GetAsync<PassMetaInfo>("/info", true);
+                if (infoResponse is null)
+                {
+                    ServerVersion = null;
+                    User = null;
+                    OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
+                }
+                else if (infoResponse.Success)
+                {
+                    ServerVersion = infoResponse.Data!.AppVersion;
+                    User = infoResponse.Data!.User;
+                    OkBadMessagesTranslatePack = infoResponse.Data!.OkBadMessagesTranslatePack;
+                }
+                else
+                {
+                    ServerVersion = "?";
+                    User = null;
+                    OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
+                }
             }
             else
             {
                 ServerVersion = null;
+                User = null;
+                OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
             }
-            
-            Cookies = User is null 
-                ? new Dictionary<string, string>() 
-                : Current.Cookies;
         }
         
         /// <summary>

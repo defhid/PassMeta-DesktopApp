@@ -252,4 +252,10 @@
     <data name="STORAGE__CONTEXT_ADD" xml:space="preserve">
         <value>Add</value>
     </data>
+    <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
+        <value>Input section name</value>
+    </data>
+    <data name="STORAGE__ASK_PASSFILE_NAME" xml:space="preserve">
+        <value>Input passfile name</value>
+    </data>
 </root>

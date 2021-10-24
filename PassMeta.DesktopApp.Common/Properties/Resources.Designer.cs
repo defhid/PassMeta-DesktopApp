@@ -682,6 +682,24 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Input passfile name.
+        /// </summary>
+        public static string STORAGE__ASK_PASSFILE_NAME {
+            get {
+                return ResourceManager.GetString("STORAGE__ASK_PASSFILE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input section name.
+        /// </summary>
+        public static string STORAGE__ASK_SECTION_NAME {
+            get {
+                return ResourceManager.GetString("STORAGE__ASK_SECTION_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         public static string STORAGE__CONTEXT_ADD {

@@ -23,7 +23,7 @@ namespace PassMeta.DesktopApp.Ui.Models.DialogWindow.Components
             PasswordChar = null;
         }
 
-        public DialogWindowTextBox(bool visible, string placeholder, string? defaultValue, char passwordChar)
+        public DialogWindowTextBox(bool visible, string placeholder, string? defaultValue, char? passwordChar)
         {
             Visible = visible;
             Placeholder = placeholder;

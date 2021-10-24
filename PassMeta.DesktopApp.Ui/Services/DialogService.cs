@@ -113,7 +113,37 @@ namespace PassMeta.DesktopApp.Ui.Services
             return new Result(dialog.ResultButton == DialogButton.Yes);
         }
 
-        public async Task<Result<string?>> AskString(string message, string? title = null)
+        public async Task<Result<string?>> AskStringAsync(string message, string? title = null)
+        {
+            if (_win is null) return new Result<string?>(false);
+
+            var dialog = new DialogWindow
+            {
+                DataContext = new DialogWindowViewModel(
+                    title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
+                    message,
+                    null,
+                    new[] { DialogButton.Ok, DialogButton.Cancel },
+                    null,
+                    new DialogWindowTextBox(true, "", "", null))
+            };
+            
+            dialog.Closed += (_, _) =>
+            {
+                ActiveCount -= 1;
+            };
+            
+            ActiveCount += 1;
+            await dialog.ShowDialog(_win);
+
+            var value = ((DialogWindowViewModel)dialog.DataContext).WindowTextBox.Value;
+
+            return dialog.ResultButton == DialogButton.Ok && !string.IsNullOrEmpty(value)
+                ? new Result<string?>(value)
+                : new Result<string?>(false);
+        }
+        
+        public async Task<Result<string?>> AskPasswordAsync(string message, string? title = null)
         {
             if (_win is null) return new Result<string?>(false);
 
