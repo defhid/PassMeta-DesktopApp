@@ -29,7 +29,7 @@ namespace PassMeta.DesktopApp.Core.Services
             return message;
         }
 
-        public Task ShowResponseFailureAsync(OkBadResponse response, IDictionary<string, string>? whatMapper = null)
+        public Task ShowResponseFailureAsync(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper = null)
         {
             var lines = _ResponseToText(response, whatMapper);
             
@@ -37,7 +37,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 .ShowFailureAsync(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
         }
 
-        private List<string> _ResponseToText(OkBadResponse response, IDictionary<string, string>? whatMapper)
+        private List<string> _ResponseToText(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper)
         {
             var message = GetLocalizedMessage(response.Message);
             List<string> builder;
@@ -48,9 +48,10 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             else
             {
-                var what = response.What;
-                whatMapper?.TryGetValue(what, out what);
-                builder = new List<string> { message + $": {what}" };
+                string? what = null;
+                whatMapper?.TryGetValue(response.What, out what);
+                
+                builder = new List<string> { message + $": {what ?? response.What}" };
             }
 
             if (response.More is not null)

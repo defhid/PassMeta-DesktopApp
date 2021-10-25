@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
 using PassMeta.DesktopApp.Core.Utils;
+using Aes = System.Security.Cryptography.Aes;
 
 namespace PassMeta.DesktopApp.Core.Services
 {
@@ -14,33 +15,57 @@ namespace PassMeta.DesktopApp.Core.Services
         
         public string Encrypt(string data, string keyPhrase)
         {
-            var aes = Aes.Create();
-            aes.IV = AppConfig.PassFileSalt;
-            aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(keyPhrase));
+            byte[] encrypted;
 
-            var crypt = aes.CreateEncryptor(aes.Key, aes.IV);
-            
-            using var ms = new MemoryStream();
-            using var cs = new CryptoStream(ms, crypt, CryptoStreamMode.Write);
-            
-            cs.Write(Encoding.UTF8.GetBytes(data));
-            
-            return Encoding.UTF8.GetString(ms.ToArray());
+            using (var aes = Aes.Create())
+            {
+                aes.IV = AppConfig.PassFileSalt;
+                aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(keyPhrase));
+
+                var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                using (var ms = new MemoryStream())
+                using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                {
+                    using (var swEncrypt = new StreamWriter(cs, Encoding.UTF8))
+                    {
+                        swEncrypt.Write(data);
+                    }
+                    encrypted = ms.ToArray();
+                }
+            }
+
+            return Convert.ToBase64String(encrypted);
         }
 
         public string Decrypt(string data, string keyPhrase)
         {
-            var aes = Aes.Create();
+            using var aes = Aes.Create();
+            
             aes.IV = AppConfig.PassFileSalt;
             aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(keyPhrase));
-            
-            var crypt = aes.CreateDecryptor(aes.Key, aes.IV);
 
-            using var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            using var cs = new CryptoStream(ms, crypt, CryptoStreamMode.Read);
-            using var sr = new StreamReader(cs);
+            var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+            using var ms = new MemoryStream(Convert.FromBase64String(data));
+            using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+            using var sr = new StreamReader(cs, Encoding.UTF8);
             
             return sr.ReadToEnd();
+        }
+
+        public string MakeCheckKey(string keyPhrase)
+        {
+            var keyPhraseBytes = Encoding.UTF8.GetBytes(keyPhrase);
+            var bytes = SHA512.HashData(keyPhraseBytes).Concat(SHA256.HashData(keyPhraseBytes)).ToArray();
+            for (var i = 0; i < 88; ++i)
+            {
+                if (bytes[i] == 0x00)
+                {
+                    bytes[i] = (byte)(i % 254 + 1);
+                }
+            }
+            return Convert.ToBase64String(bytes);
         }
 
         public string GeneratePassword(int length, bool includeDigits, bool includeSpecial)

@@ -3,7 +3,6 @@ using PassMeta.DesktopApp.Common.Interfaces.Services;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Entities.Request;
-using PassMeta.DesktopApp.Common.Models.Entities.Response;
 using PassMeta.DesktopApp.Core.Utils;
 using Splat;
 
@@ -20,7 +19,10 @@ namespace PassMeta.DesktopApp.Core.Services
                 return new Result<User>(false);
             }
             
-            var response = await PassMetaApi.PostAsync<SignInPostData, User>("/auth/sign-in", data, true);
+            var response = await PassMetaApi.Post("/auth/sign-in", data)
+                .WithBadHandling()
+                .ExecuteAsync<User>();
+            
             if (response?.Success is not true)
                 return new Result<User>(false);
             
@@ -31,10 +33,12 @@ namespace PassMeta.DesktopApp.Core.Services
         public async Task SignOutAsync()
         {
             var answer = await Locator.Current.GetService<IDialogService>()!
-                .Confirm(Common.Resources.ACCOUNT__SIGN_OUT_CONFIRM);
+                .ConfirmAsync(Common.Resources.ACCOUNT__SIGN_OUT_CONFIRM);
             if (answer.Bad) return;
             
-            var response = await PassMetaApi.PostAsync<Empty, Empty>("/auth/sign-out", new Empty(), true);
+            var response = await PassMetaApi.Post("/auth/sign-out")
+                .WithBadHandling().ExecuteAsync();
+            
             if (response?.Success is not true) return;
             
             await AppConfig.Current.SetUserAsync(null);
@@ -49,7 +53,9 @@ namespace PassMeta.DesktopApp.Core.Services
                 return new Result<User>(false);
             }
             
-            var response = await PassMetaApi.PostAsync<SignUpPostData, User>("/users/new", data, true);
+            var response = await PassMetaApi.Post("/users/new", data)
+                .WithBadHandling().ExecuteAsync<User>();
+            
             if (response?.Success is not true) 
                 return new Result<User>(false);
                 

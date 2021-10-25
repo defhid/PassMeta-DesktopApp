@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
+using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Core.Utils;
 using Splat;
 
 namespace PassMeta.DesktopApp.Core.Extensions
@@ -15,26 +15,34 @@ namespace PassMeta.DesktopApp.Core.Extensions
         /// Decrypts <see cref="PassFile.DataEncrypted"/> and returns result.
         /// </summary>
         /// <remarks>
-        /// <see cref="AppConfig.PassFilesKeyPhrase"/> must be not null.
+        /// <see cref="PassFile.PassPhrase"/> must be not null.
         /// </remarks>
-        public static void Decrypt(this PassFile passFile)
+        public static Result Decrypt(this PassFile passFile)
         {
-            if (string.IsNullOrEmpty(AppConfig.Current.PassFilesKeyPhrase))
+            if (string.IsNullOrEmpty(passFile.PassPhrase))
                 throw new NullReferenceException("Using Decrypt method without key phrase!");
             
             if (string.IsNullOrEmpty(passFile.DataEncrypted))
                 throw new NullReferenceException("Using Decrypt method without encrypted data!");
             
-            var service = Locator.Current.GetService<ICryptoService>();
-            var content = service!.Decrypt(passFile.DataEncrypted, AppConfig.Current.PassFilesKeyPhrase);
+            var service = Locator.Current.GetService<ICryptoService>()!;
+            if (service.MakeCheckKey(passFile.PassPhrase) != passFile.CheckKey)
+            {
+                return new Result(false, Resources.PASSFILE__WRONG_PASSPHRASE);
+            }
+            
+            var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase);
 
             try
             {
-                passFile.Data = JsonConvert.DeserializeObject<List<PassFile.Section>>(content);
+                passFile.Data = JsonConvert.DeserializeObject<List<PassFile.Section>>(content) 
+                                ?? new List<PassFile.Section>();
+                passFile.CheckKey = service.MakeCheckKey(passFile.PassPhrase);
+                return Result.Success;
             }
             catch
             {
-                throw new FormatException(Resources.ERR__PASSFILE_DECRYPTION);
+                return new Result(false, Resources.PASSFILE__DECRYPTION_ERROR);
             }
         }
         
@@ -42,19 +50,22 @@ namespace PassMeta.DesktopApp.Core.Extensions
         /// Encrypts <paramref name="passFile.Data"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
         /// </summary>
         /// <remarks>
-        /// <see cref="AppConfig.PassFilesKeyPhrase"/> must be not null.
+        /// <see cref="PassFile.PassPhrase"/> must be not null.
         /// </remarks>
         public static void Encrypt(this PassFile passFile)
         {
-            if (string.IsNullOrEmpty(AppConfig.Current.PassFilesKeyPhrase))
+            if (string.IsNullOrEmpty(passFile.PassPhrase))
                 throw new NullReferenceException("Using Encrypt method without key phrase!");
             
             if (passFile.Data is null)
                 throw new NullReferenceException("Using Encrypt method without decrypted data!");
 
-            var service = Locator.Current.GetService<ICryptoService>();
-            passFile.DataEncrypted = service!.Encrypt(JsonConvert.SerializeObject(passFile.Data), 
-                AppConfig.Current.PassFilesKeyPhrase);
+            var service = Locator.Current.GetService<ICryptoService>()!;
+            
+            passFile.DataEncrypted = service.Encrypt(
+                JsonConvert.SerializeObject(passFile.Data ?? new List<PassFile.Section>()), passFile.PassPhrase);
+            
+            passFile.CheckKey = service.MakeCheckKey(passFile.PassPhrase);
         }
     }
 }

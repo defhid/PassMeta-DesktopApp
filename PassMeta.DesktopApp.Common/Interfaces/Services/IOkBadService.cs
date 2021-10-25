@@ -8,6 +8,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
     {
         string? GetLocalizedMessage(string message);
 
-        Task ShowResponseFailureAsync(OkBadResponse response, IDictionary<string, string>? whatMapper = null);
+        Task ShowResponseFailureAsync(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper = null);
     }
 }

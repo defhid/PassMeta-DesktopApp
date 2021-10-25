@@ -6,6 +6,8 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         
         string Decrypt(string data, string keyPhrase);
 
+        string MakeCheckKey(string keyPhrase);
+
         string GeneratePassword(int length, bool includeDigits, bool includeSpecial);
     }
 }

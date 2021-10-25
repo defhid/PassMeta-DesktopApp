@@ -1,4 +1,3 @@
-using System.Reactive.Linq;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using ReactiveUI;
@@ -10,29 +9,63 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
         public readonly PassFile PassFile;
 
         public int Index { get; }
-        
-        public IBrush Foreground => PassFile.Color is null 
-            ? Brushes.AliceBlue 
-            : Brush.Parse( "#" + PassFile.Color);
+
+        private IBrush? _foreground;
+        public IBrush? Foreground
+        {
+            get => _foreground;
+            private set => this.RaiseAndSetIfChanged(ref _foreground, value);
+        }
+
+        private double _opacity;
+        public double Opacity
+        {
+            get => _opacity;
+            private set => this.RaiseAndSetIfChanged(ref _opacity, value);
+        }
         
         private bool _shortMode;
         public bool ShortMode
         {
             get => _shortMode;
-            set => this.RaiseAndSetIfChanged(ref _shortMode, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _shortMode, value);
+                _SetName();
+            }
         }
 
-        private readonly ObservableAsPropertyHelper<string> _name;
-        public string Name => _name.Value;
+        private string? _name;
+        public string? Name
+        {
+            get => _name;
+            set => this.RaiseAndSetIfChanged(ref _name, value);
+        }
         
         public PassFileBtn(PassFile passFile, int index)
         {
             PassFile = passFile;
             Index = index;
-            
-            _name = this.WhenAnyValue(btn => btn.ShortMode)
-                .Select(isShort => isShort ? PassFile.Name[..2] : PassFile.Name)
-                .ToProperty(this, btn => btn.Name);
+            Refresh();
+        }
+
+        private void _SetName()
+        {
+            if (PassFile.IsArchived) 
+                Name = '~' + (ShortMode ? PassFile.Name[..1] : PassFile.Name);
+            else 
+                Name = ShortMode ? PassFile.Name[..2] : PassFile.Name;
+        }
+
+        public void Refresh()
+        {
+            Foreground = PassFile.Color is null
+                ? Brushes.AliceBlue
+                : Brush.Parse("#" + PassFile.Color);
+
+            Opacity = PassFile.IsArchived ? 0.5d : 1d;
+
+            _SetName();
         }
     }
 }

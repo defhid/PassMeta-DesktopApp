@@ -31,15 +31,15 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         Task<Result> SavePassFileAsync(PassFile passFile);
         
         /// <summary>
-        /// Delete passfile from local storage and archive remote passfile.
+        /// Archive remote passfile, get actual and update local storage.
         /// </summary>
         /// <remarks>
         /// Automatic errors showing.
         /// </remarks>
-        Task<Result> ArchivePassFileAsync(PassFileLight passFile);
+        Task<Result<PassFile?>> ArchivePassFileAsync(PassFileLight passFile);
         
         /// <summary>
-        /// Unarchive remote passfile and save to local storage.
+        /// Unarchive remote passfile, get actual and update local storage.
         /// </summary>
         /// <remarks>
         /// Automatic errors showing.
@@ -52,6 +52,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <remarks>
         /// Automatic errors showing.
         /// </remarks>
-        Task<Result> DeletePassFileAsync(PassFileLight passFile);
+        Task<Result> DeletePassFileAsync(PassFileLight passFile, string accountPassword);
     }
 }

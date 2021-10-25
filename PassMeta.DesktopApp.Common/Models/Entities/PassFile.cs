@@ -16,6 +16,9 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         [JsonProperty("color")]
         public string? Color { get; set; }
         
+        [JsonProperty("check_key")]
+        public string CheckKey { get; set; } = "";
+        
         [JsonProperty("created_on")]
         public DateTime CreatedOn { get; set; }
         
@@ -40,9 +43,21 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         
         [JsonIgnore]
         public List<Section>? Data { get; set; }
+        
+        [JsonIgnore]
+        public string? PassPhrase { get; set; }
+        
+        [JsonIgnore]
+        public PassFileLight? NeedsMergeWith { get; set; }
+        
+        [JsonIgnore]
+        public bool HasProblem { get; set; }
 
         [JsonIgnore]
         public bool IsChanged => ChangedLocalOn.HasValue;
+        
+        [JsonIgnore]
+        public bool IsDecrypted => Data is not null;
 
         public class Section
         {
@@ -95,6 +110,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             Id = passFileLight.Id;
             Name = passFileLight.Name;
             Color = passFileLight.Color;
+            CheckKey = passFileLight.CheckKey;
             CreatedOn = passFileLight.CreatedOn;
             ChangedOn = passFileLight.ChangedOn;
             Version = passFileLight.Version;

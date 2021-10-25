@@ -45,7 +45,7 @@
     <data name="ERR__CONFIG_SAVE" xml:space="preserve">
         <value>Configuration file saving error!</value>
     </data>
-    <data name="ERR__PASSFILE_DECRYPTION" xml:space="preserve">
+    <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
         <value>Password is wrong (file decryption failed)</value>
     </data>
     <data name="ERR__INVALID_API_RESPONSE" xml:space="preserve">
@@ -195,9 +195,6 @@
     <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
         <value>Packages</value>
     </data>
-    <data name="STORAGE__PASSWORDS_TITLE" xml:space="preserve">
-        <value>Passwords</value>
-    </data>
     <data name="ERR__INVALID_PASSFILE_FOUND" xml:space="preserve">
         <value>Invalid passfile found on disk! Delete it?</value>
     </data>
@@ -228,7 +225,7 @@
     <data name="INFO__PASSFILES_LOCAL_MODE" xml:space="preserve">
         <value>Local mode</value>
     </data>
-    <data name="ASK__PASSPHRASE" xml:space="preserve">
+    <data name="PASSFILE__ASK_PASSPHRASE" xml:space="preserve">
         <value>Input your passphrase</value>
     </data>
     <data name="DIALOG__DEFAULT_ASK_TITLE" xml:space="preserve">
@@ -257,5 +254,23 @@
     </data>
     <data name="STORAGE__ASK_PASSFILE_NAME" xml:space="preserve">
         <value>Input passfile name</value>
+    </data>
+    <data name="STORAGE__CONFIRM_PASSFILE_ARCHIVE" xml:space="preserve">
+        <value>Do you really want to archive passfile '{0}'</value>
+    </data>
+    <data name="STORAGE__CONFIRM_PASSFILE_DELETE" xml:space="preserve">
+        <value>Do you really want to delete passfile '{0}'? Type your account password:</value>
+    </data>
+    <data name="PASSFILE__HAS_PROBLEM" xml:space="preserve">
+        <value>Has problem</value>
+    </data>
+    <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
+        <value>Wrong passphrase!</value>
+    </data>
+    <data name="PASSFILE__INCORRECT_PASSPHRASE" xml:space="preserve">
+        <value>Invalid passphrase!</value>
+    </data>
+    <data name="STORAGE__DICT__CHECK_PASSWORD" xml:space="preserve">
+        <value>account password</value>
     </data>
 </root>

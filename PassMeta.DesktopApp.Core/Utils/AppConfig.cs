@@ -71,12 +71,6 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         [JsonProperty("user")]
         public User? User { get; set; }
-        
-        /// <summary>
-        /// Passfiles encryption keyphrase.
-        /// </summary>
-        [JsonIgnore]
-        public string? PassFilesKeyPhrase { get; set; }
 
         /// <summary>
         /// A part of <see cref="ServerUrl"/>, which contains only domain.

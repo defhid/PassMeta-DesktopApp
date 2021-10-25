@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.Request
 {
-    public class PassFIlePostData
+    public class PassFilePostData
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -12,12 +12,16 @@ namespace PassMeta.DesktopApp.Common.Models.Entities.Request
         
         [JsonProperty("smth")]
         public string Smth { get; set; }
+        
+        [JsonProperty("check_key")]
+        public string CheckKey { get; set; }
 
-        public PassFIlePostData(string name, string? color, string smth)
+        public PassFilePostData(string name, string? color, string smth, string checkKey)
         {
             Name = name;
             Color = color;
             Smth = smth;
+            CheckKey = checkKey;
         }
     }
 }

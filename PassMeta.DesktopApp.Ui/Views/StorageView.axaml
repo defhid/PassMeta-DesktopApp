@@ -11,7 +11,7 @@
              d:DataContext="{d:DesignInstance storage:StorageViewModel}">
     <Grid>
         <SplitView DisplayMode="CompactInline"
-                   OpenPaneLength="200"
+                   OpenPaneLength="199"
                    CompactPaneLength="50"
                    PaneBackground="Transparent"
                    IsPaneOpen="{Binding IsPassFilesBarOpened}">
@@ -38,8 +38,9 @@
                              Items="{Binding PassFileList}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Name="TextBlock"
+                                <TextBlock FontSize="16"
                                            Text="{Binding Name}"
+                                           Opacity="{Binding Opacity}"
                                            Foreground="{Binding Foreground}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -52,13 +53,13 @@
                                 <Setter Property="ContextMenu">
                                     <ContextMenu PlacementAnchor="Bottom">
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
-                                                  Command="{Binding PassFileRenameAsync}"/>
+                                                  Click="PassFileRenameMenuItem_OnClick"/>
                                         
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ARCHIVE}"
-                                                  Command="{Binding PassFileRenameAsync}"/>
+                                                  Click="PassFileArchiveMenuItem_OnClick"/>
                                         
                                         <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
-                                                  Command="{Binding PassFileDeleteAsync}"/>
+                                                  Click="PassFileDeleteMenuItem_OnClick"/>
                                     </ContextMenu>
                                 </Setter>
                             </Style>
@@ -93,10 +94,10 @@
                             <Setter Property="ContextMenu">
                                 <ContextMenu PlacementAnchor="Bottom">
                                     <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
-                                              Command="{Binding SectionRenameAsync}"/>
+                                              Click="SectionRenameMenuItem_OnClick"/>
                                         
                                     <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
-                                              Command="{Binding SectionDeleteAsync}"/>
+                                              Click="SectionDeleteMenuItem_OnClick"/>
                                 </ContextMenu>
                             </Setter>
                         </Style>
@@ -119,16 +120,16 @@
                            IsVisible="{Binding IsNoSectionsTextVisible}"/>
                 
                 <!-- PassFileSectionItemList -->
-                <ListBox Grid.Column="1"
-                         Margin="0 6 5 5"
+                <ItemsControl Grid.Column="1"
+                         Margin="0 6 0 5"
                          Items="{Binding PassFileSectionItemList}" 
                          IsVisible="{Binding IsItemsBarVisible}">
-                    <ListBox.ItemTemplate>
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding What}"/>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
                 
                 <TextBlock Grid.Column="1"
                            FontSize="16"

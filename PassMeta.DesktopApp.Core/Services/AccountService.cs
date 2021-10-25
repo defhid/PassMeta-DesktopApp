@@ -11,7 +11,7 @@ namespace PassMeta.DesktopApp.Core.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly Dictionary<string, string> _whatMapper = new()
+        private static Dictionary<string, string> WhatMapper => new()
         {
             ["first_name"] = Common.Resources.ACCOUNT__FIRST_NAME_LABEL.ToLower(),
             ["last_name"] = Common.Resources.ACCOUNT__LAST_NAME_LABEL.ToLower(),
@@ -35,7 +35,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure;
             }
 
-            var response = await PassMetaApi.PatchAsync<UserPatchData, User>("/users/me", data);
+            var response = await PassMetaApi.Patch("/users/me", data).ExecuteAsync<User>();
             if (response is null) 
                 return Result.Failure;
             
@@ -50,7 +50,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Success;
             }
 
-            await Locator.Current.GetService<IOkBadService>()!.ShowResponseFailureAsync(response, _whatMapper);
+            await Locator.Current.GetService<IOkBadService>()!.ShowResponseFailureAsync(response, WhatMapper);
             return Result.Failure;
         }
     }

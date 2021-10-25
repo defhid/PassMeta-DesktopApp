@@ -66,7 +66,7 @@ namespace PassMeta.DesktopApp.Ui.Services
                 null)
             );
 
-        public async Task<Result> Confirm(string message, string? title = null)
+        public async Task<Result> ConfirmAsync(string message, string? title = null)
         {
             if (_win is null) return Result.Failure;
 

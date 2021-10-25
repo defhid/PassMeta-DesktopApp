@@ -16,7 +16,8 @@
         Title="{Binding Title}"
         WindowStartupLocation="CenterScreen">
     
-    <Design.DataContext>_OnAttachedToVisualTreeewModel/>
+    <Design.DataContext>
+        <main:DialogWindowViewModel></main:DialogWindowViewModel>
     </Design.DataContext>
     
     <Window.Resources>

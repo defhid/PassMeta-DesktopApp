@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Interfaces.Services;
+using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Utils;
 using Splat;
 
@@ -11,20 +13,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 {
     public partial class StorageViewModel
     {
+        private readonly IPassFileService _passFileService = Locator.Current.GetService<IPassFileService>()!;
+        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        
         private async Task _LoadPassFilesAsync()
         {
             if (_userId is null || _userId != AppConfig.Current.User?.Id)
             {
-                if (AppConfig.Current.PassFilesKeyPhrase is null)
-                {
-                    var passPhrase = await Locator.Current.GetService<IDialogService>()!
-                        .AskPasswordAsync(Resources.ASK__PASSPHRASE);
-                    if (passPhrase.Bad) return;
-
-                    AppConfig.Current.PassFilesKeyPhrase = passPhrase.Data;
-                }
-            
-                var result = await Locator.Current.GetService<IPassFileService>()!.GetPassFileListAsync();
+                var result = await _passFileService.GetPassFileListAsync();
                 if (result.Bad)
                 {
                     _passFiles = null;
@@ -43,53 +39,137 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             IsPassFilesBarOpened = true;
         }
 
+        private async Task _DecryptIfRequiredAsync(int _)
+        {
+            var passFile = SelectedPassFile;
+            if (passFile is null || passFile.IsDecrypted) return;
+
+            var passPhrase = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
+            if (passPhrase.Bad) return;
+
+            passFile.PassPhrase = passPhrase.Data;
+            var result = passFile.Decrypt();
+
+            if (result.Ok)
+                _SetPassFileSectionList();
+            else
+                await _dialogService.ShowFailureAsync(result.Message!);
+        }
+
         private async Task SaveAsync()
         {
-            await Locator.Current.GetService<IDialogService>()!.ShowInfoAsync("SAVING...");
+            if (_passFiles is null) return;
+
+            if (AppConfig.Current.ServerVersion is null)
+            {
+                // TODO: alert
+                return;
+            }
+            
+            foreach (var pf in _passFiles)
+            {
+                if (pf.NeedsMergeWith is not null || pf.HasProblem) continue;
+                if (!pf.IsChanged) continue;
+                
+                await _passFileService.SavePassFileAsync(pf);
+            }
+            
+            // TODO: alert
         }
 
         private async Task PassFileAddAsync()
         {
-            var result = await Locator.Current.GetService<IDialogService>()!
-                .AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME);
+            var name = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME);
+            if (name.Bad) return;
 
-            if (result.Bad) return;
+            Result<string?> passPhrase;
+            while (true)
+            {
+                passPhrase = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
+                if (passPhrase.Bad) return;
+
+                if (string.IsNullOrWhiteSpace(passPhrase.Data!))
+                {
+                    await _dialogService.ShowFailureAsync(Resources.PASSFILE__INCORRECT_PASSPHRASE);
+                    continue;
+                }
+                
+                break;
+            }
 
             _passFiles ??= new List<PassFile>();
             _passFiles.Add(new PassFile
             {
                 Id = 0,
-                Name = result.Data!,
+                Name = name.Data!,
                 Color = null,
                 CreatedOn = DateTime.Now,
                 ChangedOn = DateTime.Now,
                 Version = 1,
                 IsArchived = false,
                 ChangedLocalOn = DateTime.Now,
+                PassPhrase = passPhrase.Data!,
+                Data = new List<PassFile.Section>()
             });
 
             PassFileList = _MakePassFileList();
             PassFilesSelectedIndex = _passFiles.Count - 1;
         }
         
-        private async Task PassFileRenameAsync()
+        public async Task PassFileRenameAsync()
         {
-            await Locator.Current.GetService<IDialogService>()!.ShowInfoAsync("LALALA");
+            var passFileBtn = SelectedPassFileBtn!;
+            var passFile = passFileBtn.PassFile;
+            
+            var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME);
+
+            if (result.Bad) return;
+
+            passFile.Name = result.Data!;
+            passFile.ChangedLocalOn = DateTime.Now;
+
+            passFileBtn.Refresh();
         }
         
-        private async Task PassFileArchiveAsync()
+        public async Task PassFileArchiveAsync()
         {
+            var passFileBtn = SelectedPassFileBtn!;
+            var passFile = passFileBtn.PassFile;
             
+            var result = await _dialogService
+                .ConfirmAsync(string.Format(Resources.STORAGE__CONFIRM_PASSFILE_ARCHIVE, passFile.Name));
+
+            if (result.Bad) return;
+
+            var archiveResult = await _passFileService.ArchivePassFileAsync(passFile);
+            if (archiveResult.Ok)
+            {
+                passFile.IsArchived = true;
+                passFileBtn.Refresh();
+            }
         }
         
-        private async Task PassFileDeleteAsync()
+        public async Task PassFileDeleteAsync()
         {
+            var passFileBtn = SelectedPassFileBtn!;
+            var passFile = passFileBtn.PassFile;
             
+            var accountPassword = await _dialogService
+                .AskPasswordAsync(string.Format(Resources.STORAGE__CONFIRM_PASSFILE_DELETE, passFile.Name));
+
+            if (accountPassword.Bad) return;
+
+            var result = await _passFileService.DeletePassFileAsync(passFile, accountPassword.Data!);
+            if (result.Ok)
+            {
+                _passFiles!.Remove(passFile);
+                PassFileList = _MakePassFileList();
+            }
         }
         
         private async Task SectionAddAsync()
         {
-            var result = await Locator.Current.GetService<IDialogService>()!
+            var result = await _dialogService
                 .AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME);
 
             if (result.Bad) return;
@@ -106,14 +186,31 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             PassFilesSelectedSectionIndex = passFile.Data.Count - 1;
         }
 
-        private async Task SectionRenameAsync()
+        public async Task SectionRenameAsync()
         {
-            
+            var passFile = SelectedPassFile!;
+            var sectionBtn = SelectedSectionBtn!;
+            var section = sectionBtn.Section;
+
+            var result = await _dialogService
+                .AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME);
+
+            if (result.Bad) return;
+
+            section.Name = result.Data!;
+            passFile.ChangedLocalOn = DateTime.Now;
+
+            sectionBtn.Refresh();
         }
         
-        private async Task SectionDeleteAsync()
+        public void SectionDelete()
         {
+            var passFile = SelectedPassFile!;
+
+            passFile.Data!.RemoveAt(PassFilesSelectedSectionIndex);
+            passFile.ChangedLocalOn = DateTime.Now;
             
+            _SetPassFileSectionList();
         }
     }
 }

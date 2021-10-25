@@ -142,15 +142,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input your passphrase.
-        /// </summary>
-        public static string ASK__PASSPHRASE {
-            get {
-                return ResourceManager.GetString("ASK__PASSPHRASE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string AUTH__LOGIN_PLACEHOLDER {
@@ -394,15 +385,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password is wrong (file decryption failed).
-        /// </summary>
-        public static string ERR__PASSFILE_DECRYPTION {
-            get {
-                return ResourceManager.GetString("ERR__PASSFILE_DECRYPTION", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Passfile &apos;{0}&apos; local deleting error!.
         /// </summary>
         public static string ERR__PASSFILE_DELETE_LOCAL {
@@ -637,6 +619,51 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Input your passphrase.
+        /// </summary>
+        public static string PASSFILE__ASK_PASSPHRASE {
+            get {
+                return ResourceManager.GetString("PASSFILE__ASK_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password is wrong (file decryption failed).
+        /// </summary>
+        public static string PASSFILE__DECRYPTION_ERROR {
+            get {
+                return ResourceManager.GetString("PASSFILE__DECRYPTION_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Has problem.
+        /// </summary>
+        public static string PASSFILE__HAS_PROBLEM {
+            get {
+                return ResourceManager.GetString("PASSFILE__HAS_PROBLEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid passphrase!.
+        /// </summary>
+        public static string PASSFILE__INCORRECT_PASSPHRASE {
+            get {
+                return ResourceManager.GetString("PASSFILE__INCORRECT_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrong passphrase!.
+        /// </summary>
+        public static string PASSFILE__WRONG_PASSPHRASE {
+            get {
+                return ResourceManager.GetString("PASSFILE__WRONG_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to URL is incorrect!.
         /// </summary>
         public static string SETTINGS__INCORRECT_API {
@@ -700,6 +727,24 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you really want to archive passfile &apos;{0}&apos;.
+        /// </summary>
+        public static string STORAGE__CONFIRM_PASSFILE_ARCHIVE {
+            get {
+                return ResourceManager.GetString("STORAGE__CONFIRM_PASSFILE_ARCHIVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to delete passfile &apos;{0}&apos;? Type your account password:.
+        /// </summary>
+        public static string STORAGE__CONFIRM_PASSFILE_DELETE {
+            get {
+                return ResourceManager.GetString("STORAGE__CONFIRM_PASSFILE_DELETE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         public static string STORAGE__CONTEXT_ADD {
@@ -736,6 +781,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to account password.
+        /// </summary>
+        public static string STORAGE__DICT__CHECK_PASSWORD {
+            get {
+                return ResourceManager.GetString("STORAGE__DICT__CHECK_PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No items.
         /// </summary>
         public static string STORAGE__NO_ITEMS {
@@ -759,15 +813,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__PASSFILES_TITLE {
             get {
                 return ResourceManager.GetString("STORAGE__PASSFILES_TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passwords.
-        /// </summary>
-        public static string STORAGE__PASSWORDS_TITLE {
-            get {
-                return ResourceManager.GetString("STORAGE__PASSWORDS_TITLE", resourceCulture);
             }
         }
         

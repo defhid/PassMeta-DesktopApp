@@ -101,8 +101,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             }
         }
 
+        public PassFileBtn? SelectedPassFileBtn =>
+            _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex];
+        
         public PassFile? SelectedPassFile =>
             _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex].PassFile;
+        
+        public PassFileSectionBtn? SelectedSectionBtn =>
+            _passFilesSelectedSectionIndex == -1 ? null : _passFileSectionList![_passFilesSelectedSectionIndex];
         
         public PassFile.Section? SelectedSection =>
             _passFilesSelectedSectionIndex == -1 ? null : _passFileSectionList![_passFilesSelectedSectionIndex].Section;
@@ -167,6 +173,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                         passFileBtn.ShortMode = !isOpened;
                     }
                 });
+
+            this.WhenValueChanged(vm => vm.PassFilesSelectedIndex)
+                .InvokeCommand(ReactiveCommand.CreateFromTask<int>(_DecryptIfRequiredAsync));
             
             this.WhenNavigatedToObservable()
                 .InvokeCommand(ReactiveCommand.CreateFromTask(_LoadPassFilesAsync));
@@ -177,11 +186,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         private void _SetPassFileSectionList()
         {
-            var passFile = SelectedPassFile;
-            if (passFile is null) PassFileSectionList = null;
-            else if (passFile.Data is null) PassFileSectionList = Array.Empty<PassFileSectionBtn>();
-            else PassFileSectionList = 
-                passFile.Data.Select((section, i) => new PassFileSectionBtn(section, i)).ToArray();
+            PassFileSectionList = SelectedPassFile?.Data?
+                .Select((section, i) => new PassFileSectionBtn(section, i)).ToArray();
         }
 
         private void _SetPassFileSectionItemList()

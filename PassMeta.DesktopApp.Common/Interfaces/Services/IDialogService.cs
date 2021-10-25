@@ -11,7 +11,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         
         public Task ShowFailureAsync(string message, string? more = null);
 
-        public Task<Result> Confirm(string message, string? title = null);
+        public Task<Result> ConfirmAsync(string message, string? title = null);
 
         public Task<Result<string?>> AskStringAsync(string message, string? title = null);
         

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -17,49 +18,23 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
         }
-        
-        public static async Task<OkBadResponse<TData>?> GetAsync<TData>(string url, 
-            bool handleBad = false)
-        {
-            var request = await _CreateRequestAsync(url, "GET");
-            if (request is null) return null;
 
-            return await _ExecuteRequest<OkBadResponse<TData>>(request, handleBad);
-        }
-        
-        public static async Task<OkBadResponse<TResponseData>?> PostAsync<TPostData, TResponseData>(string url, 
-            TPostData data, bool handleBad = false)
+        public static Task<OkBadResponse<TResponseData>?> GetAsync<TResponseData>(string url, bool handleBad)
         {
-            var request = await _CreateRequestWithDataAsync(url, "POST", data);
-            if (request is null) return null;
-
-            return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
+            var request = new Request("GET", url, null);
+            
+            return (handleBad ? request.WithBadHandling() : request).ExecuteAsync<TResponseData>();
         }
+
+        public static Request Post(string url, object? data = null) => new("POST", url, data);
+
+        public static Request Patch(string url, object? data = null) => new("PATCH", url, data);
         
-        public static async Task<OkBadResponse<TResponseData>?> PatchAsync<TPatchData, TResponseData>(string url, 
-            TPatchData data, bool handleBad = false)
-        {
-            var request = await _CreateRequestWithDataAsync(url, "PATCH", data);
-            if (request is null) return null;
-
-            return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
-        }
+        public static Request Put(string url, object? data = null) => new("PUT", url, data);
         
-        public static async Task<OkBadResponse<TResponseData>?> PutAsync<TResponseData>(string url, bool handleBad = false)
-        {
-            var request = await _CreateRequestAsync(url, "PUT");
-            if (request is null) return null;
+        public static Request Delete(string url, object? data = null) => new("DELETE", url, data);
 
-            return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
-        }
-        
-        public static async Task<OkBadResponse<TResponseData>?> DeleteAsync<TResponseData>(string url, bool handleBad = false)
-        {
-            var request = await _CreateRequestAsync(url, "DELETE");
-            if (request is null) return null;
-
-            return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, handleBad);
-        }
+        #region Private
 
         private static async Task<HttpWebRequest?> _CreateRequestAsync(string url, string method)
         {
@@ -104,7 +79,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
         }
 
-        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, bool handleBad)
+        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, IReadOnlyDictionary<string, string>? badWhatMapper)
             where TResponse : OkBadResponse
         {
             string responseBody;
@@ -172,8 +147,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                     if (data is null)
                         throw new FormatException();
                     
-                    if (handleBad && !data.Success)
-                        await Locator.Current.GetService<IOkBadService>()!.ShowResponseFailureAsync(data);
+                    if (badWhatMapper is not null && !data.Success)
+                        await Locator.Current.GetService<IOkBadService>()!.ShowResponseFailureAsync(data, badWhatMapper);
                     
                     return data;
                 }
@@ -187,6 +162,57 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
 
             return null;
+        }
+
+        #endregion
+        
+        public struct Request
+        {
+            private readonly object? _data;
+
+            private readonly string _url;
+
+            private readonly string _method;
+
+            private IReadOnlyDictionary<string, string>? _handleBad;
+
+            private static readonly IReadOnlyDictionary<string, string> DefaultWhatMapper = new Dictionary<string, string>();
+
+            public Request(string method, string url, object? data)
+            {
+                _data = data;
+                _url = url;
+                _method = method;
+                _handleBad = null;
+            }
+            
+            public Request WithBadHandling(IReadOnlyDictionary<string, string>? whatMapper = null)
+            {
+                _handleBad = whatMapper ?? DefaultWhatMapper;
+                return this;
+            }
+            
+            public async Task<OkBadResponse<object>?> ExecuteAsync()
+            {
+                var request = _data is null
+                    ? await _CreateRequestAsync(_url, _method)
+                    : await _CreateRequestWithDataAsync(_url, _method, _data);
+                
+                if (request is null) return null;
+
+                return await _ExecuteRequest<OkBadResponse<object>>(request, _handleBad);
+            }
+            
+            public async Task<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>()
+            {
+                var request = _data is null
+                    ? await _CreateRequestAsync(_url, _method)
+                    : await _CreateRequestWithDataAsync(_url, _method, _data);
+                
+                if (request is null) return null;
+
+                return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, _handleBad);
+            }
         }
     }
 }

@@ -38,7 +38,7 @@
     <data name="ERR__CONFIG_SAVE" xml:space="preserve">
         <value>Ошибка сохранения файла конфигурации!</value>
     </data>
-    <data name="ERR__PASSFILE_DECRYPTION" xml:space="preserve">
+    <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
         <value>Неверный пароль (не удаётся расшифровать файл)</value>
     </data>
     <data name="ERR__INVALID_API_RESPONSE" xml:space="preserve">
@@ -188,9 +188,6 @@
     <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
         <value>Пакеты</value>
     </data>
-    <data name="STORAGE__PASSWORDS_TITLE" xml:space="preserve">
-        <value>Пароли</value>
-    </data>
     <data name="ERR__INVALID_PASSFILE_FOUND" xml:space="preserve">
         <value>На диске найден некорректный файл паролей! Удалить его?</value>
     </data>
@@ -221,8 +218,8 @@
     <data name="INFO__PASSFILES_LOCAL_MODE" xml:space="preserve">
         <value>Remote mode</value>
     </data>
-    <data name="ASK__PASSPHRASE" xml:space="preserve">
-        <value>Введите мастер-пароль</value>
+    <data name="PASSFILE__ASK_PASSPHRASE" xml:space="preserve">
+        <value>Введите кодовую фразу</value>
     </data>
     <data name="DIALOG__DEFAULT_ASK_TITLE" xml:space="preserve">
         <value>Форма ввода</value>
@@ -246,9 +243,27 @@
         <value>Введите название группы паролей</value>
     </data>
     <data name="STORAGE__ASK_PASSFILE_NAME" xml:space="preserve">
-        <value>Введите название файла паролей</value>
+        <value>Введите название пакета паролей</value>
     </data>
     <data name="STORAGE__NO_SECTIONS" xml:space="preserve">
         <value>Пусто</value>
+    </data>
+    <data name="STORAGE__CONFIRM_PASSFILE_ARCHIVE" xml:space="preserve">
+        <value>Вы действительно хотите архивировать пакет '{0}'</value>
+    </data>
+    <data name="STORAGE__CONFIRM_PASSFILE_DELETE" xml:space="preserve">
+        <value>Вы действительно хотите удалить пакет '{0}'? Подтвердите свой пароль от аккаунта:</value>
+    </data>
+    <data name="PASSFILE__HAS_PROBLEM" xml:space="preserve">
+        <value>Есть ошибки</value>
+    </data>
+    <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
+        <value>Неверная кодовая фраза</value>
+    </data>
+    <data name="PASSFILE__INCORRECT_PASSPHRASE" xml:space="preserve">
+        <value>Некорректная кодовая фраза</value>
+    </data>
+    <data name="STORAGE__DICT__CHECK_PASSWORD" xml:space="preserve">
+        <value>пароль от аккаунта</value>
     </data>
 </root>
