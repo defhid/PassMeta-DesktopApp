@@ -80,27 +80,36 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
 
             public class Item
             {
-                private string? _what;
+                private string[]? _what;
                 private string? _value;
+                private string? _comment;
 
                 [JsonProperty("what")]
-                public string What
+                public string[] What
                 {
-                    get => _what ?? "?"; 
+                    get => _what ?? Array.Empty<string>(); 
                     set => _what = value;
                 }
                 
-                [JsonProperty("value")]
-                public string Value
+                [JsonProperty("pass")]
+                public string Password
                 {
-                    get => _value ?? "?"; 
+                    get => _value ?? string.Empty; 
                     set => _value = value;
+                }
+
+                [JsonProperty("com")]
+                public string Comment
+                {
+                    get => _comment ?? string.Empty; 
+                    set => _comment = value;
                 }
 
                 public Item Copy() => new()
                 {
                     What = What,
-                    Value = Value
+                    Password = Password,
+                    Comment = Comment
                 };
             }
         }

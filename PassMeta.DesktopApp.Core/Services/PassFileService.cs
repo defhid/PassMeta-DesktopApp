@@ -404,7 +404,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     foreach (var item in section.Items)  // TODO null handling
                     {
                         var currentItem = mergeSection.Items.FirstOrDefault(i => i.What == item.What);
-                        if (currentItem is null || currentItem.Value != item.Value)
+                        if (currentItem is null || currentItem.Password != item.Password)
                         {
                             mergeSection.Items.Add(item);
                             changed.Add(mergeSection);

@@ -16,6 +16,8 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Core.Utils
 {
+    using System.Reflection;
+
     /// <summary>
     /// Application configuration.
     /// </summary>
@@ -118,7 +120,14 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Path to passfiles storage.
         /// </summary>
-        public const string PassFilesPath = "/passfiles";
+        public static readonly string PassFilesPath = 
+            Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(AppConfig))!.Location)!, ".passfiles");
+        
+        /// <summary>
+        /// Path to app logs.
+        /// </summary>
+        public static readonly string LogFilesPath = 
+            Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(AppConfig))!.Location)!, ".logs");
         
         /// <summary>
         /// Path to app configuration file.

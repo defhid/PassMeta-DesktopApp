@@ -6,19 +6,22 @@
         xmlns:main="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main"
         mc:Ignorable="d"
         d:DesignWidth="800"
-        d:DesignHeight="450"
+        d:DesignHeight="500"
         x:Class="PassMeta.DesktopApp.Ui.Views.Main.MainWindow"
         Icon="/Assets/PassMeta.ico"
         Title="PassMeta"
         MinWidth="800"
         MinHeight="500"
+        Width="900"
+        Height="540"
         WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
         <main:MainWindowViewModel/>
     </Design.DataContext>
     
-    <SplitView IsPaneOpen="{Binding IsMainPaneOpened}"
+    <SplitView x:Name="MainSplitView"
+               IsPaneOpen="{Binding IsMainPaneOpened}"
                DisplayMode="CompactInline"
                OpenPaneLength="188"
                CompactPaneLength="48">
@@ -105,7 +108,8 @@
             </reactiveUi:RoutedViewHost>
             
             <Grid Grid.Column="1"
-                  RowDefinitions="*,49">
+                  RowDefinitions="*,49"
+                  Background="{Binding PaneBackground, ElementName=MainSplitView}">
                 <ItemsControl Grid.Row="0"
                               Items="{Binding RightBarButtons}">
                     <ItemsControl.Styles>

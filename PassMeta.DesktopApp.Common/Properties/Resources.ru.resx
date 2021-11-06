@@ -266,4 +266,16 @@
     <data name="STORAGE__DICT__CHECK_PASSWORD" xml:space="preserve">
         <value>пароль от аккаунта</value>
     </data>
+    <data name="STORAGE__ITEM_WHAT_LABEL" xml:space="preserve">
+        <value>Логин</value>
+    </data>
+    <data name="STORAGE__ITEM_PASSWORD_LABEL" xml:space="preserve">
+        <value>Пароль</value>
+    </data>
+    <data name="STORAGE__LOGIN_COPY" xml:space="preserve">
+        <value>Скопировать 1-й</value>
+    </data>
+    <data name="STORAGE__PASSWORD_COPY" xml:space="preserve">
+        <value>Скопировать</value>
+    </data>
 </root>

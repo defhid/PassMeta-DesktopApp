@@ -14,7 +14,7 @@
         x:Class="PassMeta.DesktopApp.Ui.Views.Main.DialogWindow"
         Icon="/Assets/PassMeta.ico"
         Title="{Binding Title}"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
         <main:DialogWindowViewModel></main:DialogWindowViewModel>

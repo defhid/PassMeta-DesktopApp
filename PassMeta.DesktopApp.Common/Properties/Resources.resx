@@ -273,4 +273,16 @@
     <data name="STORAGE__DICT__CHECK_PASSWORD" xml:space="preserve">
         <value>account password</value>
     </data>
+    <data name="STORAGE__ITEM_WHAT_LABEL" xml:space="preserve">
+        <value>Login</value>
+    </data>
+    <data name="STORAGE__ITEM_PASSWORD_LABEL" xml:space="preserve">
+        <value>Password</value>
+    </data>
+    <data name="STORAGE__LOGIN_COPY" xml:space="preserve">
+        <value>Copy 1st</value>
+    </data>
+    <data name="STORAGE__PASSWORD_COPY" xml:space="preserve">
+        <value>Copy</value>
+    </data>
 </root>

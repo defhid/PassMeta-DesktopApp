@@ -790,6 +790,33 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string STORAGE__ITEM_PASSWORD_LABEL {
+            get {
+                return ResourceManager.GetString("STORAGE__ITEM_PASSWORD_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string STORAGE__ITEM_WHAT_LABEL {
+            get {
+                return ResourceManager.GetString("STORAGE__ITEM_WHAT_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy 1st.
+        /// </summary>
+        public static string STORAGE__LOGIN_COPY {
+            get {
+                return ResourceManager.GetString("STORAGE__LOGIN_COPY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No items.
         /// </summary>
         public static string STORAGE__NO_ITEMS {
@@ -813,6 +840,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__PASSFILES_TITLE {
             get {
                 return ResourceManager.GetString("STORAGE__PASSFILES_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        public static string STORAGE__PASSWORD_COPY {
+            get {
+                return ResourceManager.GetString("STORAGE__PASSWORD_COPY", resourceCulture);
             }
         }
         

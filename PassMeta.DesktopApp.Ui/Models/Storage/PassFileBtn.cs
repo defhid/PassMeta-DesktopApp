@@ -1,14 +1,12 @@
-using Avalonia.Media;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using ReactiveUI;
-
 namespace PassMeta.DesktopApp.Ui.Models.Storage
 {
+    using DesktopApp.Common.Models.Entities;
+    using Avalonia.Media;
+    using ReactiveUI;
+    
     public class PassFileBtn : ReactiveObject
     {
         public readonly PassFile PassFile;
-
-        public int Index { get; }
 
         private IBrush? _foreground;
         public IBrush? Foreground
@@ -42,10 +40,9 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
             set => this.RaiseAndSetIfChanged(ref _name, value);
         }
         
-        public PassFileBtn(PassFile passFile, int index)
+        public PassFileBtn(PassFile passFile)
         {
             PassFile = passFile;
-            Index = index;
             Refresh();
         }
 

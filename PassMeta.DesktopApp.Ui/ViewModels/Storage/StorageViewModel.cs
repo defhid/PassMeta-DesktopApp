@@ -1,33 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Avalonia.Controls;
-using Avalonia.Media;
-using DynamicData.Binding;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Constants;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Ui.Models.Storage;
-using PassMeta.DesktopApp.Ui.ViewModels.Base;
-using ReactiveUI;
-
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 {
+    using DesktopApp.Common;
+    using DesktopApp.Common.Constants;
+    using DesktopApp.Common.Models.Entities;
+    using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.Models.Storage;
+    using DesktopApp.Ui.ViewModels.Base;
+    
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reactive.Linq;
+    using System.Threading.Tasks;
+    using Avalonia.Controls;
+    using Avalonia.Media;
+    using DynamicData.Binding;
+    using ReactiveUI;
+    
     public partial class StorageViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/storage";
 
-        public override ContentControl[] RightBarButtons => new ContentControl[]
-        {
-            new Button { Content = "\uE74E", Command = ReactiveCommand.CreateFromTask(SaveAsync) }
-        };
+        public override ContentControl[] RightBarButtons => new ContentControl[] { _btnSave, _btnEditItem };
 
         private static List<PassFile>? _passFiles;
         private static int? _userId;
         private static string? _mode;
+
+        private readonly Button _btnSave;
+        private readonly Button _btnEditItem;
 
         #region Texts
         
@@ -137,6 +138,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
+            _btnSave = new Button { Content = "\uE74E", Command = ReactiveCommand.CreateFromTask(SaveAsync) };
+            _btnEditItem = new Button
+            {
+                Content = "\uE70F", 
+                Command = ReactiveCommand.Create(ItemsEdit, 
+                    this.WhenValueChanged(vm => vm.PassFileSectionItemList).
+                        Select(items => items?.Length > 0))
+            };
+
             _passFileList = _MakePassFileList();
 
             _isSectionsBarVisible = this.WhenValueChanged(vm => vm.PassFileSectionList)
@@ -174,6 +184,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                     }
                 });
 
+            this.WhenValueChanged(vm => vm.PassFilesSelectedSectionIndex)
+                .Subscribe(index => IsPassFilesBarOpened = index == -1);
+
             this.WhenValueChanged(vm => vm.PassFilesSelectedIndex)
                 .InvokeCommand(ReactiveCommand.CreateFromTask<int>(_DecryptIfRequiredAsync));
             
@@ -182,21 +195,23 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         }
 
         private static PassFileBtn[] _MakePassFileList()
-            => (_passFiles ?? new List<PassFile>()).Select((passFile, i) => new PassFileBtn(passFile, i)).ToArray();
+            => (_passFiles ?? new List<PassFile>()).Select(passFile => new PassFileBtn(passFile)).ToArray();
 
         private void _SetPassFileSectionList()
         {
             PassFileSectionList = SelectedPassFile?.Data?
-                .Select((section, i) => new PassFileSectionBtn(section, i)).ToArray();
+                .Select(section => new PassFileSectionBtn(section)).ToArray();
         }
 
-        private void _SetPassFileSectionItemList()
+        private void _SetPassFileSectionItemList(bool readOnly = true)
         {
             var section = SelectedSection;
             if (section is null) PassFileSectionItemList = null;
             else if (section.Items is null) PassFileSectionItemList = Array.Empty<PassFileSectionItemBtn>();
             else PassFileSectionItemList = 
-                section.Items.Select((item, i) => new PassFileSectionItemBtn(item, i)).ToArray();
+                section.Items.Select(item => new PassFileSectionItemBtn(item, readOnly, ItemDelete, ItemMove)).ToArray();
+            
+            _btnEditItem.Content = readOnly ? "\uE70F" : "\uE8FB";
         }
 
         public override void Navigate()

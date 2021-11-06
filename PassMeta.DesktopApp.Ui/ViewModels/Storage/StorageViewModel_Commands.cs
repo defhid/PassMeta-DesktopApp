@@ -1,16 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Core.Extensions;
-using PassMeta.DesktopApp.Core.Utils;
-using Splat;
-
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 {
+    using DesktopApp.Common;
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models;
+    using DesktopApp.Common.Models.Entities;
+    using DesktopApp.Core.Extensions;
+    using DesktopApp.Core.Utils;
+    
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using DynamicData;
+    using Models.Storage;
+    using Splat;
+    
     public partial class StorageViewModel
     {
         private readonly IPassFileService _passFileService = Locator.Current.GetService<IPassFileService>()!;
@@ -59,12 +63,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         private async Task SaveAsync()
         {
             if (_passFiles is null) return;
-
-            if (AppConfig.Current.ServerVersion is null)
-            {
-                // TODO: alert
-                return;
-            }
             
             foreach (var pf in _passFiles)
             {
@@ -73,9 +71,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                 
                 await _passFileService.SavePassFileAsync(pf);
             }
-            
-            // TODO: alert
+
+            // TODO: alert?
         }
+        
+        #region PassFile
 
         private async Task PassFileAddAsync()
         {
@@ -121,7 +121,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var passFileBtn = SelectedPassFileBtn!;
             var passFile = passFileBtn.PassFile;
             
-            var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME);
+            var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME, defaultValue: passFile.Name);
 
             if (result.Bad) return;
 
@@ -167,6 +167,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             }
         }
         
+        #endregion
+        
+        #region Section
+        
         private async Task SectionAddAsync()
         {
             var result = await _dialogService
@@ -192,10 +196,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var sectionBtn = SelectedSectionBtn!;
             var section = sectionBtn.Section;
 
-            var result = await _dialogService
-                .AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME);
-
-            if (result.Bad) return;
+            var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME, defaultValue: section.Name);
+            if (result.Bad || result.Data == section.Name) return;
 
             section.Name = result.Data!;
             passFile.ChangedLocalOn = DateTime.Now;
@@ -212,5 +214,57 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             
             _SetPassFileSectionList();
         }
+        
+        #endregion
+        
+        #region Item
+        
+        private void ItemAdd()
+        {
+            var sectionBtnList = PassFileSectionItemList!;
+            if (sectionBtnList.Any(btn => btn.IsReadOnly))
+            {
+                _SetPassFileSectionItemList(false);
+            }
+
+            var itemBtn = new PassFileSectionItemBtn(new PassFile.Section.Item(), false, ItemDelete, ItemMove);
+
+            PassFileSectionItemList = sectionBtnList.Concat(new[] { itemBtn }).ToArray();
+        }
+
+        private void ItemDelete(PassFileSectionItemBtn itemBtn)
+        {
+            PassFileSectionItemList = PassFileSectionItemList!.Where(btn => !ReferenceEquals(btn, itemBtn)).ToArray();
+        }
+        
+        private void ItemMove(PassFileSectionItemBtn itemBtn, int direction)
+        {
+            var sectionBtnList = PassFileSectionItemList!;
+            var index = sectionBtnList.IndexOf(itemBtn);
+            
+            if (direction > 0 && index == sectionBtnList.Length - 1 || direction < 0 && index == 0)
+            {
+                return;
+            }
+
+            sectionBtnList[index] = sectionBtnList[index + direction];
+            sectionBtnList[index + direction] = itemBtn;
+
+            PassFileSectionItemList = sectionBtnList.ToArray();
+        }
+
+        private void ItemsEdit()
+        {
+            var currentReadOnly = PassFileSectionItemList!.Any(btn => btn.IsReadOnly);
+            if (!currentReadOnly)
+            {
+                SelectedSection!.Items = PassFileSectionItemList!.Select(btn => btn.ToItem()).ToList();
+                SelectedPassFile!.ChangedLocalOn = DateTime.Now;
+            }
+            
+            _SetPassFileSectionItemList(!currentReadOnly);
+        }
+
+        #endregion
     }
 }

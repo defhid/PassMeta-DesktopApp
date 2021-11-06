@@ -1,13 +1,11 @@
-using PassMeta.DesktopApp.Common.Models.Entities;
-using ReactiveUI;
-
 namespace PassMeta.DesktopApp.Ui.Models.Storage
 {
+    using DesktopApp.Common.Models.Entities;
+    using ReactiveUI;
+    
     public class PassFileSectionBtn : ReactiveObject
     {
         public readonly PassFile.Section Section;
-        
-        public int Index { get; }
 
         private string? _name;
         public string? Name
@@ -16,10 +14,9 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
             set => this.RaiseAndSetIfChanged(ref _name, value);
         }
 
-        public PassFileSectionBtn(PassFile.Section section, int index)
+        public PassFileSectionBtn(PassFile.Section section)
         {
             Section = section;
-            Index = index;
             Refresh();
         }
 

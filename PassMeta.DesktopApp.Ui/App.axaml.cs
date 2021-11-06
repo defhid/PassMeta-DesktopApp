@@ -11,6 +11,9 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui
 {
+    using Avalonia.Controls.Notifications;
+    using Avalonia.Layout;
+
     public class App : Application
     {
         public override void Initialize()
@@ -24,10 +27,7 @@ namespace PassMeta.DesktopApp.Ui
             
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = new MainWindowViewModel(),
-                };
+                desktop.MainWindow = MakeWindow();
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -35,10 +35,7 @@ namespace PassMeta.DesktopApp.Ui
 
         public static void Restart()
         {
-            var window = new MainWindow
-            {
-                DataContext = new MainWindowViewModel(),
-            };
+            var window = MakeWindow();
             window.Show();
             
             var desktop = (IClassicDesktopStyleApplicationLifetime)Current.ApplicationLifetime;
@@ -46,9 +43,13 @@ namespace PassMeta.DesktopApp.Ui
             desktop.MainWindow = window;
         }
 
-        private void BeforeLaunch()
+        private static void BeforeLaunch()
         {
-            Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
+            var logger = new LogService();
+            
+            Locator.CurrentMutable.RegisterConstant<ILogService>(logger);
+            
+            Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService(logger));
             
             AppConfig.LoadAndSetCurrentAsync().GetAwaiter().GetResult();
 
@@ -61,6 +62,20 @@ namespace PassMeta.DesktopApp.Ui
             Locator.CurrentMutable.RegisterConstant<IPassFileService>(new PassFileService());
             
             Locator.CurrentMutable.RegisterConstant<ICryptoService>(new CryptoService());
+        }
+
+        private static MainWindow MakeWindow()
+        {
+            var win = new MainWindow { DataContext = new MainWindowViewModel() };
+            
+            Locator.CurrentMutable.UnregisterCurrent<INotificationManager>();
+            Locator.CurrentMutable.RegisterConstant<INotificationManager>(new WindowNotificationManager(win)
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom
+            });
+
+            return win;
         }
     }
 }
