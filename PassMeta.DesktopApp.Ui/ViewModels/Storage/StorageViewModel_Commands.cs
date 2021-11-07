@@ -66,8 +66,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             
             foreach (var pf in _passFiles)
             {
-                if (pf.NeedsMergeWith is not null || pf.HasProblem) continue;
-                if (!pf.IsChanged) continue;
+                if (pf.Problem is not null) continue;
+                if (!pf.IsLocalChanged) continue;
                 
                 await _passFileService.SavePassFileAsync(pf);
             }

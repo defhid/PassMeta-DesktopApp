@@ -36,6 +36,10 @@
         <DependentUpon>SignInView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Storage\StorageView.axaml.cs">
+        <DependentUpon>StorageView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\PassMeta.DesktopApp.Core\PassMeta.DesktopApp.Core.csproj" />

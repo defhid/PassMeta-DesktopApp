@@ -1,10 +1,10 @@
-namespace PassMeta.DesktopApp.Ui.Views
+namespace PassMeta.DesktopApp.Ui.Views.Storage
 {
-    using DesktopApp.Ui.ViewModels.Storage;
-    using DesktopApp.Ui.Views.Base;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
-    
+    using Base;
+    using ViewModels.Storage;
+
     public class StorageView : ViewPage<StorageViewModel>
     {
         public StorageView()

@@ -637,15 +637,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Has problem.
-        /// </summary>
-        public static string PASSFILE__HAS_PROBLEM {
-            get {
-                return ResourceManager.GetString("PASSFILE__HAS_PROBLEM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Invalid passphrase!.
         /// </summary>
         public static string PASSFILE__INCORRECT_PASSPHRASE {
@@ -660,6 +651,42 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE__WRONG_PASSPHRASE {
             get {
                 return ResourceManager.GetString("PASSFILE__WRONG_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading error.
+        /// </summary>
+        public static string PASSFILE_PROBLEM__DOWNLOAD_ERR {
+            get {
+                return ResourceManager.GetString("PASSFILE_PROBLEM__DOWNLOAD_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Needs merge.
+        /// </summary>
+        public static string PASSFILE_PROBLEM__NEEDS_MERGE {
+            get {
+                return ResourceManager.GetString("PASSFILE_PROBLEM__NEEDS_MERGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string PASSFILE_PROBLEM__OTHER {
+            get {
+                return ResourceManager.GetString("PASSFILE_PROBLEM__OTHER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploading error.
+        /// </summary>
+        public static string PASSFILE_PROBLEM__UPLOAD_ERR {
+            get {
+                return ResourceManager.GetString("PASSFILE_PROBLEM__UPLOAD_ERR", resourceCulture);
             }
         }
         

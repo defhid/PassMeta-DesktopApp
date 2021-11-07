@@ -261,9 +261,6 @@
     <data name="STORAGE__CONFIRM_PASSFILE_DELETE" xml:space="preserve">
         <value>Do you really want to delete passfile '{0}'? Type your account password:</value>
     </data>
-    <data name="PASSFILE__HAS_PROBLEM" xml:space="preserve">
-        <value>Has problem</value>
-    </data>
     <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Wrong passphrase!</value>
     </data>
@@ -284,5 +281,17 @@
     </data>
     <data name="STORAGE__PASSWORD_COPY" xml:space="preserve">
         <value>Copy</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__NEEDS_MERGE" xml:space="preserve">
+        <value>Needs merge</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__DOWNLOAD_ERR" xml:space="preserve">
+        <value>Downloading error</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__UPLOAD_ERR" xml:space="preserve">
+        <value>Uploading error</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__OTHER" xml:space="preserve">
+        <value>Error</value>
     </data>
 </root>

@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-
 namespace PassMeta.DesktopApp.Common.Models.Entities
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Newtonsoft.Json;
+    
     public class PassFileLight
     {
         [JsonProperty("id")]
@@ -48,13 +48,10 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         public string? PassPhrase { get; set; }
         
         [JsonIgnore]
-        public PassFileLight? NeedsMergeWith { get; set; }
-        
-        [JsonIgnore]
-        public bool HasProblem { get; set; }
+        public PassFileProblem? Problem { get; set; }
 
         [JsonIgnore]
-        public bool IsChanged => ChangedLocalOn.HasValue;
+        public bool IsLocalChanged => ChangedLocalOn.HasValue;
         
         [JsonIgnore]
         public bool IsDecrypted => Data is not null;

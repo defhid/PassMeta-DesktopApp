@@ -254,9 +254,6 @@
     <data name="STORAGE__CONFIRM_PASSFILE_DELETE" xml:space="preserve">
         <value>Вы действительно хотите удалить пакет '{0}'? Подтвердите свой пароль от аккаунта:</value>
     </data>
-    <data name="PASSFILE__HAS_PROBLEM" xml:space="preserve">
-        <value>Есть ошибки</value>
-    </data>
     <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Неверная кодовая фраза</value>
     </data>
@@ -277,5 +274,17 @@
     </data>
     <data name="STORAGE__PASSWORD_COPY" xml:space="preserve">
         <value>Скопировать</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__NEEDS_MERGE" xml:space="preserve">
+        <value>Требуется слияние</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__DOWNLOAD_ERR" xml:space="preserve">
+        <value>Ошибка скачивания</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__UPLOAD_ERR" xml:space="preserve">
+        <value>Ошибка выгрузки</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__OTHER" xml:space="preserve">
+        <value>Ошибка</value>
     </data>
 </root>

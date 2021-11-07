@@ -52,7 +52,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 
                 if (local is not null && local.Version == remote.Version)
                 {
-                    if (local.IsChanged)  // local changed, remote not changed
+                    if (local.IsLocalChanged)  // local changed, remote not changed
                     {
                         await _SavePassFileRemoteAsync(local);
                         resultList.Add(local);
@@ -66,7 +66,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 }
 
                 // local not changed, remote changed or new
-                if (local is null || (local.Version < remote.Version && !local.IsChanged))
+                if (local is null || (local.Version < remote.Version && !local.IsLocalChanged))
                 {
                     var response = await PassMetaApi.GetAsync<PassFile>($"/passfiles/{remote.Id}", true);
                     PassFile full;
@@ -81,7 +81,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     {
                         full = new PassFile
                         {
-                            HasProblem = true
+                            Problem = PassFileProblem.DownloadingError.WithInfo(response?.Message)
                         };
                         full.Refresh(remote);
                     }
@@ -95,7 +95,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 }
 
                 // local changed, remote changed
-                local.NeedsMergeWith = remote;
+                local.Problem = PassFileProblem.NeedsMerge.WithMore(remote);
                 resultList.Add(local);
             }
 
