@@ -49,7 +49,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             if (passFile is null || passFile.IsDecrypted) return;
 
             var passPhrase = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
-            if (passPhrase.Bad) return;
+            if (passPhrase.Bad || passPhrase.Data == string.Empty) return;
 
             passFile.PassPhrase = passPhrase.Data;
             var result = passFile.Decrypt();
@@ -80,7 +80,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         private async Task PassFileAddAsync()
         {
             var name = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME);
-            if (name.Bad) return;
+            if (name.Bad || name.Data == string.Empty) return;
 
             Result<string?> passPhrase;
             while (true)
@@ -88,7 +88,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                 passPhrase = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
                 if (passPhrase.Bad) return;
 
-                if (string.IsNullOrWhiteSpace(passPhrase.Data!))
+                if (string.IsNullOrEmpty(passPhrase.Data!))
                 {
                     await _dialogService.ShowFailureAsync(Resources.PASSFILE__INCORRECT_PASSPHRASE);
                     continue;
@@ -122,8 +122,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var passFile = passFileBtn.PassFile;
             
             var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME, defaultValue: passFile.Name);
-
-            if (result.Bad) return;
+            if (result.Bad || result.Data == string.Empty) return;
 
             passFile.Name = result.Data!;
             passFile.ChangedLocalOn = DateTime.Now;
@@ -157,7 +156,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var accountPassword = await _dialogService
                 .AskPasswordAsync(string.Format(Resources.STORAGE__CONFIRM_PASSFILE_DELETE, passFile.Name));
 
-            if (accountPassword.Bad) return;
+            if (accountPassword.Bad || accountPassword.Data == string.Empty) return;
 
             var result = await _passFileService.DeletePassFileAsync(passFile, accountPassword.Data!);
             if (result.Ok)
@@ -173,10 +172,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         
         private async Task SectionAddAsync()
         {
-            var result = await _dialogService
-                .AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME);
-
-            if (result.Bad) return;
+            var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME);
+            if (result.Bad || result.Data == string.Empty) return;
 
             var passFile = SelectedPassFile!;
             passFile.Data ??= new List<PassFile.Section>();
@@ -197,7 +194,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var section = sectionBtn.Section;
 
             var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME, defaultValue: section.Name);
-            if (result.Bad || result.Data == section.Name) return;
+            if (result.Bad || result.Data == string.Empty || result.Data == section.Name)
+            {
+                return;
+            }
 
             section.Name = result.Data!;
             passFile.ChangedLocalOn = DateTime.Now;

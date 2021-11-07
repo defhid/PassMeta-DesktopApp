@@ -33,9 +33,9 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
         private readonly ObservableAsPropertyHelper<bool> _isCommentInputVisible;
         public bool IsCommentInputVisible => _isCommentInputVisible.Value;
 
-        public readonly Action<PassFileSectionItemBtn> _onDelete;
+        private readonly Action<PassFileSectionItemBtn> _onDelete;
 
-        public readonly  Action<PassFileSectionItemBtn, int> _onMove;
+        private readonly  Action<PassFileSectionItemBtn, int> _onMove;
 
         public PassFileSectionItemBtn(PassFile.Section.Item item,
             bool readOnly,

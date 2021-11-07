@@ -16,6 +16,7 @@ namespace PassMeta.DesktopApp.Ui.Services
     using Avalonia.Controls;
     using Avalonia.Controls.Notifications;
 
+    /// <inheritdoc />
     public class DialogService : IDialogService
     {
         private static Window? _win;
@@ -46,6 +47,7 @@ namespace PassMeta.DesktopApp.Ui.Services
             }
         }
 
+        /// <inheritdoc />
         public Task ShowInfoAsync(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.PopUp)
         {
@@ -72,6 +74,7 @@ namespace PassMeta.DesktopApp.Ui.Services
             });
         }
 
+        /// <inheritdoc />
         public Task ShowErrorAsync(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.PopUp)
         {
@@ -99,6 +102,7 @@ namespace PassMeta.DesktopApp.Ui.Services
             });
         }
 
+        /// <inheritdoc />
         public Task ShowFailureAsync(string message, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.Window)
         {
@@ -128,6 +132,7 @@ namespace PassMeta.DesktopApp.Ui.Services
             });
         }
 
+        /// <inheritdoc />
         public async Task<Result> ConfirmAsync(string message, string? title = null)
         {
             if (_win is null) return Result.Failure;
@@ -143,6 +148,7 @@ namespace PassMeta.DesktopApp.Ui.Services
             return new Result(dialog.ResultButton == DialogButton.Yes);
         }
 
+        /// <inheritdoc />
         public async Task<Result<string?>> AskStringAsync(string message, string? title = null, string? defaultValue = null)
         {
             if (_win is null) return new Result<string?>(false);
@@ -157,11 +163,12 @@ namespace PassMeta.DesktopApp.Ui.Services
 
             var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextBox.Value?.Trim();
 
-            return dialog.ResultButton == DialogButton.Ok && !string.IsNullOrEmpty(value)
-                ? new Result<string?>(value)
+            return dialog.ResultButton == DialogButton.Ok
+                ? new Result<string?>(value ?? string.Empty)
                 : new Result<string?>(false);
         }
         
+        /// <inheritdoc />
         public async Task<Result<string?>> AskPasswordAsync(string message, string? title = null)
         {
             if (_win is null) return new Result<string?>(false);
@@ -176,8 +183,8 @@ namespace PassMeta.DesktopApp.Ui.Services
 
             var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextBox.Value;
 
-            return dialog.ResultButton == DialogButton.Ok && !string.IsNullOrEmpty(value)
-                ? new Result<string?>(value)
+            return dialog.ResultButton == DialogButton.Ok
+                ? new Result<string?>(value ?? string.Empty)
                 : new Result<string?>(false);
         }
 
