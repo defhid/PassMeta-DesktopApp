@@ -98,10 +98,9 @@ namespace PassMeta.DesktopApp.Core.Services
             }
 
             _CheckFileStream();
-            _fileStream!.Write(Encoding.UTF8.GetBytes(Environment.NewLine 
-                                                      + log.Section + '|' 
+            _fileStream!.Write(Encoding.UTF8.GetBytes(log.Section + '|' 
                                                       + log.CreatedOn.Value.ToString("O") + '|' 
-                                                      + log.Text.Replace("\n", null)));
+                                                      + log.Text.Replace("\n", " ") + '\n'));
             _fileStream.Flush();
         }
         

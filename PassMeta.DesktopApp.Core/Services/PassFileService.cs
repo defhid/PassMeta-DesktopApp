@@ -1,21 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Request;
-using PassMeta.DesktopApp.Core.Extensions;
-using PassMeta.DesktopApp.Core.Utils;
-using Splat;
-
 namespace PassMeta.DesktopApp.Core.Services
 {
+    using DesktopApp.Common;
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models;
+    using DesktopApp.Common.Models.Entities;
+    using DesktopApp.Common.Models.Entities.Request;
+    using DesktopApp.Core.Extensions;
+    using DesktopApp.Core.Utils;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using Splat;
+    
     public class PassFileService : IPassFileService
     {
         private static Dictionary<string, string> WhatMapper => new()

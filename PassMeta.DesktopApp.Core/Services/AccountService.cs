@@ -1,14 +1,14 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Request;
-using PassMeta.DesktopApp.Core.Utils;
-using Splat;
-
 namespace PassMeta.DesktopApp.Core.Services
 {
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models;
+    using DesktopApp.Common.Models.Entities;
+    using DesktopApp.Common.Models.Entities.Request;
+    using DesktopApp.Core.Utils;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Splat;
+    
     public class AccountService : IAccountService
     {
         private static Dictionary<string, string> WhatMapper => new()

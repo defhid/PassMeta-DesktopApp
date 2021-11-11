@@ -1,14 +1,14 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Core.Utils;
-using Aes = System.Security.Cryptography.Aes;
-
 namespace PassMeta.DesktopApp.Core.Services
 {
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Core.Utils;
+    using Aes = System.Security.Cryptography.Aes;
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
+    
     public class CryptoService : ICryptoService
     {
         private static readonly Random Random = new();

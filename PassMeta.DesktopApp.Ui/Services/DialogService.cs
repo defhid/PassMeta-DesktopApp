@@ -56,10 +56,9 @@ namespace PassMeta.DesktopApp.Ui.Services
             {
                 if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
                 {
-                    _Show(new Notification(
-                        title ?? Resources.DIALOG__DEFAULT_INFO_TITLE,
+                    _Show(new Notification(title,
                         message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
-                        NotificationType.Information));
+                        NotificationType.Information, TimeSpan.FromSeconds(2)));
 
                     return Task.CompletedTask;
                 }

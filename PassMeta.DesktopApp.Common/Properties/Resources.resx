@@ -294,4 +294,16 @@
     <data name="PASSFILE_PROBLEM__OTHER" xml:space="preserve">
         <value>Error</value>
     </data>
+    <data name="GENERATOR__RESULT_COPIED" xml:space="preserve">
+        <value>Password is copied to clipboard</value>
+    </data>
+    <data name="GENERATOR__COPY_BTN" xml:space="preserve">
+        <value>Copy password</value>
+    </data>
+    <data name="STORAGE__PASSWORD_COPIED" xml:space="preserve">
+        <value>Password '{0}' copied</value>
+    </data>
+    <data name="STORAGE__WHAT_COPIED" xml:space="preserve">
+        <value>Login '{0}' is copied to clipboard</value>
+    </data>
 </root>

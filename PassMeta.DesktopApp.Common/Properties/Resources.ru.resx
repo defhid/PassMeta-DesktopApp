@@ -287,4 +287,16 @@
     <data name="PASSFILE_PROBLEM__OTHER" xml:space="preserve">
         <value>Ошибка</value>
     </data>
+    <data name="GENERATOR__RESULT_COPIED" xml:space="preserve">
+        <value>Пароль скопирован в буфер обмена</value>
+    </data>
+    <data name="GENERATOR__COPY_BTN" xml:space="preserve">
+        <value>Скопировать пароль</value>
+    </data>
+    <data name="STORAGE__PASSWORD_COPIED" xml:space="preserve">
+        <value>Пароль '{0}' скопирован</value>
+    </data>
+    <data name="STORAGE__WHAT_COPIED" xml:space="preserve">
+        <value>Логин '{0}' скопирован в буфер обмена</value>
+    </data>
 </root>

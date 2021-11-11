@@ -457,6 +457,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy password.
+        /// </summary>
+        public static string GENERATOR__COPY_BTN {
+            get {
+                return ResourceManager.GetString("GENERATOR__COPY_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Numbers.
         /// </summary>
         public static string GENERATOR__INCLUDE_DIGITS {
@@ -480,6 +489,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string GENERATOR__PASSWORD_LENGTH {
             get {
                 return ResourceManager.GetString("GENERATOR__PASSWORD_LENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password is copied to clipboard.
+        /// </summary>
+        public static string GENERATOR__RESULT_COPIED {
+            get {
+                return ResourceManager.GetString("GENERATOR__RESULT_COPIED", resourceCulture);
             }
         }
         
@@ -871,11 +889,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password &apos;{0}&apos; copied.
+        /// </summary>
+        public static string STORAGE__PASSWORD_COPIED {
+            get {
+                return ResourceManager.GetString("STORAGE__PASSWORD_COPIED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
         public static string STORAGE__PASSWORD_COPY {
             get {
                 return ResourceManager.GetString("STORAGE__PASSWORD_COPY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login &apos;{0}&apos; is copied to clipboard.
+        /// </summary>
+        public static string STORAGE__WHAT_COPIED {
+            get {
+                return ResourceManager.GetString("STORAGE__WHAT_COPIED", resourceCulture);
             }
         }
         

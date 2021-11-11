@@ -1,13 +1,16 @@
-using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Ui.ViewModels.Base;
-using ReactiveUI;
-using Splat;
-
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
+    using DesktopApp.Common;
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Ui.ViewModels.Base;
+    
+    using System;
+    using System.Threading.Tasks;
+    using System.Windows.Input;
+    
+    using ReactiveUI;
+    using Splat;
+
     public class GeneratorViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/generator";
@@ -54,7 +57,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         public GeneratorViewModel(IScreen hostScreen) : base(hostScreen)
         {
             GenerateCommand = ReactiveCommand.Create(_Generate);
-            CopyCommand = ReactiveCommand.Create(_CopyResult);
+            CopyCommand = ReactiveCommand.Create(_CopyResultAsync);
             
             this.WhenAnyValue(vm => vm.Result)
                 .Subscribe(res => Generated = !string.IsNullOrEmpty(res));
@@ -72,9 +75,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             Result = service.GeneratePassword(Length, IncludeDigits, IncludeSpecial);
         }
 
-        private void _CopyResult()
+        private async Task _CopyResultAsync()
         {
-            TextCopy.ClipboardService.SetText(Result ?? "");
+            await TextCopy.ClipboardService.SetTextAsync(Result ?? string.Empty);
+            await Locator.Current.GetService<IDialogService>()!.ShowInfoAsync(Resources.GENERATOR__RESULT_COPIED);
         }
     }
 }

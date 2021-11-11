@@ -222,7 +222,7 @@
                                                     Content="&#xE8C8;"
                                                     ToolTip.Tip="{x:Static com:Resources.STORAGE__LOGIN_COPY}"
                                                     IsVisible="{Binding IsReadOnly}"
-                                                    Command="{Binding CopyWhatCommand}"/>
+                                                    Command="{Binding CopyWhatAsyncCommand}"/>
                                             
                                             <TextBlock Grid.Row="1"
                                                        Grid.Column="0"
@@ -249,7 +249,7 @@
                                                     Content="&#xE8C8;"
                                                     ToolTip.Tip="{x:Static com:Resources.STORAGE__PASSWORD_COPY}"
                                                     IsVisible="{Binding IsReadOnly}"
-                                                    Command="{Binding CopyPasswordCommand}"/>
+                                                    Command="{Binding CopyPasswordAsyncCommand}"/>
                                         </Grid>
                                     </Grid>
                                 </DataTemplate>

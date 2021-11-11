@@ -4,9 +4,13 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
     using DesktopApp.Common.Models.Entities;
     using System.Linq;
     using System.Reactive.Linq;
+    using System.Threading.Tasks;
+    using Common;
+    using Common.Interfaces.Services;
     using DynamicData.Binding;
     using ReactiveUI;
-    
+    using Splat;
+
     public class PassFileSectionItemBtn : ReactiveObject
     {
         public string? What { get; set; }
@@ -75,15 +79,22 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
         
         #region Commands
         
-        private void CopyWhatCommand()
+        private async Task CopyWhatAsyncCommand()
         {
-            TextCopy.ClipboardService.SetText(
-                _NormalizeWhat().Split('\n').FirstOrDefault(x => x != string.Empty) ?? string.Empty);
+            var what = _NormalizeWhat().Split('\n').FirstOrDefault(x => x != string.Empty) ?? string.Empty;
+            await TextCopy.ClipboardService.SetTextAsync(what);
+
+            await Locator.Current.GetService<IDialogService>()!
+                .ShowInfoAsync(string.Format(Resources.STORAGE__WHAT_COPIED, what));
         }
 
-        private void CopyPasswordCommand()
+        private async Task CopyPasswordAsyncCommand()
         {
-            TextCopy.ClipboardService.SetText(Password ?? string.Empty);
+            var password = Password ?? string.Empty;
+            await TextCopy.ClipboardService.SetTextAsync(password);
+            
+            await Locator.Current.GetService<IDialogService>()!
+                .ShowInfoAsync(string.Format(Resources.STORAGE__PASSWORD_COPIED, password));
         }
 
         private void DeleteCommand() => _onDelete(this);
