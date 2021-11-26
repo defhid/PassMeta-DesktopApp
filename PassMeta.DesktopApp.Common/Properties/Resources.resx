@@ -306,4 +306,37 @@
     <data name="STORAGE__WHAT_COPIED" xml:space="preserve">
         <value>Login '{0}' is copied to clipboard</value>
     </data>
+    <data name="STORAGE_PASSFILE__TITLE" xml:space="preserve">
+        <value>PassFile '{0}'</value>
+    </data>
+    <data name="PASSFILE_COLOR__GREEN" xml:space="preserve">
+        <value>Green</value>
+    </data>
+    <data name="PASSFILE_COLOR__RED" xml:space="preserve">
+        <value>Red</value>
+    </data>
+    <data name="PASSFILE_COLOR__BLUE" xml:space="preserve">
+        <value>Blue</value>
+    </data>
+    <data name="PASSFILE_COLOR__ORANGE" xml:space="preserve">
+        <value>Orange</value>
+    </data>
+    <data name="PASSFILE_COLOR__PINK" xml:space="preserve">
+        <value>Pink</value>
+    </data>
+    <data name="PASSFILE_COLOR__PURPLE" xml:space="preserve">
+        <value>Purple</value>
+    </data>
+    <data name="PASSFILE_COLOR__GREY" xml:space="preserve">
+        <value>Grey</value>
+    </data>
+    <data name="PASSFILE_COLOR__YELLOW" xml:space="preserve">
+        <value>Yellow</value>
+    </data>
+    <data name="PASSFILE__COLOR" xml:space="preserve">
+        <value>Color</value>
+    </data>
+    <data name="PASSFILE__NAME" xml:space="preserve">
+        <value>Name</value>
+    </data>
 </root>

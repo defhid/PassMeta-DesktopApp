@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:storage="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage"
+        xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+        mc:Ignorable="d"
+        Width="500"
+        Height="350"
+        MinWidth="500"
+        MinHeight="350"
+        MaxWidth="750"
+        MaxHeight="600"
+        x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileWindow"
+        Icon="/Assets/PassMeta.ico"
+        Title="{Binding Title}"
+        WindowStartupLocation="CenterOwner">
+    
+    <Design.DataContext>
+        <storage:PassFileViewModel></storage:PassFileViewModel>
+    </Design.DataContext>
+    
+    <Grid>
+        <Grid ColumnDefinitions="Auto,*"
+              RowDefinitions="7,Auto,Auto,Auto,Auto,Auto">
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                       Margin="7 0 20 4"
+                       VerticalAlignment="Center"
+                       Text="{x:Static com:Resources.PASSFILE__NAME}"/>
+            
+            <TextBox Grid.Row="1" Grid.Column="1"
+                     Margin="0 0 0 4"
+                     Width="300"
+                     Text="{Binding Name}"/>
+            
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                       Margin="7 0 20 4"
+                       VerticalAlignment="Center"
+                       Text="{x:Static com:Resources.PASSFILE__COLOR}"/>
+            
+            <ComboBox Grid.Row="2" Grid.Column="1" 
+                      Margin="0 0 0 4"
+                      Width="140"
+                      Items="{Binding Colors}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Item1}" 
+                                   Foreground="{Binding Item2}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            
+        </Grid>
+        
+        
+    </Grid>
+</Window>

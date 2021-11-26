@@ -38,10 +38,32 @@
                              Items="{Binding PassFileList}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock FontSize="16"
-                                           Text="{Binding Name}"
-                                           Opacity="{Binding Opacity}"
-                                           Foreground="{Binding Foreground}"/>
+                                <Grid>
+                                    <Grid ColumnDefinitions="Auto,*"
+                                          Margin="0 2 0 0">
+                                        <Button Grid.Column="0"
+                                                HorizontalContentAlignment="Center"
+                                                VerticalContentAlignment="Center"
+                                                HorizontalAlignment="Right"
+                                                Margin="-5 0 7 0"
+                                                Padding="0"
+                                                Height="22"
+                                                Width="22"
+                                                CornerRadius="100"
+                                                FontSize="16"
+                                                FontStyle="Italic"
+                                                Content="i"
+                                                Foreground="{Binding Foreground}"
+                                                Command="{Binding OpenCommand}"/>
+                                        
+                                        <TextBlock Grid.Column="1"
+                                                   FontSize="16"
+                                                   Text="{Binding Name}"
+                                                   Opacity="{Binding Opacity}"
+                                                   Foreground="{Binding Foreground}"
+                                                   Margin="0 -1 0 0"/>
+                                    </Grid>
+                                </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                         

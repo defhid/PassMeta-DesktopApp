@@ -3,7 +3,10 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
     using DesktopApp.Common.Models.Entities;
     using Avalonia.Media;
     using ReactiveUI;
-    
+    using ViewModels.Storage;
+    using Views.Main;
+    using Views.Storage;
+
     public class PassFileBtn : ReactiveObject
     {
         public readonly PassFile PassFile;
@@ -39,6 +42,8 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
             get => _name;
             set => this.RaiseAndSetIfChanged(ref _name, value);
         }
+
+        private PassFileWindow? _opened;
         
         public PassFileBtn(PassFile passFile)
         {
@@ -64,5 +69,25 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
 
             _SetName();
         }
+        
+        #region Commands
+        
+        public void OpenCommand()
+        {
+            if (_opened is not null)
+            {
+                _opened.Activate();
+                return;
+            }
+            
+            _opened = new PassFileWindow { DataContext = new PassFileViewModel(PassFile) };
+            _opened.Closed += (_, _) =>
+            {
+                _opened = null;
+            };
+            _opened.Show(MainWindow.Current);
+        }
+        
+        #endregion
     }
 }

@@ -646,6 +646,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Color.
+        /// </summary>
+        public static string PASSFILE__COLOR {
+            get {
+                return ResourceManager.GetString("PASSFILE__COLOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password is wrong (file decryption failed).
         /// </summary>
         public static string PASSFILE__DECRYPTION_ERROR {
@@ -664,11 +673,92 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string PASSFILE__NAME {
+            get {
+                return ResourceManager.GetString("PASSFILE__NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wrong passphrase!.
         /// </summary>
         public static string PASSFILE__WRONG_PASSPHRASE {
             get {
                 return ResourceManager.GetString("PASSFILE__WRONG_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blue.
+        /// </summary>
+        public static string PASSFILE_COLOR__BLUE {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__BLUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Green.
+        /// </summary>
+        public static string PASSFILE_COLOR__GREEN {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__GREEN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grey.
+        /// </summary>
+        public static string PASSFILE_COLOR__GREY {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__GREY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Orange.
+        /// </summary>
+        public static string PASSFILE_COLOR__ORANGE {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__ORANGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pink.
+        /// </summary>
+        public static string PASSFILE_COLOR__PINK {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__PINK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purple.
+        /// </summary>
+        public static string PASSFILE_COLOR__PURPLE {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__PURPLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Red.
+        /// </summary>
+        public static string PASSFILE_COLOR__RED {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__RED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yellow.
+        /// </summary>
+        public static string PASSFILE_COLOR__YELLOW {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__YELLOW", resourceCulture);
             }
         }
         
@@ -912,6 +1002,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__WHAT_COPIED {
             get {
                 return ResourceManager.GetString("STORAGE__WHAT_COPIED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PassFile &apos;{0}&apos;.
+        /// </summary>
+        public static string STORAGE_PASSFILE__TITLE {
+            get {
+                return ResourceManager.GetString("STORAGE_PASSFILE__TITLE", resourceCulture);
             }
         }
         

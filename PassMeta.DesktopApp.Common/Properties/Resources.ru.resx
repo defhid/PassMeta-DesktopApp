@@ -299,4 +299,37 @@
     <data name="STORAGE__WHAT_COPIED" xml:space="preserve">
         <value>Логин '{0}' скопирован в буфер обмена</value>
     </data>
+    <data name="STORAGE_PASSFILE__TITLE" xml:space="preserve">
+        <value>Пакет паролей '{0}'</value>
+    </data>
+    <data name="PASSFILE_COLOR__BLUE" xml:space="preserve">
+        <value>Синий</value>
+    </data>
+    <data name="PASSFILE_COLOR__GREEN" xml:space="preserve">
+        <value>Зелёный</value>
+    </data>
+    <data name="PASSFILE_COLOR__GREY" xml:space="preserve">
+        <value>Серый</value>
+    </data>
+    <data name="PASSFILE_COLOR__ORANGE" xml:space="preserve">
+        <value>Оранжевый</value>
+    </data>
+    <data name="PASSFILE_COLOR__PINK" xml:space="preserve">
+        <value>Розовый</value>
+    </data>
+    <data name="PASSFILE_COLOR__PURPLE" xml:space="preserve">
+        <value>Фиолетовый</value>
+    </data>
+    <data name="PASSFILE_COLOR__RED" xml:space="preserve">
+        <value>Красный</value>
+    </data>
+    <data name="PASSFILE_COLOR__YELLOW" xml:space="preserve">
+        <value>Жёлтый</value>
+    </data>
+    <data name="PASSFILE__COLOR" xml:space="preserve">
+        <value>Цвет</value>
+    </data>
+    <data name="PASSFILE__NAME" xml:space="preserve">
+        <value>Название</value>
+    </data>
 </root>

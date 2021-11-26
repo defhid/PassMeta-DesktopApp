@@ -19,21 +19,23 @@ namespace PassMeta.DesktopApp.Ui.Services
     /// <inheritdoc />
     public class DialogService : IDialogService
     {
-        private static Window? _win;
-        private static List<Func<Task>> _deferred = new();
-        private readonly ILogService _logger;
-
         private static INotificationManager? NotificationManager => Locator.Current.GetService<INotificationManager>();
+        private static List<Func<Task>> _deferred = new();
+        
+        private readonly ILogService _logger;
+        
+        static DialogService()
+        {
+            MainWindow.CurrentChanged += _SetCurrentWindowAsync;
+        }
 
         public DialogService(ILogService logger)
         {
             _logger = logger;
         }
 
-        public static async Task SetCurrentWindowAsync(Window window)
+        private static async Task _SetCurrentWindowAsync(Window window)
         {
-            _win = window;
-
             var deferred = _deferred;
             _deferred = new List<Func<Task>>();
             
@@ -134,7 +136,7 @@ namespace PassMeta.DesktopApp.Ui.Services
         /// <inheritdoc />
         public async Task<Result> ConfirmAsync(string message, string? title = null)
         {
-            if (_win is null) return Result.Failure;
+            if (MainWindow.Current is null) return Result.Failure;
 
             var dialog = await _ShowAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_CONFIRM_TITLE,
@@ -150,7 +152,7 @@ namespace PassMeta.DesktopApp.Ui.Services
         /// <inheritdoc />
         public async Task<Result<string?>> AskStringAsync(string message, string? title = null, string? defaultValue = null)
         {
-            if (_win is null) return new Result<string?>(false);
+            if (MainWindow.Current is null) return new Result<string?>(false);
 
             var dialog = await _ShowAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
@@ -170,7 +172,7 @@ namespace PassMeta.DesktopApp.Ui.Services
         /// <inheritdoc />
         public async Task<Result<string?>> AskPasswordAsync(string message, string? title = null)
         {
-            if (_win is null) return new Result<string?>(false);
+            if (MainWindow.Current is null) return new Result<string?>(false);
 
             var dialog = await _ShowAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
@@ -189,7 +191,7 @@ namespace PassMeta.DesktopApp.Ui.Services
 
         private static Task _CallOrDefferAsync(Func<Task> shower)
         {
-            if (_win is not null) return shower();
+            if (MainWindow.Current is not null) return shower();
             
             _deferred.Add(shower);
             return Task.CompletedTask;
@@ -203,7 +205,7 @@ namespace PassMeta.DesktopApp.Ui.Services
         private static async Task<DialogWindow> _ShowAsync(DialogWindowViewModel context)
         {
             var dialog = new DialogWindow { DataContext = context };
-            await dialog.ShowDialog(_win);
+            await dialog.ShowDialog(MainWindow.Current);
             return dialog;
         }
     }

@@ -40,6 +40,10 @@
         <DependentUpon>StorageView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Storage\PassFileWindow.axaml.cs">
+        <DependentUpon>DialogWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\PassMeta.DesktopApp.Core\PassMeta.DesktopApp.Core.csproj" />

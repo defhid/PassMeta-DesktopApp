@@ -14,7 +14,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using DynamicData;
     using Models.Storage;
     using Splat;
-    
+    using Views.Main;
+    using Views.Storage;
+
     public partial class StorageViewModel
     {
         private readonly IPassFileService _passFileService = Locator.Current.GetService<IPassFileService>()!;
@@ -165,7 +167,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                 PassFileList = _MakePassFileList();
             }
         }
-        
+
         #endregion
         
         #region Section

@@ -1,21 +1,27 @@
-using System;
-using System.Reactive.Linq;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Ui.Services;
-using PassMeta.DesktopApp.Ui.ViewModels;
-using PassMeta.DesktopApp.Ui.ViewModels.Base;
-using PassMeta.DesktopApp.Ui.ViewModels.Main;
-using PassMeta.DesktopApp.Ui.ViewModels.Storage;
-
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
+    using System;
+    using System.Reactive.Linq;
+    using System.Threading.Tasks;
+    
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Primitives;
+    using Avalonia.Interactivity;
+    using Avalonia.Markup.Xaml;
+    
+    using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.ViewModels;
+    using DesktopApp.Ui.ViewModels.Base;
+    using DesktopApp.Ui.ViewModels.Main;
+    using DesktopApp.Ui.ViewModels.Storage;
+    
     public class MainWindow : Window
     {
+        public static MainWindow? Current { get; private set; }
+
+        public static event Func<MainWindow, Task>? CurrentChanged;
+        
         private bool _loaded;
         
         public MainWindow()
@@ -66,7 +72,10 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
         private async void OnOpened(object? sender, EventArgs e)
         {
-            await DialogService.SetCurrentWindowAsync(this);
+            Current = this;
+            
+            if (CurrentChanged != null)
+                await CurrentChanged(this);
 
             if (!_loaded)
             {
