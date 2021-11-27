@@ -646,11 +646,56 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Color.
+        ///   Looks up a localized string similar to Archive.
         /// </summary>
-        public static string PASSFILE__COLOR {
+        public static string PASSFILE__BTN_ARCHIVE {
             get {
-                return ResourceManager.GetString("PASSFILE__COLOR", resourceCulture);
+                return ResourceManager.GetString("PASSFILE__BTN_ARCHIVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string PASSFILE__BTN_DELETE {
+            get {
+                return ResourceManager.GetString("PASSFILE__BTN_DELETE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolve conflicts....
+        /// </summary>
+        public static string PASSFILE__BTN_MERGE {
+            get {
+                return ResourceManager.GetString("PASSFILE__BTN_MERGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        public static string PASSFILE__BTN_OK {
+            get {
+                return ResourceManager.GetString("PASSFILE__BTN_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string PASSFILE__BTN_SAVE {
+            get {
+                return ResourceManager.GetString("PASSFILE__BTN_SAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unarchive.
+        /// </summary>
+        public static string PASSFILE__BTN_UNARCHIVE {
+            get {
+                return ResourceManager.GetString("PASSFILE__BTN_UNARCHIVE", resourceCulture);
             }
         }
         
@@ -673,11 +718,74 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name.
+        ///   Looks up a localized string similar to Changed:.
         /// </summary>
-        public static string PASSFILE__NAME {
+        public static string PASSFILE__LABEL_CHANGED_ON {
             get {
-                return ResourceManager.GetString("PASSFILE__NAME", resourceCulture);
+                return ResourceManager.GetString("PASSFILE__LABEL_CHANGED_ON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Color:.
+        /// </summary>
+        public static string PASSFILE__LABEL_COLOR {
+            get {
+                return ResourceManager.GetString("PASSFILE__LABEL_COLOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created:.
+        /// </summary>
+        public static string PASSFILE__LABEL_CREATED_ON {
+            get {
+                return ResourceManager.GetString("PASSFILE__LABEL_CREATED_ON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name:.
+        /// </summary>
+        public static string PASSFILE__LABEL_NAME {
+            get {
+                return ResourceManager.GetString("PASSFILE__LABEL_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password:.
+        /// </summary>
+        public static string PASSFILE__LABEL_PWD {
+            get {
+                return ResourceManager.GetString("PASSFILE__LABEL_PWD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to State:.
+        /// </summary>
+        public static string PASSFILE__LABEL_STATE {
+            get {
+                return ResourceManager.GetString("PASSFILE__LABEL_STATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local changed ({0}).
+        /// </summary>
+        public static string PASSFILE__STATE_LOCAL_CHANGED {
+            get {
+                return ResourceManager.GetString("PASSFILE__STATE_LOCAL_CHANGED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        public static string PASSFILE__STATE_OK {
+            get {
+                return ResourceManager.GetString("PASSFILE__STATE_OK", resourceCulture);
             }
         }
         
@@ -750,6 +858,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE_COLOR__RED {
             get {
                 return ResourceManager.GetString("PASSFILE_COLOR__RED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Teal.
+        /// </summary>
+        public static string PASSFILE_COLOR__TEAL {
+            get {
+                return ResourceManager.GetString("PASSFILE_COLOR__TEAL", resourceCulture);
             }
         }
         
@@ -844,15 +961,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input passfile name.
-        /// </summary>
-        public static string STORAGE__ASK_PASSFILE_NAME {
-            get {
-                return ResourceManager.GetString("STORAGE__ASK_PASSFILE_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Input section name.
         /// </summary>
         public static string STORAGE__ASK_SECTION_NAME {
@@ -885,15 +993,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__CONTEXT_ADD {
             get {
                 return ResourceManager.GetString("STORAGE__CONTEXT_ADD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Archive.
-        /// </summary>
-        public static string STORAGE__CONTEXT_ARCHIVE {
-            get {
-                return ResourceManager.GetString("STORAGE__CONTEXT_ARCHIVE", resourceCulture);
             }
         }
         

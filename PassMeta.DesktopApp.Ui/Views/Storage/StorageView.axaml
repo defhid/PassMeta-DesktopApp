@@ -18,16 +18,17 @@
             <SplitView.Pane>
                 <Grid RowDefinitions="Auto,*">
                     <ToggleButton Grid.Row="0"
-                               Margin="4 5 0 12"
-                               Padding="0"
-                               Height="40"
-                               IsChecked="{Binding IsPassFilesBarOpened}"
-                               HorizontalContentAlignment="Center"
-                               VerticalContentAlignment="Center"
-                               Width="{Binding PassFilesBarBtn.Width}"
-                               Content="{Binding PassFilesBarBtn.Content}"
-                               FontSize="{Binding PassFilesBarBtn.FontSize}"
-                               FontFamily="{Binding PassFilesBarBtn.FontFamily}"/>
+                                  x:Name="PassFilesBarBtn"
+                                  Margin="4 5 0 12"
+                                  Padding="0"
+                                  Height="40"
+                                  IsChecked="{Binding IsPassFilesBarOpened}"
+                                  HorizontalContentAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  Width="{Binding PassFilesBarBtn.Width}"
+                                  Content="{Binding PassFilesBarBtn.Content}"
+                                  FontSize="{Binding PassFilesBarBtn.FontSize}"
+                                  FontFamily="{Binding PassFilesBarBtn.FontFamily}"/>
 
                     <!-- PassFileList -->
                     <ListBox Grid.Row="1"
@@ -38,32 +39,38 @@
                              Items="{Binding PassFileList}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid>
-                                    <Grid ColumnDefinitions="Auto,*"
+                                <Grid ColumnDefinitions="Auto,*"
                                           Margin="0 2 0 0">
+                                        <Border Grid.Column="0"
+                                                CornerRadius="3,0,0,3"
+                                                Margin="1 0 0 0"
+                                                Height="39" Width="6"
+                                                HorizontalAlignment="Left"
+                                                Background="{Binding Color}"/>
+                                        
                                         <Button Grid.Column="0"
                                                 HorizontalContentAlignment="Center"
                                                 VerticalContentAlignment="Center"
-                                                HorizontalAlignment="Right"
-                                                Margin="-5 0 7 0"
-                                                Padding="0"
-                                                Height="22"
-                                                Width="22"
-                                                CornerRadius="100"
-                                                FontSize="16"
-                                                FontStyle="Italic"
-                                                Content="i"
-                                                Foreground="{Binding Foreground}"
+                                                HorizontalAlignment="Left"
+                                                Margin="13 0 1 0"
+                                                Padding="0 0 4 0"
+                                                Height="22" Width="22"
+                                                CornerRadius="50"
+                                                FontSize="11"
+                                                FontStyle="Italic" FontWeight="Bold"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                Content="&#xEA1f;"
+                                                Foreground="{Binding StateColor}"
+                                                Opacity="{Binding Opacity}"
+                                                IsVisible="{Binding IsChecked, ElementName=PassFilesBarBtn}"
                                                 Command="{Binding OpenCommand}"/>
                                         
                                         <TextBlock Grid.Column="1"
                                                    FontSize="16"
                                                    Text="{Binding Name}"
                                                    Opacity="{Binding Opacity}"
-                                                   Foreground="{Binding Foreground}"
-                                                   Margin="0 -1 0 0"/>
+                                                   Margin="5 0 0 0"/>
                                     </Grid>
-                                </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                         
@@ -72,18 +79,7 @@
                                 <Setter Property="CornerRadius" Value="3"/>
                                 <Setter Property="Height" Value="40"/>
                                 <Setter Property="Margin" Value="0 0 0 8"/>
-                                <Setter Property="ContextMenu">
-                                    <ContextMenu PlacementAnchor="Bottom">
-                                        <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_RENAME}"
-                                                  Click="PassFileRenameMenuItem_OnClick"/>
-                                        
-                                        <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_ARCHIVE}"
-                                                  Click="PassFileArchiveMenuItem_OnClick"/>
-                                        
-                                        <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
-                                                  Click="PassFileDeleteMenuItem_OnClick"/>
-                                    </ContextMenu>
-                                </Setter>
+                                <Setter Property="Padding" Value="0 9 6 9"/>
                             </Style>
                         </ListBox.Styles>
                         

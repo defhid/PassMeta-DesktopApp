@@ -2,8 +2,10 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
 {
     using DesktopApp.Common.Models.Entities;
     using Avalonia.Media;
+    using Common.Interfaces.Services;
     using ReactiveUI;
-    using ViewModels.Storage;
+    using Splat;
+    using Utils.Extensions;
     using Views.Main;
     using Views.Storage;
 
@@ -11,11 +13,18 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
     {
         public readonly PassFile PassFile;
 
-        private IBrush? _foreground;
-        public IBrush? Foreground
+        private ISolidColorBrush? _color;
+        public ISolidColorBrush? Color
         {
-            get => _foreground;
-            private set => this.RaiseAndSetIfChanged(ref _foreground, value);
+            get => _color;
+            private set => this.RaiseAndSetIfChanged(ref _color, value);
+        }
+
+        private ISolidColorBrush? _stateColor;
+        public ISolidColorBrush? StateColor
+        {
+            get => _stateColor;
+            private set => this.RaiseAndSetIfChanged(ref _stateColor, value);
         }
 
         private double _opacity;
@@ -61,12 +70,10 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
 
         public void Refresh()
         {
-            Foreground = PassFile.Color is null
-                ? Brushes.AliceBlue
-                : Brush.Parse("#" + PassFile.Color);
-
+            Color = PassFile.GetPassFileColor().Brush;
+            StateColor = PassFile.GetStateColor();
+            
             Opacity = PassFile.IsArchived ? 0.5d : 1d;
-
             _SetName();
         }
         
@@ -79,13 +86,19 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
                 _opened.Activate();
                 return;
             }
-            
-            _opened = new PassFileWindow { DataContext = new PassFileViewModel(PassFile) };
+
+            _opened = new PassFileWindow(PassFile);
             _opened.Closed += (_, _) =>
             {
+                var actual = _opened.PassFile;
                 _opened = null;
+                
+                Locator.Current.GetService<IDialogService>()!.ShowInfoAsync("handled: " + actual?.Name)
+                    .GetAwaiter().GetResult();
+                // TODO
             };
-            _opened.Show(MainWindow.Current);
+            
+            _opened.ShowDialog(MainWindow.Current);
         }
         
         #endregion

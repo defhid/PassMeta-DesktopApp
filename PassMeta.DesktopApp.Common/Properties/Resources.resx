@@ -243,7 +243,7 @@
     <data name="STORAGE__CONTEXT_DELETE" xml:space="preserve">
         <value>Delete</value>
     </data>
-    <data name="STORAGE__CONTEXT_ARCHIVE" xml:space="preserve">
+    <data name="PASSFILE__BTN_ARCHIVE" xml:space="preserve">
         <value>Archive</value>
     </data>
     <data name="STORAGE__CONTEXT_ADD" xml:space="preserve">
@@ -251,9 +251,6 @@
     </data>
     <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
         <value>Input section name</value>
-    </data>
-    <data name="STORAGE__ASK_PASSFILE_NAME" xml:space="preserve">
-        <value>Input passfile name</value>
     </data>
     <data name="STORAGE__CONFIRM_PASSFILE_ARCHIVE" xml:space="preserve">
         <value>Do you really want to archive passfile '{0}'</value>
@@ -333,10 +330,46 @@
     <data name="PASSFILE_COLOR__YELLOW" xml:space="preserve">
         <value>Yellow</value>
     </data>
-    <data name="PASSFILE__COLOR" xml:space="preserve">
-        <value>Color</value>
+    <data name="PASSFILE__LABEL_COLOR" xml:space="preserve">
+        <value>Color:</value>
     </data>
-    <data name="PASSFILE__NAME" xml:space="preserve">
-        <value>Name</value>
+    <data name="PASSFILE__LABEL_NAME" xml:space="preserve">
+        <value>Name:</value>
+    </data>
+    <data name="PASSFILE__LABEL_CREATED_ON" xml:space="preserve">
+        <value>Created:</value>
+    </data>
+    <data name="PASSFILE__LABEL_CHANGED_ON" xml:space="preserve">
+        <value>Changed:</value>
+    </data>
+    <data name="PASSFILE__LABEL_STATE" xml:space="preserve">
+        <value>State:</value>
+    </data>
+    <data name="PASSFILE_COLOR__TEAL" xml:space="preserve">
+        <value>Teal</value>
+    </data>
+    <data name="PASSFILE__STATE_OK" xml:space="preserve">
+        <value>Ok</value>
+    </data>
+    <data name="PASSFILE__STATE_LOCAL_CHANGED" xml:space="preserve">
+        <value>Local changed ({0})</value>
+    </data>
+    <data name="PASSFILE__LABEL_PWD" xml:space="preserve">
+        <value>Password:</value>
+    </data>
+    <data name="PASSFILE__BTN_OK" xml:space="preserve">
+        <value>Ok</value>
+    </data>
+    <data name="PASSFILE__BTN_SAVE" xml:space="preserve">
+        <value>Save</value>
+    </data>
+    <data name="PASSFILE__BTN_DELETE" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="PASSFILE__BTN_UNARCHIVE" xml:space="preserve">
+        <value>Unarchive</value>
+    </data>
+    <data name="PASSFILE__BTN_MERGE" xml:space="preserve">
+        <value>Resolve conflicts...</value>
     </data>
 </root>

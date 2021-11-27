@@ -233,7 +233,7 @@
     <data name="STORAGE__CONTEXT_DELETE" xml:space="preserve">
         <value>Удалить</value>
     </data>
-    <data name="STORAGE__CONTEXT_ARCHIVE" xml:space="preserve">
+    <data name="PASSFILE__BTN_ARCHIVE" xml:space="preserve">
         <value>Архивировать</value>
     </data>
     <data name="STORAGE__CONTEXT_ADD" xml:space="preserve">
@@ -241,9 +241,6 @@
     </data>
     <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
         <value>Введите название группы паролей</value>
-    </data>
-    <data name="STORAGE__ASK_PASSFILE_NAME" xml:space="preserve">
-        <value>Введите название пакета паролей</value>
     </data>
     <data name="STORAGE__NO_SECTIONS" xml:space="preserve">
         <value>Пусто</value>
@@ -326,10 +323,46 @@
     <data name="PASSFILE_COLOR__YELLOW" xml:space="preserve">
         <value>Жёлтый</value>
     </data>
-    <data name="PASSFILE__COLOR" xml:space="preserve">
-        <value>Цвет</value>
+    <data name="PASSFILE__LABEL_COLOR" xml:space="preserve">
+        <value>Цвет:</value>
     </data>
-    <data name="PASSFILE__NAME" xml:space="preserve">
-        <value>Название</value>
+    <data name="PASSFILE__LABEL_NAME" xml:space="preserve">
+        <value>Название:</value>
+    </data>
+    <data name="PASSFILE__LABEL_CREATED_ON" xml:space="preserve">
+        <value>Создан:</value>
+    </data>
+    <data name="PASSFILE__LABEL_CHANGED_ON" xml:space="preserve">
+        <value>Изменён</value>
+    </data>
+    <data name="PASSFILE__LABEL_STATE" xml:space="preserve">
+        <value>Статус:</value>
+    </data>
+    <data name="PASSFILE_COLOR__TEAL" xml:space="preserve">
+        <value>Бирюзовый</value>
+    </data>
+    <data name="PASSFILE__STATE_OK" xml:space="preserve">
+        <value>Ок</value>
+    </data>
+    <data name="PASSFILE__STATE_LOCAL_CHANGED" xml:space="preserve">
+        <value>Изменён локально ({0})</value>
+    </data>
+    <data name="PASSFILE__LABEL_PWD" xml:space="preserve">
+        <value>Пароль:</value>
+    </data>
+    <data name="PASSFILE__BTN_OK" xml:space="preserve">
+        <value>Ок</value>
+    </data>
+    <data name="PASSFILE__BTN_DELETE" xml:space="preserve">
+        <value>Удалить</value>
+    </data>
+    <data name="PASSFILE__BTN_MERGE" xml:space="preserve">
+        <value>Решить конфликты...</value>
+    </data>
+    <data name="PASSFILE__BTN_SAVE" xml:space="preserve">
+        <value>Сохранить</value>
+    </data>
+    <data name="PASSFILE__BTN_UNARCHIVE" xml:space="preserve">
+        <value>Разархивировать</value>
     </data>
 </root>

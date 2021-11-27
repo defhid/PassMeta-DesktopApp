@@ -81,11 +81,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         #region Selection
         
         private int _passFilesSelectedIndex = -1;
+        private int _passFilesPrevSelectedIndex = -1;
         public int PassFilesSelectedIndex
         {
             get => _passFilesSelectedIndex;
             set
             {
+                _passFilesPrevSelectedIndex = _passFilesSelectedIndex;
                 this.RaiseAndSetIfChanged(ref _passFilesSelectedIndex, value);
                 _SetPassFileSectionList();
             }

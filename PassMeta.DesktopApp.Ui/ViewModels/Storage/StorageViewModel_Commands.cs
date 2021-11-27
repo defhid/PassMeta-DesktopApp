@@ -14,8 +14,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using DynamicData;
     using Models.Storage;
     using Splat;
-    using Views.Main;
-    using Views.Storage;
 
     public partial class StorageViewModel
     {
@@ -36,7 +34,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                     return;
                 }
             
-                _passFiles = result.Data;
+                _passFiles = result.Data?.OrderBy(pf => pf.Name).ToList();
                 _userId = AppConfig.Current.User?.Id;
                 Mode = result.Message;
                 PassFileList = _MakePassFileList();
@@ -51,15 +49,23 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             if (passFile is null || passFile.IsDecrypted) return;
 
             var passPhrase = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
-            if (passPhrase.Bad || passPhrase.Data == string.Empty) return;
+            if (passPhrase.Bad || passPhrase.Data == string.Empty)
+            {
+                PassFilesSelectedIndex = _passFilesPrevSelectedIndex;
+                return;
+            }
 
             passFile.PassPhrase = passPhrase.Data;
             var result = passFile.Decrypt();
 
             if (result.Ok)
+            {
                 _SetPassFileSectionList();
-            else
-                await _dialogService.ShowFailureAsync(result.Message!);
+                return;
+            }
+            
+            await _dialogService.ShowFailureAsync(result.Message!);
+            PassFilesSelectedIndex = _passFilesPrevSelectedIndex;
         }
 
         private async Task SaveAsync()
@@ -81,9 +87,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         private async Task PassFileAddAsync()
         {
-            var name = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME);
-            if (name.Bad || name.Data == string.Empty) return;
-
             Result<string?> passPhrase;
             while (true)
             {
@@ -103,7 +106,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             _passFiles.Add(new PassFile
             {
                 Id = 0,
-                Name = name.Data!,
+                //Name = name.Data!,
                 Color = null,
                 CreatedOn = DateTime.Now,
                 ChangedOn = DateTime.Now,
@@ -117,21 +120,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             PassFileList = _MakePassFileList();
             PassFilesSelectedIndex = _passFiles.Count - 1;
         }
-        
-        public async Task PassFileRenameAsync()
-        {
-            var passFileBtn = SelectedPassFileBtn!;
-            var passFile = passFileBtn.PassFile;
-            
-            var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_PASSFILE_NAME, defaultValue: passFile.Name);
-            if (result.Bad || result.Data == string.Empty) return;
 
-            passFile.Name = result.Data!;
-            passFile.ChangedLocalOn = DateTime.Now;
-
-            passFileBtn.Refresh();
-        }
-        
         public async Task PassFileArchiveAsync()
         {
             var passFileBtn = SelectedPassFileBtn!;

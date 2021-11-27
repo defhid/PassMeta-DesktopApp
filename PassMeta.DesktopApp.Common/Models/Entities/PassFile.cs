@@ -49,6 +49,9 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         
         [JsonIgnore]
         public PassFileProblem? Problem { get; set; }
+        
+        [JsonIgnore]
+        public bool HasProblem => Problem is not null;
 
         [JsonIgnore]
         public bool IsLocalChanged => ChangedLocalOn.HasValue;
