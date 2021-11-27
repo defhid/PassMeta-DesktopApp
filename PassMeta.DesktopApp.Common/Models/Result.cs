@@ -13,8 +13,10 @@ namespace PassMeta.DesktopApp.Common.Models
             Message = message;
         }
         
-        public static Result Success => new(true);
-        public static Result Failure => new(false);
+        public static Result Success(string? message = null) => new(true, message);
+        public static Result Failure(string? message = null) => new(false, message);
+        public static Result<TData> Success<TData>(TData data, string? message = null) => new(data, message);
+        public static Result<TData> Failure<TData>(string? message = null) => new(false, message);
     }
     
     public readonly struct Result<TData>

@@ -1,10 +1,16 @@
 namespace PassMeta.DesktopApp.Ui.Utils.Extensions
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Avalonia.Media;
+    using Common;
     using Common.Enums;
+    using Common.Interfaces.Services;
+    using Common.Models;
     using Common.Models.Entities;
+    using Core.Extensions;
     using Models.PassFile;
+    using Splat;
 
     /// <summary>
     /// Extension methods for <see cref="PassFile"/>.
@@ -12,7 +18,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     public static class PassFileExtension
     {
         /// <summary>
-        /// Get color depending on <see cref="PassFile.IsLocalChanged"/> & <see cref="PassFile.Problem"/>.
+        /// Get color depending on <see cref="PassFile.IsLocalChanged"/> and <see cref="PassFile.Problem"/>.
         /// </summary>
         public static ISolidColorBrush GetStateColor(this PassFile passFile)
         {
@@ -37,5 +43,36 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         public static PassFileColor GetPassFileColor(this PassFileLight passFile)
             => PassFileColor.List.FirstOrDefault(c => c.Hex == passFile.Color?.ToUpper()) 
                ?? PassFileColor.None;
+
+        /// <summary>
+        /// Ask user for passphrase and decode data.
+        /// </summary>
+        /// <remarks>Automatic show failure.</remarks>
+        public static async Task<Result> AskKeyPhraseAndDecryptAsync(this PassFile passFile)
+        {
+            if (passFile.PassPhrase is not null)
+            {
+                var fastResult = passFile.Decrypt();
+                if (fastResult.Ok) return fastResult;
+                
+                passFile.PassPhrase = null;
+            }
+            
+            var dialogService = Locator.Current.GetService<IDialogService>()!;
+            
+            var passPhrase = await dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
+            if (passPhrase.Bad || passPhrase.Data == string.Empty)
+            {
+                return Result.Failure();
+            }
+
+            passFile.PassPhrase = passPhrase.Data;
+            var result = passFile.Decrypt();
+
+            if (result.Bad)
+                await dialogService.ShowFailureAsync(result.Message!);
+
+            return result;
+        }
     }
 }

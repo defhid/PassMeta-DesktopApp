@@ -136,7 +136,7 @@ namespace PassMeta.DesktopApp.Ui.Services
         /// <inheritdoc />
         public async Task<Result> ConfirmAsync(string message, string? title = null)
         {
-            if (MainWindow.Current is null) return Result.Failure;
+            if (MainWindow.Current is null) return Result.Failure();
 
             var dialog = await _ShowAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_CONFIRM_TITLE,

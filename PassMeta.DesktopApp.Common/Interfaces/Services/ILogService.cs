@@ -6,7 +6,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
     using Models.Entities;
 
     /// <summary>
-    /// Service for logging user messages & app errors.
+    /// Service for logging user messages and app errors.
     /// </summary>
     public interface ILogService : IDisposable
     {

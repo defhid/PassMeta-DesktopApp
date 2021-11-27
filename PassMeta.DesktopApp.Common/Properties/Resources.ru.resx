@@ -245,10 +245,10 @@
     <data name="STORAGE__NO_SECTIONS" xml:space="preserve">
         <value>Пусто</value>
     </data>
-    <data name="STORAGE__CONFIRM_PASSFILE_ARCHIVE" xml:space="preserve">
+    <data name="PASSFILE__CONFIRM_ARCHIVE" xml:space="preserve">
         <value>Вы действительно хотите архивировать пакет '{0}'</value>
     </data>
-    <data name="STORAGE__CONFIRM_PASSFILE_DELETE" xml:space="preserve">
+    <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
         <value>Вы действительно хотите удалить пакет '{0}'? Подтвердите свой пароль от аккаунта:</value>
     </data>
     <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
@@ -364,5 +364,17 @@
     </data>
     <data name="PASSFILE__BTN_UNARCHIVE" xml:space="preserve">
         <value>Разархивировать</value>
+    </data>
+    <data name="PASSFILE__SOLVE_PROBLEM" xml:space="preserve">
+        <value>Состояние пакета предполагает сначала решение проблемы: '{0}'</value>
+    </data>
+    <data name="PASSFILE__INCORRECT_NAME" xml:space="preserve">
+        <value>Некорректное название!</value>
+    </data>
+    <data name="PASSFILE__STATE_NEW" xml:space="preserve">
+        <value>Новый</value>
+    </data>
+    <data name="STORAGE_PASSFILE__NEW_TITLE" xml:space="preserve">
+        <value>Новый пакет паролей</value>
     </data>
 </root>

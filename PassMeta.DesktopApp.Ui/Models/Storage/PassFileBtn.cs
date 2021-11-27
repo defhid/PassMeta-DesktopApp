@@ -1,8 +1,12 @@
 namespace PassMeta.DesktopApp.Ui.Models.Storage
 {
+    using System.Reactive.Linq;
+    using System.Threading.Tasks;
     using DesktopApp.Common.Models.Entities;
     using Avalonia.Media;
     using Common.Interfaces.Services;
+    using DynamicData.Binding;
+    using PassFile;
     using ReactiveUI;
     using Splat;
     using Utils.Extensions;
@@ -11,96 +15,73 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
 
     public class PassFileBtn : ReactiveObject
     {
-        public readonly PassFile PassFile;
-
-        private ISolidColorBrush? _color;
-        public ISolidColorBrush? Color
+        private PassFile _passFile;
+        public PassFile PassFile
         {
-            get => _color;
-            private set => this.RaiseAndSetIfChanged(ref _color, value);
+            get => _passFile;
+            private set => this.RaiseAndSetIfChanged(ref _passFile, value);
         }
 
-        private ISolidColorBrush? _stateColor;
-        public ISolidColorBrush? StateColor
-        {
-            get => _stateColor;
-            private set => this.RaiseAndSetIfChanged(ref _stateColor, value);
-        }
-
-        private double _opacity;
-        public double Opacity
-        {
-            get => _opacity;
-            private set => this.RaiseAndSetIfChanged(ref _opacity, value);
-        }
+        private readonly ObservableAsPropertyHelper<PassFileColor> _color;
+        public PassFileColor Color => _color.Value;
         
+        private readonly ObservableAsPropertyHelper<ISolidColorBrush?> _stateColor;
+        public ISolidColorBrush? StateColor => _stateColor.Value;
+        
+        private readonly ObservableAsPropertyHelper<double> _opacity;
+        public double Opacity => _opacity.Value;
+        
+        private readonly ObservableAsPropertyHelper<string> _name;
+        public string Name => _name.Value;
+
         private bool _shortMode;
         public bool ShortMode
         {
             get => _shortMode;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _shortMode, value);
-                _SetName();
-            }
+            set => this.RaiseAndSetIfChanged(ref _shortMode, value);
         }
 
-        private string? _name;
-        public string? Name
-        {
-            get => _name;
-            set => this.RaiseAndSetIfChanged(ref _name, value);
-        }
-
-        private PassFileWindow? _opened;
-        
         public PassFileBtn(PassFile passFile)
         {
-            PassFile = passFile;
-            Refresh();
-        }
+            _passFile = passFile;
 
-        private void _SetName()
-        {
-            if (PassFile.IsArchived) 
-                Name = '~' + (ShortMode ? PassFile.Name[..1] : PassFile.Name);
-            else 
-                Name = ShortMode ? PassFile.Name[..2] : PassFile.Name;
-        }
-
-        public void Refresh()
-        {
-            Color = PassFile.GetPassFileColor().Brush;
-            StateColor = PassFile.GetStateColor();
+            _color = this.WhenValueChanged(btn => btn.PassFile)
+                .Select(pf => pf!.GetPassFileColor())
+                .ToProperty(this, btn => btn.Color);
             
-            Opacity = PassFile.IsArchived ? 0.5d : 1d;
-            _SetName();
+            _stateColor = this.WhenValueChanged(btn => btn.PassFile)
+                .Select(pf => pf!.GetStateColor())
+                .ToProperty(this, btn => btn.StateColor);
+            
+            _opacity = this.WhenValueChanged(btn => btn.PassFile)
+                .Select(pf => pf!.IsArchived ? 0.5d : 1d)
+                .ToProperty(this, btn => btn.Opacity);
+            
+            _name = this.WhenAnyValue(btn => btn.PassFile, btn => btn.ShortMode)
+                .Select(val => val.Item1.IsArchived
+                    ? '~' + (val.Item2 ? PassFile.Name[..1] : PassFile.Name)
+                    : val.Item2 ? PassFile.Name[..2] : PassFile.Name)
+                .ToProperty(this, btn => btn.Name);
         }
-        
-        #region Commands
-        
-        public void OpenCommand()
-        {
-            if (_opened is not null)
-            {
-                _opened.Activate();
-                return;
-            }
 
-            _opened = new PassFileWindow(PassFile);
-            _opened.Closed += (_, _) =>
+        public Task OpenAsync()
+        {
+            var win = new PassFileWindow(PassFile);
+            win.Closed += (_, _) =>
             {
-                var actual = _opened.PassFile;
-                _opened = null;
-                
-                Locator.Current.GetService<IDialogService>()!.ShowInfoAsync("handled: " + actual?.Name)
-                    .GetAwaiter().GetResult();
-                // TODO
+                if (win.PassFile is null)
+                {
+                    Locator.Current.GetService<IDialogService>()!.ShowInfoAsync("handled: " + win.PassFile?.Name)
+                        .GetAwaiter().GetResult();
+                    
+                    // TODO: fire event
+                    return;
+                }
+
+                PassFile = win.PassFile;
             };
             
-            _opened.ShowDialog(MainWindow.Current);
+            return win.ShowDialog(MainWindow.Current);
         }
-        
-        #endregion
     }
 }

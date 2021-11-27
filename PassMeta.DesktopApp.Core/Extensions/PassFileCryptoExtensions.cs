@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using Splat;
-
 namespace PassMeta.DesktopApp.Core.Extensions
 {
+    using DesktopApp.Common;
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models;
+    using DesktopApp.Common.Models.Entities;
+    
+    using System;
+    using System.Collections.Generic;
+    using Newtonsoft.Json;
+    using Splat;
+    
     public static class PassFileCryptoExtensions
     {
         /// <summary>
@@ -38,7 +39,7 @@ namespace PassMeta.DesktopApp.Core.Extensions
                 passFile.Data = JsonConvert.DeserializeObject<List<PassFile.Section>>(content) 
                                 ?? new List<PassFile.Section>();
                 passFile.CheckKey = service.MakeCheckKey(passFile.PassPhrase);
-                return Result.Success;
+                return Result.Success();
             }
             catch
             {

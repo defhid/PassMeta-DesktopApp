@@ -252,10 +252,10 @@
     <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
         <value>Input section name</value>
     </data>
-    <data name="STORAGE__CONFIRM_PASSFILE_ARCHIVE" xml:space="preserve">
+    <data name="PASSFILE__CONFIRM_ARCHIVE" xml:space="preserve">
         <value>Do you really want to archive passfile '{0}'</value>
     </data>
-    <data name="STORAGE__CONFIRM_PASSFILE_DELETE" xml:space="preserve">
+    <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
         <value>Do you really want to delete passfile '{0}'? Type your account password:</value>
     </data>
     <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
@@ -304,7 +304,7 @@
         <value>Login '{0}' is copied to clipboard</value>
     </data>
     <data name="STORAGE_PASSFILE__TITLE" xml:space="preserve">
-        <value>PassFile '{0}'</value>
+        <value>Passfile '{0}'</value>
     </data>
     <data name="PASSFILE_COLOR__GREEN" xml:space="preserve">
         <value>Green</value>
@@ -371,5 +371,17 @@
     </data>
     <data name="PASSFILE__BTN_MERGE" xml:space="preserve">
         <value>Resolve conflicts...</value>
+    </data>
+    <data name="PASSFILE__SOLVE_PROBLEM" xml:space="preserve">
+        <value>Passfile has problem: '{0}'. Please, deal with them first</value>
+    </data>
+    <data name="PASSFILE__INCORRECT_NAME" xml:space="preserve">
+        <value>Invalid name!</value>
+    </data>
+    <data name="PASSFILE__STATE_NEW" xml:space="preserve">
+        <value>New</value>
+    </data>
+    <data name="STORAGE_PASSFILE__NEW_TITLE" xml:space="preserve">
+        <value>New passfile</value>
     </data>
 </root>

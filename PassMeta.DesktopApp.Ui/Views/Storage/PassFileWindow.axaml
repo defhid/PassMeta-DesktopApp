@@ -83,7 +83,8 @@
                         Width="26" Height="26"
                         FontFamily="Segoe MDL2 Assets"
                         Content="{Binding PasswordBtnContent}"
-                        IsChecked="{Binding IsPasswordBoxVisible}"/>
+                        IsChecked="{Binding IsPasswordBoxVisible}"
+                        IsVisible="{Binding !IsNew}"/>
             </Grid>
             
             <TextBlock Grid.Row="3" Grid.Column="0"
@@ -137,20 +138,24 @@
                 <Button Grid.Column="0" 
                         HorizontalAlignment="Right"
                         Margin="0 0 0 0"
+                        Opacity="0.5"
+                        IsVisible="{Binding !IsNew}"
                         Content="{x:Static com:Resources.PASSFILE__BTN_MERGE}" 
-                        Opacity="0.5"/>
+                        Command="{Binding MergeBtnCommand}"/>
                 
                 <Button Grid.Column="1" 
                         Margin="18 0 0 0"
                         Opacity="0.8"
+                        IsVisible="{Binding !IsNew}"
                         Content="{Binding ArchiveBtnContent}"
                         Command="{Binding ArchiveBtnCommand}"/>
             
                 <Button Grid.Column="2" 
                         Margin="12 0 0 0"
                         Opacity="0.8"
+                        IsVisible="{Binding !IsNew}"
                         Content="{x:Static com:Resources.PASSFILE__BTN_DELETE}"
-                        Command="{Binding Delete}"/>
+                        Command="{Binding DeleteBtnCommand}"/>
             </Grid>
         </Grid>
     </Grid>

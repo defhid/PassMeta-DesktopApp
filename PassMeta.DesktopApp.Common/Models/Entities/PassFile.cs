@@ -11,13 +11,13 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         public int Id { get; set; }
         
         [JsonProperty("name")]
-        public string Name { get; set; } = "";
+        public string Name { get; set; } = string.Empty;
         
         [JsonProperty("color")]
         public string? Color { get; set; }
         
         [JsonProperty("check_key")]
-        public string CheckKey { get; set; } = "";
+        public string CheckKey { get; set; } = string.Empty;
         
         [JsonProperty("created_on")]
         public DateTime CreatedOn { get; set; }
@@ -112,6 +112,13 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
                     Comment = Comment
                 };
             }
+        }
+
+        public PassFile Copy()
+        {
+            var copy = (PassFile)MemberwiseClone();
+            copy.Data = copy.Data?.Select(section => section.Copy()).ToList();
+            return copy;
         }
 
         public void Refresh(PassFileLight passFileLight)

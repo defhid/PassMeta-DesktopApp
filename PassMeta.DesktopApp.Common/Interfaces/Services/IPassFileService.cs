@@ -1,10 +1,10 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using DesktopApp.Common.Models;
+    using DesktopApp.Common.Models.Entities;
+    
     public interface IPassFileService
     {
         /// <summary>
@@ -22,21 +22,20 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         Task<Result<List<PassFile>>> GetPassFileListAsync();
 
         /// <summary>
-        /// Save passfile local and remote.
+        /// Save passfile info and data, local and remote.
         /// </summary>
-        /// <param name="passFile"></param>
         /// <remarks>
         /// Automatic errors showing.
         /// </remarks>
-        Task<Result> SavePassFileAsync(PassFile passFile);
-        
+        Task<Result<PassFile>> SavePassFileAsync(PassFile passFile);
+
         /// <summary>
         /// Archive remote passfile, get actual and update local storage.
         /// </summary>
         /// <remarks>
         /// Automatic errors showing.
         /// </remarks>
-        Task<Result<PassFile?>> ArchivePassFileAsync(PassFileLight passFile);
+        Task<Result<PassFile>> ArchivePassFileAsync(PassFile passFile);
         
         /// <summary>
         /// Unarchive remote passfile, get actual and update local storage.
@@ -44,7 +43,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <remarks>
         /// Automatic errors showing.
         /// </remarks>
-        Task<Result<PassFile?>> UnArchivePassFileAsync(PassFileLight passFile);
+        Task<Result<PassFile>> UnArchivePassFileAsync(PassFile passFile);
 
         /// <summary>
         /// Delete local and remote passfile.

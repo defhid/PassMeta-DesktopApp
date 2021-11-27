@@ -32,12 +32,12 @@ namespace PassMeta.DesktopApp.Core.Services
             {
                 await Locator.Current.GetService<IDialogService>()!
                     .ShowFailureAsync(Common.Resources.WARN__PASSWORD_CONFIRM_MISSED);
-                return Result.Failure;
+                return Result.Failure();
             }
 
             var response = await PassMetaApi.Patch("/users/me", data).ExecuteAsync<User>();
             if (response is null) 
-                return Result.Failure;
+                return Result.Failure();
             
             if (response.Success)
             {
@@ -47,11 +47,11 @@ namespace PassMeta.DesktopApp.Core.Services
                 var user = response.Data;
                 await AppConfig.Current.SetUserAsync(user);
 
-                return Result.Success;
+                return Result.Success();
             }
 
             await Locator.Current.GetService<IOkBadService>()!.ShowResponseFailureAsync(response, WhatMapper);
-            return Result.Failure;
+            return Result.Failure();
         }
     }
 }

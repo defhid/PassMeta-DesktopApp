@@ -2,9 +2,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 {
     using DesktopApp.Common;
     using DesktopApp.Common.Interfaces.Services;
-    using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Core.Extensions;
     using DesktopApp.Core.Utils;
     
     using System;
@@ -14,6 +12,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using DynamicData;
     using Models.Storage;
     using Splat;
+    using Utils.Extensions;
+    using Views.Main;
+    using Views.Storage;
 
     public partial class StorageViewModel
     {
@@ -48,23 +49,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var passFile = SelectedPassFile;
             if (passFile is null || passFile.IsDecrypted) return;
 
-            var passPhrase = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
-            if (passPhrase.Bad || passPhrase.Data == string.Empty)
-            {
-                PassFilesSelectedIndex = _passFilesPrevSelectedIndex;
-                return;
-            }
-
-            passFile.PassPhrase = passPhrase.Data;
-            var result = passFile.Decrypt();
-
+            var result = await passFile.AskKeyPhraseAndDecryptAsync();
             if (result.Ok)
             {
                 _SetPassFileSectionList();
                 return;
             }
             
-            await _dialogService.ShowFailureAsync(result.Message!);
             PassFilesSelectedIndex = _passFilesPrevSelectedIndex;
         }
 
@@ -87,74 +78,17 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         private async Task PassFileAddAsync()
         {
-            Result<string?> passPhrase;
-            while (true)
-            {
-                passPhrase = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
-                if (passPhrase.Bad) return;
-
-                if (string.IsNullOrEmpty(passPhrase.Data!))
-                {
-                    await _dialogService.ShowFailureAsync(Resources.PASSFILE__INCORRECT_PASSPHRASE);
-                    continue;
-                }
-                
-                break;
-            }
-
+            var win = new PassFileWindow(new PassFile { Id = 0 });
+            
+            await win.ShowDialog(MainWindow.Current);
+            
+            if (win.PassFile is null) return;
+            
             _passFiles ??= new List<PassFile>();
-            _passFiles.Add(new PassFile
-            {
-                Id = 0,
-                //Name = name.Data!,
-                Color = null,
-                CreatedOn = DateTime.Now,
-                ChangedOn = DateTime.Now,
-                Version = 1,
-                IsArchived = false,
-                ChangedLocalOn = DateTime.Now,
-                PassPhrase = passPhrase.Data!,
-                Data = new List<PassFile.Section>()
-            });
-
+            _passFiles.Add(win.PassFile);
+            
             PassFileList = _MakePassFileList();
             PassFilesSelectedIndex = _passFiles.Count - 1;
-        }
-
-        public async Task PassFileArchiveAsync()
-        {
-            var passFileBtn = SelectedPassFileBtn!;
-            var passFile = passFileBtn.PassFile;
-            
-            var result = await _dialogService
-                .ConfirmAsync(string.Format(Resources.STORAGE__CONFIRM_PASSFILE_ARCHIVE, passFile.Name));
-
-            if (result.Bad) return;
-
-            var archiveResult = await _passFileService.ArchivePassFileAsync(passFile);
-            if (archiveResult.Ok)
-            {
-                passFile.IsArchived = true;
-                passFileBtn.Refresh();
-            }
-        }
-        
-        public async Task PassFileDeleteAsync()
-        {
-            var passFileBtn = SelectedPassFileBtn!;
-            var passFile = passFileBtn.PassFile;
-            
-            var accountPassword = await _dialogService
-                .AskPasswordAsync(string.Format(Resources.STORAGE__CONFIRM_PASSFILE_DELETE, passFile.Name));
-
-            if (accountPassword.Bad || accountPassword.Data == string.Empty) return;
-
-            var result = await _passFileService.DeletePassFileAsync(passFile, accountPassword.Data!);
-            if (result.Ok)
-            {
-                _passFiles!.Remove(passFile);
-                PassFileList = _MakePassFileList();
-            }
         }
 
         #endregion

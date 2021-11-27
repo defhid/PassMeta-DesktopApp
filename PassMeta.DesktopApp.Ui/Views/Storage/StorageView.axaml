@@ -40,13 +40,13 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="Auto,*"
-                                          Margin="0 2 0 0">
+                                      Margin="0 2 0 0">
                                         <Border Grid.Column="0"
                                                 CornerRadius="3,0,0,3"
                                                 Margin="1 0 0 0"
                                                 Height="39" Width="6"
                                                 HorizontalAlignment="Left"
-                                                Background="{Binding Color}"/>
+                                                Background="{Binding Color.Brush}"/>
                                         
                                         <Button Grid.Column="0"
                                                 HorizontalContentAlignment="Center"
@@ -63,7 +63,7 @@
                                                 Foreground="{Binding StateColor}"
                                                 Opacity="{Binding Opacity}"
                                                 IsVisible="{Binding IsChecked, ElementName=PassFilesBarBtn}"
-                                                Command="{Binding OpenCommand}"/>
+                                                Command="{Binding OpenAsync}"/>
                                         
                                         <TextBlock Grid.Column="1"
                                                    FontSize="16"

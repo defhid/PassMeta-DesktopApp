@@ -30,8 +30,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         
         #region Input
         
-        private string _name = string.Empty;
-        public string Name
+        private string? _name;
+        public string? Name
         {
             get => _name;
             set => this.RaiseAndSetIfChanged(ref _name, value);
@@ -57,7 +57,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             get => _isPasswordBoxVisible;
             set
             {
-                Password = null;
+                Password = value ? string.Empty : null;
                 this.RaiseAndSetIfChanged(ref _isPasswordBoxVisible, value);
             }
         }
@@ -93,7 +93,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         private readonly ObservableAsPropertyHelper<ICommand> _archiveBtnCommand;
         public ICommand ArchiveBtnCommand => _archiveBtnCommand.Value;
         
+        public ICommand DeleteBtnCommand { get; }
+
+        public ICommand MergeBtnCommand { get; }
+        
         #endregion
+        
+        private readonly ObservableAsPropertyHelper<bool> _isNew;
+        private bool IsNew => _isNew.Value;
         
         private readonly ObservableAsPropertyHelper<bool> _anyChanged;
         private bool AnyChanged => _anyChanged.Value;
@@ -105,17 +112,24 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             
             _name = passFile.Name;
             _password = null;
+            _isPasswordBoxVisible = passFile.Id == 0;
             SelectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
 
             var passFileChanged = this.WhenValueChanged(vm => vm.PassFile);
 
-            _title = passFileChanged.Select(pf => string.Format(Resources.STORAGE_PASSFILE__TITLE, pf!.Name))
+            _title = passFileChanged.Select(pf => string.Format(pf!.Id > 0 
+                    ? Resources.STORAGE_PASSFILE__TITLE 
+                    : Resources.STORAGE_PASSFILE__NEW_TITLE, pf.Name))
                 .ToProperty(this, vm => vm.Title);
             
-            _createdOn = passFileChanged.Select(pf => pf!.CreatedOn.ToString(CultureInfo.CurrentCulture))
+            _createdOn = passFileChanged.Select(pf => pf!.CreatedOn == default 
+                    ? string.Empty 
+                    : pf.CreatedOn.ToString(CultureInfo.CurrentCulture))
                 .ToProperty(this, vm => vm.CreatedOn);
             
-            _changedOn = passFileChanged.Select(pf => pf!.ChangedOn.ToString(CultureInfo.CurrentCulture))
+            _changedOn = passFileChanged.Select(pf => pf!.ChangedOn == default 
+                    ? string.Empty 
+                    : pf.ChangedOn.ToString(CultureInfo.CurrentCulture))
                 .ToProperty(this, vm => vm.ChangedOn);
             
             _stateColor = passFileChanged.Select(pf => pf!.GetStateColor())
@@ -127,27 +141,33 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             _passwordBtnContent = this.WhenValueChanged(vm => vm.IsPasswordBoxVisible)
                 .Select(isVisible => isVisible ? "\uF78A" : "\uE70F")
                 .ToProperty(this, vm => vm.PasswordBtnContent);
+            
+            _isNew = passFileChanged.Select(pf => pf!.Id == 0)
+                .ToProperty(this, vm => vm.IsNew);
 
             _anyChanged = this.WhenAnyValue(
                     vm => vm.Name,
                     vm => vm.SelectedColorIndex,
-                    vm => vm.Password)
+                    vm => vm.Password,
+                    vm => vm.IsNew)
                 .Select(val =>
                     val.Item1 != _passFile.Name ||
                     PassFileColor.List[val.Item2] != _passFile.GetPassFileColor() ||
-                    !string.IsNullOrEmpty(val.Item3))
+                    !string.IsNullOrEmpty(val.Item3) ||
+                    val.Item4)
                 .ToProperty(this, vm => vm.AnyChanged);
             
             var anyChanged = this.WhenValueChanged(vm => vm.AnyChanged);
+            var notNew = passFileChanged.Select(pf => pf!.Id > 0);
 
-            _okBtnContent = anyChanged.Select(changed => changed 
+            _okBtnContent = anyChanged.Select(changed => changed
                     ? Resources.PASSFILE__BTN_SAVE 
                     : Resources.PASSFILE__BTN_OK)
                 .ToProperty(this, vm => vm.OkBtnContent);
             
             _okBtnCommand = anyChanged.Select(changed => changed 
-                    ? ReactiveCommand.Create(Save) 
-                    : ReactiveCommand.Create(Close))
+                    ? ReactiveCommand.CreateFromTask(SaveAsync) 
+                    : ReactiveCommand.Create(() => Close(_passFile)))
                 .ToProperty(this, vm => vm.OkBtnCommand);
             
             _archiveBtnContent = passFileChanged
@@ -158,16 +178,19 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             
             _archiveBtnCommand = passFileChanged
                 .Select(pf => pf!.IsArchived
-                    ? ReactiveCommand.Create(UnArchive)
-                    : ReactiveCommand.Create(Archive))
+                    ? ReactiveCommand.CreateFromTask(UnArchiveAsync, notNew)
+                    : ReactiveCommand.CreateFromTask(ArchiveAsync, notNew))
                 .ToProperty(this, vm => vm.ArchiveBtnCommand);
+
+            DeleteBtnCommand = ReactiveCommand.CreateFromTask(DeleteAsync, notNew);
+            MergeBtnCommand = ReactiveCommand.CreateFromTask(MergeAsync, notNew);
         }
         
         private static string _MakeState(PassFile passFile)
         {
             if (!passFile.HasProblem && !passFile.IsLocalChanged)
             {
-                return Resources.PASSFILE__STATE_OK;
+                return passFile.Id > 0 ? Resources.PASSFILE__STATE_OK : Resources.PASSFILE__STATE_NEW;
             }
             
             var states = new Stack<string>();
