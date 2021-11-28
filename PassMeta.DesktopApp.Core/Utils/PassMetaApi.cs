@@ -1,17 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models;
-using Splat;
-
 namespace PassMeta.DesktopApp.Core.Utils
 {
+    using DesktopApp.Common;
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models;
+    
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Net;
+    using System.Text;
+    using System.Threading.Tasks;
+    
+    using Newtonsoft.Json;
+    using Splat;
+    
     public static class PassMetaApi
     {
         static PassMetaApi()
@@ -192,7 +194,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 return this;
             }
             
-            public async Task<OkBadResponse<object>?> ExecuteAsync()
+            public async Task<OkBadResponse?> ExecuteAsync()
             {
                 var request = _data is null
                     ? await _CreateRequestAsync(_url, _method)
@@ -200,7 +202,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 
                 if (request is null) return null;
 
-                return await _ExecuteRequest<OkBadResponse<object>>(request, _handleBad);
+                return await _ExecuteRequest<OkBadResponse>(request, _handleBad);
             }
             
             public async Task<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>()

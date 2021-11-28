@@ -5,8 +5,6 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Models.Entities.Request;
-    
-    using DesktopApp.Core.Extensions;
     using DesktopApp.Core.Utils;
     
     using System;
@@ -15,10 +13,11 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    
+    using Common.Constants;
     using Newtonsoft.Json;
     using Splat;
-    
+    using Utils.Extensions;
+
     public class PassFileService : IPassFileService
     {
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
@@ -43,13 +42,13 @@ namespace PassMeta.DesktopApp.Core.Services
 
             if (AppConfig.Current.ServerVersion is null)
             {
-                return new Result<List<PassFile>>(localList, Resources.INFO__PASSFILES_LOCAL_MODE);
+                return Result.Success(localList, Resources.INFO__PASSFILES_LOCAL_MODE);
             }
             
             var remoteList = await _GetPassFileListRemoteAsync();
             if (remoteList is null)
             {
-                return new Result<List<PassFile>>(localList, Resources.INFO__PASSFILES_LOCAL_MODE);
+                return Result.Success(localList, Resources.INFO__PASSFILES_LOCAL_MODE);
             }
             
             var resultList = new List<PassFile>();
@@ -106,13 +105,19 @@ namespace PassMeta.DesktopApp.Core.Services
                 resultList.Add(local);
             }
 
-            return new Result<List<PassFile>>(resultList);
+            return Result.Success(resultList);
         }
 
         /// <inheritdoc />
         public async Task<Result<PassFile>> SavePassFileAsync(PassFile passFile)
         {
-            passFile.Encrypt();
+            var encryptionResult = passFile.Encrypt();
+            if (encryptionResult.Bad)
+            {
+                await _dialogService.ShowErrorAsync(encryptionResult.Message!);
+                return Result.Failure<PassFile>();
+            }
+            
             PassFile? pf;
 
             if (AppConfig.Current.ServerVersion is not null)
@@ -130,7 +135,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             
             await _SavePassFileLocalAsync(pf);
-            return new Result<PassFile>(pf);
+            return Result.Success(pf);
         }
         
         /// <inheritdoc />
@@ -159,7 +164,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
 
             await _SavePassFileLocalAsync(pf);
-            return new Result<PassFile>(pf);
+            return Result.Success(pf);
         }
         
         /// <inheritdoc />
@@ -188,7 +193,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
 
             await _SavePassFileLocalAsync(pf);
-            return new Result<PassFile>(pf);
+            return Result.Success(pf);
         }
 
         /// <inheritdoc />
@@ -276,7 +281,7 @@ namespace PassMeta.DesktopApp.Core.Services
             return Result.Success();
         }
         
-        private async Task<Result<PassFileLight?>> _SavePassFileRemoteAsync(PassFile passFile)
+        private async Task<Result<PassFileLight>> _SavePassFileRemoteAsync(PassFile passFile)
         {
             try
             {
@@ -287,16 +292,14 @@ namespace PassMeta.DesktopApp.Core.Services
                     : PassMetaApi.Post("/passfiles/new", postData);
 
                 var response = await request.WithBadHandling(WhatMapper).ExecuteAsync<PassFileLight>();
-                return response?.Success is true
-                    ? new Result<PassFileLight?>(response.Data!)
-                    : new Result<PassFileLight?>(false);
+                return Result.FromResponse(response);
             }
             catch (Exception ex)
             {
                 await _dialogService.ShowErrorAsync(
                     string.Format(Resources.ERR__PASSFILE_SAVE_REMOTE, passFile.Name), more: ex.ToString());
 
-                return new Result<PassFileLight?>(false);
+                return Result.Failure<PassFileLight>();
             }
         }
 
@@ -329,9 +332,8 @@ namespace PassMeta.DesktopApp.Core.Services
             try
             {
                 var request = PassMetaApi.Delete($"/passfiles/{passFile.Id}", new { check_password = accountPassword });
-                var response = await request.WithBadHandling(WhatMapper).ExecuteAsync();
                 
-                return new Result(response?.Success is true);
+                return Result.FromResponse(await request.WithBadHandling(WhatMapper).ExecuteAsync());
             }
             catch (Exception ex)
             {
@@ -346,10 +348,9 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             try
             {
-                var response = await PassMetaApi.Put($"/passfiles/{passFile.Id}/to/archive")
-                    .WithBadHandling(WhatMapper).ExecuteAsync();
-                
-                return new Result(response?.Success is true);
+                var request = PassMetaApi.Put($"/passfiles/{passFile.Id}/to/archive");
+
+                return Result.FromResponse(await request.WithBadHandling(WhatMapper).ExecuteAsync());
             }
             catch (Exception ex)
             {
@@ -364,10 +365,9 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             try
             {
-                var response = await PassMetaApi.Put($"/passfiles/{passFile.Id}/to/actual")
-                    .WithBadHandling(WhatMapper).ExecuteAsync();
+                var request = PassMetaApi.Put($"/passfiles/{passFile.Id}/to/actual");
                 
-                return new Result(response?.Success is true);
+                return Result.FromResponse(await request.WithBadHandling(WhatMapper).ExecuteAsync());
             }
             catch (Exception ex)
             {
@@ -411,12 +411,10 @@ namespace PassMeta.DesktopApp.Core.Services
             //     string.Join('\n', result.Data.Item2.Select(s => s.Name)));
             
             if (first.Id != second.Id)
-                return new Result<(PassFile, List<PassFile.Section>)>(false, 
-                    "Attempt to merge passfiles with different ID!");
+                return Result.Failure<(PassFile, List<PassFile.Section>)>("Attempt to merge passfiles with different ID!");
 
             if (first.Data is null || second.Data is null)
-                return new Result<(PassFile, List<PassFile.Section>)>(false, 
-                    "Attempt to merge passfiles without decryption!");
+                return Result.Failure<(PassFile, List<PassFile.Section>)>("Attempt to merge passfiles without decryption!");
 
             if (second.ChangedLocalOn.HasValue && !first.ChangedLocalOn.HasValue)
             {
@@ -462,7 +460,7 @@ namespace PassMeta.DesktopApp.Core.Services
             result.Data.Sort((s1, s2) => 
                 string.CompareOrdinal(s1.Name.ToLower(), s2.Name.ToLower()));
 
-            return new Result<(PassFile, List<PassFile.Section>)>((result, changed));
+            return Result.Success((result, changed.ToList()));
         }
     }
 }

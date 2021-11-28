@@ -39,7 +39,7 @@
         <value>Ошибка сохранения файла конфигурации!</value>
     </data>
     <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
-        <value>Неверный пароль (не удаётся расшифровать файл)</value>
+        <value>Не удаётся расшифровать файл</value>
     </data>
     <data name="ERR__INVALID_API_RESPONSE" xml:space="preserve">
         <value>Невалидный ответ сервера!</value>
@@ -376,5 +376,8 @@
     </data>
     <data name="STORAGE_PASSFILE__NEW_TITLE" xml:space="preserve">
         <value>Новый пакет паролей</value>
+    </data>
+    <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
+        <value>Не удаётся зашифровать файл</value>
     </data>
 </root>

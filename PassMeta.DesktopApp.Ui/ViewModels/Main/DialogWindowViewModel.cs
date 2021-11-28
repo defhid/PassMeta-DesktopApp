@@ -1,12 +1,14 @@
 using System;
 using System.Linq;
 using PassMeta.DesktopApp.Common.Enums;
-using PassMeta.DesktopApp.Core.Extensions;
-using PassMeta.DesktopApp.Ui.Models.DialogWindow.Components;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Main
 {
+    using Core.Utils.Extensions;
+    using Models.Components.DialogWindow;
+    using Models.Enums;
+
     public class DialogWindowViewModel : ReactiveObject
     {
         public string Title { get; }

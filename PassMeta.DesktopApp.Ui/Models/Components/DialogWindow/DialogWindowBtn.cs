@@ -1,8 +1,9 @@
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Enums;
-
-namespace PassMeta.DesktopApp.Ui.Models.DialogWindow.Components
+namespace PassMeta.DesktopApp.Ui.Models.Components.DialogWindow
 {
+    using Common;
+    using Common.Enums;
+    using Enums;
+
     public class DialogWindowBtn
     {
         public bool Visible { get; }

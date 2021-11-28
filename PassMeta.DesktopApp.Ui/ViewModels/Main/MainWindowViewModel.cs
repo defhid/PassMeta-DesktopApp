@@ -1,15 +1,15 @@
-﻿using System;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Layout;
-using Avalonia.Media;
-using DynamicData;
-using ReactiveUI;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Constants;
-
-namespace PassMeta.DesktopApp.Ui.ViewModels.Main
+﻿namespace PassMeta.DesktopApp.Ui.ViewModels.Main
 {
+    using DesktopApp.Common;
+    using System;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Layout;
+    using Avalonia.Media;
+    using DynamicData;
+    using Models.Constants;
+    using ReactiveUI;
+
     public class MainWindowViewModel : ReactiveObject, IScreen
     {
         public RoutingState Router { get; } = new();
@@ -104,8 +104,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main
                 Resources.MAIN_MENU__SETTINGS_BTN,
             },
         };
-        
-        public static MainPaneButtons WhenClosed => new()
+
+        public static MainPaneButtons WhenClosed { get; } = new()
         {
             Width = 40,
             Spacing = 8,

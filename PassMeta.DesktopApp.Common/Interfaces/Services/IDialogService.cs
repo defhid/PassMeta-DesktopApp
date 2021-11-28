@@ -16,7 +16,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <param name="title">Message title.</param>
         /// <param name="more">Secondary content.</param>
         /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
-        /// <remarks>Auto-logging.</remarks>
         public Task ShowInfoAsync(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
 
         /// <summary>
@@ -53,10 +52,9 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <param name="title">Window title.</param>
         /// <param name="defaultValue">The value filled in the textbox by default.</param>
         /// <returns>
-        /// Result with optional trimmed string value.
-        /// String is null only when <see cref="Result.Bad"/>.
+        /// Result with not null trimmed string value.
         /// </returns>
-        public Task<Result<string?>> AskStringAsync(string message, string? title = null, string? defaultValue = null);
+        public Task<Result<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null);
         
         /// <summary>
         /// Ask user for string password.
@@ -64,9 +62,8 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <param name="message">Question content.</param>
         /// <param name="title">Window title.</param>
         /// <returns>
-        /// Result with optional raw password.
-        /// Password is null only when <see cref="Result.Bad"/>.
+        /// Result with not null raw password.
         /// </returns>
-        public Task<Result<string?>> AskPasswordAsync(string message, string? title = null);
+        public Task<Result<string>> AskPasswordAsync(string message, string? title = null);
     }
 }

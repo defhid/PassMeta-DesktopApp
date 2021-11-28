@@ -1,12 +1,12 @@
-namespace PassMeta.DesktopApp.Ui.Models.Storage
+namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
 {
     using System.Reactive.Linq;
     using System.Threading.Tasks;
-    using DesktopApp.Common.Models.Entities;
     using Avalonia.Media;
     using Common.Interfaces.Services;
+    using Common.Models.Entities;
+    using Constants;
     using DynamicData.Binding;
-    using PassFile;
     using ReactiveUI;
     using Splat;
     using Utils.Extensions;
@@ -25,8 +25,8 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
         private readonly ObservableAsPropertyHelper<PassFileColor> _color;
         public PassFileColor Color => _color.Value;
         
-        private readonly ObservableAsPropertyHelper<ISolidColorBrush?> _stateColor;
-        public ISolidColorBrush? StateColor => _stateColor.Value;
+        private readonly ObservableAsPropertyHelper<ISolidColorBrush> _stateColor;
+        public ISolidColorBrush StateColor => _stateColor.Value;
         
         private readonly ObservableAsPropertyHelper<double> _opacity;
         public double Opacity => _opacity.Value;
@@ -47,21 +47,21 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
 
             _color = this.WhenValueChanged(btn => btn.PassFile)
                 .Select(pf => pf!.GetPassFileColor())
-                .ToProperty(this, btn => btn.Color);
+                .ToProperty(this, nameof(Color));
             
             _stateColor = this.WhenValueChanged(btn => btn.PassFile)
                 .Select(pf => pf!.GetStateColor())
-                .ToProperty(this, btn => btn.StateColor);
+                .ToProperty(this, nameof(StateColor));
             
             _opacity = this.WhenValueChanged(btn => btn.PassFile)
                 .Select(pf => pf!.IsArchived ? 0.5d : 1d)
-                .ToProperty(this, btn => btn.Opacity);
+                .ToProperty(this, nameof(Opacity));
             
             _name = this.WhenAnyValue(btn => btn.PassFile, btn => btn.ShortMode)
                 .Select(val => val.Item1.IsArchived
                     ? '~' + (val.Item2 ? PassFile.Name[..1] : PassFile.Name)
                     : val.Item2 ? PassFile.Name[..2] : PassFile.Name)
-                .ToProperty(this, btn => btn.Name);
+                .ToProperty(this, nameof(Name));
         }
 
         public Task OpenAsync()

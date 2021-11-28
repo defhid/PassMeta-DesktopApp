@@ -1,7 +1,7 @@
-using Newtonsoft.Json;
-
 namespace PassMeta.DesktopApp.Common.Models.Entities
 {
+    using Newtonsoft.Json;
+    
     public class User
     {
         private string? _login;

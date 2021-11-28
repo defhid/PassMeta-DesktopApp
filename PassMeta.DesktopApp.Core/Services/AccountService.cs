@@ -23,7 +23,7 @@ namespace PassMeta.DesktopApp.Core.Services
         public async Task<Result<User>> GetUserDataAsync()
         {
             var response = await PassMetaApi.GetAsync<User>("/users/me", true);
-            return response?.ToResult() ?? new Result<User>(false);
+            return response?.ToResult() ?? Result.Failure<User>();
         }
 
         public async Task<Result> UpdateUserDataAsync(UserPatchData data)

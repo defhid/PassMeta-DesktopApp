@@ -28,7 +28,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         {
             SubscribeOnPageEvents();
             Opened += OnOpened;
-            
+
             AvaloniaXamlLoader.Load(this);
 #if DEBUG
             this.AttachDevTools();

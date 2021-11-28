@@ -1,11 +1,12 @@
-using System;
-using System.Threading.Tasks;
-using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Ui.ViewModels.Base;
-using ReactiveUI;
-
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
+    using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.ViewModels.Base;
+    
+    using System;
+    using System.Threading.Tasks;
+    using ReactiveUI;
+    
     public class AuthRequiredViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/auth-required";

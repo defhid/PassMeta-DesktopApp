@@ -10,7 +10,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using System.Linq;
     using System.Threading.Tasks;
     using DynamicData;
-    using Models.Storage;
+    using Models.Components.Storage;
     using Splat;
     using Utils.Extensions;
     using Views.Main;

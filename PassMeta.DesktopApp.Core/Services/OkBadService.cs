@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Core.Utils;
-using Splat;
-
 namespace PassMeta.DesktopApp.Core.Services
 {
+    using DesktopApp.Common;
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models;
+    using DesktopApp.Core.Utils;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Splat;
+    
     public class OkBadService : IOkBadService
     {
         public string GetLocalizedMessage(string message)

@@ -1,13 +1,13 @@
-using System;
-using System.Globalization;
-using System.Reflection;
-using Avalonia;
-using Avalonia.Data.Converters;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-
 namespace PassMeta.DesktopApp.Ui.Utils
 {
+    using System;
+    using System.Globalization;
+    using System.Reflection;
+    using Avalonia;
+    using Avalonia.Data.Converters;
+    using Avalonia.Media.Imaging;
+    using Avalonia.Platform;
+    
     public class ImageConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)

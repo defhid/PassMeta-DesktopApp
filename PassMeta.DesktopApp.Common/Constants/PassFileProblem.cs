@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Models.Entities
+namespace PassMeta.DesktopApp.Common.Constants
 {
     using System;
     using Enums;

@@ -1,10 +1,10 @@
-using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Request;
-
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
+    using DesktopApp.Common.Models;
+    using DesktopApp.Common.Models.Entities;
+    using DesktopApp.Common.Models.Entities.Request;
+    using System.Threading.Tasks;
+
     public interface IAccountService
     {
         /// <summary>

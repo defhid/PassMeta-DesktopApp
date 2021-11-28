@@ -1,12 +1,12 @@
-namespace PassMeta.DesktopApp.Ui.Models.Storage
+namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
 {
     using System;
-    using DesktopApp.Common.Models.Entities;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using Common;
     using Common.Interfaces.Services;
+    using Common.Models.Entities;
     using DynamicData.Binding;
     using ReactiveUI;
     using Splat;
@@ -56,11 +56,11 @@ namespace PassMeta.DesktopApp.Ui.Models.Storage
 
             _isCommentTextVisible = this.WhenAnyValue(btn => btn.IsReadOnly, btn => btn.Comment)
                 .Select(pair => pair.Item1 && pair.Item2 != string.Empty)
-                .ToProperty(this, btn => btn.IsCommentTextVisible);
+                .ToProperty(this, nameof(IsCommentTextVisible));
             
             _isCommentInputVisible = this.WhenValueChanged(btn => btn.IsReadOnly)
                 .Select(isReadOnly => !isReadOnly)
-                .ToProperty(this, btn => btn.IsCommentInputVisible);
+                .ToProperty(this, nameof(IsCommentInputVisible));
         }
 
         public PassFile.Section.Item ToItem() => new()

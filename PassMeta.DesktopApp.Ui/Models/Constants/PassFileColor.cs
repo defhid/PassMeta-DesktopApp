@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.Models.PassFile
+namespace PassMeta.DesktopApp.Ui.Models.Constants
 {
     using System;
     using Avalonia.Media;

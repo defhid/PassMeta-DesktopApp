@@ -1,14 +1,15 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models.Entities.Request;
-using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Ui.ViewModels.Base;
-using ReactiveUI;
-using Splat;
-
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models.Entities.Request;
+    using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.ViewModels.Base;
+    
+    using System.Threading.Tasks;
+    using System.Windows.Input;
+    using ReactiveUI;
+    using Splat;
+    
     public class AuthViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/auth";

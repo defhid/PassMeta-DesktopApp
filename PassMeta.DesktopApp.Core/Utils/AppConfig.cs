@@ -1,22 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Response;
-using Splat;
-
 namespace PassMeta.DesktopApp.Core.Utils
 {
+    using DesktopApp.Common;
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models;
+    using DesktopApp.Common.Models.Entities;
+    using DesktopApp.Common.Models.Entities.Response;
+    
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Text;
     using System.Reflection;
+    using System.Threading.Tasks;
+    
+    using Newtonsoft.Json;
+    using Splat;
 
     /// <summary>
     /// Application configuration.
@@ -264,10 +265,10 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
 
             if (!await _SaveToFileAsync(config))
-                return new Result<AppConfig>(false);
+                return Result.Failure<AppConfig>();
             
             await _SetCurrentAsync(config);
-            return new Result<AppConfig>(config);
+            return Result.Success(config);
         }
 
         private static Task _SetCurrentAsync(AppConfig config)

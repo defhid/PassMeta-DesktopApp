@@ -134,6 +134,14 @@
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                         </Style>
+                        
+                        <Style Selector="Button:disabled">
+                            <Setter Property="IsVisible" Value="False"/>
+                        </Style>
+                        
+                        <Style Selector="ToggleButton:disabled">
+                            <Setter Property="IsVisible" Value="False"/>
+                        </Style>
                     </ItemsControl.Styles>
                 </ItemsControl>
                 

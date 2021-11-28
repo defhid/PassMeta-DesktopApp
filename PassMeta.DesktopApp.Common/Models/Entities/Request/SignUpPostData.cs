@@ -1,7 +1,7 @@
-using Newtonsoft.Json;
-
 namespace PassMeta.DesktopApp.Common.Models.Entities.Request
 {
+    using Newtonsoft.Json;
+    
     public class SignUpPostData : SignInPostData
     {
         [JsonProperty("first_name")]

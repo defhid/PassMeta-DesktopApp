@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.Models.DialogWindow.Components
+namespace PassMeta.DesktopApp.Ui.Models.Components.DialogWindow
 {
     public class DialogWindowIcon
     {

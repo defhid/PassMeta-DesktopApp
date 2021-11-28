@@ -1,10 +1,10 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
-    
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
     public interface IPassFileService
     {
         /// <summary>

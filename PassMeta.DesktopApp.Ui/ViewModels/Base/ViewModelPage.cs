@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Avalonia.Controls;
-using ReactiveUI;
-
-namespace PassMeta.DesktopApp.Ui.ViewModels.Base
+﻿namespace PassMeta.DesktopApp.Ui.ViewModels.Base
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Avalonia.Controls;
+    using ReactiveUI;
+    
     public abstract class ViewModelPage : ReactiveObject, IRoutableViewModel
     {
         public static event Action<ViewModelPage>? OnNavigated;

@@ -46,7 +46,7 @@
         <value>Configuration file saving error!</value>
     </data>
     <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
-        <value>Password is wrong (file decryption failed)</value>
+        <value>Passfile decryption failed</value>
     </data>
     <data name="ERR__INVALID_API_RESPONSE" xml:space="preserve">
         <value>Invalid server response!</value>
@@ -383,5 +383,8 @@
     </data>
     <data name="STORAGE_PASSFILE__NEW_TITLE" xml:space="preserve">
         <value>New passfile</value>
+    </data>
+    <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
+        <value>Passfile encryption failed</value>
     </data>
 </root>

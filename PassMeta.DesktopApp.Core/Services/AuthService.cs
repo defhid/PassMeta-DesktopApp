@@ -16,7 +16,7 @@ namespace PassMeta.DesktopApp.Core.Services
             {
                 await Locator.Current.GetService<IDialogService>()!
                     .ShowErrorAsync(Common.Resources.ERR__DATA_VALIDATION);
-                return new Result<User>(false);
+                return Result.Failure<User>();
             }
             
             var response = await PassMetaApi.Post("/auth/sign-in", data)
@@ -24,10 +24,10 @@ namespace PassMeta.DesktopApp.Core.Services
                 .ExecuteAsync<User>();
             
             if (response?.Success is not true)
-                return new Result<User>(false);
+                return Result.Failure<User>();
             
             await AppConfig.Current.SetUserAsync(response.Data);
-            return new Result<User>(response.Data!);
+            return Result.Success(response.Data!);
         }
 
         public async Task SignOutAsync()
@@ -50,17 +50,17 @@ namespace PassMeta.DesktopApp.Core.Services
             {
                 await Locator.Current.GetService<IDialogService>()!
                     .ShowErrorAsync(Common.Resources.ERR__DATA_VALIDATION);
-                return new Result<User>(false);
+                return Result.Failure<User>();
             }
             
             var response = await PassMetaApi.Post("/users/new", data)
                 .WithBadHandling().ExecuteAsync<User>();
             
             if (response?.Success is not true) 
-                return new Result<User>(false);
+                return Result.Failure<User>();
                 
             await AppConfig.Current.SetUserAsync(response.Data);
-            return new Result<User>(response.Data!);
+            return Result.Success(response.Data!);
         }
         
         private static Result<TData> _Validate<TData>(TData data)
@@ -70,7 +70,7 @@ namespace PassMeta.DesktopApp.Core.Services
             
             if (data.Login.Length < 1 || data.Password.Length < 1)
             {
-                return new Result<TData>(false);
+                return Result.Failure<TData>();
             }
 
             if (data is SignUpPostData signUpData)
@@ -80,11 +80,11 @@ namespace PassMeta.DesktopApp.Core.Services
                 
                 if (signUpData.FirstName.Length < 1 || signUpData.LastName.Length < 1)
                 {
-                    return new Result<TData>(false);
+                    return Result.Failure<TData>();
                 }
             }
 
-            return new Result<TData>(data);
+            return Result.Success(data);
         }
     }
 }

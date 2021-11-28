@@ -1,10 +1,8 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 {
     using DesktopApp.Common;
-    using DesktopApp.Common.Constants;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Core.Utils;
-    using DesktopApp.Ui.Models.Storage;
     using DesktopApp.Ui.ViewModels.Base;
     
     using System;
@@ -15,6 +13,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using Avalonia.Controls;
     using Avalonia.Media;
     using DynamicData.Binding;
+    using Models.Components.Storage;
+    using Models.Constants;
     using ReactiveUI;
     
     public partial class StorageViewModel : ViewModelPage
@@ -153,19 +153,19 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
             _isSectionsBarVisible = this.WhenValueChanged(vm => vm.PassFileSectionList)
                 .Select(arr => arr is not null)
-                .ToProperty(this, vm => vm.IsSectionsBarVisible);
+                .ToProperty(this, nameof(IsSectionsBarVisible));
             
             _isItemsBarVisible = this.WhenValueChanged(vm => vm.PassFileSectionItemList)
                 .Select(arr => arr is not null)
-                .ToProperty(this, vm => vm.IsItemsBarVisible);
+                .ToProperty(this, nameof(IsItemsBarVisible));
             
             _isNoSectionsTextVisible = this.WhenValueChanged(vm => vm.PassFileSectionList)
                 .Select(arr => arr?.Any() is false)
-                .ToProperty(this, vm => vm.IsNoSectionsTextVisible);
+                .ToProperty(this, nameof(IsNoSectionsTextVisible));
             
             _isNoItemsTextVisible = this.WhenValueChanged(vm => vm.PassFileSectionItemList)
                 .Select(arr => arr?.Any() is false)
-                .ToProperty(this, vm => vm.IsNoItemsTextVisible);
+                .ToProperty(this, nameof(IsNoItemsTextVisible));
             
             _passFilesBarBtn = this.WhenValueChanged(vm => vm.IsPassFilesBarOpened)
                 .Select(isOpened => new BarBtn
@@ -175,7 +175,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                     FontFamily = isOpened ? FontFamilies.Default : FontFamilies.SegoeMdl2,
                     FontSize = isOpened ? 18 : 14
                 })
-                .ToProperty(this, vm => vm.PassFilesBarBtn);
+                .ToProperty(this, nameof(PassFilesBarBtn));
             
             this.WhenValueChanged(vm => vm.IsPassFilesBarOpened)
                 .Subscribe(isOpened =>

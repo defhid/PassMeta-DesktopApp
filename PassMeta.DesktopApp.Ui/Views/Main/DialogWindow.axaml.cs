@@ -8,6 +8,8 @@ using PassMeta.DesktopApp.Ui.ViewModels.Main;
 
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
+    using Models.Enums;
+
     public class DialogWindow : Window
     {
         public DialogButton ResultButton { get; private set; }

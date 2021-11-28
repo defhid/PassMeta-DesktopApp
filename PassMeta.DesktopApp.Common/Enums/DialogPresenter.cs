@@ -5,14 +5,10 @@ namespace PassMeta.DesktopApp.Common.Enums
     /// </summary>
     public enum DialogPresenter
     {
-        /// <summary>
         /// Temporary notification.
-        /// </summary>
         PopUp = 1,
         
-        /// <summary>
         /// Independent dialog window.
-        /// </summary>
         Window = 2
     }
 }

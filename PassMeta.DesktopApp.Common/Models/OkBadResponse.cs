@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 #pragma warning disable 8618
-
 namespace PassMeta.DesktopApp.Common.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    
     public class OkBadResponse
     {
         [JsonProperty("message")]

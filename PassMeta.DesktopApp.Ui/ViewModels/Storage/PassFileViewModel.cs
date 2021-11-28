@@ -4,19 +4,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using System.Collections.Generic;
     using System.Globalization;
     using System.Reactive.Linq;
-    using System.Windows.Input;
     using Avalonia.Media;
     using Common;
     using Common.Models.Entities;
     using DynamicData;
     using DynamicData.Binding;
-    using Models.PassFile;
+    using Models.Components;
+    using Models.Constants;
     using ReactiveUI;
     using Utils.Extensions;
     
     public partial class PassFileViewModel : ReactiveObject
     {
-        private Action<PassFile?>? _close;
+        public event Action<PassFile?>? OnUpdate;
+        
+        private Action? _close;
         
         private PassFile _passFile;
         public PassFile PassFile
@@ -61,51 +63,64 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                 this.RaiseAndSetIfChanged(ref _isPasswordBoxVisible, value);
             }
         }
-        
-        private readonly ObservableAsPropertyHelper<string> _passwordBtnContent;
-        public string PasswordBtnContent => _passwordBtnContent.Value;
-        
+
+        public BtnState PasswordBtn => new(
+            this.WhenValueChanged(vm => vm.IsPasswordBoxVisible)
+                .Select(isVisible => isVisible ? "\uF78A" : "\uE70F"),
+            isVisibleObservable: _passFileNotNew);
+
         #endregion
-        
+
         private readonly ObservableAsPropertyHelper<string> _createdOn;
         private string CreatedOn => _createdOn.Value;
-        
+
         private readonly ObservableAsPropertyHelper<string> _changedOn;
         private string ChangedOn => _changedOn.Value;
 
-        private readonly ObservableAsPropertyHelper<ISolidColorBrush?> _stateColor;
-        private ISolidColorBrush? StateColor => _stateColor.Value;
+        private readonly ObservableAsPropertyHelper<ISolidColorBrush> _stateColor;
+        private ISolidColorBrush StateColor => _stateColor.Value;
         
         private readonly ObservableAsPropertyHelper<string> _state;
         private string State => _state.Value;
 
-        #region Buttons
-        
-        private readonly ObservableAsPropertyHelper<string> _okBtnContent;
-        public string OkBtnContent => _okBtnContent.Value;
-        
-        private readonly ObservableAsPropertyHelper<ICommand> _okBtnCommand;
-        public ICommand OkBtnCommand => _okBtnCommand.Value;
-        
-        private readonly ObservableAsPropertyHelper<string> _archiveBtnContent;
-        public string ArchiveBtnContent => _archiveBtnContent.Value;
-        
-        private readonly ObservableAsPropertyHelper<ICommand> _archiveBtnCommand;
-        public ICommand ArchiveBtnCommand => _archiveBtnCommand.Value;
-        
-        public ICommand DeleteBtnCommand { get; }
+        #region Bottom buttons
 
-        public ICommand MergeBtnCommand { get; }
+        public BtnState OkBtn => new(
+            _anyChanged
+                .Select(changed => changed 
+                    ? Resources.PASSFILE__BTN_SAVE 
+                    : Resources.PASSFILE__BTN_OK),
+            _anyChanged
+                .Select(changed => changed 
+                    ? ReactiveCommand.CreateFromTask(SaveAsync) 
+                    : ReactiveCommand.Create(Close)));
+
+        public BtnState ArchiveBtn => new(
+            _passFileChanged
+                .Select(pf => pf.IsArchived
+                    ? Resources.PASSFILE__BTN_UNARCHIVE
+                    : Resources.PASSFILE__BTN_ARCHIVE),
+            _passFileChanged
+                .Select(pf => pf.IsArchived
+                    ? ReactiveCommand.CreateFromTask(UnArchiveAsync, _passFileNotNew)
+                    : ReactiveCommand.CreateFromTask(ArchiveAsync, _passFileNotNew)));
+
+        public BtnState DeleteBtn => new(
+            commandObservable: Observable.Return(ReactiveCommand.CreateFromTask(DeleteAsync, _passFileNotNew)));
+
+        public BtnState MergeBtn => new(
+            commandObservable: Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync, _passFileNotNew)));
         
         #endregion
         
         private readonly ObservableAsPropertyHelper<bool> _isNew;
         private bool IsNew => _isNew.Value;
         
-        private readonly ObservableAsPropertyHelper<bool> _anyChanged;
-        private bool AnyChanged => _anyChanged.Value;
+        private readonly IObservable<PassFile> _passFileChanged;
+        private readonly IObservable<bool> _passFileNotNew;
+        private readonly IObservable<bool> _anyChanged;
 
-        public PassFileViewModel(PassFile passFile, Action<PassFile?> close)
+        public PassFileViewModel(PassFile passFile, Action close)
         {
             _passFile = passFile;
             _close = close;
@@ -115,36 +130,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             _isPasswordBoxVisible = passFile.Id == 0;
             SelectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
 
-            var passFileChanged = this.WhenValueChanged(vm => vm.PassFile);
-
-            _title = passFileChanged.Select(pf => string.Format(pf!.Id > 0 
-                    ? Resources.STORAGE_PASSFILE__TITLE 
-                    : Resources.STORAGE_PASSFILE__NEW_TITLE, pf.Name))
-                .ToProperty(this, vm => vm.Title);
-            
-            _createdOn = passFileChanged.Select(pf => pf!.CreatedOn == default 
-                    ? string.Empty 
-                    : pf.CreatedOn.ToString(CultureInfo.CurrentCulture))
-                .ToProperty(this, vm => vm.CreatedOn);
-            
-            _changedOn = passFileChanged.Select(pf => pf!.ChangedOn == default 
-                    ? string.Empty 
-                    : pf.ChangedOn.ToString(CultureInfo.CurrentCulture))
-                .ToProperty(this, vm => vm.ChangedOn);
-            
-            _stateColor = passFileChanged.Select(pf => pf!.GetStateColor())
-                .ToProperty(this, vm => vm.StateColor);
-            
-            _state = passFileChanged.Select(pf => _MakeState(pf!))
-                .ToProperty(this, vm => vm.State);
-
-            _passwordBtnContent = this.WhenValueChanged(vm => vm.IsPasswordBoxVisible)
-                .Select(isVisible => isVisible ? "\uF78A" : "\uE70F")
-                .ToProperty(this, vm => vm.PasswordBtnContent);
-            
-            _isNew = passFileChanged.Select(pf => pf!.Id == 0)
-                .ToProperty(this, vm => vm.IsNew);
-
+            _passFileChanged = this.WhenValueChanged(vm => vm.PassFile)!;
+            _passFileNotNew = _passFileChanged.Select(pf => pf.Id > 0);
             _anyChanged = this.WhenAnyValue(
                     vm => vm.Name,
                     vm => vm.SelectedColorIndex,
@@ -154,36 +141,31 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                     val.Item1 != _passFile.Name ||
                     PassFileColor.List[val.Item2] != _passFile.GetPassFileColor() ||
                     !string.IsNullOrEmpty(val.Item3) ||
-                    val.Item4)
-                .ToProperty(this, vm => vm.AnyChanged);
-            
-            var anyChanged = this.WhenValueChanged(vm => vm.AnyChanged);
-            var notNew = passFileChanged.Select(pf => pf!.Id > 0);
+                    val.Item4);
 
-            _okBtnContent = anyChanged.Select(changed => changed
-                    ? Resources.PASSFILE__BTN_SAVE 
-                    : Resources.PASSFILE__BTN_OK)
-                .ToProperty(this, vm => vm.OkBtnContent);
+            _title = _passFileChanged.Select(pf => string.Format(pf.Id > 0 
+                    ? Resources.STORAGE_PASSFILE__TITLE 
+                    : Resources.STORAGE_PASSFILE__NEW_TITLE, pf.Name))
+                .ToProperty(this, nameof(Title));
             
-            _okBtnCommand = anyChanged.Select(changed => changed 
-                    ? ReactiveCommand.CreateFromTask(SaveAsync) 
-                    : ReactiveCommand.Create(() => Close(_passFile)))
-                .ToProperty(this, vm => vm.OkBtnCommand);
+            _createdOn = _passFileChanged.Select(pf => pf.CreatedOn == default 
+                    ? string.Empty 
+                    : pf.CreatedOn.ToString(CultureInfo.CurrentCulture))
+                .ToProperty(this, nameof(CreatedOn));
             
-            _archiveBtnContent = passFileChanged
-                .Select(pf => pf!.IsArchived 
-                    ? Resources.PASSFILE__BTN_UNARCHIVE 
-                    : Resources.PASSFILE__BTN_ARCHIVE)
-                .ToProperty(this, vm => vm.ArchiveBtnContent);
+            _changedOn = _passFileChanged.Select(pf => pf.ChangedOn == default 
+                    ? string.Empty 
+                    : pf.ChangedOn.ToString(CultureInfo.CurrentCulture))
+                .ToProperty(this, nameof(ChangedOn));
             
-            _archiveBtnCommand = passFileChanged
-                .Select(pf => pf!.IsArchived
-                    ? ReactiveCommand.CreateFromTask(UnArchiveAsync, notNew)
-                    : ReactiveCommand.CreateFromTask(ArchiveAsync, notNew))
-                .ToProperty(this, vm => vm.ArchiveBtnCommand);
+            _stateColor = _passFileChanged.Select(pf => pf.GetStateColor())
+                .ToProperty(this, nameof(StateColor));
+            
+            _state = _passFileChanged.Select(_MakeState)
+                .ToProperty(this, nameof(State));
 
-            DeleteBtnCommand = ReactiveCommand.CreateFromTask(DeleteAsync, notNew);
-            MergeBtnCommand = ReactiveCommand.CreateFromTask(MergeAsync, notNew);
+            _isNew = _passFileChanged.Select(pf => pf.Id == 0)
+                .ToProperty(this, nameof(IsNew));
         }
         
         private static string _MakeState(PassFile passFile)

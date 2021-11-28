@@ -1,5 +1,6 @@
 namespace PassMeta.DesktopApp.Common.Enums
 {
+    using Constants;
     using Models.Entities;
 
     /// <summary>

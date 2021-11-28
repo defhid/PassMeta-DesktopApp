@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using Common;
     using Common.Interfaces.Services;
     using Common.Models.Entities;
-    using Models.PassFile;
+    using Models.Constants;
     using Splat;
     using Utils.Extensions;
 
@@ -14,9 +14,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
         private readonly IPassFileService _passFileService = Locator.Current.GetService<IPassFileService>()!;
         
-        public void Close(PassFile? actual)
+        public void Close()
         {
-            _close?.Invoke(actual);
+            _close?.Invoke();
             _close = null;
         }
         
@@ -51,6 +51,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var result = await _passFileService.SavePassFileAsync(pf);
             if (result.Ok)
             {
+                OnUpdate?.Invoke(result.Data!);
+                
                 PassFile = result.Data!;
                 IsPasswordBoxVisible = false;
             }
@@ -89,12 +91,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var result = await _passFileService.DeletePassFileAsync(PassFile, accountPassword.Data!);
             if (result.Bad) return;
             
-            Close(null);
+            OnUpdate?.Invoke(null);
         }
         
-        private async Task MergeAsync()
+        private Task MergeAsync()
         {
             // TODO
+            return Task.CompletedTask;
         }
 
         private async Task<bool> _CheckPassFileProblemAsync()

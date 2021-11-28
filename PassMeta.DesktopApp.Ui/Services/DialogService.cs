@@ -4,7 +4,6 @@ namespace PassMeta.DesktopApp.Ui.Services
     using DesktopApp.Common.Enums;
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
-    using DesktopApp.Ui.Models.DialogWindow.Components;
     using DesktopApp.Ui.ViewModels.Main;
     using DesktopApp.Ui.Views.Main;
     
@@ -15,6 +14,8 @@ namespace PassMeta.DesktopApp.Ui.Services
     
     using Avalonia.Controls;
     using Avalonia.Controls.Notifications;
+    using Models.Components.DialogWindow;
+    using Models.Enums;
 
     /// <inheritdoc />
     public class DialogService : IDialogService
@@ -53,7 +54,6 @@ namespace PassMeta.DesktopApp.Ui.Services
         public Task ShowInfoAsync(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.PopUp)
         {
-            _logger.Info(message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"));
             return _CallOrDefferAsync(() =>
             {
                 if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
@@ -79,7 +79,7 @@ namespace PassMeta.DesktopApp.Ui.Services
         public Task ShowErrorAsync(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.PopUp)
         {
-            _logger.Error(message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"));
+            _logger.Error(message + (string.IsNullOrWhiteSpace(more) ? string.Empty : Environment.NewLine + $"[{more}]"));
             return _CallOrDefferAsync(() =>
             {
                 if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
@@ -107,7 +107,7 @@ namespace PassMeta.DesktopApp.Ui.Services
         public Task ShowFailureAsync(string message, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.Window)
         {
-            _logger.Warning(message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"));
+            _logger.Warning(message + (string.IsNullOrWhiteSpace(more) ? string.Empty : Environment.NewLine + $"[{more}]"));
             
             return _CallOrDefferAsync(() =>
             {
@@ -146,13 +146,13 @@ namespace PassMeta.DesktopApp.Ui.Services
                 DialogWindowIcon.Confirm,
                 null));
 
-            return new Result(dialog.ResultButton == DialogButton.Yes);
+            return Result.From(dialog.ResultButton == DialogButton.Yes);
         }
 
         /// <inheritdoc />
-        public async Task<Result<string?>> AskStringAsync(string message, string? title = null, string? defaultValue = null)
+        public async Task<Result<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null)
         {
-            if (MainWindow.Current is null) return new Result<string?>(false);
+            if (MainWindow.Current is null) return Result.Failure<string>();
 
             var dialog = await _ShowAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
@@ -164,15 +164,13 @@ namespace PassMeta.DesktopApp.Ui.Services
 
             var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextBox.Value?.Trim();
 
-            return dialog.ResultButton == DialogButton.Ok
-                ? new Result<string?>(value ?? string.Empty)
-                : new Result<string?>(false);
+            return Result.From(dialog.ResultButton == DialogButton.Ok, value ?? string.Empty);
         }
         
         /// <inheritdoc />
-        public async Task<Result<string?>> AskPasswordAsync(string message, string? title = null)
+        public async Task<Result<string>> AskPasswordAsync(string message, string? title = null)
         {
-            if (MainWindow.Current is null) return new Result<string?>(false);
+            if (MainWindow.Current is null) return Result.Failure<string>();
 
             var dialog = await _ShowAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
@@ -183,10 +181,8 @@ namespace PassMeta.DesktopApp.Ui.Services
                 new DialogWindowTextBox(true, "", "", '*')));
 
             var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextBox.Value;
-
-            return dialog.ResultButton == DialogButton.Ok
-                ? new Result<string?>(value ?? string.Empty)
-                : new Result<string?>(false);
+            
+            return Result.From(dialog.ResultButton == DialogButton.Ok, value ?? string.Empty);
         }
 
         private static Task _CallOrDefferAsync(Func<Task> shower)

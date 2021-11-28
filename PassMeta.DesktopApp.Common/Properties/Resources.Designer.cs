@@ -718,11 +718,20 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password is wrong (file decryption failed).
+        ///   Looks up a localized string similar to Passfile decryption failed.
         /// </summary>
         public static string PASSFILE__DECRYPTION_ERROR {
             get {
                 return ResourceManager.GetString("PASSFILE__DECRYPTION_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile encryption failed.
+        /// </summary>
+        public static string PASSFILE__ENCRYPTION_ERROR {
+            get {
+                return ResourceManager.GetString("PASSFILE__ENCRYPTION_ERROR", resourceCulture);
             }
         }
         
