@@ -1,12 +1,12 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using DesktopApp.Common.Interfaces.Services;
-    using DesktopApp.Common.Models.Entities.Request;
     using DesktopApp.Core.Utils;
     using DesktopApp.Ui.ViewModels.Base;
     
     using System.Threading.Tasks;
     using System.Windows.Input;
+    using Common.Models.Dto.Request;
     using ReactiveUI;
     using Splat;
     

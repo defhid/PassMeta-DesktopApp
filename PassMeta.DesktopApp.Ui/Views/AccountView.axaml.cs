@@ -1,9 +1,9 @@
-using Avalonia.Markup.Xaml;
-using PassMeta.DesktopApp.Ui.ViewModels;
-using PassMeta.DesktopApp.Ui.Views.Base;
-
 namespace PassMeta.DesktopApp.Ui.Views
 {
+    using DesktopApp.Ui.ViewModels;
+    using DesktopApp.Ui.Views.Base;
+    using Avalonia.Markup.Xaml;
+    
     public class AccountView : ViewPage<AccountViewModel>
     {
         public AccountView()

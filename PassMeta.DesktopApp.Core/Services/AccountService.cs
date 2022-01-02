@@ -3,12 +3,13 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Common.Models.Entities.Request;
     using DesktopApp.Core.Utils;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Common.Models.Dto.Request;
     using Splat;
     
+    /// <inheritdoc />
     public class AccountService : IAccountService
     {
         private static Dictionary<string, string> WhatMapper => new()
@@ -20,18 +21,22 @@ namespace PassMeta.DesktopApp.Core.Services
             ["password_confirm"] = Common.Resources.ACCOUNT__PASSWORD_CONFIRM_LABEL.ToLower(),
         };
 
+        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IOkBadService _okBadService = Locator.Current.GetService<IOkBadService>()!;
+
+        /// <inheritdoc />
         public async Task<Result<User>> GetUserDataAsync()
         {
             var response = await PassMetaApi.GetAsync<User>("/users/me", true);
-            return response?.ToResult() ?? Result.Failure<User>();
+            return Result.FromResponse(response);
         }
 
+        /// <inheritdoc />
         public async Task<Result> UpdateUserDataAsync(UserPatchData data)
         {
             if (data.PasswordConfirm is null || data.PasswordConfirm.Length == 0)
             {
-                await Locator.Current.GetService<IDialogService>()!
-                    .ShowFailureAsync(Common.Resources.WARN__PASSWORD_CONFIRM_MISSED);
+                _dialogService.ShowFailure(Common.Resources.WARN__PASSWORD_CONFIRM_MISSED);
                 return Result.Failure();
             }
 
@@ -41,8 +46,7 @@ namespace PassMeta.DesktopApp.Core.Services
             
             if (response.Success)
             {
-                await Locator.Current.GetService<IDialogService>()!
-                    .ShowInfoAsync(Common.Resources.ACCOUNT__SAVE_SUCCESS);
+                _dialogService.ShowInfo(Common.Resources.ACCOUNT__SAVE_SUCCESS);
                 
                 var user = response.Data;
                 await AppConfig.Current.SetUserAsync(user);
@@ -50,7 +54,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Success();
             }
 
-            await Locator.Current.GetService<IOkBadService>()!.ShowResponseFailureAsync(response, WhatMapper);
+            _okBadService.ShowResponseFailure(response, WhatMapper);
             return Result.Failure();
         }
     }

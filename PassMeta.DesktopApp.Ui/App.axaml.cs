@@ -1,18 +1,19 @@
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Markup.Xaml;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Core.Services;
-using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Ui.Services;
-using PassMeta.DesktopApp.Ui.ViewModels.Main;
-using PassMeta.DesktopApp.Ui.Views.Main;
-using Splat;
-
 namespace PassMeta.DesktopApp.Ui
 {
+    using Avalonia;
+    using Avalonia.Controls.ApplicationLifetimes;
     using Avalonia.Controls.Notifications;
     using Avalonia.Layout;
+    using Avalonia.Markup.Xaml;
+    
+    using PassMeta.DesktopApp.Common.Interfaces.Services;
+    using PassMeta.DesktopApp.Core.Services;
+    using PassMeta.DesktopApp.Core.Utils;
+    using PassMeta.DesktopApp.Ui.Services;
+    using PassMeta.DesktopApp.Ui.ViewModels.Main;
+    using PassMeta.DesktopApp.Ui.Views.Main;
+    
+    using Splat;
 
     public class App : Application
     {
@@ -45,13 +46,11 @@ namespace PassMeta.DesktopApp.Ui
 
         private static void BeforeLaunch()
         {
-            var logger = new LogService();
+            Locator.CurrentMutable.RegisterConstant<ILogService>(new LogService());
             
-            Locator.CurrentMutable.RegisterConstant<ILogService>(logger);
-            
-            Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService(logger));
-            
-            AppConfig.LoadAndSetCurrentAsync().GetAwaiter().GetResult();
+            Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
+
+            StartUp.CheckSystemAndLoadApplicationConfig();
 
             Locator.CurrentMutable.RegisterConstant<IOkBadService>(new OkBadService());
 

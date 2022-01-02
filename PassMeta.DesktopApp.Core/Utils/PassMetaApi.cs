@@ -14,6 +14,9 @@ namespace PassMeta.DesktopApp.Core.Utils
     using Newtonsoft.Json;
     using Splat;
     
+    /// <summary>
+    /// Utility for making requests to PassMeta server.
+    /// </summary>
     public static class PassMetaApi
     {
         static PassMetaApi()
@@ -21,6 +24,12 @@ namespace PassMeta.DesktopApp.Core.Utils
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
         }
 
+        private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
+        private static IOkBadService OkBadService => Locator.Current.GetService<IOkBadService>()!;
+
+        /// <summary>
+        /// Make GET-request and return response.
+        /// </summary>
         public static Task<OkBadResponse<TResponseData>?> GetAsync<TResponseData>(string url, bool handleBad)
         {
             var request = new Request("GET", url, null);
@@ -28,17 +37,29 @@ namespace PassMeta.DesktopApp.Core.Utils
             return (handleBad ? request.WithBadHandling() : request).ExecuteAsync<TResponseData>();
         }
 
+        /// <summary>
+        /// Build POST-request.
+        /// </summary>
         public static Request Post(string url, object? data = null) => new("POST", url, data);
 
+        /// <summary>
+        /// Build PATCH-request.
+        /// </summary>
         public static Request Patch(string url, object? data = null) => new("PATCH", url, data);
         
+        /// <summary>
+        /// Build PUT-request.
+        /// </summary>
         public static Request Put(string url, object? data = null) => new("PUT", url, data);
         
+        /// <summary>
+        /// Build DELETE-request.
+        /// </summary>
         public static Request Delete(string url, object? data = null) => new("DELETE", url, data);
 
         #region Private
 
-        private static async Task<HttpWebRequest?> _CreateRequestAsync(string url, string method)
+        private static HttpWebRequest? _CreateRequest(string url, string method)
         {
             try
             {
@@ -48,17 +69,17 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (UriFormatException)
             {
-                await Locator.Current.GetService<IDialogService>()!.ShowErrorAsync(Resources.ERR__URL);
+                DialogService.ShowError(Resources.API__URL_ERR);
                 return null;
             }
             catch (Exception ex)
             {
-                await Locator.Current.GetService<IDialogService>()!.ShowErrorAsync(ex.Message);
+                DialogService.ShowError(ex.Message);
                 return null;
             }
         }
 
-        private static async Task<HttpWebRequest?> _CreateRequestWithDataAsync<TData>(string url, string method, TData data)
+        private static HttpWebRequest? _CreateRequestWithData<TData>(string url, string method, TData data)
         {
             try
             {
@@ -69,14 +90,14 @@ namespace PassMeta.DesktopApp.Core.Utils
                 request.ContentType = "application/json";
                 request.ContentLength = dataBytes.Length;
 
-                await using var dataStream = request.GetRequestStream();
-                await dataStream.WriteAsync(dataBytes.AsMemory(0, dataBytes.Length));
+                using var dataStream = request.GetRequestStream();
+                dataStream.Write(dataBytes, 0, dataBytes.Length);
 
                 return request;
             }
             catch (Exception ex)
             {
-                await Locator.Current.GetService<IDialogService>()!.ShowErrorAsync(ex.Message);
+                DialogService.ShowError(ex.Message);
                 return null;
             }
         }
@@ -92,7 +113,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 request.CookieContainer.Add(new Cookie(name, value, null, AppConfig.Current.Domain));
             }
-            
+
             try
             {
                 var response = (HttpWebResponse)request.GetResponse();
@@ -105,9 +126,9 @@ namespace PassMeta.DesktopApp.Core.Utils
                 errMessage = response.StatusCode switch
                 {
                     HttpStatusCode.OK => null,
-                    HttpStatusCode.Unauthorized => Resources.ERR__HTTP_UNAUTHORIZED,
-                    HttpStatusCode.Forbidden => Resources.ERR__HTTP_FORBIDDEN,
-                    HttpStatusCode.InternalServerError => Resources.ERR__HTTP_INTERNAL_SERVER,
+                    HttpStatusCode.Unauthorized => Resources.API__UNAUTHORIZED_ERR,
+                    HttpStatusCode.Forbidden => Resources.API__FORBIDDEN_ERR,
+                    HttpStatusCode.InternalServerError => Resources.API__INTERNAL_SERVER_ERR,
                     _ => response.StatusCode.ToString()
                 };
                 
@@ -117,8 +138,8 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 errMessage = ex.Status switch
                 {
-                    WebExceptionStatus.ConnectFailure => Resources.ERR__CONNECTION_FAILURE,
-                    WebExceptionStatus.Timeout => Resources.ERR__CONNECTION_TIMEOUT,
+                    WebExceptionStatus.ConnectFailure => Resources.API__CONNECTION_ERR,
+                    WebExceptionStatus.Timeout => Resources.API__CONNECTION_TIMEOUT_ERR,
                     _ => ex.Message
                 };
                 
@@ -136,8 +157,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                 {
                     // ignored
                 }
-                
-                await Locator.Current.GetService<IDialogService>()!.ShowErrorAsync(errMessage, more: more);
+
+                DialogService.ShowError(errMessage, more: more);
                 return null;
             }
 
@@ -150,24 +171,26 @@ namespace PassMeta.DesktopApp.Core.Utils
                         throw new FormatException();
                     
                     if (badWhatMapper is not null && !data.Success)
-                        await Locator.Current.GetService<IOkBadService>()!.ShowResponseFailureAsync(data, badWhatMapper);
+                        OkBadService.ShowResponseFailure(data, badWhatMapper);
                     
                     return data;
                 }
 
-                await Locator.Current.GetService<IDialogService>()!.ShowErrorAsync(errMessage, more: responseBody);
+                DialogService.ShowError(errMessage, more: responseBody);
             }
             catch
             {
-                await Locator.Current.GetService<IDialogService>()!
-                    .ShowErrorAsync(errMessage ?? Resources.ERR__INVALID_API_RESPONSE, null, responseBody);
+                DialogService.ShowError(errMessage ?? Resources.API__INVALID_RESPONSE_ERR, null, responseBody);
             }
 
             return null;
         }
 
         #endregion
-        
+
+        /// <summary>
+        /// Request builder.
+        /// </summary>
         public struct Request
         {
             private readonly object? _data;
@@ -180,6 +203,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             private static readonly IReadOnlyDictionary<string, string> DefaultWhatMapper = new Dictionary<string, string>();
 
+            /// <summary></summary>
             public Request(string method, string url, object? data)
             {
                 _data = data;
@@ -188,32 +212,41 @@ namespace PassMeta.DesktopApp.Core.Utils
                 _handleBad = null;
             }
             
+            /// <summary>
+            /// Enable bad response handling (failure auto-showing).
+            /// </summary>
             public Request WithBadHandling(IReadOnlyDictionary<string, string>? whatMapper = null)
             {
                 _handleBad = whatMapper ?? DefaultWhatMapper;
                 return this;
             }
             
-            public async Task<OkBadResponse?> ExecuteAsync()
+            /// <summary>
+            /// Execute request and get response.
+            /// </summary>
+            public Task<OkBadResponse?> ExecuteAsync()
             {
                 var request = _data is null
-                    ? await _CreateRequestAsync(_url, _method)
-                    : await _CreateRequestWithDataAsync(_url, _method, _data);
+                    ? _CreateRequest(_url, _method)
+                    : _CreateRequestWithData(_url, _method, _data);
                 
-                if (request is null) return null;
-
-                return await _ExecuteRequest<OkBadResponse>(request, _handleBad);
+                return request is null
+                    ? Task.FromResult<OkBadResponse?>(null)
+                    : _ExecuteRequest<OkBadResponse>(request, _handleBad);
             }
             
-            public async Task<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>()
+            /// <summary>
+            /// Execute request and get response with data.
+            /// </summary>
+            public Task<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>()
             {
                 var request = _data is null
-                    ? await _CreateRequestAsync(_url, _method)
-                    : await _CreateRequestWithDataAsync(_url, _method, _data);
+                    ? _CreateRequest(_url, _method)
+                    : _CreateRequestWithData(_url, _method, _data);
                 
-                if (request is null) return null;
-
-                return await _ExecuteRequest<OkBadResponse<TResponseData>>(request, _handleBad);
+                return request is null
+                    ? Task.FromResult<OkBadResponse<TResponseData>?>(null)
+                    : _ExecuteRequest<OkBadResponse<TResponseData>>(request, _handleBad);
             }
         }
     }

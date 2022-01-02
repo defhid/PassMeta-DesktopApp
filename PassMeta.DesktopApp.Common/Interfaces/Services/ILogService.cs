@@ -10,15 +10,29 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
     /// </summary>
     public interface ILogService : IDisposable
     {
+        /// <summary>
+        /// Log information text.
+        /// </summary>
         void Info(string text);
         
+        /// <summary>
+        /// Log warning text.
+        /// </summary>
         void Warning(string text);
         
+        /// <summary>
+        /// Log error text.
+        /// </summary>
         void Error(string text);
 
+        /// <summary>
+        /// Log error text with exception.
+        /// </summary>
         void Error(Exception ex, string? text = null);
 
-        // TODO: UI
+        /// <summary>
+        /// Get application logs by period. TODO: UI
+        /// </summary>
         Task<List<Log>> ReadLogsAsync(DateTime dateFrom, DateTime dateTo);
     }
 }

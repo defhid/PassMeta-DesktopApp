@@ -78,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         private async Task _CopyResultAsync()
         {
             await TextCopy.ClipboardService.SetTextAsync(Result ?? string.Empty);
-            await Locator.Current.GetService<IDialogService>()!.ShowInfoAsync(Resources.GENERATOR__RESULT_COPIED);
+            Locator.Current.GetService<IDialogService>()!.ShowInfo(Resources.GENERATOR__RESULT_COPIED);
         }
     }
 }

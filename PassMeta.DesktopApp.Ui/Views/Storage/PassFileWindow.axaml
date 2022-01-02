@@ -18,7 +18,7 @@
         WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
-        <storage:PassFileViewModel></storage:PassFileViewModel>
+        <storage:PassFileWindowViewModel></storage:PassFileWindowViewModel>
     </Design.DataContext>
     
     <Grid Margin="7 7 10 10"

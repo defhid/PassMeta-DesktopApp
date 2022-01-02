@@ -1,14 +1,15 @@
-using System;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using PassMeta.DesktopApp.Common.Interfaces.Services;
-using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Ui.ViewModels;
-using PassMeta.DesktopApp.Ui.Views.Base;
-using Splat;
-
 namespace PassMeta.DesktopApp.Ui.Views
 {
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.ViewModels;
+    using DesktopApp.Ui.Views.Base;
+    
+    using System;
+    using Avalonia.Interactivity;
+    using Avalonia.Markup.Xaml;
+    using Splat;
+    
     public class SettingsView : ViewPage<SettingsViewModel>
     {
         public static event Action? OnCultureChanged;
@@ -45,8 +46,8 @@ namespace PassMeta.DesktopApp.Ui.Views
                 OnCultureChanged?.Invoke();
             }
             
-            await Locator.Current.GetService<IDialogService>()!
-                .ShowFailureAsync(Common.Resources.SETTINGS__SAVE_SUCCESS);
+            Locator.Current.GetService<IDialogService>()!
+                .ShowInfo(Common.Resources.SETTINGS__SAVE_SUCCESS);
         }
     }
 }

@@ -1,5 +1,8 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
+    /// <summary>
+    /// Service that provides PassMeta crypto-methods.
+    /// </summary>
     public interface ICryptoService
     {
         /// <summary>
@@ -13,12 +16,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// </summary>
         /// <returns>Decrypted string or null if error occured.</returns>
         string? Decrypt(string data, string keyPhrase);
-
-        /// <summary>
-        /// Make special PassMeta hash string by keyphrase.
-        /// </summary>
-        /// <returns>Result string or null if error occured.</returns>
-        string? MakeCheckKey(string keyPhrase);
 
         /// <summary>
         /// Generate random password by length, using digits and special symbols.

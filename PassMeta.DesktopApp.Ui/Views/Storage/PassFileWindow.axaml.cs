@@ -20,9 +20,9 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
 #endif
         }
 
-        private new PassFileViewModel? DataContext
+        private new PassFileWindowViewModel? DataContext
         {
-            get => (PassFileViewModel?)base.DataContext;
+            get => (PassFileWindowViewModel?)base.DataContext;
             init => base.DataContext = value;
         }
 
@@ -30,10 +30,10 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
         {
             PassFile = passFile.Id > 0 ? passFile : null;
             
-            DataContext = new PassFileViewModel(passFile, Close);
+            DataContext = new PassFileWindowViewModel(passFile, Close);
             DataContext!.OnUpdate += actualPassFile =>
             {
-                PassFile = actualPassFile?.Id > 0 ? actualPassFile : null;
+                PassFile = actualPassFile;
             };
         }
         

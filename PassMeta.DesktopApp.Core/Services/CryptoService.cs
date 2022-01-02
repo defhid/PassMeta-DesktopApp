@@ -2,7 +2,6 @@ namespace PassMeta.DesktopApp.Core.Services
 {
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Core.Utils;
-    using Aes = System.Security.Cryptography.Aes;
     using System;
     using System.IO;
     using System.Linq;
@@ -10,41 +9,50 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Text;
     using Splat;
 
+    /// <inheritdoc />
     public class CryptoService : ICryptoService
     {
         private static readonly Random Random = new();
+
+        private const int CryptoK = 100;
         
+        private readonly ILogService _logger = Locator.Current.GetService<ILogService>()!;
+
         /// <inheritdoc />
         public string? Encrypt(string data, string keyPhrase)
         {
             try
             {
-                byte[] encrypted;
-
+                byte[] encryption = Encoding.UTF8.GetBytes(data);
+                
                 using (var aes = Aes.Create())
                 {
                     aes.IV = AppConfig.PassFileSalt;
-                    aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(keyPhrase));
-
-                    var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-                    using (var ms = new MemoryStream())
-                    using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                
+                    for (var i = 0; i < CryptoK; ++i)
                     {
-                        using (var swEncrypt = new StreamWriter(cs, Encoding.UTF8))
+                        var offset = (CryptoK + i) % keyPhrase.Length;
+                        var key = keyPhrase[..offset] + Math.Pow(CryptoK - i, i % 5) + keyPhrase[offset..];
+                        
+                        aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(key));
+
+                        using var encryptor = aes.CreateEncryptor();
+                        using var ms = new MemoryStream();
+                        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                         {
-                            swEncrypt.Write(data);
+                            cs.Write(encryption);
+                            cs.Flush();
                         }
 
-                        encrypted = ms.ToArray();
+                        encryption = ms.ToArray();
                     }
                 }
 
-                return Convert.ToBase64String(encrypted);
+                return Convert.ToBase64String(encryption);
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<ILogService>()!.Error(ex, "Encryption failed");
+                _logger.Error(ex, "Encryption failed");
                 return null;
             }
         }
@@ -54,46 +62,34 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             try
             {
-                using var aes = Aes.Create();
-            
-                aes.IV = AppConfig.PassFileSalt;
-                aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(keyPhrase));
-
-                var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
-
-                using var ms = new MemoryStream(Convert.FromBase64String(data));
-                using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
-                using var sr = new StreamReader(cs, Encoding.UTF8);
-            
-                return sr.ReadToEnd();
-            }
-            catch (Exception ex)
-            {
-                Locator.Current.GetService<ILogService>()!.Error(ex, "Decryption failed");
-                return null;
-            }
-        }
-
-        /// <inheritdoc />
-        public string? MakeCheckKey(string keyPhrase)
-        {
-            try
-            {
-                var keyPhraseBytes = Encoding.UTF8.GetBytes(keyPhrase);
-                var bytes = SHA512.HashData(keyPhraseBytes).Concat(SHA256.HashData(keyPhraseBytes)).ToArray();
-                for (var i = 0; i < 88; ++i)
+                byte[] decryption = Convert.FromBase64String(data);
+                
+                using (var aes = Aes.Create())
                 {
-                    if (bytes[i] == 0x00)
+                    aes.IV = AppConfig.PassFileSalt;
+                    
+                    for (var i = CryptoK - 1; i >= 0; --i)
                     {
-                        bytes[i] = (byte)(i % 254 + 1);
+                        var offset = (CryptoK + i) % keyPhrase.Length;
+                        var key = keyPhrase[..offset] + Math.Pow(CryptoK - i, i % 5) + keyPhrase[offset..];
+                        
+                        aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(key));
+
+                        using var decryptor = aes.CreateDecryptor();
+                        using var ms = new MemoryStream(decryption);
+                        using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+                        using var msResult = new MemoryStream();
+                        
+                        cs.CopyTo(msResult);
+                        decryption = msResult.ToArray();
                     }
                 }
 
-                return Convert.ToBase64String(bytes);
+                return Encoding.UTF8.GetString(decryption);
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<ILogService>()!.Error(ex, "Check key making failed");
+                _logger.Error(ex, "Decryption failed");
                 return null;
             }
         }
@@ -117,7 +113,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (Exception ex)
             {
-                Locator.Current.GetService<ILogService>()!.Error(ex, "Password generation failed");
+                _logger.Error(ex, "Password generation failed");
                 return null;
             }
         }

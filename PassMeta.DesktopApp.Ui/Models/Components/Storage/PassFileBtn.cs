@@ -71,7 +71,7 @@ namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
             {
                 if (win.PassFile is null)
                 {
-                    Locator.Current.GetService<IDialogService>()!.ShowInfoAsync("handled: " + win.PassFile?.Name)
+                    Locator.Current.GetService<IDialogService>()!.ShowInfo("handled: " + win.PassFile?.Name)
                         .GetAwaiter().GetResult();
                     
                     // TODO: fire event

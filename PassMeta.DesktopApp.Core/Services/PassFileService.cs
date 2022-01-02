@@ -4,20 +4,17 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Common.Models.Entities.Request;
     using DesktopApp.Core.Utils;
     
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Common.Constants;
-    using Newtonsoft.Json;
     using Splat;
     using Utils.Extensions;
 
+    /// <inheritdoc />
     public class PassFileService : IPassFileService
     {
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
@@ -25,377 +22,363 @@ namespace PassMeta.DesktopApp.Core.Services
         private static Dictionary<string, string> WhatMapper => new()
         {
             ["check_password"] = Resources.STORAGE__DICT__CHECK_PASSWORD,
-            // ...
+            // TODO: ...
         };
 
         /// <inheritdoc />
-        public async Task<PassFile?> GetPassFileRemoteAsync(int passFileId)
-        {
-            var response = await PassMetaApi.GetAsync<PassFile>($"/passfiles/{passFileId}", true);
-            return response?.Data;
-        }
-        
+        public async Task<PassFile?> GetPassFileWithDataRemoteAsync(int passFileId) 
+            => (await _GetPassFileFullRemoteAsync(passFileId))?.Data;
+
         /// <inheritdoc />
-        public async Task<Result<List<PassFile>>> GetPassFileListAsync()
+        public async Task<List<PassFile>> GetPassFileListAsync()
         {
-            var localList = await _GetPassFileListLocalAsync();
+            var localList = PassFileLocalManager.GetCurrentList();
 
             if (AppConfig.Current.ServerVersion is null)
             {
-                return Result.Success(localList, Resources.INFO__PASSFILES_LOCAL_MODE);
+                return localList;
             }
             
             var remoteList = await _GetPassFileListRemoteAsync();
             if (remoteList is null)
             {
-                return Result.Success(localList, Resources.INFO__PASSFILES_LOCAL_MODE);
+                return localList;
             }
             
             var resultList = new List<PassFile>();
             foreach (var remote in remoteList)
             {
                 var local = localList.FirstOrDefault(pf => pf.Id == remote.Id);
-                
-                if (local is not null && local.Version == remote.Version)
-                {
-                    if (local.IsLocalChanged)  // local changed, remote not changed
-                    {
-                        await _SavePassFileRemoteAsync(local);
-                        resultList.Add(local);
-                    }
-                    else  // local not changed, remote not changed
-                    {
-                        resultList.Add(local);
-                    }
-                    
-                    continue;
-                }
+                if (local is not null)
+                    localList.Remove(local);
 
-                // local not changed, remote changed or new
-                if (local is null || (local.Version < remote.Version && !local.IsLocalChanged))
+                if (local is null)
                 {
-                    var response = await PassMetaApi.GetAsync<PassFile>($"/passfiles/{remote.Id}", true);
-                    PassFile full;
+                    var response = await _GetPassFileDataRemoteAsync(remote.Id);
                     
-                    if (response?.Success is true)
+                    if (response?.Data is null)
                     {
-                        full = response.Data!;
-                        await _SavePassFileLocalAsync(full);
-                        resultList.Add(full);
-                    }
-                    else if (local is null)
-                    {
-                        full = new PassFile
-                        {
-                            Problem = PassFileProblem.DownloadingError.WithInfo(response?.Message)
-                        };
-                        full.Refresh(remote);
+                        remote.Problem = PassFileProblem.DownloadingError.WithInfo(response?.Message);
                     }
                     else
                     {
-                        full = local;
+                        remote.DataEncrypted = response.Data!;
+                        
+                        var result = await PassFileLocalManager.AddFinalAsync(remote);
+                        if (result.Bad && result.Message is not null)
+                        {
+                            _dialogService.ShowError(result.Message);
+                        }
                     }
                     
-                    resultList.Add(full);
+                    resultList.Add(remote);
                     continue;
                 }
-
-                // local changed, remote changed
-                local.Problem = PassFileProblem.NeedsMerge.WithMore(remote);
-                resultList.Add(local);
-            }
-
-            return Result.Success(resultList);
-        }
-
-        /// <inheritdoc />
-        public async Task<Result<PassFile>> SavePassFileAsync(PassFile passFile)
-        {
-            var encryptionResult = passFile.Encrypt();
-            if (encryptionResult.Bad)
-            {
-                await _dialogService.ShowErrorAsync(encryptionResult.Message!);
-                return Result.Failure<PassFile>();
-            }
-            
-            PassFile? pf;
-
-            if (AppConfig.Current.ServerVersion is not null)
-            {
-                var res = await _SavePassFileRemoteAsync(passFile);
-                if (res.Bad) return Result.Failure<PassFile>();
                 
-                pf = passFile.Copy();
-                pf.Refresh(res.Data!);
-            }
-            else
-            {
-                pf = passFile.Copy();
-                pf.ChangedLocalOn = DateTime.Now;
-            }
-            
-            await _SavePassFileLocalAsync(pf);
-            return Result.Success(pf);
-        }
-        
-        /// <inheritdoc />
-        public async Task<Result<PassFile>> ArchivePassFileAsync(PassFile passFile)
-        {
-            PassFile? pf;
-
-            if (AppConfig.Current.ServerVersion is not null)
-            {
-                var res = await _ArchivePassFileRemoteAsync(passFile);
-                if (res.Bad) return Result.Failure<PassFile>();
-                
-                pf = await GetPassFileRemoteAsync(passFile.Id);
-                if (pf is null)
+                if (local.LocalDeleted)
                 {
-                    pf = passFile.Copy();
-                    pf.IsArchived = true;
-                    pf.Problem = PassFileProblem.DownloadingError;
-                }
-            }
-            else
-            {
-                pf = passFile.Copy();
-                pf.IsArchived = true;
-                pf.ChangedLocalOn = DateTime.Now;
-            }
-
-            await _SavePassFileLocalAsync(pf);
-            return Result.Success(pf);
-        }
-        
-        /// <inheritdoc />
-        public async Task<Result<PassFile>> UnArchivePassFileAsync(PassFile passFile)
-        {
-            PassFile? pf;
-
-            if (AppConfig.Current.ServerVersion is not null)
-            {
-                var res = await _UnArchivePassFileRemoteAsync(passFile);
-                if (res.Bad) return Result.Failure<PassFile>();
-                
-                pf = await GetPassFileRemoteAsync(passFile.Id);
-                if (pf is null)
-                {
-                    pf = passFile.Copy();
-                    pf.IsArchived = true;
-                    pf.Problem = PassFileProblem.DownloadingError;
-                }
-            }
-            else
-            {
-                pf = passFile.Copy();
-                pf.IsArchived = true;
-                pf.ChangedLocalOn = DateTime.Now;
-            }
-
-            await _SavePassFileLocalAsync(pf);
-            return Result.Success(pf);
-        }
-
-        /// <inheritdoc />
-        public async Task<Result> DeletePassFileAsync(PassFileLight passFile, string accountPassword)
-        {
-            var res = await _DeletePassFileRemoteAsync(passFile, accountPassword);
-            if (res.Bad) return res;
-
-            await _DeletePassFileLocalAsync(passFile);
-            return res;
-        }
-        
-        private async Task<List<PassFile>> _GetPassFileListLocalAsync()
-        {
-            var passFiles = new List<PassFile>();
-            
-            try
-            {
-                _EnsurePassFilesDirectoryExists();
-                
-                foreach (var filePath in Directory.EnumerateFiles(AppConfig.PassFilesPath))
-                {
-                    try
+                    if (local.InfoChangedOn < remote.InfoChangedOn ||
+                        local.VersionChangedOn < remote.VersionChangedOn)
                     {
-                        var fileString = await File.ReadAllTextAsync(filePath, Encoding.UTF8);
-                        var passFile = JsonConvert.DeserializeObject<PassFile>(fileString);
-                        if (passFile is not null)
+                        PassFileLocalManager.UpdateInfo(remote);
+                        
+                        var response = await _GetPassFileDataRemoteAsync(remote.Id);
+                        if (response?.Data is null)
                         {
-                            passFiles.Add(passFile);
+                            remote.Problem = PassFileProblem.DownloadingError.WithInfo(response.GetLocalizedMessage());
+                            resultList.Add(remote);
                         }
                         else
                         {
-                            throw new FormatException(fileString);
+                            remote.DataEncrypted = response.Data!;
+                            
+                            var result = PassFileLocalManager.UpdateData(remote);
+                            if (result.Ok)
+                            {
+                                resultList.Add(result.Data!);
+                            }
+                            else
+                            {
+                                _dialogService.ShowError(result.Message!);
+                            }
                         }
                     }
-                    catch (Exception exRead)
+                    else
                     {
-                        var delete = await _dialogService
-                            .ConfirmAsync(Resources.ERR__INVALID_PASSFILE_FOUND + $" ({exRead})");
-
-                        if (delete.Ok)
+                        var answer = await _dialogService.AskPasswordAsync(
+                            string.Format(Resources.PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE, remote.Name, local.InfoChangedOn.ToShortDateString()));
+                        
+                        if (answer.Ok)
                         {
-                            try
+                            var response = await _DeletePassFileRemoteAsync(remote, answer.Data!);
+                            if (response?.Success is true)
                             {
-                                File.Delete(filePath);
+                                var result = await PassFileLocalManager.DeleteFinalAsync(local);
+                                if (result.Bad)
+                                {
+                                    _dialogService.ShowError(result.Message!);
+                                }
                             }
-                            catch
+                            else
                             {
-                                // ignored
+                                local.Problem = PassFileProblem.RemoteDeletingError;
+                                resultList.Add(local);
                             }
                         }
+                    }
+                    
+                    continue;
+                }
+
+                if (local.LocalChanged)
+                {
+                    PassFile actual;
+                    
+                    #region Info
+                    
+                    if (local.InfoChangedOn > remote.InfoChangedOn)
+                    {
+                        actual = local;
+                        var response = await _SavePassFileInfoRemoteAsync(actual);
+                        if (response?.Success is true)
+                        {
+                            actual = response.Data!;
+                        }
+                        else
+                        {
+                            actual.Problem = PassFileProblem.UploadingError.WithInfo(response.GetLocalizedMessage());
+                        }
+                    }
+                    else if (local.InfoChangedOn < remote.InfoChangedOn) actual = remote;
+                    else actual = local;
+
+                    var result = PassFileLocalManager.UpdateInfo(actual, true);
+                    if (result.Ok)
+                    {
+                        actual = result.Data!;
+                    }
+                    else
+                    {
+                        _dialogService.ShowError(result.Message!);
+                    }
+                    
+                    #endregion
+                    
+                    #region Version
+                    
+                    if (local.Changed(pf => pf.Version))
+                    {
+                        if (local.Origin!.Version != remote.Version)
+                        {
+                            actual.Problem = PassFileProblem.NeedsMerge;
+                        }
+                        else
+                        {
+                            var res = await PassFileLocalManager.GetDataAsync(actual);
+                            if (res.Ok)
+                            {
+                                actual.DataEncrypted = res.Data!;
+                                var push = await _SavePassFileDataRemoteAsync(actual);
+                                if (push?.Success is not true)
+                                {
+                                    actual.Problem = PassFileProblem.UploadingError.WithInfo(push.GetLocalizedMessage());
+                                }
+                            }
+                            else
+                            {
+                                actual.Problem = PassFileProblem.UploadingError.WithInfo(res.Message!);
+                                _dialogService.ShowError(res.Message!);
+                            }
+                        }
+                    }
+                    else if (local.Version != remote.Version)
+                    {
+                        var response = await _GetPassFileDataRemoteAsync(actual.Id);
+                        if (response?.Success is true)
+                        {
+                            actual.DataEncrypted = response.Data!;
+
+                            var res = PassFileLocalManager.UpdateData(actual, true);
+                            if (res.Ok)
+                            {
+                                actual = res.Data!;
+                            }
+                            else
+                            {
+                                _dialogService.ShowError(res.Message!);
+                            }
+                        }
+                        else
+                        {
+                            actual.Problem = PassFileProblem.DownloadingError.WithInfo(response.GetLocalizedMessage());
+                        }
+                    }
+                    
+                    #endregion
+                    
+                    resultList.Add(actual);
+                    continue;
+                }
+
+                if (remote.InfoChangedOn != local.InfoChangedOn)
+                {
+                    var result = PassFileLocalManager.UpdateInfo(remote, true);
+                    if (result.Bad)
+                    {
+                        _dialogService.ShowError(result.Message!);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowErrorAsync(Resources.ERR__PASSFILES_READ, more: ex.ToString());
+
+                if (remote.Version != local.Version)
+                {
+                    var response = await _GetPassFileDataRemoteAsync(remote.Id);
+                    if (response?.Success is true)
+                    {
+                        remote.DataEncrypted = response.Data!;
+
+                        var res = PassFileLocalManager.UpdateData(remote, true);
+                        if (res.Bad)
+                        {
+                            _dialogService.ShowError(res.Message!);
+                        }
+                    }
+                    else
+                    {
+                        remote.Problem = PassFileProblem.DownloadingError.WithInfo(response.GetLocalizedMessage());
+                    }
+                }
+
+                resultList.Add(remote);
             }
 
-            return passFiles;
+            var commitResult = await PassFileLocalManager.CommitAsync();
+            if (commitResult.Bad)
+            {
+                _dialogService.ShowError(commitResult.Message!);
+            }
+
+            return resultList;
         }
 
-        private static async Task<List<PassFileLight>?> _GetPassFileListRemoteAsync()
+        /// <inheritdoc />
+        public Task<PassFile> SavePassFileInfoAsync(PassFile passFile)
         {
-            var response = await PassMetaApi.GetAsync<List<PassFileLight>>("/passfiles/list", true);
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public async Task<PassFile> SavePassFileDataAsync(PassFile passFile)
+        {
+            // TODO: complex! Unite (update info, update data, delete and create) into 'ApplyPassFileChangesAsync'.
+
+            var encryptionResult = passFile.Encrypt();
+            if (encryptionResult.Bad)
+            {
+                _dialogService.ShowError(encryptionResult.Message!);
+                return passFile;
+            }
+
+            var remoteOk = false;
+
+            if (AppConfig.Current.ServerVersion is not null)
+            {
+                var response = await _SavePassFileDataRemoteAsync(passFile);
+                remoteOk = response?.Success is true;
+            }
+
+            var updateResult = PassFileLocalManager.UpdateData(passFile, remoteOk);
+            if (updateResult.Bad)
+            {
+                var result = await PassFileLocalManager.CommitAsync();
+                if (result.Ok)
+                {
+                    return updateResult.Data!;
+                }
+                
+                _dialogService.ShowError(result.Message!);
+                return passFile;
+            }
+            
+            _dialogService.ShowError(updateResult.Message!);
+            return passFile;
+        }
+
+        /// <inheritdoc />
+        public async Task<Result> DeletePassFileAsync(PassFile passFile, string accountPassword)
+        {
+            var remoteOk = false;
+
+            if (AppConfig.Current.ServerVersion is not null)
+            {
+                var response = await _SavePassFileDataRemoteAsync(passFile);
+                remoteOk = response?.Success is true;
+            }
+            
+        }
+
+        #region Api Requests
+
+        private static async Task<List<PassFile>?> _GetPassFileListRemoteAsync()
+        {
+            var response = await PassMetaApi.GetAsync<List<PassFile>>("/passfiles/list", true);
             return response?.Data;
         }
-
-        private async Task<Result> _SavePassFileLocalAsync(PassFile passFile)
+        
+        private static Task<OkBadResponse<PassFile>?> _GetPassFileFullRemoteAsync(int passFileId)
         {
-            try
-            {
-                _EnsurePassFilesDirectoryExists();
-
-                await File.WriteAllTextAsync(_GetPassFilePath(passFile), JsonConvert.SerializeObject(passFile));
-            }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowErrorAsync(
-                    string.Format(Resources.ERR__PASSFILE_SAVE_LOCAL, passFile.Name), more: ex.ToString());
-
-                return Result.Failure();
-            }
-
-            return Result.Success();
+            return PassMetaApi.GetAsync<PassFile>($"/passfiles/{passFileId}", true);
         }
         
-        private async Task<Result<PassFileLight>> _SavePassFileRemoteAsync(PassFile passFile)
+        private static Task<OkBadResponse<string>?> _GetPassFileDataRemoteAsync(int passFileId, int? version = null)
         {
-            try
-            {
-                var postData = new PassFilePostData(passFile.Name, passFile.Color, passFile.DataEncrypted!, passFile.CheckKey);
-
-                var request = passFile.Id > 0
-                    ? PassMetaApi.Patch($"/passfiles/{passFile.Id}", postData)
-                    : PassMetaApi.Post("/passfiles/new", postData);
-
-                var response = await request.WithBadHandling(WhatMapper).ExecuteAsync<PassFileLight>();
-                return Result.FromResponse(response);
-            }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowErrorAsync(
-                    string.Format(Resources.ERR__PASSFILE_SAVE_REMOTE, passFile.Name), more: ex.ToString());
-
-                return Result.Failure<PassFileLight>();
-            }
+            var url = version is null
+                ? $"/passfiles/{passFileId}/smth"
+                : $"/passfiles/{passFileId}/smth?version={version}";
+            
+            return PassMetaApi.GetAsync<string>(url, true);
         }
 
-        private async Task<Result> _DeletePassFileLocalAsync(PassFileLight passFile)
+        private static Task<OkBadResponse<PassFile>?> _SavePassFileInfoRemoteAsync(PassFile passFile)
         {
-            try
-            {
-                _EnsurePassFilesDirectoryExists();
-                _EnsureOldPassFilesDirectoryExists();
+            var request = PassMetaApi.Patch($"/passfiles/{passFile.Id}/info", passFile);
 
-                var fromPath = _GetPassFilePath(passFile);
-                var toPath = _GetOldPassFilePath(passFile);
-
-                if (File.Exists(fromPath))
-                    File.Move(fromPath, toPath);
-            }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowErrorAsync(
-                    string.Format(Resources.ERR__PASSFILE_DELETE_LOCAL, passFile.Name), more: ex.ToString());
-
-                return Result.Failure();
-            }
-
-            return Result.Success();
+            return request.WithBadHandling().ExecuteAsync<PassFile>();
         }
         
-        private async Task<Result> _DeletePassFileRemoteAsync(PassFileLight passFile, string accountPassword)
+        private static Task<OkBadResponse<PassFile>?> _SavePassFileDataRemoteAsync(PassFile passFile)
         {
-            try
+            var request = PassMetaApi.Patch($"/passfiles/{passFile.Id}/smth", new
             {
-                var request = PassMetaApi.Delete($"/passfiles/{passFile.Id}", new { check_password = accountPassword });
+                smth = passFile.DataEncrypted!
+            });
+
+            return request.WithBadHandling(WhatMapper).ExecuteAsync<PassFile>();
+        }
+
+        private static Task<OkBadResponse<PassFile>?> _AddPassFileRemoteAsync(PassFile passFile)
+        {
+            var request = PassMetaApi.Post("/passfiles/new", new
+            {
+                name = passFile.Name,
+                color = passFile.Color,
+                created_on = passFile.CreatedOn,
+                smth = passFile.DataEncrypted!
+            });
+
+            return request.WithBadHandling(WhatMapper).ExecuteAsync<PassFile>();
+        }
+
+        private static Task<OkBadResponse?> _DeletePassFileRemoteAsync(PassFile passFile, string accountPassword)
+        {
+            var request = PassMetaApi.Delete($"/passfiles/{passFile.Id}", new
+            {
+                check_password = accountPassword
+            });
                 
-                return Result.FromResponse(await request.WithBadHandling(WhatMapper).ExecuteAsync());
-            }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowErrorAsync(
-                    string.Format(Resources.ERR__PASSFILE_DELETE_REMOTE, passFile.Name), more: ex.ToString());
-
-                return Result.Failure();
-            }
+            return request.WithBadHandling(WhatMapper).ExecuteAsync();
         }
 
-        private async Task<Result> _ArchivePassFileRemoteAsync(PassFileLight passFile)
-        {
-            try
-            {
-                var request = PassMetaApi.Put($"/passfiles/{passFile.Id}/to/archive");
-
-                return Result.FromResponse(await request.WithBadHandling(WhatMapper).ExecuteAsync());
-            }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowErrorAsync(
-                    string.Format(Resources.ERR__PASSFILE_ARCHIVE_REMOTE, passFile.Name), more: ex.ToString());
-
-                return Result.Failure();
-            }
-        }
-        
-        private async Task<Result> _UnArchivePassFileRemoteAsync(PassFileLight passFile)
-        {
-            try
-            {
-                var request = PassMetaApi.Put($"/passfiles/{passFile.Id}/to/actual");
-                
-                return Result.FromResponse(await request.WithBadHandling(WhatMapper).ExecuteAsync());
-            }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowErrorAsync(
-                    string.Format(Resources.ERR__PASSFILE_UNARCHIVE_REMOTE, passFile.Name), more: ex.ToString());
-
-                return Result.Failure();
-            }
-        }
-
-        private static void _EnsurePassFilesDirectoryExists()
-        {
-            if (!Directory.Exists(AppConfig.PassFilesPath))
-                Directory.CreateDirectory(AppConfig.PassFilesPath);
-        }
-        
-        private static void _EnsureOldPassFilesDirectoryExists()
-        {
-            var path = Path.Combine(AppConfig.PassFilesPath, ".old");
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-        }
-
-        private static string _GetPassFilePath(PassFileLight passFile) =>
-            Path.Combine(AppConfig.PassFilesPath, passFile.Id + ".tmp");
-        
-        private static string _GetOldPassFilePath(PassFileLight passFile) =>
-            Path.Combine(AppConfig.PassFilesPath, ".old", passFile.Id + ".tmp");
+        #endregion
 
         private static Result<(PassFile, List<PassFile.Section>)> _MergePassFiles(PassFile first, PassFile second)
         {
@@ -405,7 +388,7 @@ namespace PassMeta.DesktopApp.Core.Services
             //             
             // if ((await _SavePassFileLocalAsync(result.Data.Item1)).Bad) continue;
             //             
-            // await Locator.Current.GetService<IDialogService>()!.ShowInfoAsync(
+            // _dialogService.ShowInfoAsync(
             //     string.Format(Resources.INFO__PASSFILES_MERGED, remote.Name, local.Name), 
             //     null, 
             //     string.Join('\n', result.Data.Item2.Select(s => s.Name)));
@@ -416,7 +399,7 @@ namespace PassMeta.DesktopApp.Core.Services
             if (first.Data is null || second.Data is null)
                 return Result.Failure<(PassFile, List<PassFile.Section>)>("Attempt to merge passfiles without decryption!");
 
-            if (second.ChangedLocalOn.HasValue && !first.ChangedLocalOn.HasValue)
+            if (second.LocalChangedOn.HasValue && !first.LocalChangedOn.HasValue)
             {
                 (first, second) = (second, first);
             }

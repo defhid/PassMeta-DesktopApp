@@ -85,7 +85,7 @@ namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
             await TextCopy.ClipboardService.SetTextAsync(what);
 
             await Locator.Current.GetService<IDialogService>()!
-                .ShowInfoAsync(string.Format(Resources.STORAGE__WHAT_COPIED, what));
+                .ShowInfo(string.Format(Resources.STORAGE__WHAT_COPIED, what));
         }
 
         private async Task CopyPasswordAsyncCommand()
@@ -94,7 +94,7 @@ namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
             await TextCopy.ClipboardService.SetTextAsync(password);
             
             await Locator.Current.GetService<IDialogService>()!
-                .ShowInfoAsync(string.Format(Resources.STORAGE__PASSWORD_COPIED, password));
+                .ShowInfo(string.Format(Resources.STORAGE__PASSWORD_COPIED, password));
         }
 
         private void DeleteCommand() => _onDelete(this);

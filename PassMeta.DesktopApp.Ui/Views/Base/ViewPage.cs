@@ -1,9 +1,9 @@
-using System;
-using Avalonia.ReactiveUI;
-using PassMeta.DesktopApp.Ui.ViewModels.Base;
-
 namespace PassMeta.DesktopApp.Ui.Views.Base
 {
+    using DesktopApp.Ui.ViewModels.Base;
+    using System;
+    using Avalonia.ReactiveUI;
+    
     public abstract class ViewPage<TViewModel> : ReactiveUserControl<TViewModel>
         where TViewModel : ViewModelPage
     {

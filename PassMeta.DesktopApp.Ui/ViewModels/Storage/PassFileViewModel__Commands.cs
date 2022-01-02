@@ -9,7 +9,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using Splat;
     using Utils.Extensions;
 
-    public partial class PassFileViewModel
+    public partial class PassFileWindowViewModel
     {
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
         private readonly IPassFileService _passFileService = Locator.Current.GetService<IPassFileService>()!;
@@ -26,13 +26,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             
             if (string.IsNullOrWhiteSpace(Name))
             {
-                await _dialogService.ShowFailureAsync(Resources.PASSFILE__INCORRECT_NAME);
+                await _dialogService.ShowFailure(Resources.PASSFILE__INCORRECT_NAME);
                 return;
             }
 
             if (Password == string.Empty || PassFile.Id == 0 && string.IsNullOrEmpty(Password))
             {
-                await _dialogService.ShowFailureAsync(Resources.PASSFILE__INCORRECT_PASSPHRASE);
+                await _dialogService.ShowFailure(Resources.PASSFILE__INCORRECT_PASSPHRASE);
                 return;
             }
             
@@ -104,7 +104,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         {
             if (!PassFile.HasProblem) return true;
             
-            await _dialogService.ShowFailureAsync(
+            await _dialogService.ShowFailure(
                 string.Format(Resources.PASSFILE__SOLVE_PROBLEM, PassFile.Problem!.Info));
 
             return false;

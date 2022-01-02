@@ -4,8 +4,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Common.Models.Entities.Response;
-    
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -15,7 +13,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Text;
     using System.Reflection;
     using System.Threading.Tasks;
-    
+    using Common.Models.Dto.Response;
     using Newtonsoft.Json;
     using Splat;
 
@@ -24,7 +22,13 @@ namespace PassMeta.DesktopApp.Core.Utils
     /// </summary>
     public class AppConfig
     {
+        private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
+        
         private string? _serverUrl;
+        
+        private Dictionary<string, string>? _cookies;
+        
+        private string? _cultureCode;
         
         /// <summary>
         /// Server API.
@@ -43,30 +47,23 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
         }
 
-        private Dictionary<string, string> _cookies = new();
-
         /// <summary>
         /// App cookies from server.
         /// </summary>
         [JsonProperty("cookies")]
         public Dictionary<string, string> Cookies
         {
-            get => _cookies;
-            // ReSharper disable once ConstantNullCoalescingCondition
-            set => _cookies = value ?? new Dictionary<string, string>();
+            get => _cookies ??= new Dictionary<string, string>();
+            set => _cookies = value;
         }
-
-        
-        private string _cultureCode = "";
         
         /// <summary>
         /// App language.
         /// </summary>
         [JsonProperty("culture")]
         public string CultureCode {
-            get => _cultureCode;
-            // ReSharper disable once ConstantNullCoalescingCondition
-            set => _cultureCode = value ?? string.Empty;
+            get => _cultureCode ??= string.Empty;
+            set => _cultureCode = value;
         }
 
         /// <summary>
@@ -231,8 +228,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 }
                 catch (Exception ex)
                 {
-                    await Locator.Current.GetService<IDialogService>()!
-                        .ShowErrorAsync(Resources.ERR__CONFIG_LOAD, more: ex.Message);
+                    DialogService.ShowError(Resources.CONFIG__LOAD_ERR, more: ex.Message);
                 }
             }
             
@@ -295,8 +291,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (Exception ex)
             {
-                await Locator.Current.GetService<IDialogService>()!
-                    .ShowErrorAsync(Resources.ERR__CONFIG_SAVE, more: ex.Message);
+                DialogService.ShowError(Resources.CONFIG__SAVE_ERR, more: ex.Message);
                 return false;
             }
         }

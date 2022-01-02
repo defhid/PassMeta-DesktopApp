@@ -16,7 +16,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <param name="title">Message title.</param>
         /// <param name="more">Secondary content.</param>
         /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
-        public Task ShowInfoAsync(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
+        public void ShowInfo(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
 
         /// <summary>
         /// Show error message to user.
@@ -26,7 +26,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <param name="more">Secondary content.</param>
         /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
         /// <remarks>Auto-logging.</remarks>
-        public Task ShowErrorAsync(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
+        public void ShowError(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
         
         /// <summary>
         /// Show failure message to user.
@@ -35,7 +35,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <param name="more">Secondary content.</param>
         /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
         /// <remarks>Auto-logging.</remarks>
-        public Task ShowFailureAsync(string message, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.Window);
+        public void ShowFailure(string message, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.Window);
 
         /// <summary>
         /// Ask user for confirmation.

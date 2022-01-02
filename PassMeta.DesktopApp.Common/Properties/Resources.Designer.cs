@@ -142,6 +142,69 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server connection error!.
+        /// </summary>
+        public static string API__CONNECTION_ERR {
+            get {
+                return ResourceManager.GetString("API__CONNECTION_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connection timeout error!.
+        /// </summary>
+        public static string API__CONNECTION_TIMEOUT_ERR {
+            get {
+                return ResourceManager.GetString("API__CONNECTION_TIMEOUT_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Access error!.
+        /// </summary>
+        public static string API__FORBIDDEN_ERR {
+            get {
+                return ResourceManager.GetString("API__FORBIDDEN_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server error!.
+        /// </summary>
+        public static string API__INTERNAL_SERVER_ERR {
+            get {
+                return ResourceManager.GetString("API__INTERNAL_SERVER_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid server response!.
+        /// </summary>
+        public static string API__INVALID_RESPONSE_ERR {
+            get {
+                return ResourceManager.GetString("API__INVALID_RESPONSE_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authorization error! Please, try re-login..
+        /// </summary>
+        public static string API__UNAUTHORIZED_ERR {
+            get {
+                return ResourceManager.GetString("API__UNAUTHORIZED_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incorrect url! Please, check app settings..
+        /// </summary>
+        public static string API__URL_ERR {
+            get {
+                return ResourceManager.GetString("API__URL_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string AUTH__LOGIN_PLACEHOLDER {
@@ -192,6 +255,33 @@ namespace PassMeta.DesktopApp.Common {
         public static string AUTH_REQUIRED__TITLE {
             get {
                 return ResourceManager.GetString("AUTH_REQUIRED__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data validation error!.
+        /// </summary>
+        public static string AUTHERR__DATA_VALIDATION_ERR {
+            get {
+                return ResourceManager.GetString("AUTHERR__DATA_VALIDATION_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configuration file reading failed! Creating a new one....
+        /// </summary>
+        public static string CONFIG__LOAD_ERR {
+            get {
+                return ResourceManager.GetString("CONFIG__LOAD_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configuration file saving error!.
+        /// </summary>
+        public static string CONFIG__SAVE_ERR {
+            get {
+                return ResourceManager.GetString("CONFIG__SAVE_ERR", resourceCulture);
             }
         }
         
@@ -286,168 +376,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configuration file reading failed! Creating a new one....
-        /// </summary>
-        public static string ERR__CONFIG_LOAD {
-            get {
-                return ResourceManager.GetString("ERR__CONFIG_LOAD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configuration file saving error!.
-        /// </summary>
-        public static string ERR__CONFIG_SAVE {
-            get {
-                return ResourceManager.GetString("ERR__CONFIG_SAVE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Server connection error!.
-        /// </summary>
-        public static string ERR__CONNECTION_FAILURE {
-            get {
-                return ResourceManager.GetString("ERR__CONNECTION_FAILURE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Connection timeout error!.
-        /// </summary>
-        public static string ERR__CONNECTION_TIMEOUT {
-            get {
-                return ResourceManager.GetString("ERR__CONNECTION_TIMEOUT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Data validation error!.
-        /// </summary>
-        public static string ERR__DATA_VALIDATION {
-            get {
-                return ResourceManager.GetString("ERR__DATA_VALIDATION", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access error!.
-        /// </summary>
-        public static string ERR__HTTP_FORBIDDEN {
-            get {
-                return ResourceManager.GetString("ERR__HTTP_FORBIDDEN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Server error!.
-        /// </summary>
-        public static string ERR__HTTP_INTERNAL_SERVER {
-            get {
-                return ResourceManager.GetString("ERR__HTTP_INTERNAL_SERVER", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Authorization error! Please, try re-login..
-        /// </summary>
-        public static string ERR__HTTP_UNAUTHORIZED {
-            get {
-                return ResourceManager.GetString("ERR__HTTP_UNAUTHORIZED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid server response!.
-        /// </summary>
-        public static string ERR__INVALID_API_RESPONSE {
-            get {
-                return ResourceManager.GetString("ERR__INVALID_API_RESPONSE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid passfile found on disk! Delete it?.
-        /// </summary>
-        public static string ERR__INVALID_PASSFILE_FOUND {
-            get {
-                return ResourceManager.GetString("ERR__INVALID_PASSFILE_FOUND", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; remote archiving error!.
-        /// </summary>
-        public static string ERR__PASSFILE_ARCHIVE_REMOTE {
-            get {
-                return ResourceManager.GetString("ERR__PASSFILE_ARCHIVE_REMOTE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; local deleting error!.
-        /// </summary>
-        public static string ERR__PASSFILE_DELETE_LOCAL {
-            get {
-                return ResourceManager.GetString("ERR__PASSFILE_DELETE_LOCAL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; remote delete error!.
-        /// </summary>
-        public static string ERR__PASSFILE_DELETE_REMOTE {
-            get {
-                return ResourceManager.GetString("ERR__PASSFILE_DELETE_REMOTE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; local saving error!.
-        /// </summary>
-        public static string ERR__PASSFILE_SAVE_LOCAL {
-            get {
-                return ResourceManager.GetString("ERR__PASSFILE_SAVE_LOCAL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; remote saving error!.
-        /// </summary>
-        public static string ERR__PASSFILE_SAVE_REMOTE {
-            get {
-                return ResourceManager.GetString("ERR__PASSFILE_SAVE_REMOTE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; remote unarchive error!.
-        /// </summary>
-        public static string ERR__PASSFILE_UNARCHIVE_REMOTE {
-            get {
-                return ResourceManager.GetString("ERR__PASSFILE_UNARCHIVE_REMOTE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfiles reading error!.
-        /// </summary>
-        public static string ERR__PASSFILES_READ {
-            get {
-                return ResourceManager.GetString("ERR__PASSFILES_READ", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Incorrect url! Please, check app settings..
-        /// </summary>
-        public static string ERR__URL {
-            get {
-                return ResourceManager.GetString("ERR__URL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Generate.
         /// </summary>
         public static string GENERATOR__BTN {
@@ -507,15 +435,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string GENERATOR__TITLE {
             get {
                 return ResourceManager.GetString("GENERATOR__TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Local mode.
-        /// </summary>
-        public static string INFO__PASSFILES_LOCAL_MODE {
-            get {
-                return ResourceManager.GetString("INFO__PASSFILES_LOCAL_MODE", resourceCulture);
             }
         }
         
@@ -633,6 +552,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string OKBAD_MORE__REQUIRED {
             get {
                 return ResourceManager.GetString("OKBAD_MORE__REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, input your account password to delete passfile &apos;{0}&apos; from the server (deleted locally on {1}).
+        /// </summary>
+        public static string PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE {
+            get {
+                return ResourceManager.GetString("PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE", resourceCulture);
             }
         }
         
@@ -961,11 +889,47 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remote deleting error.
+        /// </summary>
+        public static string PASSFILE_PROBLEM__REMOTE_DELETING_ERR {
+            get {
+                return ResourceManager.GetString("PASSFILE_PROBLEM__REMOTE_DELETING_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Uploading error.
         /// </summary>
         public static string PASSFILE_PROBLEM__UPLOAD_ERR {
             get {
                 return ResourceManager.GetString("PASSFILE_PROBLEM__UPLOAD_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfiles are saved to the local storage with errors! (see logs).
+        /// </summary>
+        public static string PASSMANAGER__COMMIT_WARNING {
+            get {
+                return ResourceManager.GetString("PASSMANAGER__COMMIT_WARNING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile local manager error! (see logs).
+        /// </summary>
+        public static string PASSMANAGER__ERR {
+            get {
+                return ResourceManager.GetString("PASSMANAGER__ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile local version &apos;{0}&apos; not found!.
+        /// </summary>
+        public static string PASSMANAGER__VERSION_NOT_FOUND_ERR {
+            get {
+                return ResourceManager.GetString("PASSMANAGER__VERSION_NOT_FOUND_ERR", resourceCulture);
             }
         }
         

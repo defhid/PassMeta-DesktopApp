@@ -40,7 +40,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         /// <summary>
         /// Parse <see cref="PassFile.Color"/> to <see cref="PassFileColor"/>.
         /// </summary>
-        public static PassFileColor GetPassFileColor(this PassFileLight passFile)
+        public static PassFileColor GetPassFileColor(this PassFile passFile)
             => PassFileColor.List.FirstOrDefault(c => c.Hex == passFile.Color?.ToUpper()) 
                ?? PassFileColor.None;
 
@@ -70,7 +70,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
             var result = passFile.Decrypt();
 
             if (result.Bad)
-                await dialogService.ShowFailureAsync(result.Message!);
+                await dialogService.ShowFailure(result.Message!);
 
             return result;
         }

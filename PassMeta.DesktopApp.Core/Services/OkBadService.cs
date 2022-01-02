@@ -7,11 +7,14 @@ namespace PassMeta.DesktopApp.Core.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using Splat;
     
+    /// <inheritdoc />
     public class OkBadService : IOkBadService
     {
+        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        
+        /// <inheritdoc />
         public string GetLocalizedMessage(string message)
         {
             Dictionary<string, string>? dict = null;
@@ -29,12 +32,12 @@ namespace PassMeta.DesktopApp.Core.Services
             return message;
         }
 
-        public Task ShowResponseFailureAsync(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper = null)
+        /// <inheritdoc />
+        public void ShowResponseFailure(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper = null)
         {
             var lines = _ResponseToText(response, whatMapper);
             
-            return Locator.Current.GetService<IDialogService>()!
-                .ShowFailureAsync(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
+            _dialogService.ShowFailure(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
         }
 
         private List<string> _ResponseToText(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper)

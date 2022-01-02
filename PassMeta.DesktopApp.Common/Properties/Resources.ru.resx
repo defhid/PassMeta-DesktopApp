@@ -32,31 +32,31 @@
     <data name="MAIN_MENU__STORAGE_BTN" xml:space="preserve">
         <value>Хранилище</value>
     </data>
-    <data name="ERR__CONFIG_LOAD" xml:space="preserve">
+    <data name="CONFIG__LOAD_ERR" xml:space="preserve">
         <value>Ошибка чтения файла конфигурации! Создание нового...</value>
     </data>
-    <data name="ERR__CONFIG_SAVE" xml:space="preserve">
+    <data name="CONFIG__SAVE_ERR" xml:space="preserve">
         <value>Ошибка сохранения файла конфигурации!</value>
     </data>
     <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
         <value>Не удаётся расшифровать файл</value>
     </data>
-    <data name="ERR__INVALID_API_RESPONSE" xml:space="preserve">
+    <data name="API__INVALID_RESPONSE_ERR" xml:space="preserve">
         <value>Невалидный ответ сервера!</value>
     </data>
-    <data name="ERR__CONNECTION_FAILURE" xml:space="preserve">
+    <data name="API__CONNECTION_ERR" xml:space="preserve">
         <value>Ошибка подключения к серверу!</value>
     </data>
-    <data name="ERR__CONNECTION_TIMEOUT" xml:space="preserve">
+    <data name="API__CONNECTION_TIMEOUT_ERR" xml:space="preserve">
         <value>Превышено допустимое время ожидания ответа сервера!</value>
     </data>
-    <data name="ERR__HTTP_UNAUTHORIZED" xml:space="preserve">
+    <data name="API__UNAUTHORIZED_ERR" xml:space="preserve">
         <value>Ошибка авторизации! Пожалуйста, попробуйте войти в систему заново.</value>
     </data>
-    <data name="ERR__HTTP_FORBIDDEN" xml:space="preserve">
+    <data name="API__FORBIDDEN_ERR" xml:space="preserve">
         <value>Ошибка доступа!</value>
     </data>
-    <data name="ERR__HTTP_INTERNAL_SERVER" xml:space="preserve">
+    <data name="API__INTERNAL_SERVER_ERR" xml:space="preserve">
         <value>Ошибка сервера!</value>
     </data>
     <data name="OKBAD_MORE__ALLOWED" xml:space="preserve">
@@ -92,7 +92,7 @@
     <data name="DIALOG__DEFAULT_FAILURE_TITLE" xml:space="preserve">
         <value>Ошибка</value>
     </data>
-    <data name="ERR__URL" xml:space="preserve">
+    <data name="API__URL_ERR" xml:space="preserve">
         <value>Некорректный url адрес, проверьте настройки приложения.</value>
     </data>
     <data name="AUTH__TITLE" xml:space="preserve">
@@ -113,7 +113,7 @@
     <data name="AUTH_REQUIRED__TITLE" xml:space="preserve">
         <value>Авторизуйтесь, чтобы просматривать эту страницу</value>
     </data>
-    <data name="ERR__DATA_VALIDATION" xml:space="preserve">
+    <data name="AUTHERR__DATA_VALIDATION_ERR" xml:space="preserve">
         <value>Ошибка валидации данных!</value>
     </data>
     <data name="SETTINGS__TITLE" xml:space="preserve">
@@ -188,35 +188,8 @@
     <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
         <value>Пакеты</value>
     </data>
-    <data name="ERR__INVALID_PASSFILE_FOUND" xml:space="preserve">
-        <value>На диске найден некорректный файл паролей! Удалить его?</value>
-    </data>
-    <data name="ERR__PASSFILES_READ" xml:space="preserve">
-        <value>Ошибка чтения файлов паролей!</value>
-    </data>
     <data name="INFO__PASSFILES_MERGED" xml:space="preserve">
         <value>Отличающиеся версии файла паролей '{0}' ('{1}') были слиты</value>
-    </data>
-    <data name="ERR__PASSFILE_SAVE_LOCAL" xml:space="preserve">
-        <value>Ошибка локального сохранения файла паролей '{0}'!</value>
-    </data>
-    <data name="ERR__PASSFILE_SAVE_REMOTE" xml:space="preserve">
-        <value>Ошибка сохранения файла паролей '{0}' на сервере!</value>
-    </data>
-    <data name="ERR__PASSFILE_DELETE_LOCAL" xml:space="preserve">
-        <value>Ошибка локального удаления файла паролей '{0}'!</value>
-    </data>
-    <data name="ERR__PASSFILE_DELETE_REMOTE" xml:space="preserve">
-        <value>Ошибка удаления файла паролей '{0}' с сервера!</value>
-    </data>
-    <data name="ERR__PASSFILE_ARCHIVE_REMOTE" xml:space="preserve">
-        <value>Ошибка архивирования файла паролей '{0}' на сервере!</value>
-    </data>
-    <data name="ERR__PASSFILE_UNARCHIVE_REMOTE" xml:space="preserve">
-        <value>Ошибка разархивирования файла паролей '{0}' на сервере!</value>
-    </data>
-    <data name="INFO__PASSFILES_LOCAL_MODE" xml:space="preserve">
-        <value>Remote mode</value>
     </data>
     <data name="PASSFILE__ASK_PASSPHRASE" xml:space="preserve">
         <value>Введите кодовую фразу</value>
@@ -379,5 +352,20 @@
     </data>
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Не удаётся зашифровать файл</value>
+    </data>
+    <data name="PASSMANAGER__VERSION_NOT_FOUND_ERR" xml:space="preserve">
+        <value>Версия '{0}' локального пакета не найдена!</value>
+    </data>
+    <data name="PASSMANAGER__ERR" xml:space="preserve">
+        <value>Ошибка во время работы локального менеджера пакетов! (см. логи)</value>
+    </data>
+    <data name="PASSMANAGER__COMMIT_WARNING" xml:space="preserve">
+        <value>Пакеты сохранены локально с ошибками! (см. логи)</value>
+    </data>
+    <data name="PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE" xml:space="preserve">
+        <value>Пожалуйста, введите пароль от своего аккаунта для удаления пакета '{0}' с сервера (удалён локально {1})</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__REMOTE_DELETING_ERR" xml:space="preserve">
+        <value>Ошибка удаления с сервера</value>
     </data>
 </root>

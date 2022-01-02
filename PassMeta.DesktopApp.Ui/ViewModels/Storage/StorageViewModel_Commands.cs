@@ -37,7 +37,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             
                 _passFiles = result.Data?.OrderBy(pf => pf.Name).ToList();
                 _userId = AppConfig.Current.User?.Id;
-                Mode = result.Message;
+                //Mode = result.Message;
                 PassFileList = _MakePassFileList();
             }
             
@@ -106,7 +106,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             {
                 Name = result.Data!
             });
-            passFile.ChangedLocalOn = DateTime.Now;
+            passFile.LocalChangedOn = DateTime.Now;
 
             _SetPassFileSectionList();
             PassFilesSelectedSectionIndex = passFile.Data.Count - 1;
@@ -125,7 +125,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             }
 
             section.Name = result.Data!;
-            passFile.ChangedLocalOn = DateTime.Now;
+            passFile.LocalChangedOn = DateTime.Now;
 
             sectionBtn.Refresh();
         }
@@ -135,7 +135,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var passFile = SelectedPassFile!;
 
             passFile.Data!.RemoveAt(PassFilesSelectedSectionIndex);
-            passFile.ChangedLocalOn = DateTime.Now;
+            passFile.LocalChangedOn = DateTime.Now;
             
             _SetPassFileSectionList();
         }
@@ -184,7 +184,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             if (!currentReadOnly)
             {
                 SelectedSection!.Items = PassFileSectionItemList!.Select(btn => btn.ToItem()).ToList();
-                SelectedPassFile!.ChangedLocalOn = DateTime.Now;
+                SelectedPassFile!.LocalChangedOn = DateTime.Now;
             }
             
             _SetPassFileSectionItemList(!currentReadOnly);

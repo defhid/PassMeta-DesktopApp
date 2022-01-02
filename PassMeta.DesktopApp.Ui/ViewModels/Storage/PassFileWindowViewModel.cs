@@ -14,7 +14,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using ReactiveUI;
     using Utils.Extensions;
     
-    public partial class PassFileViewModel : ReactiveObject
+    public partial class PassFileWindowViewModel : ReactiveObject
     {
         public event Action<PassFile?>? OnUpdate;
         
@@ -120,7 +120,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         private readonly IObservable<bool> _passFileNotNew;
         private readonly IObservable<bool> _anyChanged;
 
-        public PassFileViewModel(PassFile passFile, Action close)
+        public PassFileWindowViewModel(PassFile passFile, Action close)
         {
             _passFile = passFile;
             _close = close;
@@ -178,7 +178,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var states = new Stack<string>();
 
             if (passFile.IsLocalChanged)
-                states.Push(string.Format(Resources.PASSFILE__STATE_LOCAL_CHANGED, passFile.ChangedLocalOn!.Value));
+                states.Push(string.Format(Resources.PASSFILE__STATE_LOCAL_CHANGED, passFile.LocalChangedOn!.Value));
 
             if (passFile.HasProblem)
                 states.Push(passFile.Problem!.Info);
@@ -188,7 +188,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         
 #pragma warning disable 8618
         // Avalonia requirements...
-        public PassFileViewModel() {}
+        public PassFileWindowViewModel() {}
 #pragma warning restore 8618
     }
 }

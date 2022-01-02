@@ -39,15 +39,10 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             }
             
             var service = Locator.Current.GetService<ICryptoService>()!;
-            
-            var checkKey = service.MakeCheckKey(passFile.PassPhrase);
-            if (checkKey is null) return DecryptionError;
-            
-            if (checkKey != passFile.CheckKey)
-                return Result.Failure(Resources.PASSFILE__WRONG_PASSPHRASE);
 
             var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase);
-            if (content is null) return DecryptionError;
+            if (content is null)
+                return Result.Failure(Resources.PASSFILE__WRONG_PASSPHRASE);
 
             try
             {
@@ -59,12 +54,11 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 return DecryptionError;
             }
             
-            passFile.CheckKey = checkKey;
             return Result.Success();
         }
         
         /// <summary>
-        /// Encrypts <paramref name="passFile.Data"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
+        /// Encrypts <see cref="PassFile.Data"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
         /// </summary>
         /// <remarks>
         /// <see cref="PassFile.PassPhrase"/> must be not null.
@@ -86,7 +80,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             string data;
             try
             {
-                data = JsonConvert.SerializeObject(passFile.Data ?? new List<PassFile.Section>());
+                data = JsonConvert.SerializeObject(passFile.Data);
             }
             catch (Exception ex)
             {
@@ -96,16 +90,12 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             
             var service = Locator.Current.GetService<ICryptoService>()!;
             
-            var dataEncrypted = service.Encrypt(data, passFile.PassPhrase);
-            var checkKey = service.MakeCheckKey(passFile.PassPhrase);
-
-            if (dataEncrypted is null || checkKey is null)
+            passFile.DataEncrypted = service.Encrypt(data, passFile.PassPhrase);
+            if (passFile.DataEncrypted is null)
             {
                 return EncryptionError;
             }
 
-            passFile.DataEncrypted = dataEncrypted;
-            passFile.CheckKey = checkKey;
             return Result.Success();
         }
     }

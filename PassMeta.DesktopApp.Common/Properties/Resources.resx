@@ -39,31 +39,31 @@
     <data name="MAIN_MENU__SETTINGS_BTN" xml:space="preserve">
         <value>Settings</value>
     </data>
-    <data name="ERR__CONFIG_LOAD" xml:space="preserve">
+    <data name="CONFIG__LOAD_ERR" xml:space="preserve">
         <value>Configuration file reading failed! Creating a new one...</value>
     </data>
-    <data name="ERR__CONFIG_SAVE" xml:space="preserve">
+    <data name="CONFIG__SAVE_ERR" xml:space="preserve">
         <value>Configuration file saving error!</value>
     </data>
     <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
         <value>Passfile decryption failed</value>
     </data>
-    <data name="ERR__INVALID_API_RESPONSE" xml:space="preserve">
+    <data name="API__INVALID_RESPONSE_ERR" xml:space="preserve">
         <value>Invalid server response!</value>
     </data>
-    <data name="ERR__CONNECTION_FAILURE" xml:space="preserve">
+    <data name="API__CONNECTION_ERR" xml:space="preserve">
         <value>Server connection error!</value>
     </data>
-    <data name="ERR__CONNECTION_TIMEOUT" xml:space="preserve">
+    <data name="API__CONNECTION_TIMEOUT_ERR" xml:space="preserve">
         <value>Connection timeout error!</value>
     </data>
-    <data name="ERR__HTTP_UNAUTHORIZED" xml:space="preserve">
+    <data name="API__UNAUTHORIZED_ERR" xml:space="preserve">
         <value>Authorization error! Please, try re-login.</value>
     </data>
-    <data name="ERR__HTTP_FORBIDDEN" xml:space="preserve">
+    <data name="API__FORBIDDEN_ERR" xml:space="preserve">
         <value>Access error!</value>
     </data>
-    <data name="ERR__HTTP_INTERNAL_SERVER" xml:space="preserve">
+    <data name="API__INTERNAL_SERVER_ERR" xml:space="preserve">
         <value>Server error!</value>
     </data>
     <data name="OKBAD_MORE__INFO" xml:space="preserve">
@@ -99,7 +99,7 @@
     <data name="DIALOG__DEFAULT_FAILURE_TITLE" xml:space="preserve">
         <value>Failure</value>
     </data>
-    <data name="ERR__URL" xml:space="preserve">
+    <data name="API__URL_ERR" xml:space="preserve">
         <value>Incorrect url! Please, check app settings.</value>
     </data>
     <data name="AUTH__TITLE" xml:space="preserve">
@@ -120,7 +120,7 @@
     <data name="AUTH_REQUIRED__TITLE" xml:space="preserve">
         <value>Authorize to view this page</value>
     </data>
-    <data name="ERR__DATA_VALIDATION" xml:space="preserve">
+    <data name="AUTHERR__DATA_VALIDATION_ERR" xml:space="preserve">
         <value>Data validation error!</value>
     </data>
     <data name="SETTINGS__TITLE" xml:space="preserve">
@@ -195,35 +195,8 @@
     <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
         <value>Packages</value>
     </data>
-    <data name="ERR__INVALID_PASSFILE_FOUND" xml:space="preserve">
-        <value>Invalid passfile found on disk! Delete it?</value>
-    </data>
-    <data name="ERR__PASSFILES_READ" xml:space="preserve">
-        <value>Passfiles reading error!</value>
-    </data>
     <data name="INFO__PASSFILES_MERGED" xml:space="preserve">
         <value>Defferent versions of passfile '{0}' ('{1}') have been merged</value>
-    </data>
-    <data name="ERR__PASSFILE_SAVE_LOCAL" xml:space="preserve">
-        <value>Passfile '{0}' local saving error!</value>
-    </data>
-    <data name="ERR__PASSFILE_SAVE_REMOTE" xml:space="preserve">
-        <value>Passfile '{0}' remote saving error!</value>
-    </data>
-    <data name="ERR__PASSFILE_DELETE_LOCAL" xml:space="preserve">
-        <value>Passfile '{0}' local deleting error!</value>
-    </data>
-    <data name="ERR__PASSFILE_DELETE_REMOTE" xml:space="preserve">
-        <value>Passfile '{0}' remote delete error!</value>
-    </data>
-    <data name="ERR__PASSFILE_ARCHIVE_REMOTE" xml:space="preserve">
-        <value>Passfile '{0}' remote archiving error!</value>
-    </data>
-    <data name="ERR__PASSFILE_UNARCHIVE_REMOTE" xml:space="preserve">
-        <value>Passfile '{0}' remote unarchive error!</value>
-    </data>
-    <data name="INFO__PASSFILES_LOCAL_MODE" xml:space="preserve">
-        <value>Local mode</value>
     </data>
     <data name="PASSFILE__ASK_PASSPHRASE" xml:space="preserve">
         <value>Input your passphrase</value>
@@ -386,5 +359,20 @@
     </data>
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Passfile encryption failed</value>
+    </data>
+    <data name="PASSMANAGER__VERSION_NOT_FOUND_ERR" xml:space="preserve">
+        <value>Passfile local version '{0}' not found!</value>
+    </data>
+    <data name="PASSMANAGER__ERR" xml:space="preserve">
+        <value>Passfile local manager error! (see logs)</value>
+    </data>
+    <data name="PASSMANAGER__COMMIT_WARNING" xml:space="preserve">
+        <value>Passfiles are saved to the local storage with errors! (see logs)</value>
+    </data>
+    <data name="PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE" xml:space="preserve">
+        <value>Please, input your account password to delete passfile '{0}' from the server (deleted locally on {1})</value>
+    </data>
+    <data name="PASSFILE_PROBLEM__REMOTE_DELETING_ERR" xml:space="preserve">
+        <value>Remote deleting error</value>
     </data>
 </root>

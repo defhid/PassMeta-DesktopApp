@@ -1,5 +1,11 @@
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
+    using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.ViewModels;
+    using DesktopApp.Ui.ViewModels.Base;
+    using DesktopApp.Ui.ViewModels.Main;
+    using DesktopApp.Ui.ViewModels.Storage;
+    
     using System;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
@@ -9,13 +15,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Controls.Primitives;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
-    
-    using DesktopApp.Core.Utils;
-    using DesktopApp.Ui.ViewModels;
-    using DesktopApp.Ui.ViewModels.Base;
-    using DesktopApp.Ui.ViewModels.Main;
-    using DesktopApp.Ui.ViewModels.Storage;
-    
+
     public class MainWindow : Window
     {
         public static MainWindow? Current { get; private set; }

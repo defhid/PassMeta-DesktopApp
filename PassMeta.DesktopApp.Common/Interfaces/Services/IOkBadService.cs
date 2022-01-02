@@ -2,8 +2,10 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
     using DesktopApp.Common.Models;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     
+    /// <summary>
+    /// Service that provides localized messages from <see cref="OkBadResponse"/>.
+    /// </summary>
     public interface IOkBadService
     {
         /// <summary>
@@ -16,6 +18,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// </summary>
         /// <param name="response">Response to show.</param>
         /// <param name="whatMapper">Translate package for <see cref="OkBadResponse.What"/> response sections.</param>
-        Task ShowResponseFailureAsync(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper = null);
+        void ShowResponseFailure(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper = null);
     }
 }

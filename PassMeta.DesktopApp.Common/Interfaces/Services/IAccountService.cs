@@ -2,9 +2,12 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Common.Models.Entities.Request;
     using System.Threading.Tasks;
+    using Models.Dto.Request;
 
+    /// <summary>
+    /// Service for working with user account data.
+    /// </summary>
     public interface IAccountService
     {
         /// <summary>

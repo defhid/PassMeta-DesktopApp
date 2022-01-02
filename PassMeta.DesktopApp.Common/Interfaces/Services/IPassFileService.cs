@@ -5,13 +5,17 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Service for working with passfiles.
+    /// </summary>
     public interface IPassFileService
     {
         /// <summary>
-        /// Get passfile by its id.
+        /// Get passfile with encrypted data by its id from server.
         /// </summary>
-        Task<PassFile?> GetPassFileRemoteAsync(int passFileId);
-        
+        /// <remarks>Automatic errors showing.</remarks>
+        Task<PassFile?> GetPassFileWithDataRemoteAsync(int passFileId);
+
         /// <summary>
         /// Refresh passfiles from remote and get result list from local storage.
         /// </summary>
@@ -19,38 +23,24 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// Automatic conflicts merge.
         /// Automatic errors showing.
         /// </remarks>
-        Task<Result<List<PassFile>>> GetPassFileListAsync();
+        Task<List<PassFile>> GetPassFileListAsync();
 
         /// <summary>
-        /// Save passfile info and data, local and remote.
+        /// Save passfile info, local and remote.
         /// </summary>
-        /// <remarks>
-        /// Automatic errors showing.
-        /// </remarks>
-        Task<Result<PassFile>> SavePassFileAsync(PassFile passFile);
+        /// <remarks>Automatic errors showing.</remarks>
+        Task<PassFile> SavePassFileInfoAsync(PassFile passFile);
 
         /// <summary>
-        /// Archive remote passfile, get actual and update local storage.
+        /// Save passfile data, local and remote.
         /// </summary>
-        /// <remarks>
-        /// Automatic errors showing.
-        /// </remarks>
-        Task<Result<PassFile>> ArchivePassFileAsync(PassFile passFile);
+        /// <remarks>Automatic errors showing.</remarks>
+        Task<PassFile> SavePassFileDataAsync(PassFile passFile);
         
-        /// <summary>
-        /// Unarchive remote passfile, get actual and update local storage.
-        /// </summary>
-        /// <remarks>
-        /// Automatic errors showing.
-        /// </remarks>
-        Task<Result<PassFile>> UnArchivePassFileAsync(PassFile passFile);
-
         /// <summary>
         /// Delete local and remote passfile.
         /// </summary>
-        /// <remarks>
-        /// Automatic errors showing.
-        /// </remarks>
-        Task<Result> DeletePassFileAsync(PassFileLight passFile, string accountPassword);
+        /// <remarks>Automatic errors showing.</remarks>
+        Task<Result> DeletePassFileAsync(PassFile passFile, string? accountPassword);
     }
 }

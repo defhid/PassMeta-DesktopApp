@@ -19,18 +19,23 @@ namespace PassMeta.DesktopApp.Core.Services
         private FileStream? _fileStream;
         private DateTime? _fileStreamDateOpened;
 
+        /// <inheritdoc />
         public void Info(string text)
             => _Write(new Log { Section = "INFO", Text = text });
 
+        /// <inheritdoc />
         public void Warning(string text)
             => _Write(new Log { Section = "WARNING", Text = text });
         
+        /// <inheritdoc />
         public void Error(string text)
             => _Write(new Log { Section = "ERROR", Text = text });
 
+        /// <inheritdoc />
         public void Error(Exception ex, string? text = null)
             => Error(text is null ? ex.ToString() : text + $" [{ex}]");
 
+        /// <inheritdoc />
         public async Task<List<Log>> ReadLogsAsync(DateTime dateFrom, DateTime dateTo)
         {
             var dates = new List<DateTime> { dateFrom };
@@ -78,8 +83,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 }
                 catch (Exception ex)
                 {
-                    await Locator.Current.GetService<IDialogService>()!
-                        .ShowErrorAsync($"Can't read log file '{fileName}'", more: ex.ToString());
+                    Locator.Current.GetService<IDialogService>()!
+                        .ShowError($"Can't read log file '{fileName}'", more: ex.ToString());
                 }
             }
 
@@ -121,6 +126,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
         ~LogService() => Dispose();
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _fileStream?.Close();
