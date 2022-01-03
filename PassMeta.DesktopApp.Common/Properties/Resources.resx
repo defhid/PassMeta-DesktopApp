@@ -165,7 +165,7 @@
     <data name="ACCOUNT__SAVE_BTN" xml:space="preserve">
         <value>Save</value>
     </data>
-    <data name="WARN__PASSWORD_CONFIRM_MISSED" xml:space="preserve">
+    <data name="ACCOUNT__PASSWORD_CONFIRM_MISSED_WARN" xml:space="preserve">
         <value>Current password is missed!</value>
     </data>
     <data name="ACCOUNT__SAVE_SUCCESS" xml:space="preserve">
@@ -195,9 +195,6 @@
     <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
         <value>Packages</value>
     </data>
-    <data name="INFO__PASSFILES_MERGED" xml:space="preserve">
-        <value>Defferent versions of passfile '{0}' ('{1}') have been merged</value>
-    </data>
     <data name="PASSFILE__ASK_PASSPHRASE" xml:space="preserve">
         <value>Input your passphrase</value>
     </data>
@@ -216,20 +213,14 @@
     <data name="STORAGE__CONTEXT_DELETE" xml:space="preserve">
         <value>Delete</value>
     </data>
-    <data name="PASSFILE__BTN_ARCHIVE" xml:space="preserve">
-        <value>Archive</value>
-    </data>
     <data name="STORAGE__CONTEXT_ADD" xml:space="preserve">
         <value>Add</value>
     </data>
     <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
         <value>Input section name</value>
     </data>
-    <data name="PASSFILE__CONFIRM_ARCHIVE" xml:space="preserve">
-        <value>Do you really want to archive passfile '{0}'</value>
-    </data>
     <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
-        <value>Do you really want to delete passfile '{0}'? Type your account password:</value>
+        <value>Do you really want to delete passfile '{0}'?</value>
     </data>
     <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Wrong passphrase!</value>
@@ -237,7 +228,7 @@
     <data name="PASSFILE__INCORRECT_PASSPHRASE" xml:space="preserve">
         <value>Invalid passphrase!</value>
     </data>
-    <data name="STORAGE__DICT__CHECK_PASSWORD" xml:space="preserve">
+    <data name="DICT_STORAGE__CHECK_PASSWORD" xml:space="preserve">
         <value>account password</value>
     </data>
     <data name="STORAGE__ITEM_WHAT_LABEL" xml:space="preserve">
@@ -276,8 +267,8 @@
     <data name="STORAGE__WHAT_COPIED" xml:space="preserve">
         <value>Login '{0}' is copied to clipboard</value>
     </data>
-    <data name="STORAGE_PASSFILE__TITLE" xml:space="preserve">
-        <value>Passfile '{0}'</value>
+    <data name="PASSFILE__TITLE" xml:space="preserve">
+        <value>Passfile '{0}' (#{1})</value>
     </data>
     <data name="PASSFILE_COLOR__GREEN" xml:space="preserve">
         <value>Green</value>
@@ -339,9 +330,6 @@
     <data name="PASSFILE__BTN_DELETE" xml:space="preserve">
         <value>Delete</value>
     </data>
-    <data name="PASSFILE__BTN_UNARCHIVE" xml:space="preserve">
-        <value>Unarchive</value>
-    </data>
     <data name="PASSFILE__BTN_MERGE" xml:space="preserve">
         <value>Resolve conflicts...</value>
     </data>
@@ -354,8 +342,8 @@
     <data name="PASSFILE__STATE_NEW" xml:space="preserve">
         <value>New</value>
     </data>
-    <data name="STORAGE_PASSFILE__NEW_TITLE" xml:space="preserve">
-        <value>New passfile</value>
+    <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
+        <value>New passfile '{0}'</value>
     </data>
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Passfile encryption failed</value>
@@ -370,9 +358,27 @@
         <value>Passfiles are saved to the local storage with errors! (see logs)</value>
     </data>
     <data name="PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE" xml:space="preserve">
-        <value>Please, input your account password to delete passfile '{0}' from the server (deleted locally on {1})</value>
+        <value>Please, input your account password to delete passfile '{0}' from the server (#{1}, deleted locally on {2})</value>
     </data>
     <data name="PASSFILE_PROBLEM__REMOTE_DELETING_ERR" xml:space="preserve">
         <value>Remote deleting error</value>
+    </data>
+    <data name="PASSFILE__TITLE_DELETED" xml:space="preserve">
+        <value>Deleted locally passfile '{0}' (#{1})</value>
+    </data>
+    <data name="DICT_STORAGE__PASSFILE_ID" xml:space="preserve">
+        <value>passfile ID</value>
+    </data>
+    <data name="DICT_STORAGE__PASSFILE_NAME" xml:space="preserve">
+        <value>passfile name</value>
+    </data>
+    <data name="DICT_STORAGE__PASSFILE_COLOR" xml:space="preserve">
+        <value>passfile color</value>
+    </data>
+    <data name="DICT_STORAGE__PASSFILE_CREATED_ON" xml:space="preserve">
+        <value>timestamp of passfile creation</value>
+    </data>
+    <data name="DICT_STORAGE__PASSFILE_SMTH" xml:space="preserve">
+        <value>passfile data</value>
     </data>
 </root>

@@ -97,6 +97,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current password is missed!.
+        /// </summary>
+        public static string ACCOUNT__PASSWORD_CONFIRM_MISSED_WARN {
+            get {
+                return ResourceManager.GetString("ACCOUNT__PASSWORD_CONFIRM_MISSED_WARN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string ACCOUNT__PASSWORD_LABEL {
@@ -376,6 +385,60 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to account password.
+        /// </summary>
+        public static string DICT_STORAGE__CHECK_PASSWORD {
+            get {
+                return ResourceManager.GetString("DICT_STORAGE__CHECK_PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to passfile color.
+        /// </summary>
+        public static string DICT_STORAGE__PASSFILE_COLOR {
+            get {
+                return ResourceManager.GetString("DICT_STORAGE__PASSFILE_COLOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to timestamp of passfile creation.
+        /// </summary>
+        public static string DICT_STORAGE__PASSFILE_CREATED_ON {
+            get {
+                return ResourceManager.GetString("DICT_STORAGE__PASSFILE_CREATED_ON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to passfile ID.
+        /// </summary>
+        public static string DICT_STORAGE__PASSFILE_ID {
+            get {
+                return ResourceManager.GetString("DICT_STORAGE__PASSFILE_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to passfile name.
+        /// </summary>
+        public static string DICT_STORAGE__PASSFILE_NAME {
+            get {
+                return ResourceManager.GetString("DICT_STORAGE__PASSFILE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to passfile data.
+        /// </summary>
+        public static string DICT_STORAGE__PASSFILE_SMTH {
+            get {
+                return ResourceManager.GetString("DICT_STORAGE__PASSFILE_SMTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Generate.
         /// </summary>
         public static string GENERATOR__BTN {
@@ -435,15 +498,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string GENERATOR__TITLE {
             get {
                 return ResourceManager.GetString("GENERATOR__TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Defferent versions of passfile &apos;{0}&apos; (&apos;{1}&apos;) have been merged.
-        /// </summary>
-        public static string INFO__PASSFILES_MERGED {
-            get {
-                return ResourceManager.GetString("INFO__PASSFILES_MERGED", resourceCulture);
             }
         }
         
@@ -556,7 +610,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please, input your account password to delete passfile &apos;{0}&apos; from the server (deleted locally on {1}).
+        ///   Looks up a localized string similar to Please, input your account password to delete passfile &apos;{0}&apos; from the server (#{1}, deleted locally on {2}).
         /// </summary>
         public static string PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE {
             get {
@@ -570,15 +624,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE__ASK_PASSPHRASE {
             get {
                 return ResourceManager.GetString("PASSFILE__ASK_PASSPHRASE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Archive.
-        /// </summary>
-        public static string PASSFILE__BTN_ARCHIVE {
-            get {
-                return ResourceManager.GetString("PASSFILE__BTN_ARCHIVE", resourceCulture);
             }
         }
         
@@ -619,25 +664,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unarchive.
-        /// </summary>
-        public static string PASSFILE__BTN_UNARCHIVE {
-            get {
-                return ResourceManager.GetString("PASSFILE__BTN_UNARCHIVE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you really want to archive passfile &apos;{0}&apos;.
-        /// </summary>
-        public static string PASSFILE__CONFIRM_ARCHIVE {
-            get {
-                return ResourceManager.GetString("PASSFILE__CONFIRM_ARCHIVE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you really want to delete passfile &apos;{0}&apos;? Type your account password:.
+        ///   Looks up a localized string similar to Do you really want to delete passfile &apos;{0}&apos;?.
         /// </summary>
         public static string PASSFILE__CONFIRM_DELETE {
             get {
@@ -768,6 +795,33 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE__STATE_OK {
             get {
                 return ResourceManager.GetString("PASSFILE__STATE_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; (#{1}).
+        /// </summary>
+        public static string PASSFILE__TITLE {
+            get {
+                return ResourceManager.GetString("PASSFILE__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted locally passfile &apos;{0}&apos; (#{1}).
+        /// </summary>
+        public static string PASSFILE__TITLE_DELETED {
+            get {
+                return ResourceManager.GetString("PASSFILE__TITLE_DELETED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New passfile &apos;{0}&apos;.
+        /// </summary>
+        public static string PASSFILE__TITLE_NEW {
+            get {
+                return ResourceManager.GetString("PASSFILE__TITLE_NEW", resourceCulture);
             }
         }
         
@@ -1015,15 +1069,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to account password.
-        /// </summary>
-        public static string STORAGE__DICT__CHECK_PASSWORD {
-            get {
-                return ResourceManager.GetString("STORAGE__DICT__CHECK_PASSWORD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string STORAGE__ITEM_PASSWORD_LABEL {
@@ -1101,33 +1146,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__WHAT_COPIED {
             get {
                 return ResourceManager.GetString("STORAGE__WHAT_COPIED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New passfile.
-        /// </summary>
-        public static string STORAGE_PASSFILE__NEW_TITLE {
-            get {
-                return ResourceManager.GetString("STORAGE_PASSFILE__NEW_TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile &apos;{0}&apos;.
-        /// </summary>
-        public static string STORAGE_PASSFILE__TITLE {
-            get {
-                return ResourceManager.GetString("STORAGE_PASSFILE__TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Current password is missed!.
-        /// </summary>
-        public static string WARN__PASSWORD_CONFIRM_MISSED {
-            get {
-                return ResourceManager.GetString("WARN__PASSWORD_CONFIRM_MISSED", resourceCulture);
             }
         }
     }

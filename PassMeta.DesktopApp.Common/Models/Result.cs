@@ -103,15 +103,6 @@ namespace PassMeta.DesktopApp.Common.Models
         /// </summary>
         public bool Bad => !Ok;
 
-        /// <summary>
-        /// Deconstruct to <see cref="Ok"/> and <see cref="Data"/>.
-        /// </summary>
-        public void Deconstruct(out bool ok, out TData? data)
-        {
-            ok = Ok;
-            data = Data;
-        }
-
         internal Result(TData data, string? message = null)
         {
             Ok = true;

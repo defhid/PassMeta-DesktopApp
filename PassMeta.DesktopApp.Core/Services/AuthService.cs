@@ -1,16 +1,20 @@
 namespace PassMeta.DesktopApp.Core.Services
 {
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
+    using DesktopApp.Common.Models.Dto.Request;
+    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Core.Utils;
-    using System.Threading.Tasks;
-    using Common.Models.Dto.Request;
-    using Splat;
+    using DesktopApp.Core.Utils.Mapping;
     
+    using System.Threading.Tasks;
+    using Splat;
+
     /// <inheritdoc />
     public class AuthService : IAuthService
     {
+        private static readonly ResourceMapper WhatMapper = AccountService.WhatMapper;
+        
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
 
         /// <inheritdoc />
@@ -23,7 +27,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             
             var response = await PassMetaApi.Post("/auth/sign-in", data)
-                .WithBadHandling()
+                .WithBadHandling(WhatMapper)
                 .ExecuteAsync<User>();
             
             if (response?.Success is not true)
@@ -39,7 +43,10 @@ namespace PassMeta.DesktopApp.Core.Services
             var answer = await _dialogService.ConfirmAsync(Common.Resources.ACCOUNT__SIGN_OUT_CONFIRM);
             if (answer.Bad) return;
             
-            var response = await PassMetaApi.Post("/auth/sign-out").WithBadHandling().ExecuteAsync();
+            var response = await PassMetaApi.Post("/auth/sign-out")
+                .WithBadHandling(WhatMapper)
+                .ExecuteAsync();
+            
             if (response?.Success is not true) return;
             
             await AppConfig.Current.SetUserAsync(null);
@@ -54,7 +61,10 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure<User>();
             }
             
-            var response = await PassMetaApi.Post("/users/new", data).WithBadHandling().ExecuteAsync<User>();
+            var response = await PassMetaApi.Post("/users/new", data)
+                .WithBadHandling(WhatMapper)
+                .ExecuteAsync<User>();
+            
             if (response?.Success is not true) 
                 return Result.Failure<User>();
                 

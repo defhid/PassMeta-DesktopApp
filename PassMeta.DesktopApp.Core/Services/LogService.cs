@@ -124,6 +124,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
 
+        /// <summary></summary>
         ~LogService() => Dispose();
 
         /// <inheritdoc />

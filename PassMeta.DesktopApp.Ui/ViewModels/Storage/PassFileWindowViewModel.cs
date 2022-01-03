@@ -86,24 +86,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         #region Bottom buttons
 
         public BtnState OkBtn => new(
-            _anyChanged
-                .Select(changed => changed 
-                    ? Resources.PASSFILE__BTN_SAVE 
-                    : Resources.PASSFILE__BTN_OK),
-            _anyChanged
-                .Select(changed => changed 
-                    ? ReactiveCommand.CreateFromTask(SaveAsync) 
-                    : ReactiveCommand.Create(Close)));
-
-        public BtnState ArchiveBtn => new(
-            _passFileChanged
-                .Select(pf => pf.IsArchived
-                    ? Resources.PASSFILE__BTN_UNARCHIVE
-                    : Resources.PASSFILE__BTN_ARCHIVE),
-            _passFileChanged
-                .Select(pf => pf.IsArchived
-                    ? ReactiveCommand.CreateFromTask(UnArchiveAsync, _passFileNotNew)
-                    : ReactiveCommand.CreateFromTask(ArchiveAsync, _passFileNotNew)));
+            _anyChanged.Select(changed => changed ? Resources.PASSFILE__BTN_SAVE : Resources.PASSFILE__BTN_OK),
+            _anyChanged.Select(changed => ReactiveCommand.Create(changed ? Save : Close)));
 
         public BtnState DeleteBtn => new(
             commandObservable: Observable.Return(ReactiveCommand.CreateFromTask(DeleteAsync, _passFileNotNew)));
@@ -144,8 +128,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                     val.Item4);
 
             _title = _passFileChanged.Select(pf => string.Format(pf.Id > 0 
-                    ? Resources.STORAGE_PASSFILE__TITLE 
-                    : Resources.STORAGE_PASSFILE__NEW_TITLE, pf.Name))
+                    ? Resources.PASSFILE__TITLE 
+                    : Resources.PASSFILE__TITLE_NEW, pf.Name))
                 .ToProperty(this, nameof(Title));
             
             _createdOn = _passFileChanged.Select(pf => pf.CreatedOn == default 
@@ -153,9 +137,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                     : pf.CreatedOn.ToString(CultureInfo.CurrentCulture))
                 .ToProperty(this, nameof(CreatedOn));
             
-            _changedOn = _passFileChanged.Select(pf => pf.ChangedOn == default 
+            _changedOn = _passFileChanged.Select(pf => pf.InfoChangedOn == default 
                     ? string.Empty 
-                    : pf.ChangedOn.ToString(CultureInfo.CurrentCulture))
+                    : pf.InfoChangedOn.ToString(CultureInfo.CurrentCulture))
                 .ToProperty(this, nameof(ChangedOn));
             
             _stateColor = _passFileChanged.Select(pf => pf.GetStateColor())
@@ -170,17 +154,18 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         
         private static string _MakeState(PassFile passFile)
         {
-            if (!passFile.HasProblem && !passFile.IsLocalChanged)
+            // TODO
+            if (passFile.Problem is null && !passFile.LocalCreated && !passFile.LocalChanged && !passFile.LocalDeleted)
             {
                 return passFile.Id > 0 ? Resources.PASSFILE__STATE_OK : Resources.PASSFILE__STATE_NEW;
             }
             
             var states = new Stack<string>();
 
-            if (passFile.IsLocalChanged)
-                states.Push(string.Format(Resources.PASSFILE__STATE_LOCAL_CHANGED, passFile.LocalChangedOn!.Value));
+            if (passFile.LocalCreated || passFile.LocalChanged || passFile.LocalDeleted)
+                states.Push(string.Format(Resources.PASSFILE__STATE_LOCAL_CHANGED, passFile.InfoChangedOn));
 
-            if (passFile.HasProblem)
+            if (passFile.Problem is not null)
                 states.Push(passFile.Problem!.Info);
 
             return string.Join(",\n", states);

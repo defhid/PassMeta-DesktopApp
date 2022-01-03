@@ -1,5 +1,7 @@
 namespace PassMeta.DesktopApp.Core.Utils
 {
+    using System.Threading.Tasks;
+
     /// <summary>
     /// Checking and loading at startup.
     /// </summary>
@@ -8,11 +10,11 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Method to call at startup.
         /// </summary>
-        public static void CheckSystemAndLoadApplicationConfig()
+        public static async Task CheckSystemAndLoadApplicationConfigAsync()
         {
             PassFileLocalManager.Initialize();
             
-            AppConfig.LoadAndSetCurrentAsync().GetAwaiter().GetResult();
+            await AppConfig.LoadAndSetCurrentAsync();
         }
     }
 }

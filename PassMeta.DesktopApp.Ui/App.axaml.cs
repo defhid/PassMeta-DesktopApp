@@ -14,18 +14,18 @@ namespace PassMeta.DesktopApp.Ui
     using PassMeta.DesktopApp.Ui.Views.Main;
     
     using Splat;
-
+    using System.Threading.Tasks;
+    
     public class App : Application
     {
         public override void Initialize()
         {
+            Task.Run(BeforeLaunch).GetAwaiter().GetResult();
             AvaloniaXamlLoader.Load(this);
         }
 
         public override void OnFrameworkInitializationCompleted()
         {
-            BeforeLaunch();
-            
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = MakeWindow();
@@ -44,13 +44,15 @@ namespace PassMeta.DesktopApp.Ui
             desktop.MainWindow = window;
         }
 
-        private static void BeforeLaunch()
+        private static async Task BeforeLaunch()
         {
             Locator.CurrentMutable.RegisterConstant<ILogService>(new LogService());
             
             Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
 
-            StartUp.CheckSystemAndLoadApplicationConfig();
+            await StartUp.CheckSystemAndLoadApplicationConfigAsync();
+            
+            AppConfig.OnCultureChanged += Restart;
 
             Locator.CurrentMutable.RegisterConstant<IOkBadService>(new OkBadService());
 

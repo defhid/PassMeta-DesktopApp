@@ -18,11 +18,11 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     public static class PassFileExtension
     {
         /// <summary>
-        /// Get color depending on <see cref="PassFile.IsLocalChanged"/> and <see cref="PassFile.Problem"/>.
+        /// Get color depending on <see cref="PassFile.Problem"/> and <see cref="PassFile.Origin"/>.
         /// </summary>
         public static ISolidColorBrush GetStateColor(this PassFile passFile)
         {
-            if (!passFile.HasProblem && !passFile.IsLocalChanged)
+            if (passFile.Problem is null && !passFile.LocalCreated && !passFile.LocalChanged && !passFile.LocalDeleted)
             {
                 return Brushes.LightGreen;
             }
@@ -70,7 +70,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
             var result = passFile.Decrypt();
 
             if (result.Bad)
-                await dialogService.ShowFailure(result.Message!);
+                dialogService.ShowFailure(result.Message!);
 
             return result;
         }

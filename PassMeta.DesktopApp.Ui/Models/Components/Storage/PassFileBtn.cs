@@ -54,11 +54,11 @@ namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
                 .ToProperty(this, nameof(StateColor));
             
             _opacity = this.WhenValueChanged(btn => btn.PassFile)
-                .Select(pf => pf!.IsArchived ? 0.5d : 1d)
+                .Select(pf => pf!.LocalDeleted ? 0.5d : 1d)
                 .ToProperty(this, nameof(Opacity));
             
             _name = this.WhenAnyValue(btn => btn.PassFile, btn => btn.ShortMode)
-                .Select(val => val.Item1.IsArchived
+                .Select(val => val.Item1.LocalDeleted
                     ? '~' + (val.Item2 ? PassFile.Name[..1] : PassFile.Name)
                     : val.Item2 ? PassFile.Name[..2] : PassFile.Name)
                 .ToProperty(this, nameof(Name));
@@ -71,8 +71,7 @@ namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
             {
                 if (win.PassFile is null)
                 {
-                    Locator.Current.GetService<IDialogService>()!.ShowInfo("handled: " + win.PassFile?.Name)
-                        .GetAwaiter().GetResult();
+                    Locator.Current.GetService<IDialogService>()!.ShowInfo("handled: " + win.PassFile?.Name);
                     
                     // TODO: fire event
                     return;

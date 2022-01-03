@@ -1,6 +1,5 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
-    using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -11,36 +10,16 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
     public interface IPassFileService
     {
         /// <summary>
-        /// Get passfile with encrypted data by its id from server.
-        /// </summary>
-        /// <remarks>Automatic errors showing.</remarks>
-        Task<PassFile?> GetPassFileWithDataRemoteAsync(int passFileId);
-
-        /// <summary>
         /// Refresh passfiles from remote and get result list from local storage.
         /// </summary>
-        /// <remarks>
-        /// Automatic conflicts merge.
-        /// Automatic errors showing.
-        /// </remarks>
+        /// <remarks>Automatic errors showing.</remarks>
+        /// <returns>Actual current passfile list.</returns>
         Task<List<PassFile>> GetPassFileListAsync();
 
         /// <summary>
-        /// Save passfile info, local and remote.
+        /// Apply changes from local manager and commit locally.
         /// </summary>
-        /// <remarks>Automatic errors showing.</remarks>
-        Task<PassFile> SavePassFileInfoAsync(PassFile passFile);
-
-        /// <summary>
-        /// Save passfile data, local and remote.
-        /// </summary>
-        /// <remarks>Automatic errors showing.</remarks>
-        Task<PassFile> SavePassFileDataAsync(PassFile passFile);
-        
-        /// <summary>
-        /// Delete local and remote passfile.
-        /// </summary>
-        /// <remarks>Automatic errors showing.</remarks>
-        Task<Result> DeletePassFileAsync(PassFile passFile, string? accountPassword);
+        /// <returns>Actual current passfile list.</returns>
+        Task<List<PassFile>> ApplyPassFileLocalChangesAsync();
     }
 }

@@ -1,16 +1,18 @@
 namespace PassMeta.DesktopApp.Core.Utils
 {
+    using Common;
+    using Common.Interfaces.Services;
+    using Common.Models;
+    using Common.Models.Entities;
+    using Extensions;
+    
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using Common;
-    using Common.Interfaces.Services;
-    using Common.Models;
-    using Common.Models.Entities;
-    using Extensions;
+    
     using Newtonsoft.Json;
     using Splat;
 
@@ -28,7 +30,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Source reflects data from the local storage.
         /// Changed reflects edited uncommited data.
         /// </summary>
-        private static List<(PassFile? source, PassFile? changed)> _passFiles = new();
+        private static List<(PassFile? source, PassFile? changed)> _currentPassFiles = new();
+        
+        /// <summary>
+        /// Finally deleted passfiles.
+        /// </summary>
+        private static List<PassFile> _deletedPassFiles = new();
 
         /// <summary>
         /// Log error and return result with common manager error message.
@@ -67,59 +74,106 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Get current passfile list.
         /// Reflects uncommitted state, changed passfiles are a priority.
         /// </summary>
-        public static List<PassFile> GetCurrentList() => _passFiles
-            .Select(pf => (pf.changed ?? pf.source)!.Copy())
+        public static List<PassFile> GetCurrentList() => _currentPassFiles
+            .Select(pf => (pf.changed ?? pf.source)!.Copy(false))
             .ToList();
         
         /// <summary>
         /// Get source passfile list.
         /// Reflects the current state in the file system.
         /// </summary>
-        public static List<PassFile> GetSourceList() => _passFiles
+        public static List<PassFile> GetSourceList() => _currentPassFiles
             .Where(pf => pf.source is not null)
-            .Select(pf => pf.source!.Copy())
+            .Select(pf => pf.source!.Copy(false))
+            .Concat(_deletedPassFiles.Select(pf => pf.Copy(false)))
             .ToList();
 
         /// <summary>
-        /// Load data for <see cref="passFile"/>.
+        /// Load data for <paramref name="passFile"/>.
         /// </summary>
         public static async Task<Result<string>> GetDataAsync(PassFile passFile, int? version = null)
         {
+            var found = _currentPassFiles.FindIndex(pf =>
+                pf.source?.Id == passFile.Id || 
+                pf.changed?.Id == passFile.Id || 
+                pf.source?.Origin?.Id == passFile.Id);
+
+            if (found >= 0 && version is null)
+            {
+                var one = (_currentPassFiles[found].changed ?? _currentPassFiles[found].source)!;
+                if (one.DataEncrypted != null)
+                    return Result.Success<string>(one.DataEncrypted);
+            }
+            
             try
             {
-                string path;
-                if (version is null)
-                {
-                    path = _GetPassFilePath(passFile.Id);
-                }
-                else
-                {
-                    if (version != passFile.Version - 1)
-                    {
-                        return Result.Failure<string>(string.Format(Resources.PASSMANAGER__VERSION_NOT_FOUND_ERR, version));
-                    }
-                    
-                    path = _GetOldPassFilePath(passFile.Id);
-                }
+                var path = version is null ? _GetPassFilePath(passFile.Id)
+                    : version == passFile.Version - 1 ? _GetOldPassFilePath(passFile.Id) 
+                    : null;
+
+                if (!File.Exists(path))
+                    return Result.Failure<string>(string.Format(Resources.PASSMANAGER__VERSION_NOT_FOUND_ERR, version));
                 
-                return File.Exists(path)
-                    ? Result.Success<string>(await File.ReadAllTextAsync(path))
-                    : Result.Failure<string>(string.Format(Resources.PASSMANAGER__VERSION_NOT_FOUND_ERR, version));
+                var dataEncrypted = await File.ReadAllTextAsync(path!);
+                if (version is null && found >= 0)
+                {
+                    var one = (_currentPassFiles[found].changed ?? _currentPassFiles[found].source)!;
+                    one.DataEncrypted = dataEncrypted;
+                }
+
+                return Result.Success<string>(dataEncrypted);
             }
             catch (Exception ex)
             {
                 return ManagerError("Passfile reading failed", ex).WithNullData<string>();
             }
         }
+        
+        /// <summary>
+        /// Create new <see cref="PassFile"/>, set its local <see cref="PassFile.Id"/>, add to the current list.
+        /// </summary>
+        /// <returns>Created passfile.</returns>
+        public static PassFile CreateNew(string passPhrase)
+        {
+            var ids = _currentPassFiles.Where(pf => pf.source is not null).Select(pf => pf.source!.Id).ToList();
+            
+            var passFile = new PassFile
+            {
+                Id = (ids.Any() ? Math.Min(ids.Min() - 1, 0) : 0) - 1,
+                Name = string.Empty,
+                InfoChangedOn = DateTime.Now,
+                Version = 1,
+                VersionChangedOn = DateTime.Now,
+                Data = new List<PassFile.Section>(),
+                PassPhrase = passPhrase
+            };
+            
+            _currentPassFiles.Add((null, passFile));
+            return passFile.Copy();
+        }
+        
+        /// <summary>
+        /// Add a new existing <see cref="PassFile"/> that is not in the current list.
+        /// </summary>
+        public static Result AddFromRemote(PassFile passFile)
+        {
+            if (_currentPassFiles.Any(pf => pf.source?.Id == passFile.Id || pf.changed?.Id == passFile.Id))
+            {
+                return ManagerError($"Adding {passFile} failed: already exists");
+            }
+
+            _currentPassFiles.Add((null, passFile.Copy()));
+            return Result.Success();
+        }
 
         /// <summary>
         /// Update passfile information.
         /// </summary>
         /// <param name="passFile">Passfile information.</param>
-        /// <param name="fromRemote">Is <paramref name="passFile"/> from remote?</param>
+        /// <param name="fromRemote">Is <paramref name="passFile"/> information from remote?</param>
         public static Result<PassFile> UpdateInfo(PassFile passFile, bool fromRemote = false)
         {
-            var found = _passFiles.FindIndex(pf =>
+            var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
                 pf.changed?.Id == passFile.Id || 
                 pf.source?.Origin?.Id == passFile.Id);
@@ -127,24 +181,24 @@ namespace PassMeta.DesktopApp.Core.Utils
             if (found < 0)
                 return ManagerError($"Can't find {passFile} to update information!").WithNullData<PassFile>();
 
-            var (source, changed) = _passFiles[found];
+            var (source, changed) = _currentPassFiles[found];
 
-            if (source?.Name == passFile.Name && source?.Color == passFile.Color)
+            if (source?.Name == passFile.Name && source.Color == passFile.Color)
             {
-                _passFiles[found] = (source, null);
-                return Result.Success(source!.Copy());
+                _currentPassFiles[found] = (source, null);
+                return Result.Success(source.Copy());
             }
 
-            if (changed?.Name == passFile.Name && changed?.Color == passFile.Color)
+            if (changed?.Name == passFile.Name && changed.Color == passFile.Color)
             {
-                return Result.Success(changed!.Copy());
+                return Result.Success(changed.Copy());
             }
 
             changed ??= source!.Copy(false);
             changed.Origin ??= source;
             changed.Name = passFile.Name;
             changed.Color = passFile.Color;
-            changed.InfoChangedOn = DateTime.Now;
+            changed.InfoChangedOn = fromRemote ? passFile.InfoChangedOn : DateTime.Now;
 
             if (fromRemote)
             {
@@ -155,7 +209,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             _RemoveOriginIfRequired(changed);
 
-            _passFiles[found] = (source, changed);
+            _currentPassFiles[found] = (source, changed);
             return Result.Success(changed.Copy());
         }
         
@@ -163,37 +217,35 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Update passfile data.
         /// </summary>
         /// <param name="passFile">
-        /// Passfile with <see cref="PassFile.DataEncrypted"/> or <see cref="PassFile.Data"/> and <see cref="PassFile.PassPhrase"/>.
+        /// Passfile with <see cref="PassFile.DataEncrypted"/> or <see cref="PassFile.Data"/> and <see cref="PassFile.PassPhrase"/>,
+        /// depending on <paramref name="fromRemote"/>.
         /// </param>
         /// <param name="fromRemote">
-        /// Is <paramref name="passFile"/> from remote?
+        /// Is <paramref name="passFile"/> data from remote?
         /// </param>
         public static Result<PassFile> UpdateData(PassFile passFile, bool fromRemote = false)
         {
-            var found = _passFiles.FindIndex(pf =>
+            var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
                 pf.changed?.Id == passFile.Id || 
                 pf.source?.Origin?.Id == passFile.Id);
             
             if (found < 0)
                 return ManagerError($"Can't find {passFile} to update data!").WithNullData<PassFile>();
-
-            if (passFile.Data is null && passFile.DataEncrypted is null)
-                return ManagerError($"Can't update {passFile} data to null!").WithNullData<PassFile>();
-
-            if (passFile.PassPhrase is null && passFile.DataEncrypted is null)
-                return ManagerError($"Can't update {passFile} data without passphrase!").WithNullData<PassFile>();
-
-            var (source, changed) = _passFiles[found];
+            
+            var (source, changed) = _currentPassFiles[found];
 
             changed ??= source!.Copy(false);
             changed.Origin ??= source;
-            changed.DataEncrypted = passFile.DataEncrypted;
-            changed.Data = passFile.Data;
-            changed.PassPhrase = passFile.PassPhrase;
-            
+
             if (fromRemote)
             {
+                if (passFile.DataEncrypted is null)
+                    return ManagerError($"Can't update {passFile} encrypted data to null!").WithNullData<PassFile>();
+                
+                changed.DataEncrypted = passFile.DataEncrypted;
+                changed.Data = null;
+                changed.PassPhrase = null;
                 changed.Version = passFile.Version;
                 changed.VersionChangedOn = passFile.VersionChangedOn;
                 changed.Origin!.Version = changed.Version;
@@ -201,99 +253,55 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             else
             {
-                changed.Version += 1;
+                if (passFile.Data is null)
+                    return ManagerError($"Can't update {passFile} data to null!").WithNullData<PassFile>();
+                
+                if (passFile.PassPhrase is null)
+                    return ManagerError($"Can't update {passFile} data without passphrase!").WithNullData<PassFile>();
+                
+                changed.DataEncrypted = null;
+                changed.Data = passFile.Data.Select(section => section.Copy()).ToList();
+                changed.PassPhrase = passFile.PassPhrase;
+                changed.Version = source is null ? changed.Version : source.Version + 1;
                 changed.VersionChangedOn = DateTime.Now;
             }
-            
+
             _RemoveOriginIfRequired(changed);
 
-            _passFiles[found] = (source, changed);
+            _currentPassFiles[found] = (source, changed);
             return Result.Success(changed.Copy());
         }
 
         /// <summary>
-        /// Create new <see cref="PassFile"/>, set its local <see cref="PassFile.Id"/>, add to the current list.
+        /// Delete passfile from list if it hasn't source or <paramref name="fromRemote"/>,
+        /// otherwise mark changed <see cref="PassFile.Id"/> as 0.
         /// </summary>
-        /// <returns>Created passfile.</returns>
-        public static PassFile CreateNew()
+        /// <param name="passFile">Passfile information.</param>
+        /// <param name="fromRemote">Is <paramref name="passFile"/> deleted from remote? (delete finally)</param>
+        public static void Delete(PassFile passFile, bool fromRemote = false)
         {
-            var ids = _passFiles.Where(pf => pf.source is not null).Select(pf => pf.source!.Id).ToList();
-            
-            var passFile = new PassFile
-            {
-                Id = (ids.Any() ? Math.Min(ids.Min() - 1, 0) : 0) - 1
-            };
-            
-            _passFiles.Add((null, passFile));
-            return passFile;
-        }
-
-        /// <summary>
-        /// Delete passfile from list if it hasn't source, otherwise mark changed <see cref="PassFile.Id"/> as 0.
-        /// </summary>
-        public static void Delete(PassFile passFile)
-        {
-            var found = _passFiles.FindIndex(pf => pf.source?.Id == passFile.Id);
+            var found = _currentPassFiles.FindIndex(pf => pf.source?.Id == passFile.Id);
             if (found < 0)
             {
-                _passFiles.RemoveAll(pf => pf.changed?.Id == passFile.Id);
+                _currentPassFiles.RemoveAll(pf => pf.changed?.Id == passFile.Id);
             }
             else
             {
-                var (source, changed) = _passFiles[found];
+                if (fromRemote)
+                {
+                    _deletedPassFiles.Add(_currentPassFiles[found].source!);
+                    _currentPassFiles.RemoveAt(found);
+                }
+                else
+                {
+                    var (source, changed) = _currentPassFiles[found];
             
-                changed ??= source!.Copy();
-                changed.Id = 0;
+                    changed ??= source!.Copy();
+                    changed.Id = 0;
 
-                _passFiles[found] = (source, changed);
+                    _currentPassFiles[found] = (source, changed);
+                }
             }
-        }
-
-        /// <summary>
-        /// Add a new existing <see cref="PassFile"/> that is not in the current list.
-        /// </summary>
-        /// <remarks>No commits required.</remarks>
-        public static async Task<Result> AddFinalAsync(PassFile passFile)
-        {
-            if (_passFiles.Any(pf => pf.source?.Id == passFile.Id || pf.changed?.Id == passFile.Id))
-            {
-                return ManagerError($"Adding {passFile} failed: already exists");
-            }
-            
-            var result = await _SaveAsync(passFile);
-            if (result.Ok)
-            {
-                _passFiles.Add((passFile.Copy(), null));
-
-                var list = _passFiles.Where(pf => pf.source is not null)
-                    .Select(pf => pf.source!).ToList();
-                
-                result = await _SaveListAsync(list);
-            }
-            
-            return result;
-        }
-
-        /// <summary>
-        /// Delete passfile from list finally.
-        /// </summary>
-        /// <remarks>No commits required.</remarks>
-        public static async Task<Result> DeleteFinalAsync(PassFile passFile)
-        {
-            var found = _passFiles.FindIndex(pf => 
-                pf.source?.Id == passFile.Id || pf.source?.Origin?.Id == passFile.Id);
-            
-            if (found < 0)
-                return ManagerError($"Final deleting {passFile} failed: not found");
-
-            var list = _passFiles.Where(pf => pf.source is not null && pf.source.Origin?.Id != passFile.Id)
-                .Select(pf => pf.source!).ToList();
-
-            var result = await _SaveListAsync(list);
-            if (result.Ok)
-                _passFiles.RemoveAt(found);
-
-            return result;
         }
 
         /// <summary>
@@ -301,11 +309,11 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         public static void Rollback()
         {
-            for (var i = 0; i < _passFiles.Count; ++i)
+            for (var i = 0; i < _currentPassFiles.Count; ++i)
             {
-                if (_passFiles[i].changed is not null)
+                if (_currentPassFiles[i].changed is not null)
                 {
-                    _passFiles[i] = (_passFiles[i].source, null);
+                    _currentPassFiles[i] = (_currentPassFiles[i].source, null);
                 }
             }
         }
@@ -317,7 +325,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             var infoChange = new List<PassFile>();
             var dataChange = new List<PassFile>();
-            var delete = new List<PassFile>();
+            var delete = _deletedPassFiles.ToList();
 
             var hasWarnings = false;
             
@@ -325,7 +333,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 #region Prepare
 
-                foreach (var (_, changed) in _passFiles)
+                foreach (var (_, changed) in _currentPassFiles)
                 {
                     if (changed is null) continue;
                     
@@ -337,7 +345,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     
                     if (changed.VersionChangedOn != changed.Origin!.VersionChangedOn)
                     {
-                        if (changed.Data is not null && changed.PassPhrase is not null)
+                        if (changed.DataEncrypted is null)
                         {
                             var result = changed.Encrypt();
                             if (result.Bad) return result;
@@ -357,13 +365,13 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 foreach (var passFile in delete)
                 {
-                    var ok = _Delete(passFile).Ok;
-                    if (ok)
+                    if (_Delete(passFile).Ok)
                     {
-                        var index = _passFiles.FindIndex(pf => ReferenceEquals(pf.changed, passFile));
-                        _passFiles.RemoveAt(index);
+                        var index = _currentPassFiles.FindIndex(pf => ReferenceEquals(pf.changed, passFile));
+                        _currentPassFiles[index] = (_currentPassFiles[index].changed, null);
+                        _deletedPassFiles.Remove(passFile);
                     }
-                    hasWarnings |= ok;
+                    else hasWarnings = true;
                 }
 
                 #endregion
@@ -377,8 +385,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                     {
                         if (passFile.InfoChangedOn == passFile.Origin!.InfoChangedOn)
                         {
-                            var index = _passFiles.FindIndex(pf => ReferenceEquals(pf.changed, passFile));
-                            _passFiles[index] = (source: passFile, null);
+                            var index = _currentPassFiles.FindIndex(pf => ReferenceEquals(pf.changed, passFile));
+                            _currentPassFiles[index] = (passFile, null);
                         }
                     }
                     hasWarnings |= ok;
@@ -390,13 +398,13 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 if (delete.Any() || dataChange.Any() || infoChange.Any())
                 {
-                    var result = await _SaveListAsync(_passFiles.Select(pf => (pf.changed ?? pf.source)!).ToList());
+                    var result = await _SaveListAsync(_currentPassFiles.Select(pf => (pf.changed ?? pf.source)!).ToList());
                     if (result.Bad) return result;
                     
                     foreach (var passFile in infoChange)
                     {
-                        var index = _passFiles.FindIndex(pf => ReferenceEquals(pf.changed, passFile));
-                        _passFiles[index] = (passFile, null);
+                        var index = _currentPassFiles.FindIndex(pf => ReferenceEquals(pf.changed, passFile));
+                        _currentPassFiles[index] = (passFile, null);
                     }
                 }
 
@@ -412,14 +420,10 @@ namespace PassMeta.DesktopApp.Core.Utils
 
         private static void _RemoveOriginIfRequired(PassFile passFile)
         {
-            var origin = passFile.Origin;
-            if (origin is null) return;
-
-            if (origin.Name != passFile.Name) return;
-            if (origin.Color != passFile.Color) return;
-            if (origin.Version != passFile.Version) return;
-
-            passFile.Origin = null;
+            if (!passFile.IsInformationChanged() && !passFile.IsVersionChanged())
+            {
+                passFile.Origin = null;
+            }
         }
         
         private static async Task<Result> _SaveAsync(PassFile passFile)
@@ -508,7 +512,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                 passFiles = new List<PassFile>();
             }
 
-            _passFiles = passFiles.Select(pf => (pf, (PassFile?)null)).ToList()!;
+            _currentPassFiles = passFiles.Select(pf => (pf, (PassFile?)null)).ToList()!;
+            _deletedPassFiles = new List<PassFile>();
         }
 
         #region AutoCorrection

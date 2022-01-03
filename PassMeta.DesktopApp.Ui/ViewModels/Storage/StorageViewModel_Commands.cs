@@ -5,7 +5,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Core.Utils;
     
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -25,19 +24,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         {
             if (_userId is null || _userId != AppConfig.Current.User?.Id)
             {
-                var result = await _passFileService.GetPassFileListAsync();
-                if (result.Bad)
-                {
-                    _passFiles = null;
-                    _userId = null;
-                    Mode = null;
-                    PassFileList = _MakePassFileList();
-                    return;
-                }
-            
-                _passFiles = result.Data?.OrderBy(pf => pf.Name).ToList();
+                var list = await _passFileService.GetPassFileListAsync();
+                
+                _passFiles = list.OrderBy(pf => pf.Name).ToList();
                 _userId = AppConfig.Current.User?.Id;
-                //Mode = result.Message;
+                //TODO: Mode;
                 PassFileList = _MakePassFileList();
             }
             
@@ -47,7 +38,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         private async Task _DecryptIfRequiredAsync(int _)
         {
             var passFile = SelectedPassFile;
-            if (passFile is null || passFile.IsDecrypted) return;
+            if (passFile is null || passFile.Data is not null) return;
 
             var result = await passFile.AskKeyPhraseAndDecryptAsync();
             if (result.Ok)
@@ -66,9 +57,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             foreach (var pf in _passFiles)
             {
                 if (pf.Problem is not null) continue;
-                if (!pf.IsLocalChanged) continue;
+                // TODO: check changed?
                 
-                await _passFileService.SavePassFileAsync(pf);
+                await _passFileService.ApplyPassFileLocalChangesAsync();
             }
 
             // TODO: alert?
@@ -106,7 +97,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             {
                 Name = result.Data!
             });
-            passFile.LocalChangedOn = DateTime.Now;
+            PassFileLocalManager.UpdateData(passFile);
 
             _SetPassFileSectionList();
             PassFilesSelectedSectionIndex = passFile.Data.Count - 1;
@@ -125,7 +116,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             }
 
             section.Name = result.Data!;
-            passFile.LocalChangedOn = DateTime.Now;
+            PassFileLocalManager.UpdateData(passFile);  // TODO: optimize copying?!
 
             sectionBtn.Refresh();
         }
@@ -135,7 +126,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             var passFile = SelectedPassFile!;
 
             passFile.Data!.RemoveAt(PassFilesSelectedSectionIndex);
-            passFile.LocalChangedOn = DateTime.Now;
+            PassFileLocalManager.UpdateData(passFile);
             
             _SetPassFileSectionList();
         }
@@ -184,7 +175,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             if (!currentReadOnly)
             {
                 SelectedSection!.Items = PassFileSectionItemList!.Select(btn => btn.ToItem()).ToList();
-                SelectedPassFile!.LocalChangedOn = DateTime.Now;
+                PassFileLocalManager.UpdateData(SelectedPassFile!);
             }
             
             _SetPassFileSectionItemList(!currentReadOnly);

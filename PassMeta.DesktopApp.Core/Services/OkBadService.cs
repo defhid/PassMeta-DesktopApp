@@ -1,9 +1,11 @@
 namespace PassMeta.DesktopApp.Core.Services
 {
     using DesktopApp.Common;
+    using DesktopApp.Common.Interfaces;
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     using DesktopApp.Core.Utils;
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -33,29 +35,20 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public void ShowResponseFailure(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper = null)
+        public void ShowResponseFailure(OkBadResponse response, IMapper? whatMapper = null)
         {
             var lines = _ResponseToText(response, whatMapper);
             
             _dialogService.ShowFailure(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
         }
 
-        private List<string> _ResponseToText(OkBadResponse response, IReadOnlyDictionary<string, string>? whatMapper)
+        private List<string> _ResponseToText(OkBadResponse response, IMapper? whatMapper)
         {
             var message = GetLocalizedMessage(response.Message);
-            List<string> builder;
-            
-            if (response.What is null)
-            {
-                builder = new List<string> { message };
-            }
-            else
-            {
-                string? what = null;
-                whatMapper?.TryGetValue(response.What, out what);
-                
-                builder = new List<string> { message + $": {what ?? response.What}" };
-            }
+
+            var builder = response.What is null
+                ? new List<string> { message }
+                : new List<string> { message + $": {whatMapper?.Map(response.What) ?? response.What}" };
 
             if (response.More is not null)
                 builder.Add(response.More.ToString());

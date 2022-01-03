@@ -22,6 +22,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     /// </summary>
     public class AppConfig
     {
+        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
         private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
         
         private string? _serverUrl;
@@ -79,8 +80,8 @@ namespace PassMeta.DesktopApp.Core.Utils
         public string? Domain { get; private set; }
         
         /// <summary>
-        /// Server version, indicates correct <see cref="ServerUrl"/>
-        /// and internet connection if not null.
+        /// Server version. If not null, indicates correct <see cref="ServerUrl"/>
+        /// and internet connection has been established.
         /// </summary>
         [JsonIgnore]
         public string? ServerVersion { get; private set; }
@@ -131,6 +132,11 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Path to app configuration file.
         /// </summary>
         private const string ConfigFilePath = ".config";
+        
+        /// <summary>
+        /// Invokes when application culture changes.
+        /// </summary>
+        public static event Action? OnCultureChanged;
 
         private AppConfig()
         {
@@ -184,24 +190,27 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             if (ServerUrl?.Length > 10)
             {
-                var infoResponse = await PassMetaApi.GetAsync<PassMetaInfo>("/info", true);
-                if (infoResponse is null)
+                if (await PassMetaApi.CheckConnectionAsync())
                 {
-                    ServerVersion = null;
-                    User = null;
-                    OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
-                }
-                else if (infoResponse.Success)
-                {
-                    ServerVersion = infoResponse.Data!.AppVersion;
-                    User = infoResponse.Data!.User;
-                    OkBadMessagesTranslatePack = infoResponse.Data!.OkBadMessagesTranslatePack;
-                }
-                else
-                {
-                    ServerVersion = "?";
-                    User = null;
-                    OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
+                    var infoResponse = await PassMetaApi.GetAsync<PassMetaInfo>("/info", true);
+                    if (infoResponse is null)
+                    {
+                        ServerVersion = null;
+                        User = null;
+                        OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
+                    }
+                    else if (infoResponse.Success)
+                    {
+                        ServerVersion = infoResponse.Data!.AppVersion;
+                        User = infoResponse.Data!.User;
+                        OkBadMessagesTranslatePack = infoResponse.Data!.OkBadMessagesTranslatePack;
+                    }
+                    else
+                    {
+                        ServerVersion = "?";
+                        User = null;
+                        OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
+                    }
                 }
             }
             else
@@ -267,12 +276,26 @@ namespace PassMeta.DesktopApp.Core.Utils
             return Result.Success(config);
         }
 
-        private static Task _SetCurrentAsync(AppConfig config)
+        private static async Task _SetCurrentAsync(AppConfig config)
         {
+            var cultureChanged = Current.CultureCode != config.CultureCode;
+
             Current = config;
             Resources.Culture = new CultureInfo(config.CultureCode);
 
-            return Current.RefreshFromServerAsync();
+            if (cultureChanged)
+            {
+                try
+                {
+                    OnCultureChanged?.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Processing of culture-changing event failed");
+                }
+            }
+
+            await PassMetaApi.CheckConnectionAsync();
         }
 
         private static async Task<bool> _SaveToFileAsync(AppConfig config)

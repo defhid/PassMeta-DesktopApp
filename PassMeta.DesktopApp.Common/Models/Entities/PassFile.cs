@@ -124,7 +124,8 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         public PassFile Copy(bool copyData = true)
         {
             var clone = (PassFile)MemberwiseClone();
-            clone.Data = clone.Data?.Select(section => section.Copy()).ToList();
+            clone.Origin = null;
+            clone.Data = copyData ? clone.Data?.Select(section => section.Copy()).ToList() : null;
             return clone;
         }
 

@@ -84,7 +84,7 @@ namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
             var what = _NormalizeWhat().Split('\n').FirstOrDefault(x => x != string.Empty) ?? string.Empty;
             await TextCopy.ClipboardService.SetTextAsync(what);
 
-            await Locator.Current.GetService<IDialogService>()!
+            Locator.Current.GetService<IDialogService>()!
                 .ShowInfo(string.Format(Resources.STORAGE__WHAT_COPIED, what));
         }
 
@@ -93,7 +93,7 @@ namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
             var password = Password ?? string.Empty;
             await TextCopy.ClipboardService.SetTextAsync(password);
             
-            await Locator.Current.GetService<IDialogService>()!
+            Locator.Current.GetService<IDialogService>()!
                 .ShowInfo(string.Format(Resources.STORAGE__PASSWORD_COPIED, password));
         }
 

@@ -60,10 +60,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
         private async void RefreshBtn_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (AppConfig.Current.ServerVersion is null)
-            {
-                await AppConfig.Current.RefreshFromServerAsync();
-            }
+            await PassMetaApi.CheckConnectionAsync();
 
             DataContext.Router.CurrentViewModel!.OfType<ViewModelPage>()
                 .FirstAsync()
@@ -104,8 +101,6 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
                 DataContext.IsMainPaneOpened = false;
                 DataContext.RightBarButtons = page.RightBarButtons;
             };
-
-            SettingsView.OnCultureChanged += App.Restart;
         }
     }
 }

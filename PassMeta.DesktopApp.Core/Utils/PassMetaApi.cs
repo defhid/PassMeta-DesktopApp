@@ -5,12 +5,11 @@ namespace PassMeta.DesktopApp.Core.Utils
     using DesktopApp.Common.Models;
     
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Net;
     using System.Text;
     using System.Threading.Tasks;
-    
+    using Common.Interfaces;
     using Newtonsoft.Json;
     using Splat;
     
@@ -24,6 +23,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
         }
 
+        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
         private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
         private static IOkBadService OkBadService => Locator.Current.GetService<IOkBadService>()!;
 
@@ -57,6 +57,41 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         public static Request Delete(string url, object? data = null) => new("DELETE", url, data);
 
+        /// <summary>
+        /// Does application have a connection to PassMeta server?
+        /// </summary>
+        /// <remarks>
+        /// Updates <see cref="AppConfig"/>
+        /// if connection has been found, but <see cref="AppConfig.ServerVersion"/> is null.
+        /// </remarks>
+        public static async Task<bool> CheckConnectionAsync()
+        {
+            bool has;
+            try
+            {
+                var request = WebRequest.CreateHttp(AppConfig.Current.ServerUrl + "/check");
+                var response = (HttpWebResponse) await request.GetResponseAsync();
+
+                has = response.StatusCode == HttpStatusCode.OK;
+            }
+            catch (WebException)
+            {
+                has = false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Connection checking error");
+                has = false;
+            }
+
+            if (has && AppConfig.Current.ServerVersion is null)
+            {
+                await AppConfig.Current.RefreshFromServerAsync();
+            }
+
+            return has;
+        }
+
         #region Private
 
         private static HttpWebRequest? _CreateRequest(string url, string method)
@@ -67,8 +102,9 @@ namespace PassMeta.DesktopApp.Core.Utils
                 request.Method = method;
                 return request;
             }
-            catch (UriFormatException)
+            catch (UriFormatException ex)
             {
+                Logger.Error(ex, AppConfig.Current.ServerUrl + url);
                 DialogService.ShowError(Resources.API__URL_ERR);
                 return null;
             }
@@ -95,6 +131,12 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 return request;
             }
+            catch (UriFormatException ex)
+            {
+                Logger.Error(ex, AppConfig.Current.ServerUrl + url);
+                DialogService.ShowError(Resources.API__URL_ERR);
+                return null;
+            }
             catch (Exception ex)
             {
                 DialogService.ShowError(ex.Message);
@@ -102,7 +144,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
         }
 
-        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, IReadOnlyDictionary<string, string>? badWhatMapper)
+        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, string? context, IMapper? badWhatMapper)
             where TResponse : OkBadResponse
         {
             string responseBody;
@@ -116,7 +158,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             try
             {
-                var response = (HttpWebResponse)request.GetResponse();
+                var response = (HttpWebResponse) await request.GetResponseAsync();
 
                 await using var stream = response.GetResponseStream();
                 using var reader = new StreamReader(stream);
@@ -158,7 +200,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     // ignored
                 }
 
-                DialogService.ShowError(errMessage, more: more);
+                DialogService.ShowError(errMessage, context, more);
                 return null;
             }
 
@@ -176,11 +218,12 @@ namespace PassMeta.DesktopApp.Core.Utils
                     return data;
                 }
 
-                DialogService.ShowError(errMessage, more: responseBody);
+                DialogService.ShowError(errMessage, context, responseBody);
             }
-            catch
+            catch (Exception ex)
             {
-                DialogService.ShowError(errMessage ?? Resources.API__INVALID_RESPONSE_ERR, null, responseBody);
+                Logger.Error(ex, request.RequestUri.ToString());
+                DialogService.ShowError(errMessage ?? Resources.API__INVALID_RESPONSE_ERR, context, responseBody);
             }
 
             return null;
@@ -199,9 +242,9 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             private readonly string _method;
 
-            private IReadOnlyDictionary<string, string>? _handleBad;
+            private string? _context;
 
-            private static readonly IReadOnlyDictionary<string, string> DefaultWhatMapper = new Dictionary<string, string>();
+            private IMapper? _handleBad;
 
             /// <summary></summary>
             public Request(string method, string url, object? data)
@@ -209,15 +252,25 @@ namespace PassMeta.DesktopApp.Core.Utils
                 _data = data;
                 _url = url;
                 _method = method;
+                _context = null;
                 _handleBad = null;
             }
             
             /// <summary>
             /// Enable bad response handling (failure auto-showing).
             /// </summary>
-            public Request WithBadHandling(IReadOnlyDictionary<string, string>? whatMapper = null)
+            public Request WithBadHandling(IMapper? whatMapper = null)
             {
-                _handleBad = whatMapper ?? DefaultWhatMapper;
+                _handleBad = whatMapper;
+                return this;
+            }
+            
+            /// <summary>
+            /// Set context (used for errors handling).
+            /// </summary>
+            public Request WithContext(string? context)
+            {
+                _context = string.IsNullOrWhiteSpace(context) ? null : context;
                 return this;
             }
             
@@ -232,7 +285,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 
                 return request is null
                     ? Task.FromResult<OkBadResponse?>(null)
-                    : _ExecuteRequest<OkBadResponse>(request, _handleBad);
+                    : _ExecuteRequest<OkBadResponse>(request, _context, _handleBad);
             }
             
             /// <summary>
@@ -246,7 +299,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 
                 return request is null
                     ? Task.FromResult<OkBadResponse<TResponseData>?>(null)
-                    : _ExecuteRequest<OkBadResponse<TResponseData>>(request, _handleBad);
+                    : _ExecuteRequest<OkBadResponse<TResponseData>>(request, _context, _handleBad);
             }
         }
     }

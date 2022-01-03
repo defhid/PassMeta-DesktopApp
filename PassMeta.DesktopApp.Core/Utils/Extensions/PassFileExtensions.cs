@@ -1,7 +1,6 @@
 namespace PassMeta.DesktopApp.Core.Utils.Extensions
 {
-    using System;
-    using System.Linq.Expressions;
+    using Common;
     using Common.Models.Entities;
 
     /// <summary>
@@ -10,16 +9,40 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
     public static class PassFileExtensions
     {
         /// <summary>
-        /// Has property been changed locally?
+        /// Has passfile information been changed? (based on <see cref="PassFile.Origin"/>)
         /// </summary>
-        public static bool Changed<TPropertyValue>(this PassFile passFile, Expression<Func<PassFile, TPropertyValue>> propertyDescriptor)
+        public static bool IsInformationChanged(this PassFile passFile)
         {
-            if (passFile.Origin is null) return false;
+            var origin = passFile.Origin;
+            if (origin is null) return false;
+
+            return origin.Name != passFile.Name ||
+                   origin.Color != passFile.Color;
+        }
+        
+        /// <summary>
+        /// Has passfile version been changed? (based on <see cref="PassFile.Origin"/>)
+        /// </summary>
+        public static bool IsVersionChanged(this PassFile passFile)
+        {
+            var origin = passFile.Origin;
+            if (origin is null) return false;
+
+            return origin.Version != passFile.Version;
+        }
+
+        /// <summary>
+        /// Get title for passfile, depending on its current state.
+        /// </summary>
+        public static string GetTitle(this PassFile passFile)
+        {
+            if (passFile.LocalCreated) 
+                return string.Format(Resources.PASSFILE__TITLE_NEW, passFile.Name);
             
-            var exp = (MemberExpression)propertyDescriptor.Body;
-            var property = typeof(PassFile).GetProperty(exp.Member.Name)!;
+            if (passFile.LocalDeleted) 
+                return string.Format(Resources.PASSFILE__TITLE_DELETED, passFile.Name, passFile.Id);
             
-            return property.GetValue(passFile) != property.GetValue(passFile.Origin);
+            return string.Format(Resources.PASSFILE__TITLE, passFile.Name, passFile.Id);
         }
     }
 }
