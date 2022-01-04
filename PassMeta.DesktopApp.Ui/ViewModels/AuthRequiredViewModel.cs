@@ -1,12 +1,13 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    using DesktopApp.Core.Utils;
     using DesktopApp.Ui.ViewModels.Base;
     
     using System;
     using System.Threading.Tasks;
     using ReactiveUI;
     
+    using AppContext = Core.Utils.AppContext;
+
     public class AuthRequiredViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/auth-required";
@@ -21,7 +22,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public override Task RefreshAsync()
         {
-            if (AppConfig.Current.User is not null)
+            if (AppContext.Current.User is not null)
             {
                 NavigateTo(ForViewModelPageType);
             }

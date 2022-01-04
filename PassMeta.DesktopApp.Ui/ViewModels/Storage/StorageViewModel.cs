@@ -2,21 +2,23 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 {
     using DesktopApp.Common;
     using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Core.Utils;
     using DesktopApp.Ui.ViewModels.Base;
+    using Models.Components.Storage;
+    using Models.Constants;
     
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
+    
     using Avalonia.Controls;
     using Avalonia.Media;
     using DynamicData.Binding;
-    using Models.Components.Storage;
-    using Models.Constants;
     using ReactiveUI;
     
+    using AppContext = Core.Utils.AppContext;
+
     public partial class StorageViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/storage";
@@ -218,7 +220,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         public override void Navigate()
         {
-            if (AppConfig.Current.User is null)
+            if (AppContext.Current.User is null)
             {
                 FakeNavigated();
                 NavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));

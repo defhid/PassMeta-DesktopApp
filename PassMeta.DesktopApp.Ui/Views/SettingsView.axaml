@@ -39,15 +39,13 @@
                   HorizontalAlignment="Left"
                   Margin="20 210 0 0"
                   Width="200"
-                  SelectedIndex="{Binding CultureIndex}">
-            <ComboBoxItem Content="{Binding Lang[0][0]}"/>
-            <ComboBoxItem Content="{Binding Lang[1][0]}"/>
-        </ComboBox>
+                  Items="{Binding Cultures}"
+                  SelectedItem="{Binding SelectedCulture}"/>
         
         <Button VerticalAlignment="Top"
                 HorizontalAlignment="Left"
                 Margin="20 270 0 0"
                 Content="{x:Static com:Resources.SETTINGS__SAVE_BTN}"
-                Click="SaveBtn_OnClick"/>
+                Command="{Binding SaveCommand}"/>
     </Grid>
 </UserControl>

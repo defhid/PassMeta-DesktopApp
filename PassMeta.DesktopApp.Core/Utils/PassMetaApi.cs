@@ -9,7 +9,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Net;
     using System.Text;
     using System.Threading.Tasks;
-    using Common.Interfaces;
+    using Common.Interfaces.Mapping;
     using Newtonsoft.Json;
     using Splat;
     
@@ -18,14 +18,28 @@ namespace PassMeta.DesktopApp.Core.Utils
     /// </summary>
     public static class PassMetaApi
     {
+        /// <summary>
+        /// Corresponds to the last call of <see cref="CheckConnectionAsync"/>.
+        /// </summary>
+        public static bool Online { get; private set; }
+
+        /// <summary>
+        /// Invokes if <see cref="Online"/> value changed.
+        /// </summary>
+        public static event Action? OnlineChanged;
+
         static PassMetaApi()
         {
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
         }
 
+        #region Services
+
         private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
         private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
         private static IOkBadService OkBadService => Locator.Current.GetService<IOkBadService>()!;
+
+        #endregion
 
         /// <summary>
         /// Make GET-request and return response.
@@ -61,11 +75,13 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Does application have a connection to PassMeta server?
         /// </summary>
         /// <remarks>
-        /// Updates <see cref="AppConfig"/>
-        /// if connection has been found, but <see cref="AppConfig.ServerVersion"/> is null.
+        /// Updates <see cref="AppContext"/>
+        /// if connection has been found, but <see cref="AppContext.ServerVersion"/> is null.
         /// </remarks>
-        public static async Task<bool> CheckConnectionAsync()
+        public static async Task<bool> CheckConnectionAsync(bool showNoConnection = false)
         {
+            if (AppConfig.Current.ServerUrl is null) return false;
+
             bool has;
             try
             {
@@ -76,6 +92,9 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (WebException)
             {
+                if (showNoConnection)
+                    DialogService.ShowInfo(Resources.API__CONNECTION_ERR);
+                
                 has = false;
             }
             catch (Exception ex)
@@ -84,12 +103,18 @@ namespace PassMeta.DesktopApp.Core.Utils
                 has = false;
             }
 
-            if (has && AppConfig.Current.ServerVersion is null)
+            if (has && AppContext.Current.ServerVersion is null)
             {
-                await AppConfig.Current.RefreshFromServerAsync();
+                await AppContext.RefreshFromServerAsync(false);
             }
 
-            return has;
+            if (has != Online)
+            {
+                Online = has;
+                OnlineChanged?.Invoke();
+            }
+
+            return Online;
         }
 
         #region Private
@@ -150,19 +175,15 @@ namespace PassMeta.DesktopApp.Core.Utils
             string responseBody;
             string? errMessage;
 
-            request.CookieContainer = new CookieContainer();
-            foreach (var (name, value) in AppConfig.Current.Cookies)
-            {
-                request.CookieContainer.Add(new Cookie(name, value, null, AppConfig.Current.Domain));
-            }
-
             try
             {
-                var response = (HttpWebResponse) await request.GetResponseAsync();
+                request.CookieContainer = AppContext.Current.CookieContainer;
+
+                using var response = (HttpWebResponse)await request.GetResponseAsync();
 
                 await using var stream = response.GetResponseStream();
                 using var reader = new StreamReader(stream);
-                
+
                 responseBody = await reader.ReadToEndAsync();
 
                 errMessage = response.StatusCode switch
@@ -173,8 +194,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                     HttpStatusCode.InternalServerError => Resources.API__INTERNAL_SERVER_ERR,
                     _ => response.StatusCode.ToString()
                 };
-                
-                AppConfig.Current.RefreshCookies(response.Cookies);
+
+                AppContext.RefreshCookies(response.Cookies);
             }
             catch (WebException ex)
             {
@@ -184,7 +205,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     WebExceptionStatus.Timeout => Resources.API__CONNECTION_TIMEOUT_ERR,
                     _ => ex.Message
                 };
-                
+
                 var more = ReferenceEquals(errMessage, ex.Message) ? null : ex.Message;
 
                 try
@@ -201,6 +222,12 @@ namespace PassMeta.DesktopApp.Core.Utils
                 }
 
                 DialogService.ShowError(errMessage, context, more);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Unknown error, making request failure");
+                DialogService.ShowError(ex.Message, context);
                 return null;
             }
 

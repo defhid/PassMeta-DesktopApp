@@ -1,7 +1,8 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
     using DesktopApp.Common.Models;
-    
+    using Mapping;
+
     /// <summary>
     /// Service that provides localized messages from <see cref="OkBadResponse"/>.
     /// </summary>

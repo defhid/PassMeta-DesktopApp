@@ -3,17 +3,13 @@ namespace PassMeta.DesktopApp.Core.Utils
     using DesktopApp.Common;
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
-    using DesktopApp.Common.Models.Entities;
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using System.Linq;
-    using System.Net;
     using System.Text;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Common.Models.Dto.Response;
+    using Common.Constants;
     using Newtonsoft.Json;
     using Splat;
 
@@ -22,210 +18,107 @@ namespace PassMeta.DesktopApp.Core.Utils
     /// </summary>
     public class AppConfig
     {
-        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
-        private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
-        
         private string? _serverUrl;
         
-        private Dictionary<string, string>? _cookies;
-        
-        private string? _cultureCode;
+        private AppCulture _culture = AppCulture.Default;
         
         /// <summary>
-        /// Server API.
+        /// PassMeta server API. Non-empty string or null.
         /// </summary>
         [JsonProperty("server")]
         public string? ServerUrl
         {
             get => _serverUrl;
-            set
-            {
-                _serverUrl = value;
-                if (value is null) return;
-                
-                var path = value[(value.IndexOf("//", StringComparison.Ordinal) + 2)..];
-                Domain = path[..path.LastIndexOf(':')];
-            }
-        }
-
-        /// <summary>
-        /// App cookies from server.
-        /// </summary>
-        [JsonProperty("cookies")]
-        public Dictionary<string, string> Cookies
-        {
-            get => _cookies ??= new Dictionary<string, string>();
-            set => _cookies = value;
+            private set => _serverUrl = string.IsNullOrWhiteSpace(value) || value.Length < MinUrlLength ? null : value;
         }
         
         /// <summary>
-        /// App language.
+        /// Application language code.
         /// </summary>
         [JsonProperty("culture")]
-        public string CultureCode {
-            get => _cultureCode ??= string.Empty;
-            set => _cultureCode = value;
+        public string CultureCode 
+        {
+            get => _culture.Code;
+            private set => AppCulture.TryParse(value, out _culture);
         }
-
-        /// <summary>
-        /// App user.
-        /// </summary>
-        [JsonProperty("user")]
-        public User? User { get; set; }
-
-        /// <summary>
-        /// A part of <see cref="ServerUrl"/>, which contains only domain.
-        /// </summary>
-        [JsonIgnore]
-        public string? Domain { get; private set; }
         
         /// <summary>
-        /// Server version. If not null, indicates correct <see cref="ServerUrl"/>
-        /// and internet connection has been established.
+        /// Application language.
         /// </summary>
         [JsonIgnore]
-        public string? ServerVersion { get; private set; }
+        public AppCulture Culture => _culture;
 
         /// <summary>
-        /// Translate package for server response messages.
-        /// </summary>
-        [JsonIgnore]
-        public Dictionary<string, Dictionary<string, string>> OkBadMessagesTranslatePack { get; private set; } = new();
-
-        /// <summary>
-        /// Current app configuration.
+        /// Current application config.
         /// </summary>
         public static AppConfig Current { get; private set; } = new();
+
+        #region Consts
+
+        private const int MinUrlLength = 11;
+
+        /// <summary>
+        /// Application version.
+        /// </summary>
+        public const string Version = "0.9.0";
 
         /// <summary>
         /// Password files encryption salt.
         /// </summary>
         public static readonly byte[] PassFileSalt = Encoding.UTF8.GetBytes("PassMetaFileSalt");
-        
-        /// <summary>
-        /// App supported languages (pairs: name-code).
-        /// </summary>
-        public static string[][] AppCultures => new[]
-        { 
-            new[] { Resources.LANG__RU, "ru" },
-            new[] { Resources.LANG__EN, "en" }
-        };
 
         /// <summary>
-        /// App version.
+        /// Application root directory.
         /// </summary>
-        public const string Version = "0.9.0";
+        public static readonly string RootPath = Path.GetDirectoryName(Assembly.GetAssembly(typeof(AppConfig))!.Location)!;
         
+        /// <summary>
+        /// Path to application config file.
+        /// </summary>
+        public static readonly string ConfigFilePath = Path.Combine(RootPath, ".config");
+        
+        /// <summary>
+        /// Path to application context file.
+        /// </summary>
+        public static readonly string ContextFilePath = Path.Combine(RootPath, ".context");
+
         /// <summary>
         /// Path to passfiles storage.
         /// </summary>
-        public static readonly string PassFilesPath = 
-            Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(AppConfig))!.Location)!, ".passfiles");
+        public static readonly string PassFilesDirectory = Path.Combine(RootPath, ".passfiles");
         
         /// <summary>
-        /// Path to app logs.
+        /// Path to application logs.
         /// </summary>
-        public static readonly string LogFilesPath = 
-            Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(typeof(AppConfig))!.Location)!, ".logs");
-        
+        public static readonly string LogFilesDirectory = Path.Combine(RootPath, ".logs");
+
+        #endregion
+
+        #region Events
+
         /// <summary>
-        /// Path to app configuration file.
-        /// </summary>
-        private const string ConfigFilePath = ".config";
-        
-        /// <summary>
-        /// Invokes when application culture changes.
+        /// Invokes when current <see cref="CultureCode"/> changes.
         /// </summary>
         public static event Action? OnCultureChanged;
+
+        #endregion
+
+        #region Services
+        
+        private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
+        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
+
+        #endregion
 
         private AppConfig()
         {
         }
-        
-        /// <summary>
-        /// Set current app <see cref="User"/>.
-        /// </summary>
-        public Task SetUserAsync(User? user)
-        {
-            Current.User = user;
 
-            if (user is null && Cookies.Any())
-            {
-                Cookies.Clear();
-                return _SaveToFileAsync(Current);
-            }
-            
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Refresh current <see cref="Cookies"/> and save if changed.
-        /// </summary>
-        public void RefreshCookies(CookieCollection cookies)
-        {
-            lock (Cookies)
-            {
-                var changed = false;
-            
-                for (var i = 0; i < cookies.Count; ++i)
-                {
-                    if (!Cookies.TryGetValue(cookies[i].Name, out var cookie) || cookies[i].Value != cookie)
-                    {
-                        Cookies[cookies[i].Name] = cookies[i].Value;
-                        changed = true;
-                    }
-                }
-
-                if (changed)
-                {
-                    _SaveToFileAsync(this).GetAwaiter().GetResult();
-                }
-            }
-        }
-        
-        /// <summary>
-        /// Refresh information from server.
-        /// </summary>
-        public async Task RefreshFromServerAsync()
-        {
-            if (ServerUrl?.Length > 10)
-            {
-                if (await PassMetaApi.CheckConnectionAsync())
-                {
-                    var infoResponse = await PassMetaApi.GetAsync<PassMetaInfo>("/info", true);
-                    if (infoResponse is null)
-                    {
-                        ServerVersion = null;
-                        User = null;
-                        OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
-                    }
-                    else if (infoResponse.Success)
-                    {
-                        ServerVersion = infoResponse.Data!.AppVersion;
-                        User = infoResponse.Data!.User;
-                        OkBadMessagesTranslatePack = infoResponse.Data!.OkBadMessagesTranslatePack;
-                    }
-                    else
-                    {
-                        ServerVersion = "?";
-                        User = null;
-                        OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
-                    }
-                }
-            }
-            else
-            {
-                ServerVersion = null;
-                User = null;
-                OkBadMessagesTranslatePack = new Dictionary<string, Dictionary<string, string>>();
-            }
-        }
-        
         /// <summary>
         /// Load and set app configuration to <see cref="Current"/>.
         /// </summary>
         /// <returns>Loaded or default configuration.</returns>
-        public static async Task<AppConfig> LoadAndSetCurrentAsync()
+        public static async Task LoadAndSetCurrentAsync()
         {
             AppConfig? config = null;
             
@@ -237,43 +130,39 @@ namespace PassMeta.DesktopApp.Core.Utils
                 }
                 catch (Exception ex)
                 {
-                    DialogService.ShowError(Resources.CONFIG__LOAD_ERR, more: ex.Message);
+                    Logger.Error(ex, "Configuration file reading failed");
+                    DialogService.ShowError(Resources.APP_CONFIG__LOAD_ERR);
                 }
             }
-            
-            config ??= new AppConfig();
 
-            if (_CorrectConfig(config))
-                await _SaveToFileAsync(config);
+            if (config is null)
+            {
+                config = new AppConfig();
+                var result = await _SaveToFileAsync(config);
+                if (result.Bad)
+                    DialogService.ShowError(result.Message!);
+            }
 
             await _SetCurrentAsync(config);
-            return config;
         }
 
         /// <summary>
         /// Create and set app configuration to <see cref="Current"/>.
         /// </summary>
         /// <returns>Success + created configuration.</returns>
-        public static async Task<Result<AppConfig>> CreateAndSetCurrentAsync(string? serverUrl, string? culture)
+        public static async Task<Result> CreateAndSetCurrentAsync(string? serverUrl, AppCulture? culture)
         {
             var config = new AppConfig
             {
-                ServerUrl = serverUrl ?? "",
-                CultureCode = culture ?? ""
+                ServerUrl = serverUrl,
+                _culture = culture ?? AppCulture.Default
             };
 
-            _CorrectConfig(config);
+            var result = await _SaveToFileAsync(config);
+            if (result.Bad) return result;
 
-            if (config.ServerUrl == Current.ServerUrl)
-            {
-                config.Cookies = Current.Cookies;
-            }
-
-            if (!await _SaveToFileAsync(config))
-                return Result.Failure<AppConfig>();
-            
             await _SetCurrentAsync(config);
-            return Result.Success(config);
+            return Result.Success();
         }
 
         private static async Task _SetCurrentAsync(AppConfig config)
@@ -295,47 +184,42 @@ namespace PassMeta.DesktopApp.Core.Utils
                 }
             }
 
-            await PassMetaApi.CheckConnectionAsync();
+            await PassMetaApi.CheckConnectionAsync(true);
         }
 
-        private static async Task<bool> _SaveToFileAsync(AppConfig config)
+        private static async Task<Result> _SaveToFileAsync(AppConfig config)
         {
             try
             {
-                var attributes = File.GetAttributes(ConfigFilePath);
-                attributes &= ~FileAttributes.Hidden;
-                File.SetAttributes(ConfigFilePath, attributes);
+                FileAttributes attributes = default;
                 
+                var creatingNew = !File.Exists(ConfigFilePath);
+                if (creatingNew)
+                {
+                    Logger.Info("Creating a new configuration file...");
+                }
+                else
+                {
+                    attributes = File.GetAttributes(ConfigFilePath);
+                    attributes &= ~FileAttributes.Hidden;
+                    File.SetAttributes(ConfigFilePath, attributes);
+                }
+
                 await File.WriteAllTextAsync(ConfigFilePath, JsonConvert.SerializeObject(config));
 
                 attributes |= FileAttributes.Hidden;
                 File.SetAttributes(ConfigFilePath, attributes);
-                return true;
+                
+                if (creatingNew)
+                    Logger.Info("Configuration file created successfully");
+                
+                return Result.Success();
             }
             catch (Exception ex)
             {
-                DialogService.ShowError(Resources.CONFIG__SAVE_ERR, more: ex.Message);
-                return false;
+                Logger.Error(ex, "Configuration file saving failed");
+                return Result.Failure(Resources.APP_CONFIG__SAVE_ERR);
             }
-        }
-
-        private static bool _CorrectConfig(AppConfig config)
-        {
-            var corrected = false;
-
-            if (AppCultures.All(c => c[1] != config.CultureCode))
-            {
-                config.CultureCode = "ru";
-                corrected = true;
-            }
-
-            if (config.ServerUrl is null || config.ServerUrl.Length < 11)
-            {
-                config.ServerUrl = "";
-                corrected = true;
-            }
-
-            return corrected;
         }
     }
 }

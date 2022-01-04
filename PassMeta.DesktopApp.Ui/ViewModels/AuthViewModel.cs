@@ -1,17 +1,19 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Models.Dto.Request;
     using DesktopApp.Core.Utils;
     using DesktopApp.Ui.ViewModels.Base;
     
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using Common.Models.Dto.Request;
     using ReactiveUI;
     using Splat;
     
     public class AuthViewModel : ViewModelPage
     {
+        private readonly IAuthService _authService = Locator.Current.GetService<IAuthService>()!;
+        
         public override string UrlPathSegment => "/auth";
 
         public string? Login { get; set; }
@@ -30,7 +32,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         public override void Navigate()
         {
-            if (AppConfig.Current.User is not null)
+            if (AppContext.Current.User is not null)
             {
                 NavigateTo<AccountViewModel>();
             }
@@ -48,17 +50,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private async Task _SignInAsync()
         {
-            var service = Locator.Current.GetService<IAuthService>()!;
-            var result = await service.SignInAsync(new SignInPostData(Login ?? "", Password ?? ""));
+            var data = new SignInPostData(Login ?? "", Password ?? "");
+            var result = await _authService.SignInAsync(data);
             if (result.Ok)
                 NavigateTo<AccountViewModel>();
         }
         
         private async Task _SignUpAsync()
         {
-            var service = Locator.Current.GetService<IAuthService>()!;
-            var result = await service.SignUpAsync(new SignUpPostData(
-                Login ?? "", Password ?? "", "Unknown", "Unknown"));
+            var data = new SignUpPostData(Login ?? "", Password ?? "", "Unknown", "Unknown");
+            var result = await _authService.SignUpAsync(data);
             if (result.Ok)
                 NavigateTo<AccountViewModel>();
         }

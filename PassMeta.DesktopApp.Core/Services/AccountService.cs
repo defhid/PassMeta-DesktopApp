@@ -8,8 +8,8 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Core.Utils;
 
     using System.Threading.Tasks;
+    using Common.Utils.Mapping;
     using Splat;
-    using Utils.Mapping;
 
     /// <inheritdoc />
     public class AccountService : IAccountService
@@ -17,14 +17,14 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <summary>
         /// Requests bad mapping.
         /// </summary>
-        public static readonly ResourceMapper WhatMapper = new
-        (
-            ("first_name", () => Resources.ACCOUNT__FIRST_NAME_LABEL.ToLower()),
-            ("last_name", () => Resources.ACCOUNT__LAST_NAME_LABEL.ToLower()),
-            ("login", () => Resources.ACCOUNT__LOGIN_LABEL.ToLower()),
-            ("password", () => Resources.ACCOUNT__PASSWORD_LABEL.ToLower()),
-            ("password_confirm", () => Resources.ACCOUNT__PASSWORD_CONFIRM_LABEL.ToLower())
-        );
+        public static readonly ResourceMapper WhatMapper = new MapToResource[]
+        {
+            new("first_name", () => Resources.DICT_ACCOUNT__FIRST_NAME),
+            new("last_name", () => Resources.DICT_ACCOUNT__LAST_NAME),
+            new("login", () => Resources.DICT_ACCOUNT__LOGIN),
+            new("password", () => Resources.DICT_ACCOUNT__PASSWORD),
+            new("password_confirm", () => Resources.DICT_ACCOUNT__PASSWORD_CONFIRM)
+        };
 
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
 
@@ -55,8 +55,8 @@ namespace PassMeta.DesktopApp.Core.Services
             
             _dialogService.ShowInfo(Resources.ACCOUNT__SAVE_SUCCESS);
                 
-            var user = response.Data;
-            await AppConfig.Current.SetUserAsync(user);
+            var user = response.Data!;
+            await AppContext.SetUserAsync(user);
 
             return Result.Success();
         }

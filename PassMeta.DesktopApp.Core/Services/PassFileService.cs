@@ -10,22 +10,22 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Linq;
     using System.Threading.Tasks;
     using Common.Constants;
+    using Common.Utils.Mapping;
     using Splat;
     using Utils.Extensions;
-    using Utils.Mapping;
 
     /// <inheritdoc />
     public class PassFileService : IPassFileService
     {
-        private static readonly ResourceMapper WhatMapper = new
-        (
-            ("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
-            ("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
-            ("color", () => Resources.DICT_STORAGE__PASSFILE_COLOR),
-            ("created_on", () => Resources.DICT_STORAGE__PASSFILE_CREATED_ON),
-            ("smth", () => Resources.DICT_STORAGE__PASSFILE_SMTH),
-            ("check_password", () => Resources.DICT_STORAGE__CHECK_PASSWORD)
-        );
+        private static readonly ResourceMapper WhatMapper = new MapToResource[]
+        {
+            new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
+            new("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
+            new("color", () => Resources.DICT_STORAGE__PASSFILE_COLOR),
+            new("created_on", () => Resources.DICT_STORAGE__PASSFILE_CREATED_ON),
+            new("smth", () => Resources.DICT_STORAGE__PASSFILE_SMTH),
+            new("check_password", () => Resources.DICT_STORAGE__CHECK_PASSWORD)
+        };
         
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
 

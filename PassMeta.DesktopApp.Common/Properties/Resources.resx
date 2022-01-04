@@ -39,11 +39,11 @@
     <data name="MAIN_MENU__SETTINGS_BTN" xml:space="preserve">
         <value>Settings</value>
     </data>
-    <data name="CONFIG__LOAD_ERR" xml:space="preserve">
-        <value>Configuration file reading failed! Creating a new one...</value>
+    <data name="APP_CONFIG__LOAD_ERR" xml:space="preserve">
+        <value>Application config file reading failed! Creating a new one...</value>
     </data>
-    <data name="CONFIG__SAVE_ERR" xml:space="preserve">
-        <value>Configuration file saving error!</value>
+    <data name="APP_CONFIG__SAVE_ERR" xml:space="preserve">
+        <value>Application config file saving error! (see logs)</value>
     </data>
     <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
         <value>Passfile decryption failed</value>
@@ -118,9 +118,9 @@
         <value>Sign Up</value>
     </data>
     <data name="AUTH_REQUIRED__TITLE" xml:space="preserve">
-        <value>Authorize to view this page</value>
+        <value>Log in to view</value>
     </data>
-    <data name="AUTHERR__DATA_VALIDATION_ERR" xml:space="preserve">
+    <data name="AUTH__DATA_VALIDATION_ERR" xml:space="preserve">
         <value>Data validation error!</value>
     </data>
     <data name="SETTINGS__TITLE" xml:space="preserve">
@@ -380,5 +380,29 @@
     </data>
     <data name="DICT_STORAGE__PASSFILE_SMTH" xml:space="preserve">
         <value>passfile data</value>
+    </data>
+    <data name="DICT_ACCOUNT__FIRST_NAME" xml:space="preserve">
+        <value>name</value>
+    </data>
+    <data name="DICT_ACCOUNT__LAST_NAME" xml:space="preserve">
+        <value>surname</value>
+    </data>
+    <data name="DICT_ACCOUNT__PASSWORD" xml:space="preserve">
+        <value>new password</value>
+    </data>
+    <data name="DICT_ACCOUNT__LOGIN" xml:space="preserve">
+        <value>login</value>
+    </data>
+    <data name="DICT_ACCOUNT__PASSWORD_CONFIRM" xml:space="preserve">
+        <value>current password (confirm)</value>
+    </data>
+    <data name="APP__ONLINE_MODE" xml:space="preserve">
+        <value>Online</value>
+    </data>
+    <data name="APP__OFFLINE_MODE" xml:space="preserve">
+        <value>Offline</value>
+    </data>
+    <data name="DICT_AUTH__USER" xml:space="preserve">
+        <value>user</value>
     </data>
 </root>

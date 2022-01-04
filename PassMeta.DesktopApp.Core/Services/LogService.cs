@@ -14,7 +14,7 @@ namespace PassMeta.DesktopApp.Core.Services
     /// <inheritdoc />
     public class LogService : ILogService
     {
-        private static readonly string Folder = AppConfig.LogFilesPath;
+        private static readonly string Folder = AppConfig.LogFilesDirectory;
 
         private FileStream? _fileStream;
         private DateTime? _fileStreamDateOpened;

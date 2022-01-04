@@ -214,6 +214,51 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Offline.
+        /// </summary>
+        public static string APP__OFFLINE_MODE {
+            get {
+                return ResourceManager.GetString("APP__OFFLINE_MODE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Online.
+        /// </summary>
+        public static string APP__ONLINE_MODE {
+            get {
+                return ResourceManager.GetString("APP__ONLINE_MODE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application config file reading failed! Creating a new one....
+        /// </summary>
+        public static string APP_CONFIG__LOAD_ERR {
+            get {
+                return ResourceManager.GetString("APP_CONFIG__LOAD_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application config file saving error! (see logs).
+        /// </summary>
+        public static string APP_CONFIG__SAVE_ERR {
+            get {
+                return ResourceManager.GetString("APP_CONFIG__SAVE_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data validation error!.
+        /// </summary>
+        public static string AUTH__DATA_VALIDATION_ERR {
+            get {
+                return ResourceManager.GetString("AUTH__DATA_VALIDATION_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string AUTH__LOGIN_PLACEHOLDER {
@@ -259,38 +304,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Authorize to view this page.
+        ///   Looks up a localized string similar to Log in to view.
         /// </summary>
         public static string AUTH_REQUIRED__TITLE {
             get {
                 return ResourceManager.GetString("AUTH_REQUIRED__TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Data validation error!.
-        /// </summary>
-        public static string AUTHERR__DATA_VALIDATION_ERR {
-            get {
-                return ResourceManager.GetString("AUTHERR__DATA_VALIDATION_ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configuration file reading failed! Creating a new one....
-        /// </summary>
-        public static string CONFIG__LOAD_ERR {
-            get {
-                return ResourceManager.GetString("CONFIG__LOAD_ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configuration file saving error!.
-        /// </summary>
-        public static string CONFIG__SAVE_ERR {
-            get {
-                return ResourceManager.GetString("CONFIG__SAVE_ERR", resourceCulture);
             }
         }
         
@@ -381,6 +399,60 @@ namespace PassMeta.DesktopApp.Common {
         public static string DIALOG__DEFAULT_INFO_TITLE {
             get {
                 return ResourceManager.GetString("DIALOG__DEFAULT_INFO_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to name.
+        /// </summary>
+        public static string DICT_ACCOUNT__FIRST_NAME {
+            get {
+                return ResourceManager.GetString("DICT_ACCOUNT__FIRST_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to surname.
+        /// </summary>
+        public static string DICT_ACCOUNT__LAST_NAME {
+            get {
+                return ResourceManager.GetString("DICT_ACCOUNT__LAST_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to login.
+        /// </summary>
+        public static string DICT_ACCOUNT__LOGIN {
+            get {
+                return ResourceManager.GetString("DICT_ACCOUNT__LOGIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to new password.
+        /// </summary>
+        public static string DICT_ACCOUNT__PASSWORD {
+            get {
+                return ResourceManager.GetString("DICT_ACCOUNT__PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to current password (confirm).
+        /// </summary>
+        public static string DICT_ACCOUNT__PASSWORD_CONFIRM {
+            get {
+                return ResourceManager.GetString("DICT_ACCOUNT__PASSWORD_CONFIRM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to user.
+        /// </summary>
+        public static string DICT_AUTH__USER {
+            get {
+                return ResourceManager.GetString("DICT_AUTH__USER", resourceCulture);
             }
         }
         

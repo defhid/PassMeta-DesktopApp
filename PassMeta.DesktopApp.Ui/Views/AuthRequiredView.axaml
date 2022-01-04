@@ -9,8 +9,12 @@
              d:DesignHeight="450">
     
     <TextBlock VerticalAlignment="Center" 
-               HorizontalAlignment="Center" 
-               FontSize="30" 
+               HorizontalAlignment="Center"
+               Margin="10 0"
+               TextAlignment="Center"
+               TextWrapping="Wrap"
+               LineHeight="40"
+               FontSize="28"
                Text="{x:Static com:Resources.AUTH_REQUIRED__TITLE}"/>
     
 </UserControl>

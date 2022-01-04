@@ -1,19 +1,22 @@
 namespace PassMeta.DesktopApp.Core.Services
 {
+    using DesktopApp.Common;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Models.Dto.Request;
     using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Utils.Mapping;
     using DesktopApp.Core.Utils;
-    using DesktopApp.Core.Utils.Mapping;
-    
     using System.Threading.Tasks;
     using Splat;
 
     /// <inheritdoc />
     public class AuthService : IAuthService
     {
-        private static readonly ResourceMapper WhatMapper = AccountService.WhatMapper;
+        private static readonly ResourceMapper WhatMapper = AccountService.WhatMapper + new MapToResource[]
+        {
+            new("user", () => Resources.DICT_AUTH__USER),
+        };
         
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
 
@@ -22,7 +25,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (!_Validate(data).Ok)
             {
-                _dialogService.ShowError(Common.Resources.AUTHERR__DATA_VALIDATION_ERR);
+                _dialogService.ShowError(Common.Resources.AUTH__DATA_VALIDATION_ERR);
                 return Result.Failure<User>();
             }
             
@@ -33,7 +36,8 @@ namespace PassMeta.DesktopApp.Core.Services
             if (response?.Success is not true)
                 return Result.Failure<User>();
             
-            await AppConfig.Current.SetUserAsync(response.Data);
+            await AppContext.SetUserAsync(response.Data!);
+            
             return Result.Success(response.Data!);
         }
 
@@ -43,13 +47,11 @@ namespace PassMeta.DesktopApp.Core.Services
             var answer = await _dialogService.ConfirmAsync(Common.Resources.ACCOUNT__SIGN_OUT_CONFIRM);
             if (answer.Bad) return;
             
-            var response = await PassMetaApi.Post("/auth/sign-out")
+            await PassMetaApi.Post("/auth/sign-out")
                 .WithBadHandling(WhatMapper)
                 .ExecuteAsync();
-            
-            if (response?.Success is not true) return;
-            
-            await AppConfig.Current.SetUserAsync(null);
+
+            await AppContext.SetUserAsync(null);
         }
 
         /// <inheritdoc />
@@ -57,7 +59,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (!_Validate(data).Ok)
             {
-                _dialogService.ShowError(Common.Resources.AUTHERR__DATA_VALIDATION_ERR);
+                _dialogService.ShowError(Common.Resources.AUTH__DATA_VALIDATION_ERR);
                 return Result.Failure<User>();
             }
             
@@ -68,7 +70,7 @@ namespace PassMeta.DesktopApp.Core.Services
             if (response?.Success is not true) 
                 return Result.Failure<User>();
                 
-            await AppConfig.Current.SetUserAsync(response.Data);
+            await AppContext.SetUserAsync(response.Data);
             return Result.Success(response.Data!);
         }
         

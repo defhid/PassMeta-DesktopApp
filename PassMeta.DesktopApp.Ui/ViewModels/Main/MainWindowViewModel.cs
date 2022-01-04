@@ -6,6 +6,7 @@
     using Avalonia.Controls;
     using Avalonia.Layout;
     using Avalonia.Media;
+    using Core.Utils;
     using DynamicData;
     using Models.Constants;
     using ReactiveUI;
@@ -58,16 +59,25 @@
             get => _rightBarButtons;
             set => this.RaiseAndSetIfChanged(ref _rightBarButtons, value);
         }
+        
+        public string Mode => PassMetaApi.Online ? Resources.APP__ONLINE_MODE : Resources.APP__OFFLINE_MODE;
+        public IBrush ModeForeground => PassMetaApi.Online ? Brushes.Green : Brushes.SlateGray;
 
         public MainWindowViewModel()
         {
             _mainPaneButtons = _mainPaneButtonsWhenClosed;
             _mainPaneButtonsActive = new [] { false, false, false, false };
-            
+
             this.WhenAnyValue(vm => vm.IsMainPaneOpened)
                 .Subscribe(isMainPaneOpened => MainPaneButtons = isMainPaneOpened 
                     ? _mainPaneButtonsWhenOpened
                     : _mainPaneButtonsWhenClosed);
+        }
+
+        public void OnlineChanged()
+        {
+            this.RaisePropertyChanged(nameof(Mode));
+            this.RaisePropertyChanged(nameof(ModeForeground));
         }
     }
 

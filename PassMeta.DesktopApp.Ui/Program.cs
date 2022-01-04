@@ -1,11 +1,11 @@
-﻿using System.Reflection;
-using Avalonia;
-using Avalonia.ReactiveUI;
-using ReactiveUI;
-using Splat;
-
-namespace PassMeta.DesktopApp.Ui
+﻿namespace PassMeta.DesktopApp.Ui
 {
+    using System.Reflection;
+    using Avalonia;
+    using Avalonia.ReactiveUI;
+    using ReactiveUI;
+    using Splat;
+    
     class Program
     {
         public static void Main(string[] args)

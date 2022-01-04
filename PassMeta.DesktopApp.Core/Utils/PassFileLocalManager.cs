@@ -561,7 +561,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         
         #region Paths
         
-        private static readonly string PassFilesPath = AppConfig.PassFilesPath;
+        private static readonly string PassFilesPath = AppConfig.PassFilesDirectory;
 
         private static readonly string PassFileListPath = Path.Combine(PassFilesPath, "__all__");
 

@@ -54,6 +54,8 @@ namespace PassMeta.DesktopApp.Common.Constants
             return this;
         }
 
+        #region Variants
+
         /// <inheritdoc cref="PassFileProblemKind.NeedsMerge"/>
         public static readonly PassFileProblem NeedsMerge = 
             new(PassFileProblemKind.NeedsMerge, () => Resources.PASSFILE_PROBLEM__NEEDS_MERGE);
@@ -73,5 +75,7 @@ namespace PassMeta.DesktopApp.Common.Constants
         /// <inheritdoc cref="PassFileProblemKind.Other"/>
         public static readonly PassFileProblem Other = 
             new(PassFileProblemKind.Other, () => Resources.PASSFILE_PROBLEM__OTHER);
+
+        #endregion
     }
 }

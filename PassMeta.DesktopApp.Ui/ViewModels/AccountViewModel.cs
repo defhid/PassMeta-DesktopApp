@@ -1,18 +1,20 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using DesktopApp.Common.Interfaces.Services;
-    using DesktopApp.Core.Utils;
+    using DesktopApp.Common.Models.Dto.Request;
     using DesktopApp.Ui.ViewModels.Base;
     
     using System;
     using System.Threading.Tasks;
     using System.Windows.Input;
+    
     using Avalonia.Controls;
     using Avalonia.Media;
-    using Common.Models.Dto.Request;
     using ReactiveUI;
     using Splat;
     
+    using AppContext = Core.Utils.AppContext;
+
     public class AccountViewModel : ViewModelPage
     {
         public override string UrlPathSegment => "/account";
@@ -89,7 +91,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         public AccountViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            if (AppConfig.Current.User is null) return;
+            if (AppContext.Current.User is null) return;
             
             _Refresh();
             this.WhenAnyValue(
@@ -100,7 +102,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                     vm => vm.PasswordConfirm)
                 .Subscribe(data =>
                     {
-                        var user = AppConfig.Current.User;
+                        var user = AppContext.Current.User;
                         var changed = data.Item1 != user.FirstName || 
                                           data.Item2 != user.LastName ||
                                           data.Item3 != user.Login ||
@@ -114,7 +116,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public override void Navigate()
         {
-            if (AppConfig.Current.User is null)
+            if (AppContext.Current.User is null)
             {
                 NavigateTo<AuthViewModel>();
             }
@@ -128,16 +130,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         {
             var result = await Locator.Current.GetService<IAccountService>()!.GetUserDataAsync();
             if (result.Ok)
-                await AppConfig.Current.SetUserAsync(result.Data);
+                await AppContext.SetUserAsync(result.Data);
 
             _Refresh();
         }
 
         private void _Refresh()
         {
-            FirstName = AppConfig.Current.User!.FirstName;
-            LastName = AppConfig.Current.User!.LastName;
-            Login = AppConfig.Current.User!.Login;
+            FirstName = AppContext.Current.User!.FirstName;
+            LastName = AppContext.Current.User!.LastName;
+            Login = AppContext.Current.User!.Login;
             Password = "";
             PasswordConfirm = "";
         }

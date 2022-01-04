@@ -14,6 +14,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             PassFileLocalManager.Initialize();
             
+            await AppContext.LoadAndSetCurrentAsync();
             await AppConfig.LoadAndSetCurrentAsync();
         }
     }

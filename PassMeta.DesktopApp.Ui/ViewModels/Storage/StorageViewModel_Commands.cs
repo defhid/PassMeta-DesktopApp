@@ -22,12 +22,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         
         private async Task _LoadPassFilesAsync()
         {
-            if (_userId is null || _userId != AppConfig.Current.User?.Id)
+            if (_userId is null || _userId != AppContext.Current.User?.Id)
             {
                 var list = await _passFileService.GetPassFileListAsync();
                 
                 _passFiles = list.OrderBy(pf => pf.Name).ToList();
-                _userId = AppConfig.Current.User?.Id;
+                _userId = AppContext.Current.User?.Id;
                 //TODO: Mode;
                 PassFileList = _MakePassFileList();
             }

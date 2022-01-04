@@ -15,6 +15,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Controls.Primitives;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
+    
+    using AppContext = Core.Utils.AppContext;
 
     public class MainWindow : Window
     {
@@ -28,6 +30,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         {
             SubscribeOnPageEvents();
             Opened += OnOpened;
+            Closing += OnClosing;
 
             AvaloniaXamlLoader.Load(this);
 #if DEBUG
@@ -76,15 +79,22 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
             if (!_loaded)
             {
-                if (AppConfig.Current.User is null)
+                if (AppContext.Current.User is null)
                     new AuthViewModel(DataContext).Navigate();
                 else
                     new StorageViewModel(DataContext).Navigate();
             }
 
             _loaded = true;
+            
+            PassMetaApi.OnlineChanged += DataContext.OnlineChanged;
         }
-
+        
+        private void OnClosing(object? sender, EventArgs e)
+        {
+            PassMetaApi.OnlineChanged -= DataContext.OnlineChanged;
+        }
+        
         private void SubscribeOnPageEvents()
         {
             ViewModelPage.OnNavigated += (page) =>

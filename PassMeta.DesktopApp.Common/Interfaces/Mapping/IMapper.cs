@@ -1,5 +1,6 @@
-namespace PassMeta.DesktopApp.Common.Interfaces
+namespace PassMeta.DesktopApp.Common.Interfaces.Mapping
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
@@ -12,5 +13,10 @@ namespace PassMeta.DesktopApp.Common.Interfaces
         /// </summary>
         [return: NotNullIfNotNull("value")]
         string? Map(string? value);
+
+        /// <summary>
+        /// Get all mappings.
+        /// </summary>
+        IEnumerable<IMapping> GetMappings();
     }
 }

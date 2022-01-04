@@ -32,11 +32,11 @@
     <data name="MAIN_MENU__STORAGE_BTN" xml:space="preserve">
         <value>Хранилище</value>
     </data>
-    <data name="CONFIG__LOAD_ERR" xml:space="preserve">
-        <value>Ошибка чтения файла конфигурации! Создание нового...</value>
+    <data name="APP_CONFIG__LOAD_ERR" xml:space="preserve">
+        <value>Ошибка чтения файла конфигурации приложения! Создание нового...</value>
     </data>
-    <data name="CONFIG__SAVE_ERR" xml:space="preserve">
-        <value>Ошибка сохранения файла конфигурации!</value>
+    <data name="APP_CONFIG__SAVE_ERR" xml:space="preserve">
+        <value>Ошибка сохранения файла конфигурации приложения! (см. логи)</value>
     </data>
     <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
         <value>Не удаётся расшифровать файл</value>
@@ -111,9 +111,9 @@
         <value>Зарегистрироваться</value>
     </data>
     <data name="AUTH_REQUIRED__TITLE" xml:space="preserve">
-        <value>Авторизуйтесь, чтобы просматривать эту страницу</value>
+        <value>Авторизуйтесь для просмотра</value>
     </data>
-    <data name="AUTHERR__DATA_VALIDATION_ERR" xml:space="preserve">
+    <data name="AUTH__DATA_VALIDATION_ERR" xml:space="preserve">
         <value>Ошибка валидации данных!</value>
     </data>
     <data name="SETTINGS__TITLE" xml:space="preserve">
@@ -373,5 +373,29 @@
     </data>
     <data name="DICT_STORAGE__PASSFILE_SMTH" xml:space="preserve">
         <value>данные пакета</value>
+    </data>
+    <data name="DICT_ACCOUNT__FIRST_NAME" xml:space="preserve">
+        <value>имя</value>
+    </data>
+    <data name="DICT_ACCOUNT__LAST_NAME" xml:space="preserve">
+        <value>фамилия</value>
+    </data>
+    <data name="DICT_ACCOUNT__LOGIN" xml:space="preserve">
+        <value>логин</value>
+    </data>
+    <data name="DICT_ACCOUNT__PASSWORD" xml:space="preserve">
+        <value>новый пароль</value>
+    </data>
+    <data name="DICT_ACCOUNT__PASSWORD_CONFIRM" xml:space="preserve">
+        <value>старый пароль (подтверждение)</value>
+    </data>
+    <data name="APP__OFFLINE_MODE" xml:space="preserve">
+        <value>Офлайн</value>
+    </data>
+    <data name="APP__ONLINE_MODE" xml:space="preserve">
+        <value>Онлайн</value>
+    </data>
+    <data name="DICT_AUTH__USER" xml:space="preserve">
+        <value>пользователь</value>
     </data>
 </root>
