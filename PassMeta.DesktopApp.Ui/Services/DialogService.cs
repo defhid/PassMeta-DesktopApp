@@ -14,9 +14,9 @@ namespace PassMeta.DesktopApp.Ui.Services
     
     using Avalonia.Controls;
     using Avalonia.Controls.Notifications;
-    using Models.Components.DialogWindow;
-    using Models.Enums;
+    using Enums;
     using Utils.Extensions;
+    using ViewModels.Components.DialogWindow;
 
     /// <inheritdoc />
     public class DialogService : IDialogService

@@ -5,8 +5,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using Common;
     using Common.Interfaces.Services;
     using Common.Models.Entities;
+    using Constants;
     using Core.Utils;
-    using Models.Constants;
     using Splat;
 
     public partial class PassFileWindowViewModel

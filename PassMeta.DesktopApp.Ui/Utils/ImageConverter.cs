@@ -10,18 +10,24 @@ namespace PassMeta.DesktopApp.Ui.Utils
     
     public class ImageConverter : IValueConverter
     {
-        public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)
+        private static readonly string AssemblyName = Assembly.GetEntryAssembly()!.GetName().Name!;
+        
+        public static Bitmap GetAvaloniaResourceBitMap(string relativePath)
         {
-            if (value is null) return null;
-
-            string assemblyName = Assembly.GetEntryAssembly()!.GetName().Name!;
-            var uri = new Uri($"avares://{assemblyName}{(string)value}");
+            var uri = new Uri($"avares://{AssemblyName}/{relativePath}");
             
-            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>()!;
             return new Bitmap(assets.Open(uri));
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public static Uri GetManifestResourcePath(string relativePath) => new($"resm:{AssemblyName}.{relativePath}");
+        
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return value is null ? null : GetAvaloniaResourceBitMap((string)value);
+        }
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotImplementedException(
                 nameof(ImageConverter) + '.' + nameof(ConvertBack) + " method not implemented!");

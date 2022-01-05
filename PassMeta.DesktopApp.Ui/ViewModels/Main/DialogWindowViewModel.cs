@@ -5,9 +5,9 @@ using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Main
 {
+    using Components.DialogWindow;
     using Core.Utils.Extensions;
-    using Models.Components.DialogWindow;
-    using Models.Enums;
+    using Enums;
 
     public class DialogWindowViewModel : ReactiveObject
     {

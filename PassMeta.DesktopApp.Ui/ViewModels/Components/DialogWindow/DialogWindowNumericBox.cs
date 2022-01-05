@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.Models.Components.DialogWindow
+namespace PassMeta.DesktopApp.Ui.ViewModels.Components.DialogWindow
 {
     public class DialogWindowNumericBox : IDialogWindowInputBox
     {

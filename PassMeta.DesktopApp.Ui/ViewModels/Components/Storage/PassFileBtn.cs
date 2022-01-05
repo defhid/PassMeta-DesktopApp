@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.Models.Components.Storage
+namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
 {
     using System.Reactive.Linq;
     using System.Threading.Tasks;

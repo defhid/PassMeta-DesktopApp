@@ -8,10 +8,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using ReactiveUI;
-    using Splat;
     
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
+    
+    using ReactiveUI;
+    using Splat;
+    using Views.Main;
 
     public class SettingsViewModel : ViewModelPage
     {
@@ -53,6 +55,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         private async Task _SaveAsync()
         {
+            using var preloader = MainWindow.Current!.StartPreloader();
+            
             var serverUrl = ServerUrl?.Trim() ?? "";
 
             if (serverUrl.Length > 0 && (!serverUrl.StartsWith("https://") || serverUrl.Length < 11))

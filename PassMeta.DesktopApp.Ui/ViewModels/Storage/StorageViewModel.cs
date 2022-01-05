@@ -3,8 +3,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using DesktopApp.Common;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Ui.ViewModels.Base;
-    using Models.Components.Storage;
-    using Models.Constants;
+    using DesktopApp.Ui.ViewModels.Components.Storage;
+    using DesktopApp.Ui.Constants;
+    
+    using AppContext = Core.Utils.AppContext;
     
     using System;
     using System.Collections.Generic;
@@ -16,8 +18,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using Avalonia.Media;
     using DynamicData.Binding;
     using ReactiveUI;
-    
-    using AppContext = Core.Utils.AppContext;
 
     public partial class StorageViewModel : ViewModelPage
     {
@@ -231,14 +231,17 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             }
         }
 
-        public override Task RefreshAsync()
+        public override async Task RefreshAsync()
         {
-            Navigate();
-            
+            if (AppContext.Current.User is null)
+            {
+                NavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
+            }
+
             _userId = null;
             _passFiles = null;
             
-            return _LoadPassFilesAsync();
+            await _LoadPassFilesAsync();
         } 
     }
 

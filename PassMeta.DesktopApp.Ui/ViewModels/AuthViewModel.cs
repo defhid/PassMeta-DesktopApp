@@ -4,15 +4,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using DesktopApp.Common.Models.Dto.Request;
     using DesktopApp.Core.Utils;
     using DesktopApp.Ui.ViewModels.Base;
+    using DesktopApp.Ui.Views.Main;
     
     using System.Threading.Tasks;
     using System.Windows.Input;
     using ReactiveUI;
     using Splat;
-    
+
     public class AuthViewModel : ViewModelPage
     {
-        private readonly IAuthService _authService = Locator.Current.GetService<IAuthService>()!;
+        private static IAuthService AuthService => Locator.Current.GetService<IAuthService>()!;
         
         public override string UrlPathSegment => "/auth";
 
@@ -50,16 +51,20 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private async Task _SignInAsync()
         {
+            using var preloader = MainWindow.Current!.StartPreloader();
+            
             var data = new SignInPostData(Login ?? "", Password ?? "");
-            var result = await _authService.SignInAsync(data);
+            var result = await AuthService.SignInAsync(data);
             if (result.Ok)
                 NavigateTo<AccountViewModel>();
         }
         
         private async Task _SignUpAsync()
         {
+            using var preloader = MainWindow.Current!.StartPreloader();
+            
             var data = new SignUpPostData(Login ?? "", Password ?? "", "Unknown", "Unknown");
-            var result = await _authService.SignUpAsync(data);
+            var result = await AuthService.SignUpAsync(data);
             if (result.Ok)
                 NavigateTo<AccountViewModel>();
         }

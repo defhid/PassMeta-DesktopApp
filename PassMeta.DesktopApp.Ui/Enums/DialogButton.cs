@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.Models.Enums
+namespace PassMeta.DesktopApp.Ui.Enums
 {
     using Services;
     using Views.Main;

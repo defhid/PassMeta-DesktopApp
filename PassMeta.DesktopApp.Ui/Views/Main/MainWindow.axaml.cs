@@ -1,10 +1,13 @@
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
     using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.Utils;
     using DesktopApp.Ui.ViewModels;
     using DesktopApp.Ui.ViewModels.Base;
     using DesktopApp.Ui.ViewModels.Main;
     using DesktopApp.Ui.ViewModels.Storage;
+    
+    using AppContext = Core.Utils.AppContext;
     
     using System;
     using System.Reactive.Linq;
@@ -15,17 +18,15 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Controls.Primitives;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
-    
-    using AppContext = Core.Utils.AppContext;
 
     public class MainWindow : Window
     {
+        private bool _loaded;
+        
         public static MainWindow? Current { get; private set; }
 
         public static event Func<MainWindow, Task>? CurrentChanged;
-        
-        private bool _loaded;
-        
+
         public MainWindow()
         {
             SubscribeOnPageEvents();
@@ -38,10 +39,12 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 #endif
         }
 
+        public Preloader StartPreloader() => new Preloader(DataContext).Start();
+
         public new MainWindowViewModel DataContext
         {
             get => (MainWindowViewModel)base.DataContext!;
-            set => base.DataContext = value;
+            init => base.DataContext = value;
         }
 
         private void MainPaneOpenCloseBtn_OnClick(object? sender, RoutedEventArgs e)
@@ -63,11 +66,13 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
         private async void RefreshBtn_OnClick(object? sender, RoutedEventArgs e)
         {
+            using var preloader = StartPreloader();
+            
             await PassMetaApi.CheckConnectionAsync();
 
-            DataContext.Router.CurrentViewModel!.OfType<ViewModelPage>()
+            await DataContext.Router.CurrentViewModel!.OfType<ViewModelPage>()
                 .FirstAsync()
-                .Subscribe(vm => vm.RefreshAsync());
+                .Select(vm => vm.RefreshAsync());
         }
 
         private async void OnOpened(object? sender, EventArgs e)

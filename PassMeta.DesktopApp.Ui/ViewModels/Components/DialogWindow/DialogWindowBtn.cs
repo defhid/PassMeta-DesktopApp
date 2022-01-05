@@ -1,7 +1,6 @@
-namespace PassMeta.DesktopApp.Ui.Models.Components.DialogWindow
+namespace PassMeta.DesktopApp.Ui.ViewModels.Components.DialogWindow
 {
     using Common;
-    using Common.Enums;
     using Enums;
 
     public class DialogWindowBtn

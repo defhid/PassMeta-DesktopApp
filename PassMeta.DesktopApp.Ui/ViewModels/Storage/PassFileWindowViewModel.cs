@@ -7,10 +7,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using Avalonia.Media;
     using Common;
     using Common.Models.Entities;
+    using Components;
+    using Constants;
     using DynamicData;
     using DynamicData.Binding;
-    using Models.Components;
-    using Models.Constants;
     using ReactiveUI;
     using Utils.Extensions;
     

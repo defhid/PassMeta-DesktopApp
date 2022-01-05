@@ -2,11 +2,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using DesktopApp.Ui.ViewModels.Base;
     
+    using AppContext = Core.Utils.AppContext;
+    
     using System;
     using System.Threading.Tasks;
     using ReactiveUI;
-    
-    using AppContext = Core.Utils.AppContext;
 
     public class AuthRequiredViewModel : ViewModelPage
     {

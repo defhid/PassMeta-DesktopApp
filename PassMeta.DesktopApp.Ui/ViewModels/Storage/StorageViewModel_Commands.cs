@@ -8,8 +8,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Components.Storage;
     using DynamicData;
-    using Models.Components.Storage;
     using Splat;
     using Utils.Extensions;
     using Views.Main;

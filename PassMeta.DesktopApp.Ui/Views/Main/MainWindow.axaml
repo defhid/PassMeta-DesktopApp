@@ -3,7 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:reactiveUi="http://reactiveui.net"
+        xmlns:avaloniaGif="clr-namespace:AvaloniaGif;assembly=AvaloniaGif"
         xmlns:main="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main"
+        xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
         mc:Ignorable="d"
         d:DesignWidth="800"
         d:DesignHeight="500"
@@ -20,155 +22,175 @@
         <main:MainWindowViewModel/>
     </Design.DataContext>
     
-    <SplitView x:Name="MainSplitView"
-               IsPaneOpen="{Binding IsMainPaneOpened}"
-               DisplayMode="CompactInline"
-               OpenPaneLength="188"
-               CompactPaneLength="48">
-        <SplitView.Pane>
-            <Grid>
-                <Grid.Styles>
-                    <Style Selector="Button">
-                        <Setter Property="Height" Value="40" />
-                        <Setter Property="Margin" Value="4 0 4 0" />
-                        <Setter Property="VerticalAlignment" Value="Top" />
-                        <Setter Property="VerticalContentAlignment" Value="Center" />
-                        <Setter Property="Padding" Value="{Binding MainPaneButtons.Padding}" />
-                        <Setter Property="Width" Value="{Binding MainPaneButtons.Width}" />
-                        <Setter Property="FontSize" Value="{Binding MainPaneButtons.FontSize}" />
-                        <Setter Property="HorizontalContentAlignment" Value="{Binding MainPaneButtons.HorizontalContentAlignment}" />
-                        <Setter Property="FontFamily" Value="{Binding MainPaneButtons.FontFamily}" />
-                    </Style>
-                    <Style Selector="Button:disabled">
-                        <Setter Property="Template">
-                            <ControlTemplate>
-                                <ContentPresenter Name="PART_ContentPresenter"
-                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                  Content="{TemplateBinding Content}"
-                                                  Padding="{TemplateBinding Padding}"
-                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  CornerRadius="{TemplateBinding CornerRadius}"
-                                                  TextBlock.Foreground="LightSkyBlue"
-                                                  TextBlock.FontWeight="Bold"/>
-                            </ControlTemplate>
-                        </Setter>
-                    </Style>
-                </Grid.Styles>
-                
-                <ToggleButton Click="MainPaneOpenCloseBtn_OnClick"
-                              IsChecked="{Binding IsMainPaneOpened}"
-                              VerticalAlignment="Top"
-                              Margin="4 5 4 4"
-                              Padding="0 0 0 0"
-                              Width="{Binding MainPaneButtons.Width}"
-                              Height="40"
-                              FontSize="24"
-                              HorizontalContentAlignment="Center"
-                              VerticalContentAlignment="Center"
-                              FontFamily="Segoe MDL2 Assets"
-                              Content="&#xE700;"/>
-                
-                <StackPanel Spacing="{Binding MainPaneButtons.Spacing}"
-                            Margin="0 57 0 0"
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Left">
-                    <Button Click="AccountBtn_OnClick"
-                            IsEnabled="{Binding !MainPaneButtonsActive[0]}"
-                            Content="{Binding MainPaneButtons.Content[0]}"/>
-                
-                    <Button Click="StorageBtn_OnClick"
-                            IsEnabled="{Binding !MainPaneButtonsActive[1]}"
-                            Content="{Binding MainPaneButtons.Content[1]}"/>
-                    
-                    <Button Click="GeneratorBtn_OnClick"
-                            IsEnabled="{Binding !MainPaneButtonsActive[2]}"
-                            Content="{Binding MainPaneButtons.Content[2]}"/>
-                </StackPanel>
-                
-                <Button Click="SettingsBtn_OnClick"
-                        IsEnabled="{Binding !MainPaneButtonsActive[3]}"
-                        Content="{Binding MainPaneButtons.Content[3]}"
-                        VerticalAlignment="Bottom"
-                        Margin="4 4 4 5"
-                        Opacity="0.8"/>
-            </Grid>
-        </SplitView.Pane>
+    <Grid>
+        <Grid.Styles>
+            <Style Selector="avaloniaGif|GifImage">
+                <Setter Property="SourceUri" Value="{x:Static const:ManifestResourcePaths.GifPreloader}"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Stretch" Value="Uniform"/>
+                <Setter Property="StretchDirection" Value="Both"/>
+                <Setter Property="Width" Value="50"/>
+                <Setter Property="Height" Value="50"/>
+            </Style>
+        </Grid.Styles>
         
-        <Grid ColumnDefinitions="*,48">
-            <reactiveUi:RoutedViewHost Grid.Column="0"
-                                       Router="{Binding Router}">
-                <reactiveUi:RoutedViewHost.DefaultContent>
-                    <TextBlock VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               FontSize="40">
-                        ...
-                    </TextBlock>
-                </reactiveUi:RoutedViewHost.DefaultContent>
-            </reactiveUi:RoutedViewHost>
-            
-            <Grid Grid.Column="1"
-                  RowDefinitions="*,69"
-                  Background="{Binding PaneBackground, ElementName=MainSplitView}">
-                <ItemsControl Grid.Row="0"
-                              Items="{Binding RightBarButtons}">
-                    <ItemsControl.Styles>
+        <SplitView x:Name="MainSplitView"
+                   IsPaneOpen="{Binding IsMainPaneOpened}"
+                   DisplayMode="CompactInline"
+                   OpenPaneLength="188"
+                   CompactPaneLength="48">
+            <SplitView.Pane>
+                <Grid IsEnabled="{Binding !PreloaderEnabled}">
+                    <Grid.Styles>
                         <Style Selector="Button">
-                            <Setter Property="Width" Value="40"/>
-                            <Setter Property="Height" Value="40"/>
-                            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-                            <Setter Property="FontSize" Value="22"/>
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Margin" Value="4 4 4 1"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="Height" Value="40" />
+                            <Setter Property="Margin" Value="4 0 4 0" />
+                            <Setter Property="VerticalAlignment" Value="Top" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Padding" Value="{Binding MainPaneButtons.Padding}" />
+                            <Setter Property="Width" Value="{Binding MainPaneButtons.Width}" />
+                            <Setter Property="FontSize" Value="{Binding MainPaneButtons.FontSize}" />
+                            <Setter Property="HorizontalContentAlignment" Value="{Binding MainPaneButtons.HorizontalContentAlignment}" />
+                            <Setter Property="FontFamily" Value="{Binding MainPaneButtons.FontFamily}" />
                         </Style>
-                        
-                        <Style Selector="ToggleButton">
-                            <Setter Property="Width" Value="40"/>
-                            <Setter Property="Height" Value="40"/>
-                            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-                            <Setter Property="FontSize" Value="22"/>
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Margin" Value="4 4 4 1"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        </Style>
-                        
                         <Style Selector="Button:disabled">
-                            <Setter Property="IsVisible" Value="False"/>
+                            <Setter Property="Template">
+                                <ControlTemplate>
+                                    <ContentPresenter Name="PART_ContentPresenter"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      Content="{TemplateBinding Content}"
+                                                      Padding="{TemplateBinding Padding}"
+                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      CornerRadius="{TemplateBinding CornerRadius}"
+                                                      TextBlock.Foreground="LightSkyBlue"
+                                                      TextBlock.FontWeight="Bold"/>
+                                </ControlTemplate>
+                            </Setter>
                         </Style>
+                    </Grid.Styles>
+                    
+                    <ToggleButton Click="MainPaneOpenCloseBtn_OnClick"
+                                  IsChecked="{Binding IsMainPaneOpened}"
+                                  VerticalAlignment="Top"
+                                  Margin="4 5 4 4"
+                                  Padding="0 0 0 0"
+                                  Width="{Binding MainPaneButtons.Width}"
+                                  Height="40"
+                                  FontSize="24"
+                                  HorizontalContentAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  FontFamily="Segoe MDL2 Assets"
+                                  Content="&#xE700;"/>
+                    
+                    <StackPanel Spacing="{Binding MainPaneButtons.Spacing}"
+                                Margin="0 57 0 0"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left">
+                        <Button Click="AccountBtn_OnClick"
+                                IsEnabled="{Binding !MainPaneButtonsActive[0]}"
+                                Content="{Binding MainPaneButtons.Content[0]}"/>
+                    
+                        <Button Click="StorageBtn_OnClick"
+                                IsEnabled="{Binding !MainPaneButtonsActive[1]}"
+                                Content="{Binding MainPaneButtons.Content[1]}"/>
                         
-                        <Style Selector="ToggleButton:disabled">
-                            <Setter Property="IsVisible" Value="False"/>
-                        </Style>
-                    </ItemsControl.Styles>
-                </ItemsControl>
+                        <Button Click="GeneratorBtn_OnClick"
+                                IsEnabled="{Binding !MainPaneButtonsActive[2]}"
+                                Content="{Binding MainPaneButtons.Content[2]}"/>
+                    </StackPanel>
+                    
+                    <Button Click="SettingsBtn_OnClick"
+                            IsEnabled="{Binding !MainPaneButtonsActive[3]}"
+                            Content="{Binding MainPaneButtons.Content[3]}"
+                            VerticalAlignment="Bottom"
+                            Margin="4 4 4 5"
+                            Opacity="0.8"/>
+                </Grid>
+            </SplitView.Pane>
+            
+            <Grid ColumnDefinitions="*,48">
+                <reactiveUi:RoutedViewHost Grid.Column="0"
+                                           Router="{Binding Router}">
+                    <reactiveUi:RoutedViewHost.DefaultContent>
+                        <avaloniaGif:GifImage
+                            SourceUri="{x:Static const:ManifestResourcePaths.GifPreloader}"/>
+                    </reactiveUi:RoutedViewHost.DefaultContent>
+                </reactiveUi:RoutedViewHost>
                 
-                <TextBlock Grid.Row="1"
-                           VerticalAlignment="Bottom"
-                           HorizontalAlignment="Center"
-                           Margin="2 0 2 50"
-                           Width="44"
-                           TextAlignment="Center"
-                           FontSize="10"
-                           FontWeight="Bold"
-                           Text="{Binding Mode}"
-                           Foreground="{Binding ModeForeground}"/>
+                <Grid Grid.Column="0" 
+                      IsVisible="{Binding PreloaderEnabled}"
+                      Background="Black" 
+                      Opacity="0.2"/>
                 
-                <Button Grid.Row="1"
-                        Click="RefreshBtn_OnClick"
-                        VerticalAlignment="Bottom"
-                        Margin="4 0 4 5"
-                        Padding="0"
-                        Width="40"
-                        Height="40"
-                        FontSize="22"
-                        Content="&#xE72C;"
-                        FontFamily="Segoe MDL2 Assets"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"/>
+                <Grid Grid.Column="1"
+                      RowDefinitions="*,69"
+                      IsEnabled="{Binding !PreloaderEnabled}"
+                      Background="{Binding PaneBackground, ElementName=MainSplitView}">
+                    <ItemsControl Grid.Row="0"
+                                  Items="{Binding RightBarButtons}">
+                        <ItemsControl.Styles>
+                            <Style Selector="Button">
+                                <Setter Property="Width" Value="40"/>
+                                <Setter Property="Height" Value="40"/>
+                                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                                <Setter Property="FontSize" Value="22"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="4 4 4 1"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            </Style>
+                            
+                            <Style Selector="ToggleButton">
+                                <Setter Property="Width" Value="40"/>
+                                <Setter Property="Height" Value="40"/>
+                                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                                <Setter Property="FontSize" Value="22"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="4 4 4 1"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            </Style>
+                            
+                            <Style Selector="Button:disabled">
+                                <Setter Property="IsVisible" Value="False"/>
+                            </Style>
+                            
+                            <Style Selector="ToggleButton:disabled">
+                                <Setter Property="IsVisible" Value="False"/>
+                            </Style>
+                        </ItemsControl.Styles>
+                    </ItemsControl>
+                    
+                    <TextBlock Grid.Row="1"
+                               VerticalAlignment="Bottom"
+                               HorizontalAlignment="Center"
+                               Margin="2 0 2 50"
+                               Width="44"
+                               TextAlignment="Center"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Text="{Binding Mode}"
+                               Foreground="{Binding ModeForeground}"/>
+                    
+                    <Button Grid.Row="1"
+                            Click="RefreshBtn_OnClick"
+                            VerticalAlignment="Bottom"
+                            Margin="4 0 4 5"
+                            Padding="0"
+                            Width="40"
+                            Height="40"
+                            FontSize="22"
+                            Content="&#xE72C;"
+                            FontFamily="Segoe MDL2 Assets"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+                </Grid>
             </Grid>
-        </Grid>
-    </SplitView>
+        </SplitView>
+        
+        <avaloniaGif:GifImage IsVisible="{Binding PreloaderEnabled}"
+                              SourceUri="{x:Static const:ManifestResourcePaths.GifPreloader}"/>
+    </Grid>
 </Window>

@@ -3,6 +3,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models.Dto.Request;
     using DesktopApp.Ui.ViewModels.Base;
+    using DesktopApp.Ui.Views.Main;
+    
+    using AppContext = Core.Utils.AppContext;
     
     using System;
     using System.Threading.Tasks;
@@ -12,11 +15,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using Avalonia.Media;
     using ReactiveUI;
     using Splat;
-    
-    using AppContext = Core.Utils.AppContext;
 
     public class AccountViewModel : ViewModelPage
     {
+        private static IAccountService AccountService => Locator.Current.GetService<IAccountService>()!;
+        private static IAuthService AuthService => Locator.Current.GetService<IAuthService>()!;
+        
         public override string UrlPathSegment => "/account";
 
         public override ContentControl[] RightBarButtons => new ContentControl[]
@@ -128,7 +132,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public override async Task RefreshAsync()
         {
-            var result = await Locator.Current.GetService<IAccountService>()!.GetUserDataAsync();
+            if (AppContext.Current.User is null)
+            {
+                NavigateTo<AuthViewModel>();
+            }
+            
+            var result = await AccountService.GetUserDataAsync();
             if (result.Ok)
                 await AppContext.SetUserAsync(result.Data);
 
@@ -146,6 +155,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         private async Task _SaveAsync()
         {
+            using var preloader = MainWindow.Current!.StartPreloader();
+            
             var data = new UserPatchData
             {
                 FirstName = FirstName ?? "",
@@ -155,16 +166,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                 PasswordConfirm = PasswordConfirm ?? "",
             };
 
-            var service = Locator.Current.GetService<IAccountService>()!;
-            var result = await service.UpdateUserDataAsync(data);
+            var result = await AccountService.UpdateUserDataAsync(data);
 
             if (result.Ok) await RefreshAsync();
         }
 
         private async Task _SignOutAsync()
         {
-            var service = Locator.Current.GetService<IAuthService>()!;
-            await service.SignOutAsync();
+            using var preloader = MainWindow.Current!.StartPreloader();
+            
+            await AuthService.SignOutAsync();
             NavigateTo<AuthViewModel>();
         }
     }

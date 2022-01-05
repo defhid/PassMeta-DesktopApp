@@ -35,6 +35,10 @@
             vm.Navigate();
         }
 
+        /// <summary>
+        /// Refresh page.
+        /// </summary>
+        /// <remarks>Invokes with preloader.</remarks>
         public abstract Task RefreshAsync();
 
         public virtual void Navigate()

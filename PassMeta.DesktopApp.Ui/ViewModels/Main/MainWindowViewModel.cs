@@ -1,17 +1,19 @@
 ﻿namespace PassMeta.DesktopApp.Ui.ViewModels.Main
 {
     using DesktopApp.Common;
+    using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.Constants;
+    using DesktopApp.Ui.Interfaces;
+    
     using System;
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Layout;
     using Avalonia.Media;
-    using Core.Utils;
     using DynamicData;
-    using Models.Constants;
     using ReactiveUI;
 
-    public class MainWindowViewModel : ReactiveObject, IScreen
+    public class MainWindowViewModel : ReactiveObject, IScreen, IPreloaderSupport
     {
         public RoutingState Router { get; } = new();
         
@@ -62,6 +64,13 @@
         
         public string Mode => PassMetaApi.Online ? Resources.APP__ONLINE_MODE : Resources.APP__OFFLINE_MODE;
         public IBrush ModeForeground => PassMetaApi.Online ? Brushes.Green : Brushes.SlateGray;
+
+        private bool _preloaderEnabled;
+        public bool PreloaderEnabled
+        {
+            get => _preloaderEnabled;
+            set => this.RaiseAndSetIfChanged(ref _preloaderEnabled, value);
+        }
 
         public MainWindowViewModel()
         {

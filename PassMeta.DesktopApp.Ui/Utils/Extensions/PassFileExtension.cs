@@ -8,8 +8,8 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using Common.Interfaces.Services;
     using Common.Models;
     using Common.Models.Entities;
+    using Constants;
     using Core.Utils.Extensions;
-    using Models.Constants;
     using Splat;
 
     /// <summary>

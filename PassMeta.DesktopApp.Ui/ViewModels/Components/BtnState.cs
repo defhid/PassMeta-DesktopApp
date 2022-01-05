@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.Models.Components
+namespace PassMeta.DesktopApp.Ui.ViewModels.Components
 {
     using System;
     using System.Reactive;

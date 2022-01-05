@@ -1,13 +1,12 @@
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
     using DesktopApp.Ui.ViewModels.Main;
-    using DesktopApp.Ui.Models.Enums;
-    
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Input;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
+    using Enums;
 
     public class DialogWindow : Window
     {

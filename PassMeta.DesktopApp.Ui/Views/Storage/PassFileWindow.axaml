@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:storage="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage"
         xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-        xmlns:pf="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants"
+        xmlns:pf="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
         mc:Ignorable="d"
         Width="520"
         Height="265"

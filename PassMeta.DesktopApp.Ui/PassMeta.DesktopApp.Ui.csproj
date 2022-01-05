@@ -5,14 +5,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.10.10" />
-        <PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
-        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.10" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.10" />
+        <PackageReference Include="Avalonia" Version="0.10.11" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.11" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.11" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11" />
         <PackageReference Include="TextCopy" Version="4.3.1" />
     </ItemGroup>
     <ItemGroup>
@@ -46,6 +45,17 @@
       </Compile>
     </ItemGroup>
     <ItemGroup>
+      <EmbeddedResource Include="Assets\Resm\Preloader.gif" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\AvaloniaGif\AvaloniaGif.csproj" />
       <ProjectReference Include="..\PassMeta.DesktopApp.Core\PassMeta.DesktopApp.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Confirm.png" />
+      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Error.png" />
+      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Info.png" />
+      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Success.png" />
+      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Warning.png" />
     </ItemGroup>
 </Project>

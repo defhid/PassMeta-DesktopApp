@@ -15,7 +15,7 @@ namespace PassMeta.DesktopApp.Ui
     
     using Splat;
     using System.Threading.Tasks;
-    
+
     public class App : Application
     {
         public override void Initialize()
@@ -39,7 +39,7 @@ namespace PassMeta.DesktopApp.Ui
             var window = MakeWindow();
             window.Show();
             
-            var desktop = (IClassicDesktopStyleApplicationLifetime)Current.ApplicationLifetime;
+            var desktop = (IClassicDesktopStyleApplicationLifetime)Current!.ApplicationLifetime!;
             desktop.MainWindow.Close(true);
             desktop.MainWindow = window;
         }
@@ -73,7 +73,8 @@ namespace PassMeta.DesktopApp.Ui
             Locator.CurrentMutable.RegisterConstant<INotificationManager>(new WindowNotificationManager(win)
             {
                 HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Bottom
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Opacity = 0.8
             });
 
             return win;
