@@ -74,7 +74,8 @@ namespace PassMeta.DesktopApp.Ui
             {
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Bottom,
-                Opacity = 0.8
+                Opacity = 0.8,
+                Margin = Thickness.Parse("0 0 0 -4")
             });
 
             return win;

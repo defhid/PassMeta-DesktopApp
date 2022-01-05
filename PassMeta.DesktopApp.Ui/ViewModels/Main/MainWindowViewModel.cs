@@ -111,7 +111,7 @@
         {
             Width = 180,
             Spacing = 8,
-            Padding = Thickness.Parse("10 0 5 0"),
+            Padding = Thickness.Parse("10 0 5 4"),
             HorizontalContentAlignment = HorizontalAlignment.Left,
             FontFamily = FontFamilies.Default,
             FontSize = 20,
