@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 {
     using System;
     using System.Collections.Generic;
@@ -10,11 +10,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using Components;
     using Constants;
     using DynamicData;
-    using DynamicData.Binding;
     using ReactiveUI;
     using Utils.Extensions;
-    
-    public partial class PassFileWindowViewModel : ReactiveObject
+
+    public partial class PassFileWinViewModel : ReactiveObject
     {
         public event Action<PassFile?>? OnUpdate;
         
@@ -65,7 +64,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         }
 
         public BtnState PasswordBtn => new(
-            this.WhenValueChanged(vm => vm.IsPasswordBoxVisible)
+            this.WhenAnyValue(vm => vm.IsPasswordBoxVisible)
                 .Select(isVisible => isVisible ? "\uF78A" : "\uE70F"),
             isVisibleObservable: _passFileNotNew);
 
@@ -104,7 +103,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         private readonly IObservable<bool> _passFileNotNew;
         private readonly IObservable<bool> _anyChanged;
 
-        public PassFileWindowViewModel(PassFile passFile, Action close)
+        public PassFileWinViewModel(PassFile passFile, Action close)
         {
             _passFile = passFile;
             _close = close;
@@ -114,7 +113,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             _isPasswordBoxVisible = passFile.Id == 0;
             SelectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
 
-            _passFileChanged = this.WhenValueChanged(vm => vm.PassFile)!;
+            _passFileChanged = this.WhenAnyValue(vm => vm.PassFile)!;
             _passFileNotNew = _passFileChanged.Select(pf => pf.Id > 0);
             _anyChanged = this.WhenAnyValue(
                     vm => vm.Name,
@@ -173,7 +172,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
         
 #pragma warning disable 8618
         // Avalonia requirements...
-        public PassFileWindowViewModel() {}
+        public PassFileWinViewModel() {}
 #pragma warning restore 8618
     }
 }

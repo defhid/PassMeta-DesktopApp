@@ -1,23 +1,19 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 {
-    using DesktopApp.Common;
-    using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Ui.ViewModels.Base;
-    using DesktopApp.Ui.ViewModels.Components.Storage;
-    using DesktopApp.Ui.Constants;
-    
-    using AppContext = Core.Utils.AppContext;
-    
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
-    
     using Avalonia.Controls;
     using Avalonia.Media;
-    using DynamicData.Binding;
+    using Base;
+    using Common;
+    using Common.Models.Entities;
+    using Components;
+    using Constants;
     using ReactiveUI;
+    using AppContext = Core.Utils.AppContext;
 
     public partial class StorageViewModel : ViewModelPage
     {
@@ -147,29 +143,29 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
             {
                 Content = "\uE70F", 
                 Command = ReactiveCommand.Create(ItemsEdit, 
-                    this.WhenValueChanged(vm => vm.PassFileSectionItemList).
+                    this.WhenAnyValue(vm => vm.PassFileSectionItemList).
                         Select(items => items?.Length > 0))
             };
 
             _passFileList = _MakePassFileList();
 
-            _isSectionsBarVisible = this.WhenValueChanged(vm => vm.PassFileSectionList)
+            _isSectionsBarVisible = this.WhenAnyValue(vm => vm.PassFileSectionList)
                 .Select(arr => arr is not null)
                 .ToProperty(this, nameof(IsSectionsBarVisible));
             
-            _isItemsBarVisible = this.WhenValueChanged(vm => vm.PassFileSectionItemList)
+            _isItemsBarVisible = this.WhenAnyValue(vm => vm.PassFileSectionItemList)
                 .Select(arr => arr is not null)
                 .ToProperty(this, nameof(IsItemsBarVisible));
             
-            _isNoSectionsTextVisible = this.WhenValueChanged(vm => vm.PassFileSectionList)
+            _isNoSectionsTextVisible = this.WhenAnyValue(vm => vm.PassFileSectionList)
                 .Select(arr => arr?.Any() is false)
                 .ToProperty(this, nameof(IsNoSectionsTextVisible));
             
-            _isNoItemsTextVisible = this.WhenValueChanged(vm => vm.PassFileSectionItemList)
+            _isNoItemsTextVisible = this.WhenAnyValue(vm => vm.PassFileSectionItemList)
                 .Select(arr => arr?.Any() is false)
                 .ToProperty(this, nameof(IsNoItemsTextVisible));
             
-            _passFilesBarBtn = this.WhenValueChanged(vm => vm.IsPassFilesBarOpened)
+            _passFilesBarBtn = this.WhenAnyValue(vm => vm.IsPassFilesBarOpened)
                 .Select(isOpened => new BarBtn
                 {
                     Width = isOpened ? 190 : 40,
@@ -179,7 +175,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                 })
                 .ToProperty(this, nameof(PassFilesBarBtn));
             
-            this.WhenValueChanged(vm => vm.IsPassFilesBarOpened)
+            this.WhenAnyValue(vm => vm.IsPassFilesBarOpened)
                 .Subscribe(isOpened =>
                 {
                     foreach (var passFileBtn in PassFileList)
@@ -188,10 +184,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
                     }
                 });
 
-            this.WhenValueChanged(vm => vm.PassFilesSelectedSectionIndex)
+            this.WhenAnyValue(vm => vm.PassFilesSelectedSectionIndex)
                 .Subscribe(index => IsPassFilesBarOpened = index == -1);
 
-            this.WhenValueChanged(vm => vm.PassFilesSelectedIndex)
+            this.WhenAnyValue(vm => vm.PassFilesSelectedIndex)
                 .InvokeCommand(ReactiveCommand.CreateFromTask<int>(_DecryptIfRequiredAsync));
             
             this.WhenNavigatedToObservable()

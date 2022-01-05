@@ -2,9 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:storage="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage"
         xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
         xmlns:pf="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
+        xmlns:passFileWin="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin"
         mc:Ignorable="d"
         Width="520"
         Height="265"
@@ -12,13 +12,13 @@
         MinHeight="265"
         MaxWidth="520"
         MaxHeight="265"
-        x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileWindow"
+        x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileWin"
         Icon="/Assets/PassMeta.ico"
         Title="{Binding Title}"
         WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
-        <storage:PassFileWindowViewModel></storage:PassFileWindowViewModel>
+        <passFileWin:PassFileWinViewModel></passFileWin:PassFileWinViewModel>
     </Design.DataContext>
     
     <Grid Margin="7 7 10 10"

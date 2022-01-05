@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 {
     using System;
     using System.Linq;
@@ -7,7 +7,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
     using Common;
     using Common.Interfaces.Services;
     using Common.Models.Entities;
-    using DynamicData.Binding;
     using ReactiveUI;
     using Splat;
 
@@ -58,7 +57,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
                 .Select(pair => pair.Item1 && pair.Item2 != string.Empty)
                 .ToProperty(this, nameof(IsCommentTextVisible));
             
-            _isCommentInputVisible = this.WhenValueChanged(btn => btn.IsReadOnly)
+            _isCommentInputVisible = this.WhenAnyValue(btn => btn.IsReadOnly)
                 .Select(isReadOnly => !isReadOnly)
                 .ToProperty(this, nameof(IsCommentInputVisible));
         }

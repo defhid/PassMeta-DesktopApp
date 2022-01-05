@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -9,10 +9,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
     using Core.Utils;
     using Splat;
 
-    public partial class PassFileWindowViewModel
+    public partial class PassFileWinViewModel
     {
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
-        private readonly IPassFileService _passFileService = Locator.Current.GetService<IPassFileService>()!;
         
         public void Close()
         {

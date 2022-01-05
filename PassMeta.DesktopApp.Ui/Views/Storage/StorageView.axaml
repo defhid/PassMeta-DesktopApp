@@ -4,11 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
              xmlns:storage="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage"
+             xmlns:storage1="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage"
              x:Class="PassMeta.DesktopApp.Ui.Views.Storage.StorageView"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             d:DataContext="{d:DesignInstance storage:StorageViewModel}">
+             d:DataContext="{d:DesignInstance storage1:StorageViewModel}">
     <Grid>
         <SplitView DisplayMode="CompactInline"
                    OpenPaneLength="199"

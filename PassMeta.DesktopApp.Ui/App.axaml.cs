@@ -15,6 +15,7 @@ namespace PassMeta.DesktopApp.Ui
     
     using Splat;
     using System.Threading.Tasks;
+    using ViewModels.Main.MainWindow;
 
     public class App : Application
     {

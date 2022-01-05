@@ -5,13 +5,13 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
     using Avalonia.Markup.Xaml;
     using Common.Models.Entities;
     using Utils.Extensions;
-    using ViewModels.Storage;
+    using PassFileWinViewModel = ViewModels.Storage.PassFileWin.PassFileWinViewModel;
 
-    public class PassFileWindow : Window
+    public class PassFileWin : Window
     {
         public PassFile? PassFile { get; private set; }
         
-        public PassFileWindow()
+        public PassFileWin()
         {
             AvaloniaXamlLoader.Load(this);
             this.CorrectMainWindowFocusWhileOpened();
@@ -20,17 +20,17 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
 #endif
         }
 
-        private new PassFileWindowViewModel? DataContext
+        private new PassFileWinViewModel? DataContext
         {
-            get => (PassFileWindowViewModel?)base.DataContext;
+            get => (PassFileWinViewModel?)base.DataContext;
             init => base.DataContext = value;
         }
 
-        public PassFileWindow(PassFile passFile) : this()
+        public PassFileWin(PassFile passFile) : this()
         {
             PassFile = passFile.Id > 0 ? passFile : null;
             
-            DataContext = new PassFileWindowViewModel(passFile, Close);
+            DataContext = new PassFileWinViewModel(passFile, Close);
             DataContext!.OnUpdate += actualPassFile =>
             {
                 PassFile = actualPassFile;

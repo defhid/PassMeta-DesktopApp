@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 {
     using Common.Models.Entities;
     using ReactiveUI;

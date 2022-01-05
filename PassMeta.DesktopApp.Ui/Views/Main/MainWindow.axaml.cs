@@ -15,9 +15,10 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     
     using Avalonia;
     using Avalonia.Controls;
-    using Avalonia.Controls.Primitives;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
+    using ViewModels.Main.MainWindow;
+    using ViewModels.Storage.Storage;
 
     public class MainWindow : Window
     {
@@ -30,6 +31,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         public MainWindow()
         {
             SubscribeOnPageEvents();
+            
             Opened += OnOpened;
             Closing += OnClosing;
 
@@ -39,18 +41,13 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 #endif
         }
 
-        public Preloader StartPreloader() => new Preloader(DataContext).Start();
-
         public new MainWindowViewModel DataContext
         {
             get => (MainWindowViewModel)base.DataContext!;
             init => base.DataContext = value;
         }
-
-        private void MainPaneOpenCloseBtn_OnClick(object? sender, RoutedEventArgs e)
-        {
-            DataContext.IsMainPaneOpened = ((ToggleButton)sender!).IsChecked is true;
-        }
+        
+        public Preloader StartPreloader() => new Preloader(DataContext).Start();
 
         private void AccountBtn_OnClick(object? sender, RoutedEventArgs e) 
             => new AccountViewModel(DataContext).Navigate();
@@ -92,28 +89,29 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
             _loaded = true;
             
-            PassMetaApi.OnlineChanged += DataContext.OnlineChanged;
+            PassMetaApi.OnlineChanged += DataContext.Mode.OnChanged;
         }
         
         private void OnClosing(object? sender, EventArgs e)
         {
-            PassMetaApi.OnlineChanged -= DataContext.OnlineChanged;
+            PassMetaApi.OnlineChanged -= DataContext.Mode.OnChanged;
         }
         
         private void SubscribeOnPageEvents()
         {
             ViewModelPage.OnNavigated += (page) =>
             {
-                DataContext.ActiveMainPaneButtonIndex = page switch
+                var mainPaneButtons = DataContext.MainPane.Buttons;
+                mainPaneButtons.CurrentActive = page switch
                 {
-                    AuthViewModel => 0,
-                    AccountViewModel => 0,
-                    StorageViewModel => 1,
-                    GeneratorViewModel => 2,
-                    SettingsViewModel => 3,
-                    _ => DataContext.ActiveMainPaneButtonIndex
+                    AuthViewModel => mainPaneButtons.Account,
+                    AccountViewModel => mainPaneButtons.Account,
+                    StorageViewModel => mainPaneButtons.Storage,
+                    GeneratorViewModel => mainPaneButtons.Generator,
+                    SettingsViewModel => mainPaneButtons.Settings,
+                    _ => mainPaneButtons.CurrentActive
                 };
-                DataContext.IsMainPaneOpened = false;
+                DataContext.MainPane.IsOpened = false;
                 DataContext.RightBarButtons = page.RightBarButtons;
             };
         }

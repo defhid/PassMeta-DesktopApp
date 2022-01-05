@@ -6,6 +6,7 @@
         xmlns:avaloniaGif="clr-namespace:AvaloniaGif;assembly=AvaloniaGif"
         xmlns:main="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main"
         xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
+        xmlns:mainWindow="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow"
         mc:Ignorable="d"
         d:DesignWidth="800"
         d:DesignHeight="500"
@@ -19,7 +20,7 @@
         WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
-        <main:MainWindowViewModel/>
+        <mainWindow:MainWindowViewModel/>
     </Design.DataContext>
     
     <Grid>
@@ -42,7 +43,7 @@
         </Grid.Styles>
         
         <SplitView x:Name="MainSplitView"
-                   IsPaneOpen="{Binding IsMainPaneOpened}"
+                   IsPaneOpen="{Binding MainPane.IsOpened}"
                    DisplayMode="CompactInline"
                    OpenPaneLength="188"
                    CompactPaneLength="48">
@@ -54,20 +55,20 @@
                             <Setter Property="Margin" Value="4 0 4 0" />
                             <Setter Property="VerticalAlignment" Value="Top" />
                             <Setter Property="VerticalContentAlignment" Value="Center" />
-                            <Setter Property="Padding" Value="{Binding MainPaneButtons.Padding}" />
-                            <Setter Property="Width" Value="{Binding MainPaneButtons.Width}" />
-                            <Setter Property="FontSize" Value="{Binding MainPaneButtons.FontSize}" />
-                            <Setter Property="HorizontalContentAlignment" Value="{Binding MainPaneButtons.HorizontalContentAlignment}" />
-                            <Setter Property="FontFamily" Value="{Binding MainPaneButtons.FontFamily}" />
+                            <Setter Property="Padding" Value="{Binding MainPane.BtnPadding}" />
+                            <Setter Property="Width" Value="{Binding MainPane.BtnWidth}" />
+                            <Setter Property="FontSize" Value="{Binding MainPane.BtnFontSize}" />
+                            <Setter Property="HorizontalContentAlignment" Value="{Binding MainPane.BtnHorizontalContentAlignment}" />
+                            <Setter Property="FontFamily" Value="{Binding MainPane.BtnFontFamily}" />
                         </Style>
                         <Style Selector="Button:disabled">
                             <Setter Property="Template">
                                 <ControlTemplate>
                                     <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
                                                       Content="{TemplateBinding Content}"
-                                                      Padding="{TemplateBinding Padding}"
+                                                      Padding="0"
                                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      HorizontalContentAlignment="Center"
                                                       TextBlock.Foreground="#52C049"
                                                       TextBlock.FontWeight="Bold"/>
                                 </ControlTemplate>
@@ -75,12 +76,11 @@
                         </Style>
                     </Grid.Styles>
                     
-                    <ToggleButton Click="MainPaneOpenCloseBtn_OnClick"
-                                  IsChecked="{Binding IsMainPaneOpened}"
+                    <ToggleButton IsChecked="{Binding MainPane.IsOpened}"
                                   VerticalAlignment="Top"
                                   Margin="4 5 4 4"
                                   Padding="0 0 0 0"
-                                  Width="{Binding MainPaneButtons.Width}"
+                                  Width="{Binding MainPane.BtnWidth}"
                                   Height="40"
                                   FontSize="24"
                                   FontWeight="Bold"
@@ -89,26 +89,26 @@
                                   FontFamily="Segoe MDL2 Assets"
                                   Content="&#xE700;"/>
                     
-                    <StackPanel Spacing="{Binding MainPaneButtons.Spacing}"
+                    <StackPanel Spacing="8"
                                 Margin="0 57 0 0"
                                 VerticalAlignment="Top"
                                 HorizontalAlignment="Left">
                         <Button Click="AccountBtn_OnClick"
-                                IsEnabled="{Binding !MainPaneButtonsActive[0]}"
-                                Content="{Binding MainPaneButtons.Content[0]}"/>
+                                IsEnabled="{Binding !MainPane.Buttons.Account.IsActive}"
+                                Content="{Binding MainPane.Buttons.Account.Content}"/>
                     
                         <Button Click="StorageBtn_OnClick"
-                                IsEnabled="{Binding !MainPaneButtonsActive[1]}"
-                                Content="{Binding MainPaneButtons.Content[1]}"/>
+                                IsEnabled="{Binding !MainPane.Buttons.Storage.IsActive}"
+                                Content="{Binding MainPane.Buttons.Storage.Content}"/>
                         
                         <Button Click="GeneratorBtn_OnClick"
-                                IsEnabled="{Binding !MainPaneButtonsActive[2]}"
-                                Content="{Binding MainPaneButtons.Content[2]}"/>
+                                IsEnabled="{Binding !MainPane.Buttons.Generator.IsActive}"
+                                Content="{Binding MainPane.Buttons.Generator.Content}"/>
                     </StackPanel>
                     
                     <Button Click="SettingsBtn_OnClick"
-                            IsEnabled="{Binding !MainPaneButtonsActive[3]}"
-                            Content="{Binding MainPaneButtons.Content[3]}"
+                            IsEnabled="{Binding !MainPane.Buttons.Settings.IsActive}"
+                            Content="{Binding MainPane.Buttons.Settings.Content}"
                             VerticalAlignment="Bottom"
                             Margin="4 4 4 5"
                             Opacity="0.8"/>
@@ -177,8 +177,8 @@
                                TextAlignment="Center"
                                FontSize="9.5"
                                FontWeight="Bold"
-                               Text="{Binding Mode}"
-                               Foreground="{Binding ModeForeground}"/>
+                               Text="{Binding Mode.Text}"
+                               Foreground="{Binding Mode.Foreground}"/>
                     
                     <Button Grid.Row="1"
                             Click="RefreshBtn_OnClick"

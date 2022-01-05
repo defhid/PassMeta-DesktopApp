@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 {
     using System.Reactive.Linq;
     using System.Threading.Tasks;
@@ -6,7 +6,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
     using Common.Interfaces.Services;
     using Common.Models.Entities;
     using Constants;
-    using DynamicData.Binding;
     using ReactiveUI;
     using Splat;
     using Utils.Extensions;
@@ -45,15 +44,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
         {
             _passFile = passFile;
 
-            _color = this.WhenValueChanged(btn => btn.PassFile)
+            _color = this.WhenAnyValue(btn => btn.PassFile)
                 .Select(pf => pf!.GetPassFileColor())
                 .ToProperty(this, nameof(Color));
             
-            _stateColor = this.WhenValueChanged(btn => btn.PassFile)
+            _stateColor = this.WhenAnyValue(btn => btn.PassFile)
                 .Select(pf => pf!.GetStateColor())
                 .ToProperty(this, nameof(StateColor));
             
-            _opacity = this.WhenValueChanged(btn => btn.PassFile)
+            _opacity = this.WhenAnyValue(btn => btn.PassFile)
                 .Select(pf => pf!.LocalDeleted ? 0.5d : 1d)
                 .ToProperty(this, nameof(Opacity));
             
@@ -66,7 +65,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Components.Storage
 
         public Task OpenAsync()
         {
-            var win = new PassFileWindow(PassFile);
+            var win = new PassFileWin(PassFile);
             win.Closed += (_, _) =>
             {
                 if (win.PassFile is null)

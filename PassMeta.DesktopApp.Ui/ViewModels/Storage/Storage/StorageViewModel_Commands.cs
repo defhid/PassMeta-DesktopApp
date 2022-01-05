@@ -1,14 +1,13 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 {
-    using DesktopApp.Common;
-    using DesktopApp.Common.Interfaces.Services;
-    using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Core.Utils;
-    
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Components.Storage;
+    using Common;
+    using Common.Interfaces.Services;
+    using Common.Models.Entities;
+    using Components;
+    using Core.Utils;
     using DynamicData;
     using Splat;
     using Utils.Extensions;
@@ -69,7 +68,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage
 
         private async Task PassFileAddAsync()
         {
-            var win = new PassFileWindow(new PassFile { Id = 0 });
+            var win = new PassFileWin(new PassFile { Id = 0 });
             
             await win.ShowDialog(MainWindow.Current);
             

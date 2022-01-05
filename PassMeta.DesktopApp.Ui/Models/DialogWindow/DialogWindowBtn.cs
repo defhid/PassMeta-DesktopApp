@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Components.DialogWindow
+namespace PassMeta.DesktopApp.Ui.Models.DialogWindow
 {
     using Common;
     using Enums;
