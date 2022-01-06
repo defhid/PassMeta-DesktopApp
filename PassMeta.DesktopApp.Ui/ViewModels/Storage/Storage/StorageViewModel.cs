@@ -17,25 +17,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
     public partial class StorageViewModel : ViewModelPage
     {
-        public override string UrlPathSegment => "/storage";
-
         public override ContentControl[] RightBarButtons => new ContentControl[] { _btnSave, _btnEditItem };
 
         private static List<PassFile>? _passFiles;
         private static int? _userId;
-        private static string? _mode;
 
         private readonly Button _btnSave;
         private readonly Button _btnEditItem;
 
         #region Texts
-        
-        public string? Mode
-        {
-            get => _mode;
-            set => this.RaiseAndSetIfChanged(ref _mode, value);
-        }
-        
+
         private readonly ObservableAsPropertyHelper<bool> _isNoSectionsTextVisible;
         public bool IsNoSectionsTextVisible => _isNoSectionsTextVisible.Value;
         

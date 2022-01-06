@@ -13,8 +13,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
     public class GeneratorViewModel : ViewModelPage
     {
-        public override string UrlPathSegment => "/generator";
-
         private int _length = 12;
         public int Length
         {

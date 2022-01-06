@@ -10,8 +10,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
     public class AuthRequiredViewModel : ViewModelPage
     {
-        public override string UrlPathSegment => "/auth-required";
-        
         /// <summary><see cref="ViewModelPage"/></summary>
         public Type ForViewModelPageType { get; }
 

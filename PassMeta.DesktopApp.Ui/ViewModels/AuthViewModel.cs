@@ -14,8 +14,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     public class AuthViewModel : ViewModelPage
     {
         private static IAuthService AuthService => Locator.Current.GetService<IAuthService>()!;
-        
-        public override string UrlPathSegment => "/auth";
 
         public string? Login { get; set; }
         

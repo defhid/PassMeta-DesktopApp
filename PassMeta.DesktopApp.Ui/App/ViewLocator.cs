@@ -1,10 +1,11 @@
-namespace PassMeta.DesktopApp.Ui
+namespace PassMeta.DesktopApp.Ui.App
 {
-    using System;
-    using Avalonia.Controls;
-    using Avalonia.Controls.Templates;
     using DesktopApp.Ui.ViewModels.Base;
     
+    using Avalonia.Controls.Templates;
+    using Avalonia.Controls;
+    using System;
+
     public class ViewLocator : IDataTemplate
     {
         public bool SupportsRecycling => false;

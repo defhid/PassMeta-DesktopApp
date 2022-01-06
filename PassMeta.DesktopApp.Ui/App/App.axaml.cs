@@ -1,21 +1,22 @@
-namespace PassMeta.DesktopApp.Ui
+namespace PassMeta.DesktopApp.Ui.App
 {
+    using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Core.Services;
+    using DesktopApp.Core.Utils;
+    using DesktopApp.Ui.ViewModels.Main.MainWindow;
+    using DesktopApp.Ui.Views.Main;
+    
     using Avalonia;
     using Avalonia.Controls.ApplicationLifetimes;
     using Avalonia.Controls.Notifications;
     using Avalonia.Layout;
     using Avalonia.Markup.Xaml;
     
-    using PassMeta.DesktopApp.Common.Interfaces.Services;
-    using PassMeta.DesktopApp.Core.Services;
-    using PassMeta.DesktopApp.Core.Utils;
-    using PassMeta.DesktopApp.Ui.Services;
-    using PassMeta.DesktopApp.Ui.ViewModels.Main;
-    using PassMeta.DesktopApp.Ui.Views.Main;
-    
-    using Splat;
     using System.Threading.Tasks;
-    using ViewModels.Main.MainWindow;
+    using System.Reflection;
+    using ReactiveUI;
+    using Services;
+    using Splat;
 
     public class App : Application
     {
@@ -64,6 +65,8 @@ namespace PassMeta.DesktopApp.Ui
             Locator.CurrentMutable.RegisterConstant<IPassFileService>(new PassFileService());
             
             Locator.CurrentMutable.RegisterConstant<ICryptoService>(new CryptoService());
+            
+            Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
         }
 
         private static MainWindow MakeWindow()

@@ -20,8 +20,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     {
         private static IAccountService AccountService => Locator.Current.GetService<IAccountService>()!;
         private static IAuthService AuthService => Locator.Current.GetService<IAuthService>()!;
-        
-        public override string UrlPathSegment => "/account";
 
         public override ContentControl[] RightBarButtons => new ContentControl[]
         {

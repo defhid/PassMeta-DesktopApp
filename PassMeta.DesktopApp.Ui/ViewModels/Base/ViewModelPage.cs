@@ -10,7 +10,7 @@
     {
         public static event Action<ViewModelPage>? OnNavigated;
 
-        public abstract string? UrlPathSegment { get; }
+        public string? UrlPathSegment { get; }
         
         public IScreen HostScreen { get; }
 
@@ -19,6 +19,7 @@
         protected ViewModelPage(IScreen hostScreen)
         {
             HostScreen = hostScreen;
+            UrlPathSegment = GetType().Name;
         }
         
         protected void NavigateTo<TViewModel>(params object?[]? args) 

@@ -19,8 +19,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     {
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
 
-        public override string UrlPathSegment => "/settings";
-
         public IReadOnlyList<AppCulture> Cultures => AppCulture.All;
 
         public string? ServerUrl { get; set; }
