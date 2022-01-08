@@ -93,9 +93,6 @@
     <data name="DIALOG__DEFAULT_INFO_TITLE" xml:space="preserve">
         <value>Information</value>
     </data>
-    <data name="DIALOG__BTN_CLOSE" xml:space="preserve">
-        <value>Close</value>
-    </data>
     <data name="DIALOG__DEFAULT_FAILURE_TITLE" xml:space="preserve">
         <value>Failure</value>
     </data>
@@ -213,8 +210,8 @@
     <data name="STORAGE__CONTEXT_DELETE" xml:space="preserve">
         <value>Delete</value>
     </data>
-    <data name="STORAGE__CONTEXT_ADD" xml:space="preserve">
-        <value>Add</value>
+    <data name="STORAGE__CONTEXT_ADD_PASSFILE" xml:space="preserve">
+        <value>Add passfile</value>
     </data>
     <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
         <value>Input section name</value>
@@ -262,7 +259,7 @@
         <value>Copy password</value>
     </data>
     <data name="STORAGE__PASSWORD_COPIED" xml:space="preserve">
-        <value>Password '{0}' copied</value>
+        <value>Password is copied to clipboard</value>
     </data>
     <data name="STORAGE__WHAT_COPIED" xml:space="preserve">
         <value>Login '{0}' is copied to clipboard</value>
@@ -318,9 +315,6 @@
     <data name="PASSFILE__STATE_LOCAL_CHANGED" xml:space="preserve">
         <value>Local changed ({0})</value>
     </data>
-    <data name="PASSFILE__LABEL_PWD" xml:space="preserve">
-        <value>Password:</value>
-    </data>
     <data name="PASSFILE__BTN_OK" xml:space="preserve">
         <value>Ok</value>
     </data>
@@ -332,9 +326,6 @@
     </data>
     <data name="PASSFILE__BTN_MERGE" xml:space="preserve">
         <value>Resolve conflicts...</value>
-    </data>
-    <data name="PASSFILE__SOLVE_PROBLEM" xml:space="preserve">
-        <value>Passfile has problem: '{0}'. Please, deal with them first</value>
     </data>
     <data name="PASSFILE__INCORRECT_NAME" xml:space="preserve">
         <value>Invalid name!</value>
@@ -404,5 +395,33 @@
     </data>
     <data name="DICT_AUTH__USER" xml:space="preserve">
         <value>user</value>
+    </data>
+    <data name="PASSERVICE__SUCCESS_COMMIT" xml:space="preserve">
+        <value>Successfully saved!</value>
+    </data>
+    <data name="STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE" xml:space="preserve">
+        <value>Input passphrase for a new passfile</value>
+    </data>
+    <data name="PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
+        <value>New</value>
+    </data>
+    <data name="STORAGE__SECTION_SEARCH_INPUT_WATERMARK" xml:space="preserve">
+        <value>Search passwords...</value>
+    </data>
+    <data name="DIALOG__BTN_CLOSE" xml:space="preserve">
+        <value>Close</value>
+    </data>
+    <data name="STORAGE__CONTEXT_ADD_SECTION" xml:space="preserve">
+        <value>Add section</value>
+    </data>
+    <data name="STORAGE__CONTEXT_ADD_ITEM" xml:space="preserve">
+        <value>Add password</value>
+    </data>
+    <data name="STORAGE__CONFIRM_DELETE_SECTION" xml:space="preserve">
+        <value>Do you really want to delete section '{0}'?</value>
+    </data>
+    <data name="STORAGE__NO_SECTIONS_FOUND" xml:space="preserve">
+        <value>Not found,
+try another keywords...</value>
     </data>
 </root>

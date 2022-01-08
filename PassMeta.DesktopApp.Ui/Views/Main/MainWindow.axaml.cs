@@ -4,8 +4,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using DesktopApp.Ui.Utils;
     using DesktopApp.Ui.ViewModels;
     using DesktopApp.Ui.ViewModels.Base;
-    using DesktopApp.Ui.ViewModels.Main;
-    using DesktopApp.Ui.ViewModels.Storage;
+    using DesktopApp.Ui.ViewModels.Main.MainWindow;
+    using DesktopApp.Ui.ViewModels.Storage.Storage;
     
     using AppContext = Core.Utils.AppContext;
     
@@ -17,8 +17,6 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Controls;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
-    using ViewModels.Main.MainWindow;
-    using ViewModels.Storage.Storage;
 
     public class MainWindow : Window
     {

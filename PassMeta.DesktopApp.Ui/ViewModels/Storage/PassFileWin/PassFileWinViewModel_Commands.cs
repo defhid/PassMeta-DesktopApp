@@ -1,12 +1,11 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Common;
     using Common.Interfaces.Services;
-    using Common.Models.Entities;
     using Constants;
     using Core.Utils;
+    using ReactiveUI;
     using Splat;
 
     public partial class PassFileWinViewModel
@@ -15,17 +14,18 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         
         public void Close()
         {
-            _close?.Invoke();
-            _close = null;
+            _closeAction?.Invoke();
+            _closeAction = null;
+        }
+
+        public async Task ChangePassword()
+        {
+            // TODO
         }
         
         private void Save()
         {
-            if (PassFile.Problem is not null)
-            {
-                _dialogService.ShowFailure(string.Format(Resources.PASSFILE__SOLVE_PROBLEM, PassFile.Problem!.Info));
-                return;
-            }
+            if (PassFile.LocalDeleted) return; // TODO
             
             if (string.IsNullOrWhiteSpace(Name))
             {
@@ -33,38 +33,35 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                 return;
             }
 
-            // TODO?
-            if (Password == string.Empty || PassFile.Id == 0 && string.IsNullOrEmpty(Password))
-            {
-                _dialogService.ShowFailure(Resources.PASSFILE__INCORRECT_PASSPHRASE);
-                return;
-            }
+            var passFile = PassFile.Copy();
+            passFile.Name = Name.Trim();
+            passFile.Color = PassFileColor.List[SelectedColorIndex].Hex;
 
-            var pf = PassFile.Copy();
-            pf.Name = Name.Trim();
-            pf.Color = PassFileColor.List[SelectedColorIndex].Hex;
-            pf.PassPhrase = Password ?? pf.PassPhrase;
-            pf.Data = new List<PassFile.Section>();
-
-            var result = PassFileLocalManager.UpdateInfo(pf);
+            var result = PassFileLocalManager.UpdateInfo(passFile);
             if (result.Ok)
             {
-                OnUpdate?.Invoke(result.Data!);
+                PassFile = passFile;
+                PassFileChanged = true;
+                this.RaisePropertyChanged(nameof(PassFile));
+                Close();
+            }
+            else
+            {
                 
-                PassFile = result.Data!;
-                IsPasswordBoxVisible = false;
             }
         }
 
         private async Task DeleteAsync()
         {
             var confirm = await _dialogService.ConfirmAsync(
-                string.Format(Resources.PASSFILE__CONFIRM_DELETE, PassFile.Name, PassFile.Id));
+                string.Format(Resources.PASSFILE__CONFIRM_DELETE, PassFile!.Name, PassFile.Id));
 
             if (confirm.Bad) return;
 
-            PassFileLocalManager.Delete(PassFile);
-            OnUpdate?.Invoke(null);
+            PassFile = PassFileLocalManager.Delete(PassFile);
+            PassFileChanged = true;
+
+            this.RaisePropertyChanged(nameof(PassFile));
         }
         
         private Task MergeAsync()

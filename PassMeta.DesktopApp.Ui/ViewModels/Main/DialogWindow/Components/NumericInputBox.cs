@@ -1,6 +1,6 @@
-namespace PassMeta.DesktopApp.Ui.Models.DialogWindow
+namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
 {
-    public class DialogWindowNumericBox : IDialogWindowInputBox
+    public class NumericInputBox : IInputBox
     {
         public bool Visible { get; }
         
@@ -8,14 +8,14 @@ namespace PassMeta.DesktopApp.Ui.Models.DialogWindow
         
         public double Value { get; }
 
-        public DialogWindowNumericBox(bool visible)
+        public NumericInputBox(bool visible)
         {
             Visible = visible;
             Placeholder = "";
             Value = 0d;
         }
 
-        public DialogWindowNumericBox(bool visible, string placeholder, double defaultValue)
+        public NumericInputBox(bool visible, string placeholder, double defaultValue)
         {
             Visible = visible;
             Placeholder = placeholder;

@@ -9,57 +9,53 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using Common.Models.Entities;
     using ReactiveUI;
     using Splat;
+    
+    using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
 
     public class PassFileSectionItemBtn : ReactiveObject
     {
-        public string? What { get; set; }
-
-        public string? Password { get; set; }
-
-        private string? _comment;
-        public string? Comment
-        {
-            get => _comment;
-            set => this.RaiseAndSetIfChanged(ref _comment, value);
-        }
-
-        private bool _isReadOnly;
-        public bool IsReadOnly
-        {
-            get => _isReadOnly;
-            set => this.RaiseAndSetIfChanged(ref _isReadOnly, value);
-        }
+        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
         
-        private readonly ObservableAsPropertyHelper<bool> _isCommentTextVisible;
-        public bool IsCommentTextVisible => _isCommentTextVisible.Value;
+        private readonly ObservableAsPropertyHelper<bool> _isReadOnly;
+        public bool IsReadOnly => _isReadOnly.Value;
+        
+        public string? What { get; set; }
+        public string? Password { get; set; }
+        public string? Comment { get; set; }
 
-        private readonly ObservableAsPropertyHelper<bool> _isCommentInputVisible;
-        public bool IsCommentInputVisible => _isCommentInputVisible.Value;
-
-        private readonly Action<PassFileSectionItemBtn> _onDelete;
-
-        private readonly  Action<PassFileSectionItemBtn, int> _onMove;
+        public IObservable<bool> IsCommentTextVisible { get; }
+        public IObservable<bool> IsCommentInputVisible { get; }
+        
+        public ReactCommand CopyWhatCommand { get; }
+        public ReactCommand CopyPasswordCommand { get; }
+        public ReactCommand DeleteCommand { get; }
+        public ReactCommand UpCommand { get; }
+        public ReactCommand DownCommand { get; }
 
         public PassFileSectionItemBtn(PassFile.Section.Item item,
-            bool readOnly,
+            IObservable<bool> editModeObservable,
             Action<PassFileSectionItemBtn> onDelete,
             Action<PassFileSectionItemBtn, int> onMove)
         {
             What = string.Join('\n', item.What.Select(x => x.Trim()).Where(x => x != string.Empty));
             Password = item.Password;
             Comment = item.Comment;
-            IsReadOnly = readOnly;
 
-            _onDelete = onDelete;
-            _onMove = onMove;
-
-            _isCommentTextVisible = this.WhenAnyValue(btn => btn.IsReadOnly, btn => btn.Comment)
-                .Select(pair => pair.Item1 && pair.Item2 != string.Empty)
-                .ToProperty(this, nameof(IsCommentTextVisible));
+            _isReadOnly = editModeObservable.Select(editMode => !editMode)
+                .ToProperty(this, nameof(IsReadOnly));
             
-            _isCommentInputVisible = this.WhenAnyValue(btn => btn.IsReadOnly)
-                .Select(isReadOnly => !isReadOnly)
-                .ToProperty(this, nameof(IsCommentInputVisible));
+            IsCommentTextVisible = this.WhenAnyValue(btn => btn.IsReadOnly, btn => btn.Comment)
+                .Select(pair => pair.Item1 && pair.Item2 != string.Empty);
+            
+            IsCommentInputVisible = this.WhenAnyValue(btn => btn.IsReadOnly)
+                .Select(isReadOnly => !isReadOnly);
+
+            CopyWhatCommand = ReactiveCommand.CreateFromTask(_CopyWhatAsync);
+            CopyPasswordCommand = ReactiveCommand.CreateFromTask(_CopyPasswordAsync);
+            
+            DeleteCommand = ReactiveCommand.Create(() => onDelete(this));
+            UpCommand = ReactiveCommand.Create(() => onMove(this, -1));
+            DownCommand = ReactiveCommand.Create(() => onMove(this, 1));
         }
 
         public PassFile.Section.Item ToItem() => new()
@@ -76,31 +72,23 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 : string.Join('\n', What.Split('\n').Select(x => x.Trim()).Where(x => x != string.Empty));
         }
         
-        #region Commands
+        #region Command funcs
         
-        private async Task CopyWhatAsyncCommand()
+        private async Task _CopyWhatAsync()
         {
             var what = _NormalizeWhat().Split('\n').FirstOrDefault(x => x != string.Empty) ?? string.Empty;
             await TextCopy.ClipboardService.SetTextAsync(what);
 
-            Locator.Current.GetService<IDialogService>()!
-                .ShowInfo(string.Format(Resources.STORAGE__WHAT_COPIED, what));
+            _dialogService.ShowInfo(string.Format(Resources.STORAGE__WHAT_COPIED, what));
         }
 
-        private async Task CopyPasswordAsyncCommand()
+        private async Task _CopyPasswordAsync()
         {
             var password = Password ?? string.Empty;
             await TextCopy.ClipboardService.SetTextAsync(password);
             
-            Locator.Current.GetService<IDialogService>()!
-                .ShowInfo(string.Format(Resources.STORAGE__PASSWORD_COPIED, password));
+            _dialogService.ShowInfo(Resources.STORAGE__PASSWORD_COPIED);
         }
-
-        private void DeleteCommand() => _onDelete(this);
-        
-        private void UpCommand() => _onMove(this, -1);
-        
-        private void DownCommand() => _onMove(this, 1);
 
         #endregion
     }

@@ -1,7 +1,5 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
-    using DesktopApp.Common.Models.Entities;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -14,12 +12,13 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// </summary>
         /// <remarks>Automatic errors showing.</remarks>
         /// <returns>Actual current passfile list.</returns>
-        Task<List<PassFile>> GetPassFileListAsync();
+        Task RefreshLocalPassFilesAsync();
 
         /// <summary>
         /// Apply changes from local manager and commit locally.
         /// </summary>
+        /// <remarks>Automatic errors showing.</remarks>
         /// <returns>Actual current passfile list.</returns>
-        Task<List<PassFile>> ApplyPassFileLocalChangesAsync();
+        Task ApplyPassFileLocalChangesAsync();
     }
 }

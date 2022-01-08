@@ -3,7 +3,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Constants;
+    using Extra;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -11,8 +11,6 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
     /// </summary>
     public class PassFile
     {
-        private string? _name;
-
         /// <summary>
         /// Passfile identifier.
         /// </summary>
@@ -23,11 +21,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// Passfile name.
         /// </summary>
         [JsonProperty("name")]
-        public string Name
-        {
-            get => _name ?? "?";
-            set => _name = value;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Passfile distinctive color.
@@ -112,8 +106,20 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// </summary>
         [JsonIgnore]
         public bool LocalDeleted => Id < 1 && Origin is not null;
+        
+        /// <summary>
+        /// Is passfile unchanged locally?
+        /// </summary>
+        [JsonIgnore]
+        public bool LocalNotChanged => Id > 0 && Origin is null;
 
         #endregion
+
+        /// <summary></summary>
+        public PassFile()
+        {
+            Name ??= "?";
+        }
 
         /// <inheritdoc />
         public override string ToString() => $"<Passfile Id={Id}, Name='{Name.Replace("'", "\"")}'>";
@@ -124,9 +130,36 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         public PassFile Copy(bool copyData = true)
         {
             var clone = (PassFile)MemberwiseClone();
-            clone.Origin = null;
+            clone.Origin = Origin?.Copy(false);
             clone.Data = copyData ? clone.Data?.Select(section => section.Copy()).ToList() : null;
             return clone;
+        }
+
+        /// <summary>
+        /// Set information fields from other <paramref name="passFile"/>.
+        /// </summary>
+        public void RefreshInfoFieldsFrom(PassFile passFile)
+        {
+            Name = passFile.Name;
+            Color = passFile.Color;
+            Origin = passFile.Origin?.Copy(false);
+            InfoChangedOn = passFile.InfoChangedOn;
+        }
+        
+        /// <summary>
+        /// Set data fields from other <paramref name="passFile"/>.
+        /// </summary>
+        public void RefreshDataFieldsFrom(PassFile passFile, bool refreshDecryptedData)
+        {
+            if (refreshDecryptedData)
+            {
+                Data = passFile.Data?.Select(section => section.Copy()).ToList();
+            }
+            DataEncrypted = passFile.DataEncrypted;
+            PassPhrase = passFile.PassPhrase;
+            Origin = passFile.Origin?.Copy(false);
+            Version = passFile.Version;
+            VersionChangedOn = passFile.VersionChangedOn;
         }
 
         /// <summary>
@@ -134,26 +167,38 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// </summary>
         public class Section
         {
-            private string? _name;
-            private List<Item>? _items;
+            private string? _search;
+            
+            /// <summary>
+            /// Section identifier (GUID).
+            /// </summary>
+            [JsonProperty("id")]
+            public string Id { get; set; }
 
             /// <summary>
             /// Section name.
             /// </summary>
             [JsonProperty("nm")]
-            public string Name { 
-                get => _name ??= "?";
-                set => _name = value;
-            }
+            public string Name { get; set; }
 
             /// <summary>
             /// Section items.
             /// </summary>
             [JsonProperty("it")]
-            public List<Item> Items
+            public List<Item> Items { get; set; }
+
+            /// <summary>
+            /// Prepared value for search.
+            /// </summary>
+            [JsonIgnore]
+            public string Search => _search ??= Name.Trim().ToLower();
+
+            /// <summary></summary>
+            public Section()
             {
-                get => _items ??= new List<Item>();
-                set => _items = value;
+                Id ??= Guid.NewGuid().ToString();
+                Name ??= "?";
+                Items ??= new List<Item>();
             }
 
             /// <summary>
@@ -170,38 +215,38 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             /// </summary>
             public class Item
             {
-                private string[]? _what;
-                private string? _value;
-                private string? _comment;
-
+                private string? _search;
+                
                 /// <summary>
                 /// Logins: email, phone, etc.
                 /// </summary>
                 [JsonProperty("wh")]
-                public string[] What
-                {
-                    get => _what ?? Array.Empty<string>(); 
-                    set => _what = value;
-                }
-                
+                public string[] What { get; set; }
+
                 /// <summary>
                 /// One password.
                 /// </summary>
                 [JsonProperty("pw")]
-                public string Password
-                {
-                    get => _value ?? string.Empty; 
-                    set => _value = value;
-                }
+                public string Password { get; set; }
 
                 /// <summary>
                 /// Some comment.
                 /// </summary>
                 [JsonProperty("cm")]
-                public string Comment
+                public string Comment { get; set; }
+                
+                /// <summary>
+                /// Prepared value for search.
+                /// </summary>
+                [JsonIgnore]
+                public string Search => _search ??= Comment.Trim().ToLower();
+
+                /// <summary></summary>
+                public Item()
                 {
-                    get => _comment ?? string.Empty; 
-                    set => _comment = value;
+                    What ??= Array.Empty<string>();
+                    Password ??= string.Empty;
+                    Comment ??= string.Empty;
                 }
 
                 /// <summary>

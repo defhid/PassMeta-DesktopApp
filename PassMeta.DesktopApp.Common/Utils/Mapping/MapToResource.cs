@@ -7,13 +7,14 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
     /// <summary>
     /// Mapping to resource.
     /// </summary>
-    public class MapToResource : IMapping
+    public class MapToResource<TValueFrom> : IMapping<TValueFrom, string>
+        where TValueFrom : notnull
     {
-        private readonly string _fromValue;
+        private readonly TValueFrom _fromValue;
         private readonly string _toResourceName;
 
         /// <inheritdoc />
-        public string From => _fromValue;
+        public TValueFrom From => _fromValue;
 
         /// <inheritdoc />
         public string To => Resources.ResourceManager.GetString(_toResourceName)!;
@@ -21,7 +22,7 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
         /// <summary>
         /// Create mapping from resource name.
         /// </summary>
-        public MapToResource(string value, string resourceName)
+        public MapToResource(TValueFrom value, string resourceName)
         {
             _fromValue = value;
             _toResourceName = resourceName;
@@ -30,7 +31,7 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
         /// <summary>
         /// Create mapping from resource descriptor (() => Resources.SomeResourceNameForMapping).
         /// </summary>
-        public MapToResource(string value, Expression<Func<string>> resourceDescriptor) 
+        public MapToResource(TValueFrom value, Expression<Func<string>> resourceDescriptor) 
             : this(value, ((MemberExpression)resourceDescriptor.Body).Member.Name)
         {
         }

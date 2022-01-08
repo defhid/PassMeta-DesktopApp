@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
              xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+             xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
              x:Class="PassMeta.DesktopApp.Ui.Views.GeneratorView"
              mc:Ignorable="d"
              d:DesignWidth="800"
@@ -70,7 +71,7 @@
                     Margin="0 0 15 0"
                     Padding="8 8 8 8"
                     FontSize="26"
-                    FontFamily="Segoe MDL2 Assets"
+                    FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
                     Content="&#xE8C8;"
                     IsVisible="{Binding Generated}"
                     Command="{Binding CopyCommand}"/>
@@ -80,7 +81,7 @@
                     Margin="0 0 15 0"
                     Padding="8 8 8 8"
                     FontSize="26"
-                    FontFamily="Segoe MDL2 Assets"
+                    FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
                     Content="&#xE8D7;"
                     Command="{Binding GenerateCommand}"/>
         </Grid>

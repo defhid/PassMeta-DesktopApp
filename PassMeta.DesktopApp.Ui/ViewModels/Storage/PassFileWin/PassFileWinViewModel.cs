@@ -7,27 +7,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Avalonia.Media;
     using Common;
     using Common.Models.Entities;
+    using Common.Utils.Extensions;
     using Components;
     using Constants;
-    using DynamicData;
     using ReactiveUI;
     using Utils.Extensions;
 
     public partial class PassFileWinViewModel : ReactiveObject
     {
-        public event Action<PassFile?>? OnUpdate;
+        public bool PassFileChanged { get; private set; }
         
-        private Action? _close;
+        private Action? _closeAction;
         
-        private PassFile _passFile;
-        public PassFile PassFile
-        {
-            get => _passFile;
-            set => this.RaiseAndSetIfChanged(ref _passFile, value);
-        }
+        public PassFile? PassFile { get; private set; }
         
-        private readonly ObservableAsPropertyHelper<string> _title;
-        private string Title => _title.Value;
+        public IObservable<string> Title { get; }
         
         #region Input
         
@@ -45,110 +39,79 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             set => this.RaiseAndSetIfChanged(ref _selectedColorIndex, value);
         }
 
-        private string? _password;
-        public string? Password
-        {
-            get => _password;
-            set => this.RaiseAndSetIfChanged(ref _password, value);
-        }
-        
-        private bool _isPasswordBoxVisible;
-        public bool IsPasswordBoxVisible
-        {
-            get => _isPasswordBoxVisible;
-            set
-            {
-                Password = value ? string.Empty : null;
-                this.RaiseAndSetIfChanged(ref _isPasswordBoxVisible, value);
-            }
-        }
-
-        public BtnState PasswordBtn => new(
-            this.WhenAnyValue(vm => vm.IsPasswordBoxVisible)
-                .Select(isVisible => isVisible ? "\uF78A" : "\uE70F"),
-            isVisibleObservable: _passFileNotNew);
-
         #endregion
 
-        private readonly ObservableAsPropertyHelper<string> _createdOn;
-        private string CreatedOn => _createdOn.Value;
+        #region Read-only fields
 
-        private readonly ObservableAsPropertyHelper<string> _changedOn;
-        private string ChangedOn => _changedOn.Value;
+        public IObservable<string> CreatedOn { get; }
+        public IObservable<string> ChangedOn { get; }
+        public IObservable<ISolidColorBrush> StateColor { get; }
+        public IObservable<string> State { get; }
 
-        private readonly ObservableAsPropertyHelper<ISolidColorBrush> _stateColor;
-        private ISolidColorBrush StateColor => _stateColor.Value;
+        #endregion
         
-        private readonly ObservableAsPropertyHelper<string> _state;
-        private string State => _state.Value;
-
         #region Bottom buttons
 
-        public BtnState OkBtn => new(
-            _anyChanged.Select(changed => changed ? Resources.PASSFILE__BTN_SAVE : Resources.PASSFILE__BTN_OK),
-            _anyChanged.Select(changed => ReactiveCommand.Create(changed ? Save : Close)));
-
-        public BtnState DeleteBtn => new(
-            commandObservable: Observable.Return(ReactiveCommand.CreateFromTask(DeleteAsync, _passFileNotNew)));
-
-        public BtnState MergeBtn => new(
-            commandObservable: Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync, _passFileNotNew)));
+        public BtnState OkBtn { get; }
+        public BtnState DeleteBtn { get; }
+        public BtnState MergeBtn { get; }
         
         #endregion
-        
-        private readonly ObservableAsPropertyHelper<bool> _isNew;
-        private bool IsNew => _isNew.Value;
-        
-        private readonly IObservable<PassFile> _passFileChanged;
-        private readonly IObservable<bool> _passFileNotNew;
-        private readonly IObservable<bool> _anyChanged;
 
-        public PassFileWinViewModel(PassFile passFile, Action close)
+        public PassFileWinViewModel(PassFile passFile, Action closeAction)
         {
-            _passFile = passFile;
-            _close = close;
+            PassFile = passFile;
+            _closeAction = closeAction;
+
+            PassFileChanged = false;
             
             _name = passFile.Name;
-            _password = null;
-            _isPasswordBoxVisible = passFile.Id == 0;
             SelectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
 
-            _passFileChanged = this.WhenAnyValue(vm => vm.PassFile)!;
-            _passFileNotNew = _passFileChanged.Select(pf => pf.Id > 0);
-            _anyChanged = this.WhenAnyValue(
+            var passFileChanged = this.WhenAnyValue(vm => vm.PassFile)!;
+            
+            var passFileNotNew = passFileChanged.Select(pf => pf.Id > 0);
+            var anyChanged = this.WhenAnyValue(
                     vm => vm.Name,
-                    vm => vm.SelectedColorIndex,
-                    vm => vm.Password,
-                    vm => vm.IsNew)
+                    vm => vm.SelectedColorIndex)
                 .Select(val =>
-                    val.Item1 != _passFile.Name ||
-                    PassFileColor.List[val.Item2] != _passFile.GetPassFileColor() ||
-                    !string.IsNullOrEmpty(val.Item3) ||
-                    val.Item4);
+                    val.Item1 != PassFile.Name ||
+                    PassFileColor.List[val.Item2] != PassFile.GetPassFileColor());
 
-            _title = _passFileChanged.Select(pf => string.Format(pf.Id > 0 
+            Title = passFileChanged.Select(pf => string.Format(pf.Id > 0 
                     ? Resources.PASSFILE__TITLE 
-                    : Resources.PASSFILE__TITLE_NEW, pf.Name))
-                .ToProperty(this, nameof(Title));
+                    : Resources.PASSFILE__TITLE_NEW, pf.Name));
             
-            _createdOn = _passFileChanged.Select(pf => pf.CreatedOn == default 
+            CreatedOn = passFileChanged.Select(pf => pf.CreatedOn == default 
                     ? string.Empty 
-                    : pf.CreatedOn.ToString(CultureInfo.CurrentCulture))
-                .ToProperty(this, nameof(CreatedOn));
+                    : pf.CreatedOn.ToString(CultureInfo.CurrentCulture));
             
-            _changedOn = _passFileChanged.Select(pf => pf.InfoChangedOn == default 
+            ChangedOn = passFileChanged.Select(pf => pf.InfoChangedOn == default 
                     ? string.Empty 
-                    : pf.InfoChangedOn.ToString(CultureInfo.CurrentCulture))
-                .ToProperty(this, nameof(ChangedOn));
+                    : pf.InfoChangedOn.ToString(CultureInfo.CurrentCulture));
             
-            _stateColor = _passFileChanged.Select(pf => pf.GetStateColor())
-                .ToProperty(this, nameof(StateColor));
+            StateColor = passFileChanged.Select(pf => pf.GetStateColor());
             
-            _state = _passFileChanged.Select(_MakeState)
-                .ToProperty(this, nameof(State));
-
-            _isNew = _passFileChanged.Select(pf => pf.Id == 0)
-                .ToProperty(this, nameof(IsNew));
+            State = passFileChanged.Select(_MakeState);
+            
+            
+            OkBtn = new BtnState
+            {
+                ContentObservable = anyChanged.Select(changed => changed ? Resources.PASSFILE__BTN_SAVE : Resources.PASSFILE__BTN_OK),
+                CommandObservable = anyChanged.Select(changed => ReactiveCommand.Create(changed ? Save : Close))
+            };
+            
+            DeleteBtn = new BtnState
+            {
+                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(DeleteAsync, passFileNotNew)),
+                IsVisibleObservable = Observable.Return(true)
+            };
+            
+            MergeBtn = new BtnState
+            {
+                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync, passFileNotNew)),
+                IsVisibleObservable = Observable.Return(true)
+            };
         }
         
         private static string _MakeState(PassFile passFile)

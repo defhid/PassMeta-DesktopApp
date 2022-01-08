@@ -13,14 +13,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
             set => this.RaiseAndSetIfChanged(ref _isActive, value);
         }
 
-        private readonly ObservableAsPropertyHelper<string> _content;
-        public string Content => _content.Value;
+        public IObservable<string> Content { get; }
 
         public MainPaneBtn(string text, string icon, IObservable<bool> shortModeObservable)
         {
-            _content = shortModeObservable.Select(isShort => isShort
-                ? icon
-                : text).ToProperty(this, nameof(Content));
+            Content = shortModeObservable.Select(isShort => isShort ? icon : text);
         }
     }
 }

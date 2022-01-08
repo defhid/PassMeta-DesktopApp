@@ -169,7 +169,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
         }
 
-        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, string? context, IMapper? badWhatMapper)
+        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, string? context, IMapper<string, string>? badWhatMapper)
             where TResponse : OkBadResponse
         {
             string responseBody;
@@ -271,7 +271,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             private string? _context;
 
-            private IMapper? _handleBad;
+            private IMapper<string, string>? _handleBad;
 
             /// <summary></summary>
             public Request(string method, string url, object? data)
@@ -286,7 +286,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             /// <summary>
             /// Enable bad response handling (failure auto-showing).
             /// </summary>
-            public Request WithBadHandling(IMapper? whatMapper = null)
+            public Request WithBadHandling(IMapper<string, string>? whatMapper = null)
             {
                 _handleBad = whatMapper;
                 return this;

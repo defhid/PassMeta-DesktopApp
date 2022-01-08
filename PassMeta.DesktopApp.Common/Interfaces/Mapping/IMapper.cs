@@ -6,17 +6,19 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Mapping
     /// <summary>
     /// Simple mapper.
     /// </summary>
-    public interface IMapper
+    public interface IMapper<TValueFrom, out TValueTo>
+        where TValueFrom : notnull
+        where TValueTo : notnull
     {
         /// <summary>
         /// Get mapped value corresponding to parameter <paramref name="value"/>
         /// </summary>
         [return: NotNullIfNotNull("value")]
-        string? Map(string? value);
+        TValueTo? Map(TValueFrom? value);
 
         /// <summary>
         /// Get all mappings.
         /// </summary>
-        IEnumerable<IMapping> GetMappings();
+        IEnumerable<IMapping<TValueFrom, TValueTo>> GetMappings();
     }
 }

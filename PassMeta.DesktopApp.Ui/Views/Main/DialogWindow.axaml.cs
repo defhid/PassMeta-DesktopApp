@@ -1,12 +1,12 @@
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
-    using DesktopApp.Ui.ViewModels.Main;
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Input;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
-    using Enums;
+    using Common.Enums;
+    using ViewModels.Main.DialogWindow;
 
     public class DialogWindow : Window
     {
@@ -19,48 +19,25 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             ResultButton = DialogButton.Close;
             AvaloniaXamlLoader.Load(this);
         }
+        
+        private void Button_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var buttonKind = ((Button)sender!).Tag!;
+            ResultButton = (DialogButton)buttonKind;
+            Close();
+        }
 
-        private void OkButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            ResultButton = DialogButton.Ok;
-            Close();
-        }
-        
-        private void YesButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            ResultButton = DialogButton.Yes;
-            Close();
-        }
-        
-        private void NoButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            ResultButton = DialogButton.No;
-            Close();
-        }
-        
-        private void CancelButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            ResultButton = DialogButton.Cancel;
-            Close();
-        }
-        
-        private void CloseButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            ResultButton = DialogButton.Close;
-            Close();
-        }
-        
         private void Input_OnKeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
             var dataContext = (DialogWindowViewModel)DataContext!;
 
-            if (dataContext.WindowBtnOk.Visible)
+            if (dataContext.BtnOk.IsVisible)
             {
                 ResultButton = DialogButton.Ok;
                 Close();
             }
-            else if (dataContext.WindowBtnYes.Visible)
+            else if (dataContext.BtnYes.IsVisible)
             {
                 ResultButton = DialogButton.Yes;
                 Close();
@@ -71,7 +48,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         {
             if (_focused) return;
             var btn = (Button)sender!;
-            if (btn.Tag as string == ((DialogWindowViewModel)DataContext!).BtnFocusedTag)
+            if ((DialogButton)btn.Tag! == ((DialogWindowViewModel)DataContext!).BtnFocused)
             {
                 btn.Focus();
             }
@@ -82,7 +59,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             if (_focused) return;
             var dataContext = (DialogWindowViewModel)DataContext!;
 
-            if (dataContext.WindowTextBox.Visible || dataContext.WindowNumericBox.Visible)
+            if (dataContext.WindowTextInputBox.Visible || dataContext.WindowNumericInputBox.Visible)
             {
                 ((Control)sender!).Focus();
                 _focused = true;

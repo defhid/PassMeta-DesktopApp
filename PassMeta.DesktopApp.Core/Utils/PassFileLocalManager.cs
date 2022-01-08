@@ -4,6 +4,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using Common.Interfaces.Services;
     using Common.Models;
     using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using Extensions;
     
     using System;
@@ -12,7 +13,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    
     using Newtonsoft.Json;
     using Splat;
 
@@ -75,7 +75,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Reflects uncommitted state, changed passfiles are a priority.
         /// </summary>
         public static List<PassFile> GetCurrentList() => _currentPassFiles
-            .Select(pf => (pf.changed ?? pf.source)!.Copy(false))
+            .Select(pf => (pf.changed ?? pf.source)!.Copy())
             .ToList();
         
         /// <summary>
@@ -89,9 +89,9 @@ namespace PassMeta.DesktopApp.Core.Utils
             .ToList();
 
         /// <summary>
-        /// Load data for <paramref name="passFile"/>.
+        /// Load <see cref="PassFile.DataEncrypted"/> for <paramref name="passFile"/>.
         /// </summary>
-        public static async Task<Result<string>> GetDataAsync(PassFile passFile, int? version = null)
+        public static async Task<Result<string>> GetEncryptedDataAsync(PassFile passFile, int? version = null)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
@@ -102,7 +102,16 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 var one = (_currentPassFiles[found].changed ?? _currentPassFiles[found].source)!;
                 if (one.DataEncrypted != null)
+                {
                     return Result.Success<string>(one.DataEncrypted);
+                }
+                if (one.Data != null)
+                {
+                    var res = one.Encrypt();
+                    return res.Ok 
+                        ? Result.Success<string>(one.DataEncrypted!) 
+                        : res.WithNullData<string>();
+                }
             }
             
             try
@@ -140,7 +149,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             var passFile = new PassFile
             {
                 Id = (ids.Any() ? Math.Min(ids.Min() - 1, 0) : 0) - 1,
-                Name = string.Empty,
+                Name = Resources.PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME,
                 InfoChangedOn = DateTime.Now,
                 Version = 1,
                 VersionChangedOn = DateTime.Now,
@@ -167,11 +176,29 @@ namespace PassMeta.DesktopApp.Core.Utils
         }
 
         /// <summary>
+        /// Set problem to passfile.
+        /// </summary>
+        public static bool TrySetProblem(int passFileId, PassFileProblem? problem)
+        {
+            var found = _currentPassFiles.FindIndex(pf =>
+                pf.source?.Id == passFileId || 
+                pf.changed?.Id == passFileId || 
+                pf.source?.Origin?.Id == passFileId);
+
+            if (found < 0) return false;
+            
+            var (source, changed) = _currentPassFiles[found];
+            (changed ?? source)!.Problem = problem;
+            
+            return true;
+        }
+
+        /// <summary>
         /// Update passfile information.
         /// </summary>
-        /// <param name="passFile">Passfile information.</param>
+        /// <param name="passFile">Passfile information. Will be refreshed if success.</param>
         /// <param name="fromRemote">Is <paramref name="passFile"/> information from remote?</param>
-        public static Result<PassFile> UpdateInfo(PassFile passFile, bool fromRemote = false)
+        public static Result UpdateInfo(PassFile passFile, bool fromRemote = false)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
@@ -179,19 +206,21 @@ namespace PassMeta.DesktopApp.Core.Utils
                 pf.source?.Origin?.Id == passFile.Id);
             
             if (found < 0)
-                return ManagerError($"Can't find {passFile} to update information!").WithNullData<PassFile>();
+                return ManagerError($"Can't find {passFile} to update information!");
 
             var (source, changed) = _currentPassFiles[found];
 
             if (source?.Name == passFile.Name && source.Color == passFile.Color)
             {
                 _currentPassFiles[found] = (source, null);
-                return Result.Success(source.Copy());
+                passFile.RefreshInfoFieldsFrom(source);
+                return Result.Success();
             }
 
             if (changed?.Name == passFile.Name && changed.Color == passFile.Color)
             {
-                return Result.Success(changed.Copy());
+                passFile.RefreshInfoFieldsFrom(changed);
+                return Result.Success();
             }
 
             changed ??= source!.Copy(false);
@@ -210,7 +239,9 @@ namespace PassMeta.DesktopApp.Core.Utils
             _RemoveOriginIfRequired(changed);
 
             _currentPassFiles[found] = (source, changed);
-            return Result.Success(changed.Copy());
+            
+            passFile.RefreshInfoFieldsFrom(changed);
+            return Result.Success();
         }
         
         /// <summary>
@@ -218,12 +249,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         /// <param name="passFile">
         /// Passfile with <see cref="PassFile.DataEncrypted"/> or <see cref="PassFile.Data"/> and <see cref="PassFile.PassPhrase"/>,
-        /// depending on <paramref name="fromRemote"/>.
+        /// depending on <paramref name="fromRemote"/>. Will be refreshed if success.
         /// </param>
         /// <param name="fromRemote">
         /// Is <paramref name="passFile"/> data from remote?
         /// </param>
-        public static Result<PassFile> UpdateData(PassFile passFile, bool fromRemote = false)
+        public static Result UpdateData(PassFile passFile, bool fromRemote = false)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
@@ -231,7 +262,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 pf.source?.Origin?.Id == passFile.Id);
             
             if (found < 0)
-                return ManagerError($"Can't find {passFile} to update data!").WithNullData<PassFile>();
+                return ManagerError($"Can't find {passFile} to update data!");
             
             var (source, changed) = _currentPassFiles[found];
 
@@ -241,7 +272,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             if (fromRemote)
             {
                 if (passFile.DataEncrypted is null)
-                    return ManagerError($"Can't update {passFile} encrypted data to null!").WithNullData<PassFile>();
+                    return ManagerError($"Can't update {passFile} encrypted data to null!");
                 
                 changed.DataEncrypted = passFile.DataEncrypted;
                 changed.Data = null;
@@ -254,10 +285,10 @@ namespace PassMeta.DesktopApp.Core.Utils
             else
             {
                 if (passFile.Data is null)
-                    return ManagerError($"Can't update {passFile} data to null!").WithNullData<PassFile>();
+                    return ManagerError($"Can't update {passFile} data to null!");
                 
                 if (passFile.PassPhrase is null)
-                    return ManagerError($"Can't update {passFile} data without passphrase!").WithNullData<PassFile>();
+                    return ManagerError($"Can't update {passFile} data without passphrase!");
                 
                 changed.DataEncrypted = null;
                 changed.Data = passFile.Data.Select(section => section.Copy()).ToList();
@@ -269,7 +300,65 @@ namespace PassMeta.DesktopApp.Core.Utils
             _RemoveOriginIfRequired(changed);
 
             _currentPassFiles[found] = (source, changed);
-            return Result.Success(changed.Copy());
+            passFile.RefreshDataFieldsFrom(changed, false);
+            return Result.Success();
+        }
+        
+        /// <summary>
+        /// Update passfile data without redundant copying.
+        /// </summary>
+        /// <param name="passFile">
+        /// Passfile with <see cref="PassFile.Data"/> and <see cref="PassFile.PassPhrase"/>.
+        /// Will be refreshed if success.
+        /// </param>
+        /// <param name="update">
+        /// Action that must reflect <paramref name="passFile"/> changes.
+        /// Used when internal changed is decrypted.
+        /// </param>
+        public static Result UpdateDataSelectively(PassFile passFile, Action<List<PassFile.Section>> update)
+        {
+            var found = _currentPassFiles.FindIndex(pf =>
+                pf.source?.Id == passFile.Id || 
+                pf.changed?.Id == passFile.Id || 
+                pf.source?.Origin?.Id == passFile.Id);
+            
+            if (found < 0)
+                return ManagerError($"Can't find {passFile} to update data selectively!");
+            
+            var (source, changed) = _currentPassFiles[found];
+
+            changed ??= source!.Copy();
+            changed.Origin ??= source;
+            
+            changed.DataEncrypted = null;
+
+            if (changed.Data is null)
+            {
+                changed.Data = passFile.Data!.Select(section => section.Copy()).ToList();
+                changed.PassPhrase = passFile.PassPhrase;
+            }
+            else
+            {
+                try
+                {
+                    update(changed.Data);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Selective passfile data update failed");
+                    
+                    changed.Data = passFile.Data!.Select(section => section.Copy()).ToList();
+                    changed.PassPhrase = passFile.PassPhrase;
+                }
+            }
+            
+            changed.Version = source is null ? changed.Version : source.Version + 1;
+            changed.VersionChangedOn = DateTime.Now;
+            
+            _currentPassFiles[found] = (source, changed);
+            
+            passFile.RefreshDataFieldsFrom(changed, false);
+            return Result.Success();
         }
 
         /// <summary>
@@ -278,30 +367,29 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         /// <param name="passFile">Passfile information.</param>
         /// <param name="fromRemote">Is <paramref name="passFile"/> deleted from remote? (delete finally)</param>
-        public static void Delete(PassFile passFile, bool fromRemote = false)
+        public static PassFile? Delete(PassFile passFile, bool fromRemote = false)
         {
             var found = _currentPassFiles.FindIndex(pf => pf.source?.Id == passFile.Id);
             if (found < 0)
             {
                 _currentPassFiles.RemoveAll(pf => pf.changed?.Id == passFile.Id);
+                return null;
             }
-            else
-            {
-                if (fromRemote)
-                {
-                    _deletedPassFiles.Add(_currentPassFiles[found].source!);
-                    _currentPassFiles.RemoveAt(found);
-                }
-                else
-                {
-                    var (source, changed) = _currentPassFiles[found];
             
-                    changed ??= source!.Copy();
-                    changed.Id = 0;
-
-                    _currentPassFiles[found] = (source, changed);
-                }
+            if (fromRemote)
+            {
+                _deletedPassFiles.Add(_currentPassFiles[found].source!);
+                _currentPassFiles.RemoveAt(found);
+                return null;
             }
+            
+            var (source, changed) = _currentPassFiles[found];
+            
+            changed ??= source!.Copy();
+            changed.Id = 0;
+
+            _currentPassFiles[found] = (source, changed);
+            return changed.Copy();
         }
 
         /// <summary>

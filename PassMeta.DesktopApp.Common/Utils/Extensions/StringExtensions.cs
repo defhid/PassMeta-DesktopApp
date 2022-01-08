@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Core.Utils.Extensions
+namespace PassMeta.DesktopApp.Common.Utils.Extensions
 {
     /// <summary>
     /// Extension methods for <see cref="string"/>.

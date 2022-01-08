@@ -691,6 +691,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Successfully saved!.
+        /// </summary>
+        public static string PASSERVICE__SUCCESS_COMMIT {
+            get {
+                return ResourceManager.GetString("PASSERVICE__SUCCESS_COMMIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input your passphrase.
         /// </summary>
         public static string PASSFILE__ASK_PASSPHRASE {
@@ -817,29 +826,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password:.
-        /// </summary>
-        public static string PASSFILE__LABEL_PWD {
-            get {
-                return ResourceManager.GetString("PASSFILE__LABEL_PWD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to State:.
         /// </summary>
         public static string PASSFILE__LABEL_STATE {
             get {
                 return ResourceManager.GetString("PASSFILE__LABEL_STATE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile has problem: &apos;{0}&apos;. Please, deal with them first.
-        /// </summary>
-        public static string PASSFILE__SOLVE_PROBLEM {
-            get {
-                return ResourceManager.GetString("PASSFILE__SOLVE_PROBLEM", resourceCulture);
             }
         }
         
@@ -1042,6 +1033,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New.
+        /// </summary>
+        public static string PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME {
+            get {
+                return ResourceManager.GetString("PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Passfile local manager error! (see logs).
         /// </summary>
         public static string PASSMANAGER__ERR {
@@ -1105,6 +1105,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Input passphrase for a new passfile.
+        /// </summary>
+        public static string STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE {
+            get {
+                return ResourceManager.GetString("STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input section name.
         /// </summary>
         public static string STORAGE__ASK_SECTION_NAME {
@@ -1114,11 +1123,38 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add.
+        ///   Looks up a localized string similar to Do you really want to delete section &apos;{0}&apos;?.
         /// </summary>
-        public static string STORAGE__CONTEXT_ADD {
+        public static string STORAGE__CONFIRM_DELETE_SECTION {
             get {
-                return ResourceManager.GetString("STORAGE__CONTEXT_ADD", resourceCulture);
+                return ResourceManager.GetString("STORAGE__CONFIRM_DELETE_SECTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add password.
+        /// </summary>
+        public static string STORAGE__CONTEXT_ADD_ITEM {
+            get {
+                return ResourceManager.GetString("STORAGE__CONTEXT_ADD_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add passfile.
+        /// </summary>
+        public static string STORAGE__CONTEXT_ADD_PASSFILE {
+            get {
+                return ResourceManager.GetString("STORAGE__CONTEXT_ADD_PASSFILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add section.
+        /// </summary>
+        public static string STORAGE__CONTEXT_ADD_SECTION {
+            get {
+                return ResourceManager.GetString("STORAGE__CONTEXT_ADD_SECTION", resourceCulture);
             }
         }
         
@@ -1186,6 +1222,16 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not found,
+        ///try another keywords....
+        /// </summary>
+        public static string STORAGE__NO_SECTIONS_FOUND {
+            get {
+                return ResourceManager.GetString("STORAGE__NO_SECTIONS_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Packages.
         /// </summary>
         public static string STORAGE__PASSFILES_TITLE {
@@ -1195,7 +1241,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password &apos;{0}&apos; copied.
+        ///   Looks up a localized string similar to Password is copied to clipboard.
         /// </summary>
         public static string STORAGE__PASSWORD_COPIED {
             get {
@@ -1209,6 +1255,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__PASSWORD_COPY {
             get {
                 return ResourceManager.GetString("STORAGE__PASSWORD_COPY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search passwords....
+        /// </summary>
+        public static string STORAGE__SECTION_SEARCH_INPUT_WATERMARK {
+            get {
+                return ResourceManager.GetString("STORAGE__SECTION_SEARCH_INPUT_WATERMARK", resourceCulture);
             }
         }
         

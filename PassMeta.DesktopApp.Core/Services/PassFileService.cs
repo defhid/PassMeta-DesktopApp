@@ -1,23 +1,23 @@
 namespace PassMeta.DesktopApp.Core.Services
 {
     using DesktopApp.Common;
+    using DesktopApp.Common.Enums;
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
+    using DesktopApp.Common.Utils.Mapping;
     using DesktopApp.Core.Utils;
+    using DesktopApp.Core.Utils.Extensions;
     
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Common.Constants;
-    using Common.Utils.Mapping;
     using Splat;
-    using Utils.Extensions;
 
     /// <inheritdoc />
     public class PassFileService : IPassFileService
     {
-        private static readonly ResourceMapper WhatMapper = new MapToResource[]
+        private static readonly ToStringMapper<string> WhatToStringMapper = new MapToResource<string>[]
         {
             new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
             new("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
@@ -30,22 +30,15 @@ namespace PassMeta.DesktopApp.Core.Services
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
 
         /// <inheritdoc />
-        public async Task<List<PassFile>> GetPassFileListAsync()
+        public async Task RefreshLocalPassFilesAsync()
         {
+            if (!await PassMetaApi.CheckConnectionAsync()) return;
+
+            var remoteList = await _GetPassFileListRemoteAsync();
+            if (remoteList is null) return;
+            
             var localList = PassFileLocalManager.GetCurrentList();
 
-            if (!await PassMetaApi.CheckConnectionAsync())
-            {
-                return localList;
-            }
-            
-            var remoteList = await _GetPassFileListRemoteAsync();
-            if (remoteList is null)
-            {
-                return localList;
-            }
-            
-            var resultList = new List<PassFile>();
             foreach (var remote in remoteList)
             {
                 var local = localList.FirstOrDefault(pf => pf.Id == remote.Id);
@@ -58,7 +51,8 @@ namespace PassMeta.DesktopApp.Core.Services
                     
                     if (response?.Data is null)
                     {
-                        remote.Problem = PassFileProblem.DownloadingError.WithInfo(response?.Message);
+                        PassFileLocalManager.TrySetProblem(remote.Id, 
+                            PassFileProblemKind.DownloadingError.ToProblemWithInfo(response?.Message));
                     }
                     else
                     {
@@ -69,7 +63,6 @@ namespace PassMeta.DesktopApp.Core.Services
                             _dialogService.ShowError(result.Message!, remote.GetTitle());
                     }
                     
-                    resultList.Add(remote);
                     continue;
                 }
                 
@@ -83,17 +76,15 @@ namespace PassMeta.DesktopApp.Core.Services
                         var response = await _GetPassFileDataRemoteAsync(remote.Id);
                         if (response?.Data is null)
                         {
-                            remote.Problem = PassFileProblem.DownloadingError.WithInfo(response.GetLocalizedMessage());
-                            resultList.Add(remote);
+                            PassFileLocalManager.TrySetProblem(remote.Id, 
+                                PassFileProblemKind.DownloadingError.ToProblemWithInfo(response.GetLocalizedMessage()));
                         }
                         else
                         {
                             remote.DataEncrypted = response.Data!;
                             
                             var result = PassFileLocalManager.UpdateData(remote);
-                            if (result.Ok)
-                                resultList.Add(result.Data!);
-                            else
+                            if (result.Bad)
                                 _dialogService.ShowError(result.Message!, remote.GetTitle());
                         }
                     }
@@ -112,8 +103,7 @@ namespace PassMeta.DesktopApp.Core.Services
                             }
                             else
                             {
-                                local.Problem = PassFileProblem.RemoteDeletingError;
-                                resultList.Add(local);
+                                PassFileLocalManager.TrySetProblem(local.Id, PassFileProblemKind.RemoteDeletingError);
                             }
                         }
                     }
@@ -137,16 +127,15 @@ namespace PassMeta.DesktopApp.Core.Services
                         }
                         else
                         {
-                            actual.Problem = PassFileProblem.UploadingError.WithInfo(response.GetLocalizedMessage());
+                            PassFileLocalManager.TrySetProblem(actual.Id,
+                                PassFileProblemKind.UploadingError.ToProblemWithInfo(response.GetLocalizedMessage()));
                         }
                     }
                     else if (local.InfoChangedOn < remote.InfoChangedOn) actual = remote;
                     else actual = local;
 
                     var result = PassFileLocalManager.UpdateInfo(actual, true);
-                    if (result.Ok)
-                        actual = result.Data!;
-                    else
+                    if (result.Bad)
                         _dialogService.ShowError(result.Message!, actual.GetTitle());
 
                     #endregion
@@ -157,23 +146,25 @@ namespace PassMeta.DesktopApp.Core.Services
                     {
                         if (local.Origin!.Version != remote.Version)
                         {
-                            actual.Problem = PassFileProblem.NeedsMerge;
+                            PassFileLocalManager.TrySetProblem(actual.Id, PassFileProblemKind.NeedsMerge);
                         }
                         else
                         {
-                            var res = await PassFileLocalManager.GetDataAsync(actual);
+                            var res = await PassFileLocalManager.GetEncryptedDataAsync(actual);
                             if (res.Ok)
                             {
                                 actual.DataEncrypted = res.Data!;
                                 var push = await _SavePassFileDataRemoteAsync(actual);
                                 if (push?.Success is not true)
                                 {
-                                    actual.Problem = PassFileProblem.UploadingError.WithInfo(push.GetLocalizedMessage());
+                                    PassFileLocalManager.TrySetProblem(actual.Id,
+                                        PassFileProblemKind.UploadingError.ToProblemWithInfo(push.GetLocalizedMessage()));
                                 }
                             }
                             else
                             {
-                                actual.Problem = PassFileProblem.UploadingError.WithInfo(res.Message!);
+                                PassFileLocalManager.TrySetProblem(actual.Id,
+                                    PassFileProblemKind.UploadingError.ToProblemWithInfo(res.Message));
                                 _dialogService.ShowError(res.Message!, actual.GetTitle());
                             }
                         }
@@ -186,20 +177,18 @@ namespace PassMeta.DesktopApp.Core.Services
                             actual.DataEncrypted = response.Data!;
 
                             var res = PassFileLocalManager.UpdateData(actual, true);
-                            if (res.Ok)
-                                actual = res.Data!;
-                            else
+                            if (res.Bad)
                                 _dialogService.ShowError(res.Message!, actual.GetTitle());
                         }
                         else
                         {
-                            actual.Problem = PassFileProblem.DownloadingError.WithInfo(response.GetLocalizedMessage());
+                            PassFileLocalManager.TrySetProblem(actual.Id,
+                                PassFileProblemKind.DownloadingError.ToProblemWithInfo(response.GetLocalizedMessage()));
                         }
                     }
                     
                     #endregion
                     
-                    resultList.Add(actual);
                     continue;
                 }
 
@@ -223,11 +212,10 @@ namespace PassMeta.DesktopApp.Core.Services
                     }
                     else
                     {
-                        remote.Problem = PassFileProblem.DownloadingError.WithInfo(response.GetLocalizedMessage());
+                        PassFileLocalManager.TrySetProblem(remote.Id, 
+                             PassFileProblemKind.DownloadingError.ToProblemWithInfo(response.GetLocalizedMessage()));
                     }
                 }
-
-                resultList.Add(remote);
             }
             
             foreach (var local in localList)
@@ -238,12 +226,10 @@ namespace PassMeta.DesktopApp.Core.Services
             var commitResult = await PassFileLocalManager.CommitAsync();
             if (commitResult.Bad)
                 _dialogService.ShowError(commitResult.Message!);
-            
-            return resultList;
         }
 
         /// <inheritdoc />
-        public async Task<List<PassFile>> ApplyPassFileLocalChangesAsync()
+        public async Task ApplyPassFileLocalChangesAsync()
         {
             var list = PassFileLocalManager.GetCurrentList();
 
@@ -286,7 +272,7 @@ namespace PassMeta.DesktopApp.Core.Services
                                 }
                                 else
                                 {
-                                    var res = await PassFileLocalManager.GetDataAsync(passFile);
+                                    var res = await PassFileLocalManager.GetEncryptedDataAsync(passFile);
                                     if (res.Bad)
                                         _dialogService.ShowError(res.Message!, passFile.GetTitle());
 
@@ -321,12 +307,11 @@ namespace PassMeta.DesktopApp.Core.Services
             }
 
             var commitResult = await PassFileLocalManager.CommitAsync();
-            if (commitResult.Bad)
-            {
+            
+            if (commitResult.Ok)
+                _dialogService.ShowInfo(Resources.PASSERVICE__SUCCESS_COMMIT);
+            else
                 _dialogService.ShowError(commitResult.Message!);
-            }
-
-            return PassFileLocalManager.GetCurrentList();
         }
 
         #region Api Requests
@@ -336,12 +321,7 @@ namespace PassMeta.DesktopApp.Core.Services
             var response = await PassMetaApi.GetAsync<List<PassFile>>("/passfiles/list", true);
             return response?.Data;
         }
-        
-        private static Task<OkBadResponse<PassFile>?> _GetPassFileFullRemoteAsync(int passFileId)
-        {
-            return PassMetaApi.GetAsync<PassFile>($"/passfiles/{passFileId}", true);
-        }
-        
+
         private static Task<OkBadResponse<string>?> _GetPassFileDataRemoteAsync(int passFileId, int? version = null)
         {
             var url = version is null
@@ -356,7 +336,7 @@ namespace PassMeta.DesktopApp.Core.Services
             var request = PassMetaApi.Patch($"/passfiles/{passFile.Id}/info", passFile);
 
             return request.WithContext(passFile.GetTitle())
-                .WithBadHandling(WhatMapper)
+                .WithBadHandling(WhatToStringMapper)
                 .ExecuteAsync<PassFile>();
         }
         
@@ -368,7 +348,7 @@ namespace PassMeta.DesktopApp.Core.Services
             });
 
             return request.WithContext(passFile.GetTitle())
-                .WithBadHandling(WhatMapper)
+                .WithBadHandling(WhatToStringMapper)
                 .ExecuteAsync<PassFile>();
         }
 
@@ -383,7 +363,7 @@ namespace PassMeta.DesktopApp.Core.Services
             });
 
             return request.WithContext(passFile.GetTitle())
-                .WithBadHandling(WhatMapper)
+                .WithBadHandling(WhatToStringMapper)
                 .ExecuteAsync<PassFile>();
         }
 
@@ -395,7 +375,7 @@ namespace PassMeta.DesktopApp.Core.Services
             });
                 
             return request.WithContext(passFile.GetTitle())
-                .WithBadHandling(WhatMapper)
+                .WithBadHandling(WhatToStringMapper)
                 .ExecuteAsync();
         }
 

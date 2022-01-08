@@ -18,6 +18,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// </summary>
         /// <param name="response">Response to show.</param>
         /// <param name="whatMapper">Translate package for <see cref="OkBadResponse.What"/> response sections.</param>
-        void ShowResponseFailure(OkBadResponse response, IMapper? whatMapper = null);
+        void ShowResponseFailure(OkBadResponse response, IMapper<string, string>? whatMapper = null);
     }
 }

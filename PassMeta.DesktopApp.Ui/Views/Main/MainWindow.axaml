@@ -4,7 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:reactiveUi="http://reactiveui.net"
         xmlns:avaloniaGif="clr-namespace:AvaloniaGif;assembly=AvaloniaGif"
-        xmlns:main="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main"
         xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
         xmlns:mainWindow="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow"
         mc:Ignorable="d"
@@ -55,13 +54,13 @@
                             <Setter Property="Margin" Value="4 0 4 0" />
                             <Setter Property="VerticalAlignment" Value="Top" />
                             <Setter Property="VerticalContentAlignment" Value="Center" />
-                            <Setter Property="Padding" Value="{Binding MainPane.BtnPadding}" />
-                            <Setter Property="Width" Value="{Binding MainPane.BtnWidth}" />
-                            <Setter Property="FontSize" Value="{Binding MainPane.BtnFontSize}" />
-                            <Setter Property="HorizontalContentAlignment" Value="{Binding MainPane.BtnHorizontalContentAlignment}" />
-                            <Setter Property="FontFamily" Value="{Binding MainPane.BtnFontFamily}" />
+                            <Setter Property="Padding" Value="{Binding MainPane.BtnPadding^}" />
+                            <Setter Property="Width" Value="{Binding MainPane.BtnWidth^}" />
+                            <Setter Property="FontSize" Value="{Binding MainPane.BtnFontSize^}" />
+                            <Setter Property="HorizontalContentAlignment" Value="{Binding MainPane.BtnHorizontalContentAlignment^}" />
+                            <Setter Property="FontFamily" Value="{Binding MainPane.BtnFontFamily^}" />
                         </Style>
-                        <Style Selector="Button:disabled">
+                        <Style Selector="Button.active">
                             <Setter Property="Template">
                                 <ControlTemplate>
                                     <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -80,13 +79,13 @@
                                   VerticalAlignment="Top"
                                   Margin="4 5 4 4"
                                   Padding="0 0 0 0"
-                                  Width="{Binding MainPane.BtnWidth}"
+                                  Width="{Binding MainPane.BtnWidth^}"
                                   Height="40"
                                   FontSize="24"
                                   FontWeight="Bold"
                                   HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center"
-                                  FontFamily="Segoe MDL2 Assets"
+                                  FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
                                   Content="&#xE700;"/>
                     
                     <StackPanel Spacing="8"
@@ -94,21 +93,21 @@
                                 VerticalAlignment="Top"
                                 HorizontalAlignment="Left">
                         <Button Click="AccountBtn_OnClick"
-                                IsEnabled="{Binding !MainPane.Buttons.Account.IsActive}"
-                                Content="{Binding MainPane.Buttons.Account.Content}"/>
+                                Classes.active="{Binding MainPane.Buttons.Account.IsActive}"
+                                Content="{Binding MainPane.Buttons.Account.Content^}"/>
                     
                         <Button Click="StorageBtn_OnClick"
-                                IsEnabled="{Binding !MainPane.Buttons.Storage.IsActive}"
-                                Content="{Binding MainPane.Buttons.Storage.Content}"/>
+                                Classes.active="{Binding MainPane.Buttons.Storage.IsActive}"
+                                Content="{Binding MainPane.Buttons.Storage.Content^}"/>
                         
                         <Button Click="GeneratorBtn_OnClick"
-                                IsEnabled="{Binding !MainPane.Buttons.Generator.IsActive}"
-                                Content="{Binding MainPane.Buttons.Generator.Content}"/>
+                                Classes.active="{Binding MainPane.Buttons.Generator.IsActive}"
+                                Content="{Binding MainPane.Buttons.Generator.Content^}"/>
                     </StackPanel>
                     
                     <Button Click="SettingsBtn_OnClick"
-                            IsEnabled="{Binding !MainPane.Buttons.Settings.IsActive}"
-                            Content="{Binding MainPane.Buttons.Settings.Content}"
+                            Classes.active="{Binding MainPane.Buttons.Settings.IsActive}"
+                            Content="{Binding MainPane.Buttons.Settings.Content^}"
                             VerticalAlignment="Bottom"
                             Margin="4 4 4 5"
                             Opacity="0.8"/>
@@ -124,7 +123,7 @@
                     </reactiveUi:RoutedViewHost.DefaultContent>
                 </reactiveUi:RoutedViewHost>
                 
-                <Grid Grid.Column="0" 
+                <Grid Grid.Column="0"
                       IsVisible="{Binding PreloaderEnabled}"
                       Background="Black" 
                       Opacity="0.2"/>
@@ -139,7 +138,7 @@
                             <Style Selector="Button">
                                 <Setter Property="Width" Value="40"/>
                                 <Setter Property="Height" Value="40"/>
-                                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                                <Setter Property="FontFamily" Value="{x:Static const:FontFamilies.SegoeMdl2}"/>
                                 <Setter Property="FontSize" Value="22"/>
                                 <Setter Property="Padding" Value="0"/>
                                 <Setter Property="Margin" Value="4 4 4 1"/>
@@ -150,20 +149,12 @@
                             <Style Selector="ToggleButton">
                                 <Setter Property="Width" Value="40"/>
                                 <Setter Property="Height" Value="40"/>
-                                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                                <Setter Property="FontFamily" Value="{x:Static const:FontFamilies.SegoeMdl2}"/>
                                 <Setter Property="FontSize" Value="22"/>
                                 <Setter Property="Padding" Value="0"/>
                                 <Setter Property="Margin" Value="4 4 4 1"/>
                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                            </Style>
-                            
-                            <Style Selector="Button:disabled">
-                                <Setter Property="IsVisible" Value="False"/>
-                            </Style>
-                            
-                            <Style Selector="ToggleButton:disabled">
-                                <Setter Property="IsVisible" Value="False"/>
                             </Style>
                         </ItemsControl.Styles>
                     </ItemsControl>
@@ -189,7 +180,7 @@
                             Height="40"
                             FontSize="22"
                             Content="&#xE72C;"
-                            FontFamily="Segoe MDL2 Assets"
+                            FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"/>
                 </Grid>

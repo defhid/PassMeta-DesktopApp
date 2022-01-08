@@ -1,6 +1,6 @@
-namespace PassMeta.DesktopApp.Ui.Models.DialogWindow
+namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
 {
-    public class DialogWindowTextBox : IDialogWindowInputBox
+    public class TextInputBox : IInputBox
     {
         public bool Visible { get; }
         
@@ -13,17 +13,18 @@ namespace PassMeta.DesktopApp.Ui.Models.DialogWindow
         }
 
         public char? PasswordChar { get; }
+        public bool IsForPassword => PasswordChar is not null;
 
         private string? _value;
 
-        public DialogWindowTextBox(bool visible)
+        public TextInputBox(bool visible)
         {
             Visible = visible;
             Placeholder = "";
             PasswordChar = null;
         }
 
-        public DialogWindowTextBox(bool visible, string placeholder, string? defaultValue, char? passwordChar)
+        public TextInputBox(bool visible, string placeholder, string? defaultValue, char? passwordChar)
         {
             Visible = visible;
             Placeholder = placeholder;

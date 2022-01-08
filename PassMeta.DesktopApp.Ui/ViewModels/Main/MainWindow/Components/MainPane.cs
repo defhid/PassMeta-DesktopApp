@@ -19,20 +19,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
             set => this.RaiseAndSetIfChanged(ref _isOpened, value);
         }
 
-        private readonly ObservableAsPropertyHelper<int> _btnWidth;
-        public int BtnWidth => _btnWidth.Value;
+        public IObservable<int> BtnWidth { get; }
 
-        private readonly ObservableAsPropertyHelper<Thickness> _btnPadding;
-        public Thickness BtnPadding => _btnPadding.Value;
+        public IObservable<Thickness> BtnPadding { get; }
         
-        private readonly ObservableAsPropertyHelper<HorizontalAlignment> _btnHorizontalContentAlignment;
-        public HorizontalAlignment BtnHorizontalContentAlignment => _btnHorizontalContentAlignment.Value;
+        public IObservable<HorizontalAlignment> BtnHorizontalContentAlignment { get; }
         
-        private readonly ObservableAsPropertyHelper<FontFamily> _btnFontFamily;
-        public FontFamily BtnFontFamily => _btnFontFamily.Value;
+        public IObservable<FontFamily> BtnFontFamily { get; }
         
-        private readonly ObservableAsPropertyHelper<int> _btnFontSize;
-        public int BtnFontSize => _btnFontSize.Value;
+        public IObservable<int> BtnFontSize { get; }
         
         public ButtonCollection Buttons { get; }
 
@@ -40,25 +35,25 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
         {
             var modeChanged = this.WhenAnyValue(pane => pane.IsOpened).Select(isOpened => !isOpened);
 
-            _btnWidth = modeChanged.Select(isShort => isShort 
+            BtnWidth = modeChanged.Select(isShort => isShort 
                 ? 40 
-                : 180).ToProperty(this, nameof(BtnWidth));
+                : 180);
             
-            _btnPadding = modeChanged.Select(isShort => isShort 
+            BtnPadding = modeChanged.Select(isShort => isShort 
                 ? Thickness.Parse("0 0 0 0") 
-                : Thickness.Parse("10 0 5 4")).ToProperty(this, nameof(BtnPadding));
+                : Thickness.Parse("10 0 5 4"));
             
-            _btnHorizontalContentAlignment = modeChanged.Select(isShort => isShort 
+            BtnHorizontalContentAlignment = modeChanged.Select(isShort => isShort 
                 ? HorizontalAlignment.Center 
-                : HorizontalAlignment.Left).ToProperty(this, nameof(BtnHorizontalContentAlignment));
+                : HorizontalAlignment.Left);
             
-            _btnFontFamily = modeChanged.Select(isShort => isShort 
+            BtnFontFamily = modeChanged.Select(isShort => isShort 
                 ? FontFamilies.SegoeMdl2 
-                : FontFamilies.Default).ToProperty(this, nameof(BtnFontFamily));
+                : FontFamilies.Default);
             
-            _btnFontSize = modeChanged.Select(isShort => isShort
+            BtnFontSize = modeChanged.Select(isShort => isShort
                 ? 24 
-                : 20).ToProperty(this, nameof(BtnFontSize));
+                : 20);
 
             Buttons = new ButtonCollection(modeChanged);
         }

@@ -3,7 +3,7 @@
         xmlns:ut="using:PassMeta.DesktopApp.Ui.Utils"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:main="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main"
+        xmlns:dialogWindow="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow"
         mc:Ignorable="d"
         Width="500"
         Height="200"
@@ -17,7 +17,7 @@
         WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
-        <main:DialogWindowViewModel></main:DialogWindowViewModel>
+        <dialogWindow:DialogWindowViewModel></dialogWindow:DialogWindowViewModel>
     </Design.DataContext>
     
     <Window.Resources>
@@ -55,74 +55,71 @@
         
         <Grid Grid.Row="1" RowDefinitions="*,Auto">
             <StackPanel Grid.Row="0">
-                <TextBox IsVisible="{Binding WindowTextBox.Visible}" 
-                         Text="{Binding WindowTextBox.Value}"
-                         Watermark="{Binding WindowTextBox.Placeholder}"
-                         PasswordChar="{Binding WindowTextBox.PasswordChar}"
+                <TextBox IsVisible="{Binding WindowTextInputBox.Visible}" 
+                         Text="{Binding WindowTextInputBox.Value}"
+                         Watermark="{Binding WindowTextInputBox.Placeholder}"
+                         PasswordChar="{Binding WindowTextInputBox.PasswordChar}"
+                         Classes.revealPasswordButton="{Binding WindowTextInputBox.IsForPassword}"
+                         Classes.clearButton="{Binding !WindowTextInputBox.IsForPassword}"
                          Margin="80 0 20 0"
                          VerticalAlignment="Bottom"
                          KeyDown="Input_OnKeyDown"
                          AttachedToVisualTree="Input_OnAttachedToVisualTree"/>
                 
-                <NumericUpDown IsVisible="{Binding WindowNumericBox.Visible}"
-                               Value="{Binding WindowNumericBox.Value}"
+                <NumericUpDown IsVisible="{Binding WindowNumericInputBox.Visible}"
+                               Value="{Binding WindowNumericInputBox.Value}"
                                AllowSpin="False"
                                ShowButtonSpinner="False"
-                               Watermark="{Binding WindowNumericBox.Placeholder}"
+                               Watermark="{Binding WindowNumericInputBox.Placeholder}"
                                Margin="80 0 20 0"
                                VerticalAlignment="Bottom"
                                KeyDown="Input_OnKeyDown"
                                AttachedToVisualTree="Input_OnAttachedToVisualTree"/>
             </StackPanel>
             
-            <Grid Grid.Row="1"
+            <StackPanel Grid.Row="1"
                   MinHeight="50"
-                  ColumnDefinitions="Auto,Auto,Auto,Auto,Auto"
+                  Orientation="Horizontal"
                   HorizontalAlignment="Right">
-                <Grid.Styles>
+                <StackPanel.Styles>
                     <Style Selector="Button">
                         <Setter Property="HorizontalAlignment" Value="Right" />
                         <Setter Property="VerticalAlignment" Value="Bottom"/>
                         <Setter Property="Margin" Value="10 10 20 20"/>
                         <Setter Property="Padding" Value="12 7 12 7"/>
                     </Style>
-                </Grid.Styles>
+                </StackPanel.Styles>
                 
-                <Button Grid.Column="0"
-                        IsVisible="{Binding WindowBtnOk.Visible}" 
-                        Content="{Binding WindowBtnOk.Text}"
-                        Tag="1"
-                        Click="OkButton_OnClick"
+                <Button IsVisible="{Binding BtnOk.IsVisible}" 
+                        Content="{Binding BtnOk.Content}"
+                        Tag="{Binding BtnOk.ButtonKind}"
+                        Click="Button_OnClick"
                         AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
                 
-                <Button Grid.Column="1"
-                        IsVisible="{Binding WindowBtnYes.Visible}" 
-                        Content="{Binding WindowBtnYes.Text}"
-                        Tag="2"
-                        Click="YesButton_OnClick"
+                <Button IsVisible="{Binding BtnYes.IsVisible}" 
+                        Content="{Binding BtnYes.Content}"
+                        Tag="{Binding BtnYes.ButtonKind}"
+                        Click="Button_OnClick"
                         AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
                 
-                <Button Grid.Column="2"
-                        IsVisible="{Binding WindowBtnNo.Visible}" 
-                        Content="{Binding WindowBtnNo.Text}"
-                        Tag="3"
-                        Click="NoButton_OnClick"
+                <Button IsVisible="{Binding BtnNo.IsVisible}" 
+                        Content="{Binding BtnNo.Content}"
+                        Tag="{Binding BtnNo.ButtonKind}"
+                        Click="Button_OnClick"
                         AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
                 
-                <Button Grid.Column="3"
-                        IsVisible="{Binding WindowBtnCancel.Visible}" 
-                        Content="{Binding WindowBtnCancel.Text}"
-                        Tag="4"
-                        Click="CancelButton_OnClick"
+                <Button IsVisible="{Binding BtnCancel.IsVisible}" 
+                        Content="{Binding BtnCancel.Content}"
+                        Tag="{Binding BtnCancel.ButtonKind}"
+                        Click="Button_OnClick"
                         AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
                 
-                <Button Grid.Column="4"
-                        IsVisible="{Binding WindowBtnClose.Visible}" 
-                        Content="{Binding WindowBtnClose.Text}"
-                        Tag="5"
-                        Click="CloseButton_OnClick"
+                <Button IsVisible="{Binding BtnClose.IsVisible}" 
+                        Content="{Binding BtnClose.Content}"
+                        Tag="{Binding BtnClose.ButtonKind}"
+                        Click="Button_OnClick"
                         AttachedToVisualTree="Button_OnAttachedToVisualTree"/>
-            </Grid>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

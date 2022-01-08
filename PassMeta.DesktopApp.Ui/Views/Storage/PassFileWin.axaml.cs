@@ -5,11 +5,19 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
     using Avalonia.Markup.Xaml;
     using Common.Models.Entities;
     using Utils.Extensions;
-    using PassFileWinViewModel = ViewModels.Storage.PassFileWin.PassFileWinViewModel;
+    using ViewModels.Storage.PassFileWin;
 
     public class PassFileWin : Window
     {
         public PassFile? PassFile { get; private set; }
+
+        public bool PassFileChanged { get; private set; }
+        
+        private new PassFileWinViewModel? DataContext
+        {
+            get => (PassFileWinViewModel?)base.DataContext;
+            init => base.DataContext = value;
+        }
         
         public PassFileWin()
         {
@@ -20,32 +28,32 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
 #endif
         }
 
-        private new PassFileWinViewModel? DataContext
-        {
-            get => (PassFileWinViewModel?)base.DataContext;
-            init => base.DataContext = value;
-        }
-
         public PassFileWin(PassFile passFile) : this()
         {
-            PassFile = passFile.Id > 0 ? passFile : null;
-            
-            DataContext = new PassFileWinViewModel(passFile, Close);
-            DataContext!.OnUpdate += actualPassFile =>
+            PassFile = passFile;
+            DataContext = new PassFileWinViewModel(passFile.Copy(), Close);
+        }
+
+        private new void Close()
+        {
+            if (DataContext!.PassFileChanged)
             {
-                PassFile = actualPassFile;
-            };
+                PassFile = DataContext.PassFile;
+                PassFileChanged = true;
+            }
+
+            base.Close();
         }
         
         private void NameTextBox__OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            if (PassFile?.Id is not >0)
+            if (PassFile!.LocalCreated is true)
                 (sender as TextBox)?.Focus();
         }
         
         private void OkBtn__OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            if (PassFile?.Id > 0)
+            if (PassFile!.LocalCreated is false)
                 (sender as Button)?.Focus();
         }
     }

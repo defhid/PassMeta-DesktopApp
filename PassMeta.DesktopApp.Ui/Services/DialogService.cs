@@ -14,9 +14,10 @@ namespace PassMeta.DesktopApp.Ui.Services
     
     using Avalonia.Controls;
     using Avalonia.Controls.Notifications;
-    using Enums;
-    using Models.DialogWindow;
+    using Constants;
     using Utils.Extensions;
+    using ViewModels.Main.DialogWindow;
+    using ViewModels.Main.DialogWindow.Components;
 
     /// <inheritdoc />
     public class DialogService : IDialogService
@@ -163,9 +164,9 @@ namespace PassMeta.DesktopApp.Ui.Services
                 null,
                 new[] { DialogButton.Ok, DialogButton.Cancel },
                 null,
-                new DialogWindowTextBox(true, "", defaultValue, null)));
+                new TextInputBox(true, "", defaultValue, null)));
 
-            var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextBox.Value?.Trim();
+            var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextInputBox.Value?.Trim();
 
             return Result.From(dialog.ResultButton == DialogButton.Ok, value ?? string.Empty);
         }
@@ -182,9 +183,9 @@ namespace PassMeta.DesktopApp.Ui.Services
                 null,
                 new[] { DialogButton.Ok, DialogButton.Cancel },
                 null,
-                new DialogWindowTextBox(true, "", "", '*')));
+                new TextInputBox(true, "", "", '*')));
 
-            var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextBox.Value;
+            var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextInputBox.Value;
             
             return Result.From(dialog.ResultButton == DialogButton.Ok, value ?? string.Empty);
         }

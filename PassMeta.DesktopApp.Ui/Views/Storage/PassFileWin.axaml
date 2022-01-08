@@ -14,7 +14,7 @@
         MaxHeight="265"
         x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileWin"
         Icon="/Assets/PassMeta.ico"
-        Title="{Binding Title}"
+        Title="{Binding Title^}"
         WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
@@ -25,7 +25,7 @@
           RowDefinitions="Auto,*">
         <Grid Grid.Row="0"
               ColumnDefinitions="Auto,*"
-              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto">
             <TextBlock Grid.Row="0" Grid.Column="0"
                        Margin="0 0 20 10"
                        VerticalAlignment="Center"
@@ -60,67 +60,37 @@
             
             <TextBlock Grid.Row="2" Grid.Column="0"
                        Margin="0 0 20 10"
-                       VerticalAlignment="Center"
                        Opacity="0.7"
-                       Text="{x:Static com:Resources.PASSFILE__LABEL_PWD}"/>
+                       Text="{x:Static com:Resources.PASSFILE__LABEL_CREATED_ON}"/>
             
-            <Grid Grid.Row="2" Grid.Column="1"
-                  ColumnDefinitions="Auto,Auto"
-                  Margin="0 0 0 10">
-                <TextBox Grid.Column="0" 
-                         Margin="0 0 10 0"
-                         Padding="3 2 5 2"
-                         Height="26" MinHeight="26" MaxHeight="26"
-                         Width="280"
-                         VerticalContentAlignment="Center"
-                         PasswordChar="*"
-                         Text="{Binding Password}"
-                         IsVisible="{Binding IsPasswordBoxVisible}"/>
-                
-                <ToggleButton Grid.Column="1"
-                        Padding="0"
-                        VerticalContentAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        Width="26" Height="26"
-                        FontFamily="Segoe MDL2 Assets"
-                        Content="{Binding PasswordBtn.Content}"
-                        IsVisible="{Binding PasswordBtn.IsVisible}"
-                        IsChecked="{Binding IsPasswordBoxVisible}"/>
-            </Grid>
+            <TextBlock Grid.Row="2" Grid.Column="1"
+                       Margin="0 0 0 10"
+                       Text="{Binding CreatedOn^}"/>
             
             <TextBlock Grid.Row="3" Grid.Column="0"
                        Margin="0 0 20 10"
                        Opacity="0.7"
-                       Text="{x:Static com:Resources.PASSFILE__LABEL_CREATED_ON}"/>
+                       Text="{x:Static com:Resources.PASSFILE__LABEL_CHANGED_ON}"/>
             
             <TextBlock Grid.Row="3" Grid.Column="1"
                        Margin="0 0 0 10"
-                       Text="{Binding CreatedOn}"/>
+                       Text="{Binding ChangedOn^}"/>
             
             <TextBlock Grid.Row="4" Grid.Column="0"
                        Margin="0 0 20 10"
                        Opacity="0.7"
-                       Text="{x:Static com:Resources.PASSFILE__LABEL_CHANGED_ON}"/>
-            
-            <TextBlock Grid.Row="4" Grid.Column="1"
-                       Margin="0 0 0 10"
-                       Text="{Binding ChangedOn}"/>
-            
-            <TextBlock Grid.Row="5" Grid.Column="0"
-                       Margin="0 0 20 10"
-                       Opacity="0.7"
                        Text="{x:Static com:Resources.PASSFILE__LABEL_STATE}"/>
             
-            <Grid Grid.Row="5" Grid.Column="1"
+            <Grid Grid.Row="4" Grid.Column="1"
                   ColumnDefinitions="Auto,*">
                 <Ellipse Grid.Column="0" 
                          Width="8" Height="8"
                          Margin="0 0 6 10"
                          VerticalAlignment="Center"
-                         Fill="{Binding StateColor}"/>  
+                         Fill="{Binding StateColor^}"/>  
                 
                 <TextBlock Grid.Column="1"
-                           Text="{Binding State}"/>
+                           Text="{Binding State^}"/>
             </Grid>
         </Grid>
         

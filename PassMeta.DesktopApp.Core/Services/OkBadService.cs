@@ -11,6 +11,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Common.Utils.Extensions;
     using Splat;
 
     /// <inheritdoc />
@@ -37,14 +38,14 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public void ShowResponseFailure(OkBadResponse response, IMapper? whatMapper = null)
+        public void ShowResponseFailure(OkBadResponse response, IMapper<string, string>? whatMapper = null)
         {
             var lines = _ResponseToText(response, whatMapper);
             
             _dialogService.ShowFailure(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
         }
 
-        private List<string> _ResponseToText(OkBadResponse response, IMapper? whatMapper, int level = 0)
+        private List<string> _ResponseToText(OkBadResponse response, IMapper<string, string>? whatMapper, int level = 0)
         {
             var message = GetLocalizedMessage(response.Message).Capitalize();
 

@@ -1,37 +1,91 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 {
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
     using Common;
     using Common.Interfaces.Services;
     using Common.Models.Entities;
+    using Common.Utils.Extensions;
     using Components;
     using Core.Utils;
-    using DynamicData;
     using Splat;
-    using Utils.Extensions;
+    using Ui.Utils.Extensions;
+    using Utils.Comparers;
     using Views.Main;
-    using Views.Storage;
 
     public partial class StorageViewModel
     {
         private readonly IPassFileService _passFileService = Locator.Current.GetService<IPassFileService>()!;
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+
+        private void OnPassFileChangedFromBtn(object? sender, PassFileBtn.PassFileChangedEventArgs ev)
+        {
+            if (ev.PassFileNew != null) return;
+            
+            PassFileList.Remove((PassFileBtn)sender!);
+        }
         
+        private PassFileBtn MakePassFileBtn(PassFile passFile)
+        {
+            var passFileBtn = new PassFileBtn(passFile, _passFileBarShortMode);
+            passFileBtn.PassFileChanged += OnPassFileChangedFromBtn;
+            return passFileBtn;
+        }
+
         private async Task _LoadPassFilesAsync()
         {
-            if (_userId is null || _userId != AppContext.Current.User?.Id)
+            using var preloader = MainWindow.Current!.StartPreloader();
+
+            if (!_loaded)
             {
-                var list = await _passFileService.GetPassFileListAsync();
-                
-                _passFiles = list.OrderBy(pf => pf.Name).ToList();
-                _userId = AppContext.Current.User?.Id;
-                //TODO: Mode;
-                PassFileList = _MakePassFileList();
+                await _passFileService.RefreshLocalPassFilesAsync();
+                _loaded = true;
             }
+
+            var lastItemPath = LastItemPath.Copy();
             
+            _UpdatePassFileList();
+
+            if (lastItemPath.PassFileId is not null)
+            {
+                PassFilesSelectedIndex = 
+                    _passFileList.FindIndex(btn => btn.PassFile!.Id == lastItemPath.PassFileId.Value);
+                
+                if (PassFilesSelectedIndex >= 0 && lastItemPath.PassFileSectionId is not null)
+                {
+                    SelectedData.SelectedSectionIndex =
+                        SelectedData.SectionsList!.FindIndex(btn => btn.Section.Id == lastItemPath.PassFileSectionId);
+                }
+            }
+
             IsPassFilesBarOpened = true;
+        }
+
+        private void _UpdatePassFileList()
+        {
+            var selectedPassFileId = SelectedPassFile?.Id;
+            var selectedSectionId = SelectedData.SelectedSection?.Id;
+
+            var list = PassFileLocalManager.GetCurrentList();
+            list.Sort(new PassFileComparer());
+
+            var localCreated = list.Where(pf => pf.LocalCreated);
+            var localChanged = list.Where(pf => pf.LocalChanged); 
+            var unchanged = list.Where(pf => pf.LocalNotChanged);
+            var localDeleted = list.Where(pf => pf.LocalDeleted);
+
+            PassFileList = new ObservableCollection<PassFileBtn>(
+                localCreated.Concat(localChanged).Concat(unchanged).Concat(localDeleted).Select(MakePassFileBtn));
+
+            PassFilesSelectedIndex = 
+                PassFileList.FindIndex(pf => pf.PassFile?.Id == selectedPassFileId);
+            
+            if (PassFilesSelectedIndex > -1 && selectedSectionId is not null)
+            {
+                SelectedData.SelectedSectionIndex =
+                    SelectedPassFile!.Data?.FindIndex(section => section.Id == selectedSectionId) ?? -1;
+            }
         }
 
         private async Task _DecryptIfRequiredAsync(int _)
@@ -39,10 +93,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             var passFile = SelectedPassFile;
             if (passFile is null || passFile.Data is not null) return;
 
+            using var preloader = MainWindow.Current!.StartPreloader();
+
             var result = await passFile.AskKeyPhraseAndDecryptAsync();
             if (result.Ok)
             {
-                _SetPassFileSectionList();
+                SelectedData.PassFile = passFile;
                 return;
             }
             
@@ -51,135 +107,27 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         private async Task SaveAsync()
         {
-            if (_passFiles is null) return;
+            using var preloader = MainWindow.Current!.StartPreloader();
             
-            foreach (var pf in _passFiles)
-            {
-                if (pf.Problem is not null) continue;
-                // TODO: check changed?
-                
-                await _passFileService.ApplyPassFileLocalChangesAsync();
-            }
-
-            // TODO: alert?
+            await _passFileService.ApplyPassFileLocalChangesAsync();
+            
+            _UpdatePassFileList();
         }
-        
-        #region PassFile
 
         private async Task PassFileAddAsync()
         {
-            var win = new PassFileWin(new PassFile { Id = 0 });
+            using var preloader = MainWindow.Current!.StartPreloader();
             
-            await win.ShowDialog(MainWindow.Current);
+            var askPassPhrase = await _dialogService.AskPasswordAsync(Resources.STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE);
+            if (askPassPhrase.Bad || askPassPhrase.Data == string.Empty) return;
             
-            if (win.PassFile is null) return;
+            var passFile = PassFileLocalManager.CreateNew(askPassPhrase.Data!);
+            var passFileBtn = MakePassFileBtn(passFile);
             
-            _passFiles ??= new List<PassFile>();
-            _passFiles.Add(win.PassFile);
-            
-            PassFileList = _MakePassFileList();
-            PassFilesSelectedIndex = _passFiles.Count - 1;
+            PassFileList.Insert(0, passFileBtn);
+            PassFilesSelectedIndex = 0;
+             
+            await passFileBtn.OpenAsync();
         }
-
-        #endregion
-        
-        #region Section
-        
-        private async Task SectionAddAsync()
-        {
-            var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME);
-            if (result.Bad || result.Data == string.Empty) return;
-
-            var passFile = SelectedPassFile!;
-            passFile.Data ??= new List<PassFile.Section>();
-            passFile.Data.Add(new PassFile.Section
-            {
-                Name = result.Data!
-            });
-            PassFileLocalManager.UpdateData(passFile);
-
-            _SetPassFileSectionList();
-            PassFilesSelectedSectionIndex = passFile.Data.Count - 1;
-        }
-
-        public async Task SectionRenameAsync()
-        {
-            var passFile = SelectedPassFile!;
-            var sectionBtn = SelectedSectionBtn!;
-            var section = sectionBtn.Section;
-
-            var result = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME, defaultValue: section.Name);
-            if (result.Bad || result.Data == string.Empty || result.Data == section.Name)
-            {
-                return;
-            }
-
-            section.Name = result.Data!;
-            PassFileLocalManager.UpdateData(passFile);  // TODO: optimize copying?!
-
-            sectionBtn.Refresh();
-        }
-        
-        public void SectionDelete()
-        {
-            var passFile = SelectedPassFile!;
-
-            passFile.Data!.RemoveAt(PassFilesSelectedSectionIndex);
-            PassFileLocalManager.UpdateData(passFile);
-            
-            _SetPassFileSectionList();
-        }
-        
-        #endregion
-        
-        #region Item
-        
-        private void ItemAdd()
-        {
-            var sectionBtnList = PassFileSectionItemList!;
-            if (sectionBtnList.Any(btn => btn.IsReadOnly))
-            {
-                _SetPassFileSectionItemList(false);
-            }
-
-            var itemBtn = new PassFileSectionItemBtn(new PassFile.Section.Item(), false, ItemDelete, ItemMove);
-
-            PassFileSectionItemList = sectionBtnList.Concat(new[] { itemBtn }).ToArray();
-        }
-
-        private void ItemDelete(PassFileSectionItemBtn itemBtn)
-        {
-            PassFileSectionItemList = PassFileSectionItemList!.Where(btn => !ReferenceEquals(btn, itemBtn)).ToArray();
-        }
-        
-        private void ItemMove(PassFileSectionItemBtn itemBtn, int direction)
-        {
-            var sectionBtnList = PassFileSectionItemList!;
-            var index = sectionBtnList.IndexOf(itemBtn);
-            
-            if (direction > 0 && index == sectionBtnList.Length - 1 || direction < 0 && index == 0)
-            {
-                return;
-            }
-
-            sectionBtnList[index] = sectionBtnList[index + direction];
-            sectionBtnList[index + direction] = itemBtn;
-
-            PassFileSectionItemList = sectionBtnList.ToArray();
-        }
-
-        private void ItemsEdit()
-        {
-            var currentReadOnly = PassFileSectionItemList!.Any(btn => btn.IsReadOnly);
-            if (!currentReadOnly)
-            {
-                SelectedSection!.Items = PassFileSectionItemList!.Select(btn => btn.ToItem()).ToList();
-                PassFileLocalManager.UpdateData(SelectedPassFile!);
-            }
-            
-            _SetPassFileSectionItemList(!currentReadOnly);
-        }
-
-        #endregion
     }
 }
