@@ -116,5 +116,10 @@ namespace PassMeta.DesktopApp.Common.Models
             Message = message;
             Data = default;
         }
+        
+        /// <summary>
+        /// Cast to <see cref="Result{TData}"/> with null data of other type.
+        /// </summary>
+        public Result<TNewData> WithNullData<TNewData>() => new(Ok, Message);
     }
 }

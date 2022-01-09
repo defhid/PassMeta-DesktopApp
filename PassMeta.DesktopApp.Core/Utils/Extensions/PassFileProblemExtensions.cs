@@ -4,7 +4,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
     using Common.Models.Entities.Extra;
 
     /// <summary>
-    /// Extension methods for <see cref="PassFileProblem"/> & <see cref="PassFileProblemKind"/>
+    /// Extension methods for <see cref="PassFileProblem"/> and <see cref="PassFileProblemKind"/>
     /// </summary>
     public static class PassFileProblemExtensions
     {

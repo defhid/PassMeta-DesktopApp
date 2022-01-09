@@ -9,7 +9,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using Common.Models;
     using Common.Models.Entities;
     using Constants;
-    using Core.Utils.Extensions;
+    using Core.Utils;
     using Splat;
 
     /// <summary>
@@ -45,34 +45,37 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
                ?? PassFileColor.None;
 
         /// <summary>
-        /// Ask user for passphrase and decode data.
+        /// Ask user for passphrase (if required), load and decode data.
         /// </summary>
         /// <remarks>Automatic show failure.</remarks>
-        public static async Task<Result> AskKeyPhraseAndDecryptAsync(this PassFile passFile)
+        public static async Task<Result> LoadIfRequiredAndDecryptAsync(this PassFile passFile)
         {
-            if (passFile.PassPhrase is not null)
-            {
-                var fastResult = passFile.Decrypt();
-                if (fastResult.Ok) return fastResult;
-                
-                passFile.PassPhrase = null;
-            }
-            
             var dialogService = Locator.Current.GetService<IDialogService>()!;
-            
-            var passPhrase = await dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
-            if (passPhrase.Bad || passPhrase.Data == string.Empty)
+
+            if (passFile.PassPhrase is null)
             {
+                var passPhrase = await dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
+                if (passPhrase.Bad || passPhrase.Data == string.Empty)
+                {
+                    return Result.Failure();
+                }
+
+                passFile.PassPhrase = passPhrase.Data!;
+                PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
+            }
+
+            var result = await PassFileManager.TryLoadIfRequiredAndDecryptAsync(passFile.Id);
+            if (result.Bad)
+            {
+                passFile.PassPhrase = null;
+                PassFileManager.TrySetPassPhrase(passFile.Id, null);
+                
+                dialogService.ShowFailure(result.Message!);
                 return Result.Failure();
             }
 
-            passFile.PassPhrase = passPhrase.Data;
-            var result = passFile.Decrypt();
-
-            if (result.Bad)
-                dialogService.ShowFailure(result.Message!);
-
-            return result;
+            passFile.Data = result.Data!;
+            return Result.Success();
         }
     }
 }

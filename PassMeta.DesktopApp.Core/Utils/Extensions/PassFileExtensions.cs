@@ -9,15 +9,31 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
     public static class PassFileExtensions
     {
         /// <summary>
+        /// Does passfile information differs from other?
+        /// </summary>
+        public static bool IsInformationDifferentFrom(this PassFile left, PassFile right)
+        {
+            return left.Id != right.Id ||
+                   left.Name != right.Name ||
+                   left.Color != right.Color;
+        }
+        
+        /// <summary>
+        /// Does passfile version differs from other?
+        /// </summary>
+        public static bool IsVersionDifferentFrom(this PassFile left, PassFile right)
+        {
+            return left.Version != right.Version;
+        }
+        
+        /// <summary>
         /// Has passfile information been changed? (based on <see cref="PassFile.Origin"/>)
         /// </summary>
         public static bool IsInformationChanged(this PassFile passFile)
         {
             var origin = passFile.Origin;
-            if (origin is null) return false;
-
-            return origin.Name != passFile.Name ||
-                   origin.Color != passFile.Color;
+            return origin is not null && 
+                   IsInformationDifferentFrom(origin, passFile);
         }
         
         /// <summary>
@@ -26,9 +42,8 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         public static bool IsVersionChanged(this PassFile passFile)
         {
             var origin = passFile.Origin;
-            if (origin is null) return false;
-
-            return origin.Version != passFile.Version;
+            return origin is not null && 
+                   IsVersionDifferentFrom(origin, passFile);
         }
 
         /// <summary>

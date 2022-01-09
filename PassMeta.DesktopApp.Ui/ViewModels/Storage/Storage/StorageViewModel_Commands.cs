@@ -29,7 +29,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         
         private PassFileBtn MakePassFileBtn(PassFile passFile)
         {
-            var passFileBtn = new PassFileBtn(passFile, _passFileBarShortMode);
+            var passFileBtn = new PassFileBtn(passFile, PassFileBarExpander.ShortModeObservable);
             passFileBtn.PassFileChanged += OnPassFileChangedFromBtn;
             return passFileBtn;
         }
@@ -58,15 +58,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 }
             }
 
-            IsPassFilesBarOpened = true;
+            PassFileBarExpander.IsOpened = true;
         }
 
         private void _UpdatePassFileList()
         {
-            var selectedPassFileId = SelectedPassFile?.Id;
-            var selectedSectionId = SelectedData.SelectedSection?.Id;
-
-            var list = PassFileLocalManager.GetCurrentList();
+            var list = PassFileManager.GetCurrentList();
             list.Sort(new PassFileComparer());
 
             var localCreated = list.Where(pf => pf.LocalCreated);
@@ -76,41 +73,39 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
             PassFileList = new ObservableCollection<PassFileBtn>(
                 localCreated.Concat(localChanged).Concat(unchanged).Concat(localDeleted).Select(MakePassFileBtn));
-
-            PassFilesSelectedIndex = 
-                PassFileList.FindIndex(pf => pf.PassFile?.Id == selectedPassFileId);
-            
-            if (PassFilesSelectedIndex > -1 && selectedSectionId is not null)
-            {
-                SelectedData.SelectedSectionIndex =
-                    SelectedPassFile!.Data?.FindIndex(section => section.Id == selectedSectionId) ?? -1;
-            }
         }
 
-        private async Task _DecryptIfRequiredAsync(int _)
+        private async Task _DecryptIfRequiredAndSetSectionsAsync(int _)
         {
             var passFile = SelectedPassFile;
-            if (passFile is null || passFile.Data is not null) return;
+            if (passFile is null || passFile.Data is not null)
+            {
+                SelectedData.PassFile = passFile;
+                return;
+            }
 
             using var preloader = MainWindow.Current!.StartPreloader();
 
-            var result = await passFile.AskKeyPhraseAndDecryptAsync();
+            var result = await passFile.LoadIfRequiredAndDecryptAsync();
             if (result.Ok)
             {
                 SelectedData.PassFile = passFile;
                 return;
             }
-            
+
+            SelectedData.PassFile = null;
             PassFilesSelectedIndex = _passFilesPrevSelectedIndex;
         }
 
         private async Task SaveAsync()
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
-            
-            await _passFileService.ApplyPassFileLocalChangesAsync();
-            
-            _UpdatePassFileList();
+            using (MainWindow.Current!.StartPreloader())
+            {
+                await _passFileService.ApplyPassFileLocalChangesAsync();
+            }
+
+            _loaded = false;
+            await _LoadPassFilesAsync(LastItemPath.Copy());
         }
 
         public async Task PassFileAddAsync()
@@ -120,7 +115,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             var askPassPhrase = await _dialogService.AskPasswordAsync(Resources.STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE);
             if (askPassPhrase.Bad || askPassPhrase.Data == string.Empty) return;
             
-            var passFile = PassFileLocalManager.CreateNew(askPassPhrase.Data!);
+            var passFile = PassFileManager.CreateNew(askPassPhrase.Data!);
             var passFileBtn = MakePassFileBtn(passFile);
             
             PassFileList.Insert(0, passFileBtn);

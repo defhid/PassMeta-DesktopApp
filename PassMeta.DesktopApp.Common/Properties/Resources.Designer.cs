@@ -1123,15 +1123,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input section name.
-        /// </summary>
-        public static string STORAGE__ASK_SECTION_NAME {
-            get {
-                return ResourceManager.GetString("STORAGE__ASK_SECTION_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do you really want to delete section &apos;{0}&apos;?.
         /// </summary>
         public static string STORAGE__CONFIRM_DELETE_SECTION {
@@ -1191,6 +1182,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__LOGIN_COPY {
             get {
                 return ResourceManager.GetString("STORAGE__LOGIN_COPY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New section.
+        /// </summary>
+        public static string STORAGE__NEW_SECTION_NAME {
+            get {
+                return ResourceManager.GetString("STORAGE__NEW_SECTION_NAME", resourceCulture);
             }
         }
         

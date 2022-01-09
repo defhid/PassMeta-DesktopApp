@@ -30,7 +30,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 Content = "\uE70F",
                 
                 Command = ReactiveCommand.Create(ItemsEdit),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.EditMode)
+                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && !x.Item2)
                     .ToBinding()
             },
@@ -38,7 +38,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             {
                 Content = "\uE711", 
                 Command = ReactiveCommand.Create(ItemsDiscardChanges),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.EditMode)
+                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && x.Item2)
                     .ToBinding()
             },
@@ -46,7 +46,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             {
                 Content = "\uE8FB", 
                 Command = ReactiveCommand.Create(ItemsApplyChanges),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.EditMode)
+                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && x.Item2)
                     .ToBinding()
             },
@@ -54,7 +54,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             {
                 Content = "\uE74D", 
                 Command = ReactiveCommand.Create(SectionDeleteAsync),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.EditMode)
+                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && !x.Item2)
                     .ToBinding()
             },
@@ -69,6 +69,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 _passFile = value;
                 _lastPassFileItemPath.PassFileId = value?.Id;
                 _UpdatePassFileSectionList(true);
+                if (_sectionsList.Any())
+                    _viewElements.SearchBox?.Focus();
             }
         }
         
@@ -83,7 +85,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         
         public IObservable<string> NoSectionsText { get; }
         public bool IsNoSectionsTextVisible => !_sectionsList.Any();
-        public bool IsNoItemsTextVisible => !_sectionItemsList.Any() && !_editMode;
+        public bool IsNoItemsTextVisible => !_sectionItemsList.Any() && !Edit.Mode;
 
         private int _selectedSectionIndex = -1;
         public int SelectedSectionIndex
@@ -92,8 +94,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedSectionIndex, value);
-                this.RaisePropertyChanged(nameof(SelectedSectionName));
-                EditMode = false;
+                Edit.SectionBtn = value < 0 ? null : _sectionsList[value];
                 _UpdatePassFileSectionItemList();
             }
         }
@@ -104,16 +105,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         public PassFile.Section? SelectedSection =>
             _selectedSectionIndex < 0 ? null : _sectionsList[_selectedSectionIndex].Section;
         
-        public string? SelectedSectionName
-        {
-            get => _selectedSectionIndex < 0 ? null : _sectionsList[_selectedSectionIndex].Name;
-            set
-            {
-                if (_selectedSectionIndex >= 0)
-                    _sectionsList[_selectedSectionIndex].Name = value ?? string.Empty;
-            }
-        }
-
         private string? _searchText;
         public string? SearchText
         {
@@ -121,22 +112,27 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             set => this.RaiseAndSetIfChanged(ref _searchText, value);
         }
 
-        private bool _editMode;
-        public bool EditMode
-        {
-            get => _editMode;
-            set => this.RaiseAndSetIfChanged(ref _editMode, value);
-        }
-
+        public PassFileDataEdit Edit { get; }
+        
         private readonly IObservable<bool> _editModeObservable;
 
         private int _searching;
 
+        private bool _addingSectionMode;
+
+        private readonly PassFileBarExpander _passFileBarExpander;
+
         private readonly PassFileItemPath _lastPassFileItemPath;
 
-        public PassFileData(PassFileItemPath lastPassFileItemPath)
+        private readonly ViewElements _viewElements;
+
+        public PassFileData(ViewElements viewElements, PassFileItemPath lastPassFileItemPath, PassFileBarExpander passFileBarExpander)
         {
+            _viewElements = viewElements;
             _lastPassFileItemPath = lastPassFileItemPath;
+            _passFileBarExpander = passFileBarExpander;
+            
+            Edit = new PassFileDataEdit(viewElements);
             
             this.WhenAnyValue(vm => vm.SectionsList)
                 .Subscribe(_ => _UpdatePassFileSectionItemList());
@@ -150,7 +146,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             _sectionsList.CollectionChanged += (_, _) => this.RaisePropertyChanged(nameof(IsNoSectionsTextVisible));
             _sectionItemsList.CollectionChanged += (_, _) => this.RaisePropertyChanged(nameof(IsNoItemsTextVisible));
             
-            _editModeObservable = this.WhenAnyValue(vm => vm.EditMode);
+            _editModeObservable = Edit.WhenAnyValue(vm => vm.Mode);
 
             _editModeObservable.Subscribe(_ => this.RaisePropertyChanged(nameof(IsNoItemsTextVisible)));
 
@@ -247,27 +243,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         
         #region Sections
 
-        public async Task SectionAddAsync()
+        public void SectionAdd()
         {
-            var askName = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME);
-            if (askName.Bad || askName.Data == string.Empty) return;
-            
-            using var preloader = MainWindow.Current!.StartPreloader();
-            var passFile = _passFile!;
-            var section = new PassFile.Section { Name = askName.Data! };
-            
-            var result = PassFileLocalManager.UpdateDataSelectively(passFile, data => 
-                data.Add(section.Copy()));
-            
-            if (result.Ok)
+            var section = new PassFile.Section { Name = Resources.STORAGE__NEW_SECTION_NAME };
+
+            using (_passFileBarExpander.DisableAutoExpandingScoped())
             {
-                _UpdatePassFileSectionList(true);
-                SelectedSectionIndex = _sectionsList.FindIndex(btn => btn.Section.Id == section.Id);
+                _sectionsList.Insert(0, _MakePassFileSectionBtn(section));
+                SelectedSectionIndex = 0;
+                _viewElements.SectionListBox!.ScrollIntoView(0);
             }
-            else
-            {
-                _dialogService.ShowError(result.Message!);
-            }
+
+            ItemsEdit();
+            ItemAdd();
+            
+            _addingSectionMode = true;
         }
 
         public async Task SectionDeleteAsync()
@@ -280,14 +270,18 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
             using var preloader = MainWindow.Current!.StartPreloader();
 
-            var result = PassFileLocalManager.UpdateDataSelectively(passFile, data => 
+            var result = PassFileManager.UpdateDataSelectively(passFile, data => 
                 data.RemoveAll(s => s.Id == section.Id));
 
             if (result.Ok)
             {
                 var index = SelectedSectionIndex;
-                _sectionsList.RemoveAt(index);
-                SelectedSectionIndex = Math.Min(index, _sectionsList.Count - 1);
+                
+                using (_passFileBarExpander.DisableAutoExpandingScoped())
+                {
+                    _sectionsList.RemoveAt(index);
+                    SelectedSectionIndex = Math.Min(index, _sectionsList.Count - 1);
+                }
             }
             else
             {
@@ -301,7 +295,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         public void ItemsEdit()
         {
-            EditMode = true;
+            Edit.Mode = true;
         }
 
         private void ItemsApplyChanges()
@@ -310,16 +304,28 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
             var passFile = _passFile!;
             var section = SelectedSection!;
-            
+
+            if (_addingSectionMode)
+            {
+                var res = PassFileManager.UpdateDataSelectively(passFile, data => 
+                    data.Add(section.Copy()));
+
+                if (res.Bad)
+                {
+                    _dialogService.ShowError(res.Message!);
+                    return;
+                }
+            }
+
             var items = _sectionItemsList.Select(btn => btn.ToItem()).ToList();
-            var sectionName = SelectedSectionName?.Trim();
+            var sectionName = Edit.SectionName?.Trim();
 
             if (string.IsNullOrEmpty(sectionName))
             {
                 sectionName = section.Name;
             }
             
-            var result = PassFileLocalManager.UpdateDataSelectively(passFile, data =>
+            var result = PassFileManager.UpdateDataSelectively(passFile, data =>
             {
                 var lSection = data.First(s => s.Id == section.Id);
                 lSection.Name = sectionName;
@@ -328,9 +334,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
             if (result.Ok)
             {
-                _UpdatePassFileSectionItemList();
-                SelectedSectionBtn!.Refresh();
-                EditMode = false;
+                using (_passFileBarExpander.DisableAutoExpandingScoped())
+                {
+                    _UpdatePassFileSectionList(true);
+                    SelectedSectionIndex = _sectionsList.FindIndex(btn => btn.Section.Id == section.Id);
+                    _UpdatePassFileSectionItemList();
+                }
+                
+                Edit.Mode = false;
             }
             else
             {
@@ -340,16 +351,28 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         private void ItemsDiscardChanges()
         {
-            SelectedSectionBtn!.Refresh();
-            this.RaisePropertyChanged(nameof(SelectedSectionName));
-            _UpdatePassFileSectionItemList();
-            EditMode = false;
+            using (_passFileBarExpander.DisableAutoExpandingScoped())
+            {
+                if (_addingSectionMode)
+                {
+                    _sectionsList.RemoveAt(SelectedSectionIndex);
+                    _addingSectionMode = false;
+                }
+                else
+                {
+                    SelectedSectionBtn!.Refresh();
+                    _UpdatePassFileSectionItemList();
+                }
+            }
+
+            Edit.Mode = false;
         }
         
         public void ItemAdd()
         {
             var itemBtn = _MakePassFileSectionItemBtn(new PassFile.Section.Item());
             _sectionItemsList.Add(itemBtn);
+            _viewElements.ItemScrollViewer!.ScrollToEnd();
         }
 
         private void ItemDelete(PassFileSectionItemBtn itemBtn)

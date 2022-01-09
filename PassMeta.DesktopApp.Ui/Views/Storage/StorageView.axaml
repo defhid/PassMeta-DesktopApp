@@ -31,7 +31,7 @@
                    PaneBackground="Transparent"
                    CompactPaneLength="50"
                    OpenPaneLength="{Binding LayoutState^.PassFilesPaneWidth}"
-                   IsPaneOpen="{Binding IsPassFilesBarOpened}">
+                   IsPaneOpen="{Binding PassFileBarExpander.IsOpened}">
             <SplitView.Pane>
                 <Grid RowDefinitions="Auto,*">
                     <ToggleButton Grid.Row="0"
@@ -42,7 +42,7 @@
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center"
-                                  IsChecked="{Binding IsPassFilesBarOpened}"
+                                  IsChecked="{Binding PassFileBarExpander.IsOpened}"
                                   Content="{Binding PassFilesBarBtn.Content}"
                                   FontSize="{Binding PassFilesBarBtn.FontSize}"
                                   FontFamily="{Binding PassFilesBarBtn.FontFamily}"/>
@@ -56,7 +56,7 @@
                              CornerRadius="3"
                              SelectedIndex="{Binding PassFilesSelectedIndex}"
                              Items="{Binding PassFileList}"
-                             IsEnabled="{Binding !SelectedData.EditMode}"
+                             IsEnabled="{Binding !SelectedData.Edit.Mode}"
                              PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -114,7 +114,7 @@
                     <Button Grid.Row="1" 
                             Classes="list_add"
                             Margin="4 0 5 5"
-                            IsEnabled="{Binding !SelectedData.EditMode}"
+                            IsEnabled="{Binding !SelectedData.Edit.Mode}"
                             Command="{Binding PassFileAddAsync}"
                             ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_PASSFILE}"/>
                 </Grid>
@@ -133,9 +133,10 @@
                              Classes="clearButton"
                              Watermark="{x:Static com:Resources.STORAGE__SECTION_SEARCH_INPUT_WATERMARK}"
                              IsVisible="{Binding SelectedData.IsSectionsBarVisible^}"
-                             IsReadOnly="{Binding SelectedData.EditMode}"
-                             Focusable="{Binding !SelectedData.EditMode}"
-                             Text="{Binding SelectedData.SearchText}"/>
+                             IsReadOnly="{Binding SelectedData.Edit.Mode}"
+                             Focusable="{Binding !SelectedData.Edit.Mode}"
+                             Text="{Binding SelectedData.SearchText}"
+                             AttachedToLogicalTree="Search_OnAttachedToLogicalTree"/>
                 
                     <!-- PassFileSectionList -->
                     <Border Grid.Row="1"
@@ -146,15 +147,16 @@
                             DataContext="{Binding SelectedData}"
                             Background="{Binding Background, ElementName=PassFiles}"
                             IsVisible="{Binding IsSectionsBarVisible^}"
-                            IsEnabled="{Binding !EditMode}">
+                            IsEnabled="{Binding !Edit.Mode}">
                         <Grid VerticalAlignment="Stretch">
                             <ListBox x:Name="Sections"
                                      Padding="0 0 0 20"
                                      SelectionMode="Toggle"
                                      SelectedIndex="{Binding SelectedSectionIndex}"
                                      Items="{Binding SectionsList}"
-                                     IsEnabled="{Binding !EditMode}"
-                                     PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
+                                     IsEnabled="{Binding !Edit.Mode}"
+                                     PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}"
+                                     AttachedToLogicalTree="SectionListBox_OnAttachedToLogicalTree">
                                 <ListBox.Styles>
                                     <Style Selector="ListBoxItem">
                                         <Setter Property="Padding" Value="8"/>
@@ -178,7 +180,7 @@
                             
                             <Button Classes="list_add"
                                     Margin="0 0 0 -4"
-                                    Command="{Binding SectionAddAsync}"
+                                    Command="{Binding SectionAdd}"
                                     ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_SECTION}"/>
                             
                             <TextBlock FontSize="16"
@@ -200,7 +202,8 @@
                         Background="{Binding Background, ElementName=Sections}"
                         IsVisible="{Binding IsItemsBarVisible^}">
                     <Grid PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      AttachedToLogicalTree="ItemScrollViewer_OnAttachedToLogicalTree">
                             <Grid RowDefinitions="Auto,*">
                                 <TextBox Grid.Row="0"
                                          Margin="5 5 7 10"
@@ -209,9 +212,10 @@
                                          Height="28"
                                          FontSize="14"
                                          VerticalContentAlignment="Center"
-                                         Text="{Binding SelectedSectionName}"
-                                         IsReadOnly="{Binding !EditMode}"
-                                         Focusable="{Binding EditMode}"/>
+                                         Text="{Binding Edit.SectionName}"
+                                         IsReadOnly="{Binding !Edit.Mode}"
+                                         Focusable="{Binding Edit.Mode}"
+                                         AttachedToLogicalTree="SectionNameEdit_OnAttachedToLogicalTree"/>
                                 
                                 <ItemsControl Grid.Row="1"
                                               Items="{Binding SectionItemsList}"
@@ -349,7 +353,7 @@
                         
                         <Button Classes="list_add"
                                 Margin="0 0 0 0"
-                                IsVisible="{Binding EditMode}"
+                                IsVisible="{Binding Edit.Mode}"
                                 Command="{Binding ItemAdd}"
                                 ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_ITEM}"/>
                         

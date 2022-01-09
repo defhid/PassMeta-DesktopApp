@@ -29,7 +29,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             {
                 Content = "\uE74E", 
                 Command = ReactiveCommand.CreateFromTask(SaveAsync),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SelectedData.EditMode)
+                [!Button.IsVisibleProperty] = SelectedData.Edit.WhenAnyValue(vm => vm.Mode)
                     .Select(editMode => !editMode)
                     .ToBinding()
             }
@@ -41,10 +41,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         public ObservableCollection<PassFileBtn> PassFileList
         {
             get => _passFileList;
-            private set {
-                this.RaiseAndSetIfChanged(ref _passFileList, value);
-                SelectedData.PassFile = null;
-            }
+            private set => this.RaiseAndSetIfChanged(ref _passFileList, value);
         }
 
         private int _passFilesSelectedIndex = -1;
@@ -56,7 +53,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             {
                 _passFilesPrevSelectedIndex = _passFilesSelectedIndex;
                 this.RaiseAndSetIfChanged(ref _passFilesSelectedIndex, value);
-                SelectedData.PassFile = value >= 0 ? _passFileList[value].PassFile : null;
             }
         }
         
@@ -70,32 +66,29 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         
         public PassFileData SelectedData { get; }
 
-        #region Layout
+        public PassFileBarExpander PassFileBarExpander { get; }
         
-        private readonly IObservable<bool> _passFileBarShortMode;
-
-        private bool _isPassFilesBarOpened;
-        public bool IsPassFilesBarOpened
-        {
-            get => _isPassFilesBarOpened;
-            set => this.RaiseAndSetIfChanged(ref _isPassFilesBarOpened, value);
-        }
-
         public BtnState PassFilesBarBtn { get; }
         
         public IObservable<LayoutState> LayoutState { get; }
 
-        #endregion
+        public readonly ViewElements ViewElements = new();
         
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            var passFileBarMode = this.WhenAnyValue(vm => vm.IsPassFilesBarOpened);
-
+            PassFileBarExpander = new PassFileBarExpander();
+            
             PassFilesBarBtn = new BtnState
             {
-                ContentObservable = passFileBarMode.Select(isOpened => isOpened ? Resources.STORAGE__PASSFILES_TITLE : "\uE72b\uE72a"),
-                FontFamilyObservable = passFileBarMode.Select(isOpened => isOpened ? FontFamilies.Default : FontFamilies.SegoeMdl2),
-                FontSizeObservable = passFileBarMode.Select(isOpened => isOpened ? 18d : 14d)
+                ContentObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
+                    ? Resources.STORAGE__PASSFILES_TITLE 
+                    : "\uE72b\uE72a"),
+                FontFamilyObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
+                    ? FontFamilies.Default 
+                    : FontFamilies.SegoeMdl2),
+                FontSizeObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
+                    ? 18d 
+                    : 14d)
             };
 
             LayoutState = this.WhenAnyValue(vm => vm.PassFilesSelectedIndex,
@@ -106,18 +99,32 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                         ? AfterPassFileSelectionLayoutState
                         : AfterSectionSelectionLayoutState);
 
-            _passFileBarShortMode = passFileBarMode.Select(isOpened => !isOpened);
-
-            this.WhenAnyValue(vm => vm.SelectedData.SelectedSectionIndex)
-                .Subscribe(index => IsPassFilesBarOpened = index == -1);
-
-            this.WhenAnyValue(vm => vm.PassFilesSelectedIndex)
-                .InvokeCommand(ReactiveCommand.CreateFromTask<int>(_DecryptIfRequiredAsync));
-            
             var lastItemPath = LastItemPath.Copy();
 
-            SelectedData = new PassFileData(LastItemPath);
+            SelectedData = new PassFileData(ViewElements, LastItemPath, PassFileBarExpander);
             
+            SelectedData.WhenAnyValue(vm => vm.SelectedSectionIndex)
+                .Subscribe(index => PassFileBarExpander.TryExecuteAutoExpanding(index == -1));
+            
+            this.WhenAnyValue(vm => vm.PassFileList)
+                .Subscribe(_ => SelectedData.PassFile = null);
+            
+            this.WhenAnyValue(vm => vm.PassFilesSelectedIndex)
+                .InvokeCommand(ReactiveCommand.CreateFromTask<int>(_DecryptIfRequiredAndSetSectionsAsync));
+
+            SelectedData.WhenAnyValue(vm => vm.SelectedSectionIndex)
+                .Subscribe(index =>
+                {
+                    if (index < 0)
+                        PassFileBarExpander.AutoExpanding = true;
+                });
+
+            PassFileBarExpander.IsOpenedObservable
+                .Subscribe(isOpened =>
+                {
+                    PassFileBarExpander.AutoExpanding = !(isOpened && _passFilesSelectedIndex >= 0);
+                });
+
             this.WhenNavigatedToObservable()
                 .InvokeCommand(ReactiveCommand.CreateFromTask(() => _LoadPassFilesAsync(lastItemPath)));
         }
@@ -142,12 +149,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 NavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
             }
 
-            if (PassFileLocalManager.AnyCurrentChanged)
+            if (PassFileManager.AnyCurrentChanged)
             {
                 var confirm = await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_REFRESH_FROM_SERVER);
                 if (confirm.Bad) return;
+                
+                PassFileManager.Rollback();
             }
 
+            _loaded = false;
             await _LoadPassFilesAsync(LastItemPath.Copy());
         }
 

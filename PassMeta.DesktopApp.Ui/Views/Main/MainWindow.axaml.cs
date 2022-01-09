@@ -95,7 +95,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         
         private async void OnClosing(object? sender, CancelEventArgs e)
         {
-            if (ReferenceEquals(Current, this) && PassFileLocalManager.AnyCurrentChanged)
+            if (ReferenceEquals(Current, this) && PassFileManager.AnyCurrentChanged)
             {
                 e.Cancel = true;
                 var dialogService = Locator.Current.GetService<IDialogService>()!;

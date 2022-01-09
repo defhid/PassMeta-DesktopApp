@@ -59,6 +59,8 @@
                          Text="{Binding WindowTextInputBox.Value}"
                          Watermark="{Binding WindowTextInputBox.Placeholder}"
                          PasswordChar="{Binding WindowTextInputBox.PasswordChar}"
+                         SelectionStart="{Binding WindowTextInputBox.SelectionStart}"
+                         SelectionEnd="{Binding WindowTextInputBox.SelectionEnd}"
                          Classes.revealPasswordButton="{Binding WindowTextInputBox.IsForPassword}"
                          Classes.clearButton="{Binding !WindowTextInputBox.IsForPassword}"
                          Margin="80 0 20 0"

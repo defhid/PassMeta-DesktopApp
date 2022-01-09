@@ -5,7 +5,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
         public bool Visible { get; }
         
         public string Placeholder { get; }
-
+        
+        private string? _value;
         public string? Value
         {
             get => _value; 
@@ -15,7 +16,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
         public char? PasswordChar { get; }
         public bool IsForPassword => PasswordChar is not null;
 
-        private string? _value;
+        public int SelectionStart { get; }
+        public int SelectionEnd { get; }
 
         public TextInputBox(bool visible)
         {
@@ -24,12 +26,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
             PasswordChar = null;
         }
 
-        public TextInputBox(bool visible, string placeholder, string? defaultValue, char? passwordChar)
+        public TextInputBox(bool visible, string placeholder, string? defaultValue, char? passwordChar, bool selectDefaultValue = true)
         {
             Visible = visible;
             Placeholder = placeholder;
             Value = defaultValue;
             PasswordChar = passwordChar;
+            SelectionStart = selectDefaultValue ? 0 : (defaultValue ?? string.Empty).Length;
+            SelectionEnd = (defaultValue ?? string.Empty).Length;
         }
     }
 }

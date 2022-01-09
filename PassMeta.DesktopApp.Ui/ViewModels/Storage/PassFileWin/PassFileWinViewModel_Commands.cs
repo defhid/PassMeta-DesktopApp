@@ -37,7 +37,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             passFile.Name = Name.Trim();
             passFile.Color = PassFileColor.List[SelectedColorIndex].Hex;
 
-            var result = PassFileLocalManager.UpdateInfo(passFile);
+            var result = PassFileManager.UpdateInfo(passFile);
             if (result.Ok)
             {
                 PassFile = passFile;
@@ -58,7 +58,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 
             if (confirm.Bad) return;
 
-            PassFile = PassFileLocalManager.Delete(PassFile);
+            PassFile = PassFileManager.Delete(PassFile);
             PassFileChanged = true;
 
             this.RaisePropertyChanged(nameof(PassFile));

@@ -210,9 +210,6 @@
     <data name="STORAGE__TOOLTIP_ADD_PASSFILE" xml:space="preserve">
         <value>Add passfile</value>
     </data>
-    <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
-        <value>Input section name</value>
-    </data>
     <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
         <value>Do you really want to delete passfile '{0}'?</value>
     </data>
@@ -429,5 +426,8 @@ try another keywords...</value>
     </data>
     <data name="APP__CONFIRM_ROLLBACK_ON_QUIT" xml:space="preserve">
         <value>You have uncommited changes, rollback and exit?</value>
+    </data>
+    <data name="STORAGE__NEW_SECTION_NAME" xml:space="preserve">
+        <value>New section</value>
     </data>
 </root>

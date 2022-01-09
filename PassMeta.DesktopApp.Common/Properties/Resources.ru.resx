@@ -200,9 +200,6 @@
     <data name="STORAGE__TOOLTIP_ADD_PASSFILE" xml:space="preserve">
         <value>Добавить пакет</value>
     </data>
-    <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
-        <value>Введите название группы паролей</value>
-    </data>
     <data name="STORAGE__NO_SECTIONS" xml:space="preserve">
         <value>Пусто</value>
     </data>
@@ -422,5 +419,8 @@
     </data>
     <data name="APP__CONFIRM_ROLLBACK_ON_QUIT" xml:space="preserve">
         <value>У вас есть несохранённые изменения, сбросить их и выйти?</value>
+    </data>
+    <data name="STORAGE__NEW_SECTION_NAME" xml:space="preserve">
+        <value>Новая группа</value>
     </data>
 </root>

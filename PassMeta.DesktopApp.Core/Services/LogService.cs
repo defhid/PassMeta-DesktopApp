@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Common;
     using Common.Interfaces.Services;
     using Common.Models.Entities;
     using Splat;
@@ -104,7 +105,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             _CheckFileStream();
             _fileStream!.Write(Encoding.UTF8.GetBytes(log.Section + '|' 
-                                                      + log.CreatedOn.Value.ToString("yyyy-MM-dd hh:mm:ss") + '|' 
+                                                      + log.CreatedOn.Value.ToString("yyyy-MM-dd hh:mm:ss", Resources.Culture) + '|' 
                                                       + log.Text.Replace("\n", " ") + '\n'));
             _fileStream.Flush();
         }
