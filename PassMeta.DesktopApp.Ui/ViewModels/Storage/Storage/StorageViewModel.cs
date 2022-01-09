@@ -12,6 +12,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Common.Models.Entities;
     using Components;
     using Constants;
+    using Core.Utils;
     using Models;
     using ReactiveUI;
     using ViewModels.Components;
@@ -58,13 +59,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 SelectedData.PassFile = value >= 0 ? _passFileList[value].PassFile : null;
             }
         }
+        
+        public PassFileBtn? SelectedPassFileBtn =>
+            _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex];
 
         public PassFile? SelectedPassFile =>
             _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex].PassFile;
 
         #endregion
         
-        public PassFileData SelectedData { get; } = new(LastItemPath);
+        public PassFileData SelectedData { get; }
 
         #region Layout
         
@@ -110,8 +114,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             this.WhenAnyValue(vm => vm.PassFilesSelectedIndex)
                 .InvokeCommand(ReactiveCommand.CreateFromTask<int>(_DecryptIfRequiredAsync));
             
+            var lastItemPath = LastItemPath.Copy();
+
+            SelectedData = new PassFileData(LastItemPath);
+            
             this.WhenNavigatedToObservable()
-                .InvokeCommand(ReactiveCommand.CreateFromTask(_LoadPassFilesAsync));
+                .InvokeCommand(ReactiveCommand.CreateFromTask(() => _LoadPassFilesAsync(lastItemPath)));
         }
 
         public override void Navigate()
@@ -134,8 +142,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 NavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
             }
 
-            // TODO: alert discard changes?
-            await _LoadPassFilesAsync();
+            if (PassFileLocalManager.AnyCurrentChanged)
+            {
+                var confirm = await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_REFRESH_FROM_SERVER);
+                if (confirm.Bad) return;
+            }
+
+            await _LoadPassFilesAsync(LastItemPath.Copy());
         }
 
         #region Layout states

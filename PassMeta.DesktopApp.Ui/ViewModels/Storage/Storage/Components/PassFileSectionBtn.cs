@@ -7,15 +7,17 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     {
         public readonly PassFile.Section Section;
 
-        public string Name => Section.Name;
+        public string Name { get; set; }
 
         public PassFileSectionBtn(PassFile.Section section)
         {
             Section = section;
+            Name = Section.Name;
         }
 
         public void Refresh()
         {
+            Name = Section.Name;
             this.RaisePropertyChanged(nameof(Name));
         }
     }

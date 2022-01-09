@@ -28,9 +28,9 @@
         </Grid.Styles>
         
         <SplitView DisplayMode="CompactInline"
-                   OpenPaneLength="{Binding LayoutState^.PassFilesPaneWidth}"
-                   CompactPaneLength="50"
                    PaneBackground="Transparent"
+                   CompactPaneLength="50"
+                   OpenPaneLength="{Binding LayoutState^.PassFilesPaneWidth}"
                    IsPaneOpen="{Binding IsPassFilesBarOpened}">
             <SplitView.Pane>
                 <Grid RowDefinitions="Auto,*">
@@ -39,10 +39,10 @@
                                   Margin="4 5 5 12"
                                   Padding="0"
                                   Height="40"
-                                  IsChecked="{Binding IsPassFilesBarOpened}"
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center"
+                                  IsChecked="{Binding IsPassFilesBarOpened}"
                                   Content="{Binding PassFilesBarBtn.Content}"
                                   FontSize="{Binding PassFilesBarBtn.FontSize}"
                                   FontFamily="{Binding PassFilesBarBtn.FontFamily}"/>
@@ -56,6 +56,7 @@
                              CornerRadius="3"
                              SelectedIndex="{Binding PassFilesSelectedIndex}"
                              Items="{Binding PassFileList}"
+                             IsEnabled="{Binding !SelectedData.EditMode}"
                              PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -100,6 +101,12 @@
                                 <Setter Property="Height" Value="40"/>
                                 <Setter Property="Margin" Value="0 0 0 8"/>
                                 <Setter Property="Padding" Value="0 9 6 9"/>
+                                <Setter Property="ContextMenu">
+                                    <ContextMenu>
+                                        <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_EDIT}"
+                                                  Click="OpenCurrentPassFile_OnClick"/>
+                                    </ContextMenu>
+                                </Setter>
                             </Style>
                         </ListBox.Styles>
                     </ListBox>
@@ -107,15 +114,18 @@
                     <Button Grid.Row="1" 
                             Classes="list_add"
                             Margin="4 0 5 5"
+                            IsEnabled="{Binding !SelectedData.EditMode}"
                             Command="{Binding PassFileAddAsync}"
-                            ToolTip.Tip="{x:Static com:Resources.STORAGE__CONTEXT_ADD_PASSFILE}"/>
+                            ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_PASSFILE}"/>
                 </Grid>
             </SplitView.Pane>
             
             <Grid ColumnDefinitions="2*,3*">
                 <Grid Grid.Column="0"
+                      RowDefinitions="Auto,*"
                       Margin="{Binding LayoutState^.SectionsListMargin}">
-                    <TextBox VerticalAlignment="Top"
+                    <TextBox Grid.Row="0"
+                             VerticalAlignment="Top"
                              Margin="0 6 5 6"
                              Height="39"
                              Padding="6 8 6 0"
@@ -123,25 +133,39 @@
                              Classes="clearButton"
                              Watermark="{x:Static com:Resources.STORAGE__SECTION_SEARCH_INPUT_WATERMARK}"
                              IsVisible="{Binding SelectedData.IsSectionsBarVisible^}"
+                             IsReadOnly="{Binding SelectedData.EditMode}"
+                             Focusable="{Binding !SelectedData.EditMode}"
                              Text="{Binding SelectedData.SearchText}"/>
                 
                     <!-- PassFileSectionList -->
-                    <Border VerticalAlignment="Stretch"
-                            Margin="0 57 5 5"
+                    <Border Grid.Row="1"
+                            VerticalAlignment="Stretch"
+                            Margin="0 6 5 5"
                             Padding="0 4 0 4"
                             CornerRadius="3"
+                            DataContext="{Binding SelectedData}"
                             Background="{Binding Background, ElementName=PassFiles}"
-                            IsVisible="{Binding SelectedData.IsSectionsBarVisible^}">
+                            IsVisible="{Binding IsSectionsBarVisible^}"
+                            IsEnabled="{Binding !EditMode}">
                         <Grid VerticalAlignment="Stretch">
                             <ListBox x:Name="Sections"
                                      Padding="0 0 0 20"
                                      SelectionMode="Toggle"
-                                     SelectedIndex="{Binding SelectedData.SelectedSectionIndex}"
-                                     Items="{Binding SelectedData.SectionsList}"
+                                     SelectedIndex="{Binding SelectedSectionIndex}"
+                                     Items="{Binding SectionsList}"
+                                     IsEnabled="{Binding !EditMode}"
                                      PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
                                 <ListBox.Styles>
                                     <Style Selector="ListBoxItem">
                                         <Setter Property="Padding" Value="8"/>
+                                        <Setter Property="ContextMenu">
+                                            <ContextMenu>
+                                                <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_EDIT}"
+                                                          Click="EditCurrentSection_OnClick"/>
+                                                <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
+                                                          Click="DeleteCurrentSection_OnClick"/>
+                                            </ContextMenu>
+                                        </Setter>
                                     </Style>
                                 </ListBox.Styles>
                                 
@@ -154,15 +178,16 @@
                             
                             <Button Classes="list_add"
                                     Margin="0 0 0 -4"
-                                    Command="{Binding SelectedData.SectionAddAsync}"
-                                    ToolTip.Tip="{x:Static com:Resources.STORAGE__CONTEXT_ADD_SECTION}"/>
+                                    Command="{Binding SectionAddAsync}"
+                                    ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_SECTION}"/>
                             
                             <TextBlock FontSize="16"
                                        Foreground="DarkGray"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
-                                       Text="{Binding SelectedData.NoSectionsText^}"
-                                       IsVisible="{Binding SelectedData.IsNoSectionsTextVisible}"/>
+                                       Margin="0 0 0 30"
+                                       Text="{Binding NoSectionsText^}"
+                                       IsVisible="{Binding IsNoSectionsTextVisible}"/>
                         </Grid>
                     </Border>
                 </Grid>
@@ -171,14 +196,25 @@
                 <Border Grid.Column="1"
                         Margin="0 6 4 5"
                         CornerRadius="3"
+                        DataContext="{Binding SelectedData}"
                         Background="{Binding Background, ElementName=Sections}"
-                        IsVisible="{Binding SelectedData.IsItemsBarVisible^}">
+                        IsVisible="{Binding IsItemsBarVisible^}">
                     <Grid PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <Grid>
-                                <!-- TODO: section rename, nice UI -->
+                            <Grid RowDefinitions="Auto,*">
+                                <TextBox Grid.Row="0"
+                                         Margin="5 5 7 10"
+                                         Padding="8 3 8 3"
+                                         MinHeight="28"
+                                         Height="28"
+                                         FontSize="14"
+                                         VerticalContentAlignment="Center"
+                                         Text="{Binding SelectedSectionName}"
+                                         IsReadOnly="{Binding !EditMode}"
+                                         Focusable="{Binding EditMode}"/>
                                 
-                                <ItemsControl Items="{Binding SelectedData.SectionItemsList}"
+                                <ItemsControl Grid.Row="1"
+                                              Items="{Binding SectionItemsList}"
                                               CornerRadius="3"
                                               Padding="5 5 5 100"
                                               VerticalAlignment="Top">
@@ -193,13 +229,13 @@
                                                 
                                                 <!-- Comment edit, manage buttons -->
                                                 <Grid Grid.Row="0"
-                                                      Margin="0 0 40 7"
-                                                      ColumnDefinitions="*,28,28,28"
+                                                      Margin="0 0 26 7"
+                                                      ColumnDefinitions="*,30,30,30"
                                                       IsVisible="{Binding IsCommentInputVisible^}">
                                                     <Grid.Styles>
                                                         <Style Selector="Button">
-                                                            <Setter Property="Height" Value="24"/>
-                                                            <Setter Property="Width" Value="24"/>
+                                                            <Setter Property="Height" Value="26"/>
+                                                            <Setter Property="Width" Value="26"/>
                                                             <Setter Property="Padding" Value="0"/>
                                                             <Setter Property="FontSize" Value="14"/>
                                                             <Setter Property="FontFamily" Value="{x:Static const:FontFamilies.SegoeMdl2}"/>
@@ -211,9 +247,9 @@
                                                     
                                                     <TextBox Grid.Column="0"
                                                              Padding="6 2"
-                                                             MinHeight="24"
-                                                             Height="24"
-                                                             FontSize="12"
+                                                             MinHeight="26"
+                                                             Height="26"
+                                                             FontSize="13"
                                                              VerticalContentAlignment="Center"
                                                              Text="{Binding Comment}"/>
                                                     
@@ -232,7 +268,7 @@
                                                 
                                                 <!-- Login & password, copy buttons -->
                                                 <Grid Grid.Row="1"
-                                                      ColumnDefinitions="Auto,*,40"
+                                                      ColumnDefinitions="Auto,*,Auto"
                                                       RowDefinitions="*,*">
                                                     <Grid.Styles>
                                                         <Style Selector="Button">
@@ -257,6 +293,7 @@
                                                     
                                                     <TextBox Grid.Row="0"
                                                              Grid.Column="1"
+                                                             Margin="0 0 26 0"
                                                              Padding="4"
                                                              MinHeight="45"
                                                              FontSize="15"
@@ -264,11 +301,12 @@
                                                              AcceptsReturn="True"
                                                              TextWrapping="Wrap"
                                                              Text="{Binding What}"
-                                                             IsReadOnly="{Binding IsReadOnly}"/>
+                                                             IsReadOnly="{Binding IsReadOnly}"
+                                                             Focusable="{Binding !IsReadOnly}"/>
                                                         
                                                     <Button Grid.Row="0"
                                                             Grid.Column="2"
-                                                            Margin="0 0 2 0"
+                                                            Margin="-20 0 2 0"
                                                             Content="&#xE8C8;"
                                                             ToolTip.Tip="{x:Static com:Resources.STORAGE__LOGIN_COPY}"
                                                             IsVisible="{Binding IsReadOnly}"
@@ -283,7 +321,7 @@
                                                     
                                                     <TextBox Grid.Row="1"
                                                              Grid.Column="1"
-                                                             Margin="0 10 0 20"
+                                                             Margin="0 10 26 20"
                                                              Padding="4"
                                                              Height="30"
                                                              MinHeight="30"
@@ -291,11 +329,12 @@
                                                              FontSize="15"
                                                              VerticalContentAlignment="Center"
                                                              Text="{Binding Password}"
-                                                             IsReadOnly="{Binding IsReadOnly}"/>
-                                                        
+                                                             IsReadOnly="{Binding IsReadOnly}"
+                                                             Focusable="{Binding !IsReadOnly}"/>
+                                                    
                                                     <Button Grid.Row="1"
                                                             Grid.Column="2"
-                                                            Margin="0 10 2 0"
+                                                            Margin="-20 10 2 0"
                                                             Content="&#xE8C8;"
                                                             ToolTip.Tip="{x:Static com:Resources.STORAGE__PASSWORD_COPY}"
                                                             IsVisible="{Binding IsReadOnly}"
@@ -310,16 +349,16 @@
                         
                         <Button Classes="list_add"
                                 Margin="0 0 0 0"
-                                IsVisible="{Binding SelectedData.EditMode}"
-                                Command="{Binding SelectedData.ItemAdd}"
-                                ToolTip.Tip="{x:Static com:Resources.STORAGE__CONTEXT_ADD_ITEM}"/>
+                                IsVisible="{Binding EditMode}"
+                                Command="{Binding ItemAdd}"
+                                ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_ITEM}"/>
                         
                         <TextBlock FontSize="16"
                                    Foreground="DarkGray"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    Text="{x:Static com:Resources.STORAGE__NO_ITEMS}"
-                                   IsVisible="{Binding SelectedData.IsNoItemsTextVisible}"/>
+                                   IsVisible="{Binding IsNoItemsTextVisible}"/>
                     </Grid>
                 </Border>
             </Grid>

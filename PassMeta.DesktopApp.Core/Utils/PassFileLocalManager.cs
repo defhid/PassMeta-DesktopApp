@@ -309,12 +309,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         /// <param name="passFile">
         /// Passfile with <see cref="PassFile.Data"/> and <see cref="PassFile.PassPhrase"/>.
-        /// Will be refreshed if success.
+        /// Will be refreshed (including data) if success.
         /// </param>
         /// <param name="update">
-        /// Action that must reflect <paramref name="passFile"/> changes.
-        /// Used when internal changed is decrypted.
+        /// Action to perform on <paramref name="passFile"/> data.
         /// </param>
+        /// <remarks>Ensure that <paramref name="update"/> algorithm only works with copies of new data!</remarks>
         public static Result UpdateDataSelectively(PassFile passFile, Action<List<PassFile.Section>> update)
         {
             var found = _currentPassFiles.FindIndex(pf =>
@@ -337,19 +337,15 @@ namespace PassMeta.DesktopApp.Core.Utils
                 changed.Data = passFile.Data!.Select(section => section.Copy()).ToList();
                 changed.PassPhrase = passFile.PassPhrase;
             }
-            else
+            
+            try
             {
-                try
-                {
-                    update(changed.Data);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex, "Selective passfile data update failed");
-                    
-                    changed.Data = passFile.Data!.Select(section => section.Copy()).ToList();
-                    changed.PassPhrase = passFile.PassPhrase;
-                }
+                update(changed.Data);
+                update(passFile.Data!);
+            }
+            catch (Exception ex)
+            {
+                return ManagerError("Selective passfile data update failed", ex);
             }
             
             changed.Version = source is null ? changed.Version : source.Version + 1;
@@ -393,6 +389,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         }
 
         /// <summary>
+        /// Has any uncommited changed/deleted passfile?
+        /// </summary>
+        public static bool AnyCurrentChanged =>
+            _deletedPassFiles.Any() || _currentPassFiles.Any(pf => pf.changed is not null);
+
+        /// <summary>
         /// Cancel all passfile changes.
         /// </summary>
         public static void Rollback()
@@ -425,7 +427,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 {
                     if (changed is null) continue;
                     
-                    if (changed.LocalDeleted && changed.Origin!.LocalCreated is true)
+                    if (changed.LocalDeleted && changed.Origin!.LocalCreated)
                     {
                         delete.Add(changed);
                         continue;

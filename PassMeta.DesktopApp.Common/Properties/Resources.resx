@@ -204,13 +204,10 @@
     <data name="STORAGE__NO_ITEMS" xml:space="preserve">
         <value>No items</value>
     </data>
-    <data name="STORAGE__CONTEXT_RENAME" xml:space="preserve">
-        <value>Rename</value>
-    </data>
     <data name="STORAGE__CONTEXT_DELETE" xml:space="preserve">
         <value>Delete</value>
     </data>
-    <data name="STORAGE__CONTEXT_ADD_PASSFILE" xml:space="preserve">
+    <data name="STORAGE__TOOLTIP_ADD_PASSFILE" xml:space="preserve">
         <value>Add passfile</value>
     </data>
     <data name="STORAGE__ASK_SECTION_NAME" xml:space="preserve">
@@ -411,10 +408,10 @@
     <data name="DIALOG__BTN_CLOSE" xml:space="preserve">
         <value>Close</value>
     </data>
-    <data name="STORAGE__CONTEXT_ADD_SECTION" xml:space="preserve">
+    <data name="STORAGE__TOOLTIP_ADD_SECTION" xml:space="preserve">
         <value>Add section</value>
     </data>
-    <data name="STORAGE__CONTEXT_ADD_ITEM" xml:space="preserve">
+    <data name="STORAGE__TOOLTIP_ADD_ITEM" xml:space="preserve">
         <value>Add password</value>
     </data>
     <data name="STORAGE__CONFIRM_DELETE_SECTION" xml:space="preserve">
@@ -423,5 +420,14 @@
     <data name="STORAGE__NO_SECTIONS_FOUND" xml:space="preserve">
         <value>Not found,
 try another keywords...</value>
+    </data>
+    <data name="STORAGE__CONTEXT_EDIT" xml:space="preserve">
+        <value>Edit</value>
+    </data>
+    <data name="STORAGE__CONFIRM_REFRESH_FROM_SERVER" xml:space="preserve">
+        <value>Rollback current changes and refresh from the server?</value>
+    </data>
+    <data name="APP__CONFIRM_ROLLBACK_ON_QUIT" xml:space="preserve">
+        <value>You have uncommited changes, rollback and exit?</value>
     </data>
 </root>

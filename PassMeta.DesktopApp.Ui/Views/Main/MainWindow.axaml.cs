@@ -10,6 +10,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using AppContext = Core.Utils.AppContext;
     
     using System;
+    using System.ComponentModel;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     
@@ -17,6 +18,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Controls;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
+    using Common.Interfaces.Services;
+    using Splat;
 
     public class MainWindow : Window
     {
@@ -90,8 +93,21 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             PassMetaApi.OnlineChanged += DataContext.Mode.OnChanged;
         }
         
-        private void OnClosing(object? sender, EventArgs e)
+        private async void OnClosing(object? sender, CancelEventArgs e)
         {
+            if (ReferenceEquals(Current, this) && PassFileLocalManager.AnyCurrentChanged)
+            {
+                e.Cancel = true;
+                var dialogService = Locator.Current.GetService<IDialogService>()!;
+                var confirm = await dialogService.ConfirmAsync(Common.Resources.APP__CONFIRM_ROLLBACK_ON_QUIT);
+                if (confirm.Ok)
+                {
+                    var win = Current;
+                    Current = null;
+                    win.Close();
+                }
+            }
+            
             PassMetaApi.OnlineChanged -= DataContext.Mode.OnChanged;
         }
         

@@ -206,6 +206,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             /// </summary>
             public Section Copy() => new()
             {
+                Id = Id,
                 Name = Name,
                 Items = Items.Select(i => i.Copy()).ToList()
             };

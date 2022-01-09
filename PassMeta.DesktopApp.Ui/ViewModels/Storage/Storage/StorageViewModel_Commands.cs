@@ -9,6 +9,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Common.Utils.Extensions;
     using Components;
     using Core.Utils;
+    using Models;
     using Splat;
     using Ui.Utils.Extensions;
     using Utils.Comparers;
@@ -33,7 +34,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             return passFileBtn;
         }
 
-        private async Task _LoadPassFilesAsync()
+        private async Task _LoadPassFilesAsync(PassFileItemPath lastItemPath)
         {
             using var preloader = MainWindow.Current!.StartPreloader();
 
@@ -43,8 +44,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 _loaded = true;
             }
 
-            var lastItemPath = LastItemPath.Copy();
-            
             _UpdatePassFileList();
 
             if (lastItemPath.PassFileId is not null)
@@ -114,7 +113,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             _UpdatePassFileList();
         }
 
-        private async Task PassFileAddAsync()
+        public async Task PassFileAddAsync()
         {
             using var preloader = MainWindow.Current!.StartPreloader();
             
@@ -128,6 +127,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             PassFilesSelectedIndex = 0;
              
             await passFileBtn.OpenAsync();
+        }
+
+        public async Task PassFileOpenAsync()
+        {
+            await SelectedPassFileBtn!.OpenAsync();
         }
     }
 }

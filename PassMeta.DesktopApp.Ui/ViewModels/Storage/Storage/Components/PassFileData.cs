@@ -92,15 +92,27 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedSectionIndex, value);
+                this.RaisePropertyChanged(nameof(SelectedSectionName));
+                EditMode = false;
                 _UpdatePassFileSectionItemList();
             }
         }
         
         public PassFileSectionBtn? SelectedSectionBtn =>
             _selectedSectionIndex < 0 ? null : _sectionsList[_selectedSectionIndex];
-        
+
         public PassFile.Section? SelectedSection =>
             _selectedSectionIndex < 0 ? null : _sectionsList[_selectedSectionIndex].Section;
+        
+        public string? SelectedSectionName
+        {
+            get => _selectedSectionIndex < 0 ? null : _sectionsList[_selectedSectionIndex].Name;
+            set
+            {
+                if (_selectedSectionIndex >= 0)
+                    _sectionsList[_selectedSectionIndex].Name = value ?? string.Empty;
+            }
+        }
 
         private string? _searchText;
         public string? SearchText
@@ -128,7 +140,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             
             this.WhenAnyValue(vm => vm.SectionsList)
                 .Subscribe(_ => _UpdatePassFileSectionItemList());
-            
+
             IsSectionsBarVisible = this.WhenAnyValue(vm => vm.SectionsList)
                 .Select(sections => sections is not null);
 
@@ -235,7 +247,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         
         #region Sections
 
-        private async Task SectionAddAsync()
+        public async Task SectionAddAsync()
         {
             var askName = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME);
             if (askName.Bad || askName.Data == string.Empty) return;
@@ -244,10 +256,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             var passFile = _passFile!;
             var section = new PassFile.Section { Name = askName.Data! };
             
-            var result = PassFileLocalManager.UpdateDataSelectively(passFile, data => data.Add(section.Copy()));
+            var result = PassFileLocalManager.UpdateDataSelectively(passFile, data => 
+                data.Add(section.Copy()));
+            
             if (result.Ok)
             {
-                passFile.Data!.Add(section);
                 _UpdatePassFileSectionList(true);
                 SelectedSectionIndex = _sectionsList.FindIndex(btn => btn.Section.Id == section.Id);
             }
@@ -257,31 +270,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             }
         }
 
-        public async Task SectionRenameAsync()  // TODO implement UI input
-        {
-            var passFile = _passFile!;
-            var section = SelectedSection!;
-
-            var askName = await _dialogService.AskStringAsync(Resources.STORAGE__ASK_SECTION_NAME, defaultValue: section.Name);
-            if (askName.Bad || askName.Data == string.Empty || askName.Data == section.Name) return;
-            
-            using var preloader = MainWindow.Current!.StartPreloader();
-            var name = askName.Data!;
-
-            var result = PassFileLocalManager.UpdateDataSelectively(passFile, 
-                data => data.First(s => s.Id == section.Id).Name = name);
-
-            if (result.Ok)
-            {
-                passFile.Data!.First(s => s.Id == section.Id).Name = name;
-                SelectedSectionBtn!.Refresh();
-            }
-            else
-            {
-                _dialogService.ShowError(result.Message!);
-            }
-        }
-        
         public async Task SectionDeleteAsync()
         {
             var passFile = _passFile!;
@@ -292,15 +280,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
             using var preloader = MainWindow.Current!.StartPreloader();
 
-            var result = PassFileLocalManager.UpdateDataSelectively(passFile, 
-                data => data.RemoveAll(s => s.Id == section.Id));
+            var result = PassFileLocalManager.UpdateDataSelectively(passFile, data => 
+                data.RemoveAll(s => s.Id == section.Id));
 
             if (result.Ok)
             {
-                passFile.Data!.RemoveAll(s => s.Id == section.Id);
                 var index = SelectedSectionIndex;
                 _sectionsList.RemoveAt(index);
-                SelectedSectionIndex = Math.Min(index, _sectionsList.Count);
+                SelectedSectionIndex = Math.Min(index, _sectionsList.Count - 1);
             }
             else
             {
@@ -312,24 +299,54 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         #region Items
 
-        private void ItemsEdit()
+        public void ItemsEdit()
         {
             EditMode = true;
         }
 
         private void ItemsApplyChanges()
         {
-            // TODO
-            EditMode = false;
+            using var preloader = MainWindow.Current!.StartPreloader();
+
+            var passFile = _passFile!;
+            var section = SelectedSection!;
+            
+            var items = _sectionItemsList.Select(btn => btn.ToItem()).ToList();
+            var sectionName = SelectedSectionName?.Trim();
+
+            if (string.IsNullOrEmpty(sectionName))
+            {
+                sectionName = section.Name;
+            }
+            
+            var result = PassFileLocalManager.UpdateDataSelectively(passFile, data =>
+            {
+                var lSection = data.First(s => s.Id == section.Id);
+                lSection.Name = sectionName;
+                lSection.Items = items.Select(i => i.Copy()).ToList();
+            });
+
+            if (result.Ok)
+            {
+                _UpdatePassFileSectionItemList();
+                SelectedSectionBtn!.Refresh();
+                EditMode = false;
+            }
+            else
+            {
+                _dialogService.ShowError(result.Message!);
+            }
         }
 
         private void ItemsDiscardChanges()
         {
+            SelectedSectionBtn!.Refresh();
+            this.RaisePropertyChanged(nameof(SelectedSectionName));
             _UpdatePassFileSectionItemList();
             EditMode = false;
         }
         
-        private void ItemAdd()
+        public void ItemAdd()
         {
             var itemBtn = _MakePassFileSectionItemBtn(new PassFile.Section.Item());
             _sectionItemsList.Add(itemBtn);

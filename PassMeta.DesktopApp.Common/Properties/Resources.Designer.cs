@@ -214,6 +214,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have uncommited changes, rollback and exit?.
+        /// </summary>
+        public static string APP__CONFIRM_ROLLBACK_ON_QUIT {
+            get {
+                return ResourceManager.GetString("APP__CONFIRM_ROLLBACK_ON_QUIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Offline.
         /// </summary>
         public static string APP__OFFLINE_MODE {
@@ -1132,29 +1141,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add password.
+        ///   Looks up a localized string similar to Rollback current changes and refresh from the server?.
         /// </summary>
-        public static string STORAGE__CONTEXT_ADD_ITEM {
+        public static string STORAGE__CONFIRM_REFRESH_FROM_SERVER {
             get {
-                return ResourceManager.GetString("STORAGE__CONTEXT_ADD_ITEM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add passfile.
-        /// </summary>
-        public static string STORAGE__CONTEXT_ADD_PASSFILE {
-            get {
-                return ResourceManager.GetString("STORAGE__CONTEXT_ADD_PASSFILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add section.
-        /// </summary>
-        public static string STORAGE__CONTEXT_ADD_SECTION {
-            get {
-                return ResourceManager.GetString("STORAGE__CONTEXT_ADD_SECTION", resourceCulture);
+                return ResourceManager.GetString("STORAGE__CONFIRM_REFRESH_FROM_SERVER", resourceCulture);
             }
         }
         
@@ -1168,11 +1159,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rename.
+        ///   Looks up a localized string similar to Edit.
         /// </summary>
-        public static string STORAGE__CONTEXT_RENAME {
+        public static string STORAGE__CONTEXT_EDIT {
             get {
-                return ResourceManager.GetString("STORAGE__CONTEXT_RENAME", resourceCulture);
+                return ResourceManager.GetString("STORAGE__CONTEXT_EDIT", resourceCulture);
             }
         }
         
@@ -1264,6 +1255,33 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__SECTION_SEARCH_INPUT_WATERMARK {
             get {
                 return ResourceManager.GetString("STORAGE__SECTION_SEARCH_INPUT_WATERMARK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add password.
+        /// </summary>
+        public static string STORAGE__TOOLTIP_ADD_ITEM {
+            get {
+                return ResourceManager.GetString("STORAGE__TOOLTIP_ADD_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add passfile.
+        /// </summary>
+        public static string STORAGE__TOOLTIP_ADD_PASSFILE {
+            get {
+                return ResourceManager.GetString("STORAGE__TOOLTIP_ADD_PASSFILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add section.
+        /// </summary>
+        public static string STORAGE__TOOLTIP_ADD_SECTION {
+            get {
+                return ResourceManager.GetString("STORAGE__TOOLTIP_ADD_SECTION", resourceCulture);
             }
         }
         
