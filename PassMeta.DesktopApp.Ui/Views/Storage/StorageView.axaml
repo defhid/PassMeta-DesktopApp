@@ -10,7 +10,8 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              d:DataContext="{d:DesignInstance storage:StorageViewModel}">
-    <Grid>
+    <Grid Background="Transparent"
+          PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
         <Grid.Styles>
             <Style Selector="Button.list_add">
                 <Setter Property="Content" Value="&#xE710;"/>
@@ -56,8 +57,7 @@
                              CornerRadius="3"
                              SelectedIndex="{Binding PassFilesSelectedIndex}"
                              Items="{Binding PassFileList}"
-                             IsEnabled="{Binding !SelectedData.Edit.Mode}"
-                             PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
+                             IsEnabled="{Binding !SelectedData.Edit.Mode}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="Auto,*"
@@ -155,7 +155,6 @@
                                      SelectedIndex="{Binding SelectedSectionIndex}"
                                      Items="{Binding SectionsList}"
                                      IsEnabled="{Binding !Edit.Mode}"
-                                     PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}"
                                      AttachedToLogicalTree="SectionListBox_OnAttachedToLogicalTree">
                                 <ListBox.Styles>
                                     <Style Selector="ListBoxItem">
@@ -196,12 +195,12 @@
                 
                 <!-- PassFileSectionItemList -->
                 <Border Grid.Column="1"
-                        Margin="0 6 4 5"
                         CornerRadius="3"
+                        Margin="0 6 4 5"
                         DataContext="{Binding SelectedData}"
                         Background="{Binding Background, ElementName=Sections}"
                         IsVisible="{Binding IsItemsBarVisible^}">
-                    <Grid PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
+                    <Grid>
                         <ScrollViewer VerticalScrollBarVisibility="Auto"
                                       AttachedToLogicalTree="ItemScrollViewer_OnAttachedToLogicalTree">
                             <Grid RowDefinitions="Auto,*">

@@ -709,11 +709,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input your passphrase.
+        ///   Looks up a localized string similar to Input NEW passphrase.
+        /// </summary>
+        public static string PASSFILE__ASK_NEW_PASSPHRASE {
+            get {
+                return ResourceManager.GetString("PASSFILE__ASK_NEW_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input passphrase.
         /// </summary>
         public static string PASSFILE__ASK_PASSPHRASE {
             get {
                 return ResourceManager.GetString("PASSFILE__ASK_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change password.
+        /// </summary>
+        public static string PASSFILE__BTN_CHANGE_PWD {
+            get {
+                return ResourceManager.GetString("PASSFILE__BTN_CHANGE_PWD", resourceCulture);
             }
         }
         
@@ -745,6 +763,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restore.
+        /// </summary>
+        public static string PASSFILE__BTN_RESTORE {
+            get {
+                return ResourceManager.GetString("PASSFILE__BTN_RESTORE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string PASSFILE__BTN_SAVE {
@@ -754,7 +781,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you really want to delete passfile &apos;{0}&apos;?.
+        ///   Looks up a localized string similar to Do you really want to delete passfile &apos;{0}&apos; #{1}?.
         /// </summary>
         public static string PASSFILE__CONFIRM_DELETE {
             get {
@@ -790,11 +817,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid passphrase!.
+        ///   Looks up a localized string similar to Passphrase successfully changed!.
         /// </summary>
-        public static string PASSFILE__INCORRECT_PASSPHRASE {
+        public static string PASSFILE__INFO_PASSPHRASE_CHANGED {
             get {
-                return ResourceManager.GetString("PASSFILE__INCORRECT_PASSPHRASE", resourceCulture);
+                return ResourceManager.GetString("PASSFILE__INFO_PASSPHRASE_CHANGED", resourceCulture);
             }
         }
         
@@ -844,7 +871,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Local changed ({0}).
+        ///   Looks up a localized string similar to Changed locally ({0}).
         /// </summary>
         public static string PASSFILE__STATE_LOCAL_CHANGED {
             get {
@@ -853,11 +880,20 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New.
+        ///   Looks up a localized string similar to New (local, {0}).
         /// </summary>
-        public static string PASSFILE__STATE_NEW {
+        public static string PASSFILE__STATE_LOCAL_CREATED {
             get {
-                return ResourceManager.GetString("PASSFILE__STATE_NEW", resourceCulture);
+                return ResourceManager.GetString("PASSFILE__STATE_LOCAL_CREATED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted locally ({0}).
+        /// </summary>
+        public static string PASSFILE__STATE_LOCAL_DELETED {
+            get {
+                return ResourceManager.GetString("PASSFILE__STATE_LOCAL_DELETED", resourceCulture);
             }
         }
         
@@ -1060,7 +1096,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Passfile local version &apos;{0}&apos; not found!.
+        ///   Looks up a localized string similar to Passfile local version not found!.
         /// </summary>
         public static string PASSMANAGER__VERSION_NOT_FOUND_ERR {
             get {
@@ -1132,11 +1168,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rollback current changes and refresh from the server?.
+        ///   Looks up a localized string similar to Rollback current changes?.
         /// </summary>
-        public static string STORAGE__CONFIRM_REFRESH_FROM_SERVER {
+        public static string STORAGE__CONFIRM_ROLLBACK {
             get {
-                return ResourceManager.GetString("STORAGE__CONFIRM_REFRESH_FROM_SERVER", resourceCulture);
+                return ResourceManager.GetString("STORAGE__CONFIRM_ROLLBACK", resourceCulture);
             }
         }
         

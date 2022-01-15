@@ -193,7 +193,7 @@
         <value>Packages</value>
     </data>
     <data name="PASSFILE__ASK_PASSPHRASE" xml:space="preserve">
-        <value>Input your passphrase</value>
+        <value>Input passphrase</value>
     </data>
     <data name="DIALOG__DEFAULT_ASK_TITLE" xml:space="preserve">
         <value>Input form</value>
@@ -211,13 +211,10 @@
         <value>Add passfile</value>
     </data>
     <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
-        <value>Do you really want to delete passfile '{0}'?</value>
+        <value>Do you really want to delete passfile '{0}' #{1}?</value>
     </data>
     <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Wrong passphrase!</value>
-    </data>
-    <data name="PASSFILE__INCORRECT_PASSPHRASE" xml:space="preserve">
-        <value>Invalid passphrase!</value>
     </data>
     <data name="DICT_STORAGE__CHECK_PASSWORD" xml:space="preserve">
         <value>account password</value>
@@ -307,7 +304,7 @@
         <value>Ok</value>
     </data>
     <data name="PASSFILE__STATE_LOCAL_CHANGED" xml:space="preserve">
-        <value>Local changed ({0})</value>
+        <value>Changed locally ({0})</value>
     </data>
     <data name="PASSFILE__BTN_OK" xml:space="preserve">
         <value>Ok</value>
@@ -324,8 +321,8 @@
     <data name="PASSFILE__INCORRECT_NAME" xml:space="preserve">
         <value>Invalid name!</value>
     </data>
-    <data name="PASSFILE__STATE_NEW" xml:space="preserve">
-        <value>New</value>
+    <data name="PASSFILE__STATE_LOCAL_CREATED" xml:space="preserve">
+        <value>New (local, {0})</value>
     </data>
     <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
         <value>New passfile '{0}'</value>
@@ -334,7 +331,7 @@
         <value>Passfile encryption failed</value>
     </data>
     <data name="PASSMANAGER__VERSION_NOT_FOUND_ERR" xml:space="preserve">
-        <value>Passfile local version '{0}' not found!</value>
+        <value>Passfile local version not found!</value>
     </data>
     <data name="PASSMANAGER__ERR" xml:space="preserve">
         <value>Passfile local manager error! (see logs)</value>
@@ -421,13 +418,28 @@ try another keywords...</value>
     <data name="STORAGE__CONTEXT_EDIT" xml:space="preserve">
         <value>Edit</value>
     </data>
-    <data name="STORAGE__CONFIRM_REFRESH_FROM_SERVER" xml:space="preserve">
-        <value>Rollback current changes and refresh from the server?</value>
+    <data name="STORAGE__CONFIRM_ROLLBACK" xml:space="preserve">
+        <value>Rollback current changes?</value>
     </data>
     <data name="APP__CONFIRM_ROLLBACK_ON_QUIT" xml:space="preserve">
         <value>You have uncommited changes, rollback and exit?</value>
     </data>
     <data name="STORAGE__NEW_SECTION_NAME" xml:space="preserve">
         <value>New section</value>
+    </data>
+    <data name="PASSFILE__STATE_LOCAL_DELETED" xml:space="preserve">
+        <value>Deleted locally ({0})</value>
+    </data>
+    <data name="PASSFILE__BTN_CHANGE_PWD" xml:space="preserve">
+        <value>Change password</value>
+    </data>
+    <data name="PASSFILE__BTN_RESTORE" xml:space="preserve">
+        <value>Restore</value>
+    </data>
+    <data name="PASSFILE__ASK_NEW_PASSPHRASE" xml:space="preserve">
+        <value>Input NEW passphrase</value>
+    </data>
+    <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
+        <value>Passphrase successfully changed!</value>
     </data>
 </root>

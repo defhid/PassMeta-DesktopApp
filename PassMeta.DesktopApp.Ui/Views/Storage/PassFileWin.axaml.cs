@@ -12,6 +12,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
         public PassFile? PassFile { get; private set; }
 
         public bool PassFileChanged { get; private set; }
+
+        private readonly bool _changeNameAdvice;
         
         private new PassFileWinViewModel? DataContext
         {
@@ -32,6 +34,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
         {
             PassFile = passFile;
             DataContext = new PassFileWinViewModel(passFile.Copy(), Close);
+
+            _changeNameAdvice = PassFile!.Name.Trim() == Common.Resources.PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME;
         }
 
         private new void Close()
@@ -47,14 +51,24 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
         
         private void NameTextBox__OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            if (PassFile!.LocalCreated is true)
-                (sender as TextBox)?.Focus();
+            var textBox = (sender as TextBox)!;
+
+            textBox.CaretIndex = textBox.Text.Length;
+
+            if (_changeNameAdvice)
+            {
+                textBox.SelectionStart = 0;
+                textBox.SelectionEnd = textBox.Text.Length;
+                textBox.Focus();
+            }
         }
         
         private void OkBtn__OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            if (PassFile!.LocalCreated is false)
-                (sender as Button)?.Focus();
+            if (!_changeNameAdvice)
+            {
+                (sender as Button)!.Focus();
+            }
         }
     }
 }

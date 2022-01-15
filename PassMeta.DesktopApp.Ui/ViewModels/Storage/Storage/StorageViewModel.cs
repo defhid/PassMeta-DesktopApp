@@ -151,7 +151,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
             if (PassFileManager.AnyCurrentChanged)
             {
-                var confirm = await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_REFRESH_FROM_SERVER);
+                var confirm = await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_ROLLBACK);
                 if (confirm.Bad) return;
                 
                 PassFileManager.Rollback();

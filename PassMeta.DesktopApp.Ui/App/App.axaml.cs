@@ -14,6 +14,7 @@ namespace PassMeta.DesktopApp.Ui.App
     
     using System.Threading.Tasks;
     using System.Reflection;
+    using System.Threading;
     using ReactiveUI;
     using Services;
     using Splat;
@@ -71,6 +72,9 @@ namespace PassMeta.DesktopApp.Ui.App
 
         private static MainWindow MakeWindow()
         {
+            Thread.CurrentThread.CurrentCulture = Common.Resources.Culture;
+            Thread.CurrentThread.CurrentUICulture = Common.Resources.Culture;
+            
             var win = new MainWindow { DataContext = new MainWindowViewModel() };
             
             Locator.CurrentMutable.UnregisterCurrent<INotificationManager>();

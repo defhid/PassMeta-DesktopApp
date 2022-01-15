@@ -93,7 +93,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 return;
             }
 
-            SelectedData.PassFile = null;
             PassFilesSelectedIndex = _passFilesPrevSelectedIndex;
         }
 

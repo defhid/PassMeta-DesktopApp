@@ -7,6 +7,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Core.Utils;
     using ReactiveUI;
     using Splat;
+    using Utils.Extensions;
 
     public partial class PassFileWinViewModel
     {
@@ -18,15 +19,47 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             _closeAction = null;
         }
 
-        public async Task ChangePassword()
+        public async Task ChangePasswordAsync()
         {
-            // TODO
+            if (PassFile?.LocalDeleted is not false) return;
+
+            var result = await PassFile.LoadIfRequiredAndDecryptAsync();
+            if (result.Bad) return;
+
+            var passPhraseNew = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_NEW_PASSPHRASE);
+            if (passPhraseNew.Bad || passPhraseNew.Data == string.Empty) return;
+
+            var passfile = PassFile.Copy();
+            passfile.PassPhrase = passPhraseNew.Data;
+            result = PassFileManager.UpdateData(passfile);
+
+            if (result.Ok)
+            {
+                PassFile = passfile;
+                PassFileChanged = true;
+                this.RaisePropertyChanged(nameof(PassFile));
+                
+                _dialogService.ShowInfo(Resources.PASSFILE__INFO_PASSPHRASE_CHANGED);
+            }
+            else
+            {
+                _dialogService.ShowError(result.Message!);
+            }
         }
         
         private void Save()
         {
-            if (PassFile.LocalDeleted) return; // TODO
-            
+            if (PassFile is null)
+            {
+                Close();
+                return;
+            }
+
+            if (PassFile.LocalDeleted)
+            {
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(Name))
             {
                 _dialogService.ShowFailure(Resources.PASSFILE__INCORRECT_NAME);
@@ -43,16 +76,17 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                 PassFile = passFile;
                 PassFileChanged = true;
                 this.RaisePropertyChanged(nameof(PassFile));
-                Close();
             }
             else
             {
-                
+                _dialogService.ShowError(result.Message!);
             }
         }
 
         private async Task DeleteAsync()
         {
+            if (PassFile?.LocalDeleted is not false) return;
+
             var confirm = await _dialogService.ConfirmAsync(
                 string.Format(Resources.PASSFILE__CONFIRM_DELETE, PassFile!.Name, PassFile.Id));
 
@@ -62,11 +96,19 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             PassFileChanged = true;
 
             this.RaisePropertyChanged(nameof(PassFile));
+            
+            if (PassFile is null) Close();
+        }
+
+        private Task RestoreAsync()
+        {
+            _dialogService.ShowInfo("Not implemented...");  // TODO
+            return Task.CompletedTask;
         }
         
         private Task MergeAsync()
         {
-            // TODO
+            _dialogService.ShowInfo("Not implemented...");  // TODO
             return Task.CompletedTask;
         }
     }

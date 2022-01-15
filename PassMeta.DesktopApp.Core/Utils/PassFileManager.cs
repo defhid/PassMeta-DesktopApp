@@ -91,7 +91,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Load <see cref="PassFile.DataEncrypted"/> for passfile with id = <paramref name="passFileId"/>.
         /// </summary>
-        public static async Task<Result<string>> GetEncryptedDataAsync(int passFileId, int? version = null)
+        public static async Task<Result<string>> GetEncryptedDataAsync(int passFileId, bool oldVersion = false)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFileId || 
@@ -100,14 +100,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             var actual = found < 0 ? null : (_currentPassFiles[found].changed ?? _currentPassFiles[found].source)!;
             
-            if (version is not null)
-            {
-                if (actual is null || actual.Version - 1 > version)
-                {
-                    return Result.Failure<string>(string.Format(Resources.PASSMANAGER__VERSION_NOT_FOUND_ERR, version));
-                }
-            }
-            else if (actual is not null)
+            if (!oldVersion && actual is not null)
             {
                 if (actual.DataEncrypted != null)
                 {
@@ -124,18 +117,17 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             try
             {
-                var path = version is null 
-                    ? _GetPassFilePath(passFileId) 
-                    : _GetOldPassFilePath(passFileId);
+                var path = oldVersion
+                    ? _GetOldPassFilePath(passFileId) 
+                    : _GetPassFilePath(passFileId);
 
                 if (!File.Exists(path))
-                    return Result.Failure<string>(string.Format(Resources.PASSMANAGER__VERSION_NOT_FOUND_ERR, version));
+                    return Result.Failure<string>(Resources.PASSMANAGER__VERSION_NOT_FOUND_ERR);
                 
                 var dataEncrypted = await File.ReadAllTextAsync(path);
-                if (version is null && found >= 0)
+                if (!oldVersion && actual is not null)
                 {
-                    var one = (_currentPassFiles[found].changed ?? _currentPassFiles[found].source)!;
-                    one.DataEncrypted = dataEncrypted;
+                    actual.DataEncrypted = dataEncrypted;
                 }
 
                 return Result.Success<string>(dataEncrypted);
@@ -188,6 +180,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 Id = (ids.Any() ? Math.Min(ids.Min() - 1, 0) : 0) - 1,
                 Name = Resources.PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME,
+                CreatedOn = DateTime.Now,
                 InfoChangedOn = DateTime.Now,
                 Version = 1,
                 VersionChangedOn = DateTime.Now,
@@ -404,16 +397,17 @@ namespace PassMeta.DesktopApp.Core.Utils
                 return null;
             }
             
-            if (fromRemote)
+            var (source, changed) = _GetPairForChange(found);
+            
+            if (changed.LocalCreated || fromRemote)
             {
-                _deletedPassFiles.Add(_currentPassFiles[found].source!);
+                _deletedPassFiles.Add(changed);
                 _currentPassFiles.RemoveAt(found);
                 return null;
             }
-            
-            var (source, changed) = _GetPairForChange(found);
-            
+
             changed.Id = 0;
+            changed.InfoChangedOn = DateTime.Now;
 
             var actual = _OptimizeAndSetChanged(found, source, changed);
             return actual.Copy();
@@ -430,11 +424,18 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         public static void Rollback()
         {
-            for (var i = 0; i < _currentPassFiles.Count; ++i)
+            for (var i = _currentPassFiles.Count - 1; i >= 0; --i)
             {
                 if (_currentPassFiles[i].changed is not null)
                 {
-                    _currentPassFiles[i] = (_currentPassFiles[i].source, null);
+                    if (_currentPassFiles[i].source is null)
+                    {
+                        _currentPassFiles.RemoveAt(i);
+                    }
+                    else
+                    {
+                        _currentPassFiles[i] = (_currentPassFiles[i].source, null);
+                    }
                 }
             }
         }
@@ -460,7 +461,6 @@ namespace PassMeta.DesktopApp.Core.Utils
                     if (changed.LocalDeleted && source?.LocalCreated is true)
                     {
                         delete.Add(changed);
-                        listChange = true;
                         continue;
                     }
                     
@@ -480,15 +480,19 @@ namespace PassMeta.DesktopApp.Core.Utils
                     }
                 }
 
+                listChange |= delete.Any();
+
                 #endregion
 
                 foreach (var passFile in delete)
                 {
                     if (_Delete(passFile).Ok)
                     {
-                        var index = _currentPassFiles.FindIndex(pf => ReferenceEquals(pf.changed, passFile));
-                        _currentPassFiles[index] = (_currentPassFiles[index].changed, null);
-                        _deletedPassFiles.Remove(passFile);
+                        if (!_deletedPassFiles.Remove(passFile))
+                        {
+                            var index = _currentPassFiles.FindIndex(pf => ReferenceEquals(pf.changed, passFile));
+                            _currentPassFiles[index] = (_currentPassFiles[index].changed, null);
+                        }
                     }
                     else hasWarnings = true;
                 }
@@ -590,7 +594,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             return Result.Success();
         }
 
-        private static Result _Delete(PassFile passFile)
+        private static Result _Delete(PassFile passFile)  // TODO: for storage manager
         {
             try
             {

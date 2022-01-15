@@ -37,6 +37,10 @@ namespace PassMeta.DesktopApp.Common.Models.Entities.Extra
             return this;
         }
 
+        /// <inheritdoc />
+        public override string ToString() 
+            => Info == string.Empty ? Name : $"{Name} ({Info})";
+
         /// <summary>
         /// Create <see cref="PassFileProblem"/> from its kind.
         /// </summary>

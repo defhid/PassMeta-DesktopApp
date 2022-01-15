@@ -204,13 +204,10 @@
         <value>Пусто</value>
     </data>
     <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
-        <value>Вы действительно хотите удалить пакет '{0}'?</value>
+        <value>Вы действительно хотите удалить пакет '{0}' #{1}?</value>
     </data>
     <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Неверная кодовая фраза</value>
-    </data>
-    <data name="PASSFILE__INCORRECT_PASSPHRASE" xml:space="preserve">
-        <value>Некорректная кодовая фраза</value>
     </data>
     <data name="DICT_STORAGE__CHECK_PASSWORD" xml:space="preserve">
         <value>пароль от аккаунта</value>
@@ -317,8 +314,8 @@
     <data name="PASSFILE__INCORRECT_NAME" xml:space="preserve">
         <value>Некорректное название!</value>
     </data>
-    <data name="PASSFILE__STATE_NEW" xml:space="preserve">
-        <value>Новый</value>
+    <data name="PASSFILE__STATE_LOCAL_CREATED" xml:space="preserve">
+        <value>Новый (локальный, {0})</value>
     </data>
     <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
         <value>Новый пакет паролей '{0}'</value>
@@ -327,7 +324,7 @@
         <value>Не удаётся зашифровать файл</value>
     </data>
     <data name="PASSMANAGER__VERSION_NOT_FOUND_ERR" xml:space="preserve">
-        <value>Версия '{0}' локального пакета не найдена!</value>
+        <value>Версия локального пакета не найдена!</value>
     </data>
     <data name="PASSMANAGER__ERR" xml:space="preserve">
         <value>Ошибка во время работы локального менеджера пакетов! (см. логи)</value>
@@ -387,7 +384,7 @@
         <value>Успешно сохранено!</value>
     </data>
     <data name="STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE" xml:space="preserve">
-        <value>Введите пароль для нового пакета</value>
+        <value>Введите кодовую фразу для нового пакета</value>
     </data>
     <data name="PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
         <value>Новый</value>
@@ -414,13 +411,28 @@
     <data name="STORAGE__CONTEXT_EDIT" xml:space="preserve">
         <value>Изменить</value>
     </data>
-    <data name="STORAGE__CONFIRM_REFRESH_FROM_SERVER" xml:space="preserve">
-        <value>Откатить текущие изменения и обновить данные с сервера?</value>
+    <data name="STORAGE__CONFIRM_ROLLBACK" xml:space="preserve">
+        <value>Откатить текущие изменения?</value>
     </data>
     <data name="APP__CONFIRM_ROLLBACK_ON_QUIT" xml:space="preserve">
         <value>У вас есть несохранённые изменения, сбросить их и выйти?</value>
     </data>
     <data name="STORAGE__NEW_SECTION_NAME" xml:space="preserve">
         <value>Новая группа</value>
+    </data>
+    <data name="PASSFILE__STATE_LOCAL_DELETED" xml:space="preserve">
+        <value>Удалён локально ({0})</value>
+    </data>
+    <data name="PASSFILE__BTN_CHANGE_PWD" xml:space="preserve">
+        <value>Изменить пароль</value>
+    </data>
+    <data name="PASSFILE__BTN_RESTORE" xml:space="preserve">
+        <value>Восстановить</value>
+    </data>
+    <data name="PASSFILE__ASK_NEW_PASSPHRASE" xml:space="preserve">
+        <value>Введите НОВУЮ кодовую фразу</value>
+    </data>
+    <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
+        <value>Кодовая фраза упешно изменена!</value>
     </data>
 </root>

@@ -3,15 +3,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-        xmlns:pf="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
+        xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
         xmlns:passFileWin="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin"
         mc:Ignorable="d"
         Width="520"
         Height="265"
         MinWidth="520"
-        MinHeight="265"
+        MinHeight="250"
         MaxWidth="520"
-        MaxHeight="265"
+        MaxHeight="250"
         x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileWin"
         Icon="/Assets/PassMeta.ico"
         Title="{Binding Title^}"
@@ -22,6 +22,8 @@
     </Design.DataContext>
     
     <Grid Margin="7 7 10 10"
+          Background="Transparent"
+          PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}"
           RowDefinitions="Auto,*">
         <Grid Grid.Row="0"
               ColumnDefinitions="Auto,*"
@@ -35,6 +37,7 @@
             <TextBox Grid.Row="0" Grid.Column="1"
                      Margin="0 0 0 10"
                      Text="{Binding Name}"
+                     IsReadOnly="{Binding ReadOnly^}"
                      AttachedToVisualTree="NameTextBox__OnAttachedToVisualTree"/>
             
             <TextBlock Grid.Row="1" Grid.Column="0"
@@ -49,7 +52,8 @@
                       FontWeight="Bold"
                       FontStyle="Italic"
                       SelectedIndex="{Binding SelectedColorIndex}"
-                      Items="{x:Static pf:PassFileColor.List}">
+                      Items="{x:Static const:PassFileColor.List}"
+                      IsEnabled="{Binding !ReadOnly^}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" 
@@ -106,19 +110,24 @@
                     AttachedToVisualTree="OkBtn__OnAttachedToVisualTree"/>
             
             <Grid Grid.Column="1"
-                  ColumnDefinitions="*,Auto,Auto">
-                <Button Grid.Column="0" 
+                  ColumnDefinitions="*,Auto,Auto,Auto">
+                <Button Grid.Column="1" 
                         HorizontalAlignment="Right"
                         Margin="0 0 0 0"
-                        Opacity="0.5"
+                        Content="{x:Static com:Resources.PASSFILE__BTN_CHANGE_PWD}"
+                        Command="{Binding ChangePasswordBtn.Command}"/>
+                
+                <Button Grid.Column="2" 
+                        HorizontalAlignment="Right"
+                        Margin="0 0 0 0"
                         Content="{x:Static com:Resources.PASSFILE__BTN_MERGE}" 
                         IsVisible="{Binding MergeBtn.IsVisible}"
                         Command="{Binding MergeBtn.Command}"/>
             
-                <Button Grid.Column="2" 
+                <Button Grid.Column="3" 
                         Margin="12 0 0 0"
                         Opacity="0.8"
-                        Content="{x:Static com:Resources.PASSFILE__BTN_DELETE}"
+                        Content="{Binding DeleteBtn.Content}"
                         IsVisible="{Binding DeleteBtn.IsVisible}"
                         Command="{Binding DeleteBtn.Command}"/>
             </Grid>

@@ -2,10 +2,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
+    using System.Linq;
     using System.Reactive.Linq;
     using Avalonia.Media;
     using Common;
+    using Common.Enums;
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Components;
@@ -43,8 +44,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 
         #region Read-only fields
 
-        public IObservable<string> CreatedOn { get; }
-        public IObservable<string> ChangedOn { get; }
+        public IObservable<string?> CreatedOn { get; }
+        public IObservable<string?> ChangedOn { get; }
         public IObservable<ISolidColorBrush> StateColor { get; }
         public IObservable<string> State { get; }
 
@@ -53,10 +54,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         #region Bottom buttons
 
         public BtnState OkBtn { get; }
-        public BtnState DeleteBtn { get; }
+        public BtnState ChangePasswordBtn { get; }
         public BtnState MergeBtn { get; }
+        public BtnState DeleteBtn { get; }
         
         #endregion
+        
+        public IObservable<bool> ReadOnly { get; }
 
         public PassFileWinViewModel(PassFile passFile, Action closeAction)
         {
@@ -68,74 +72,92 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             _name = passFile.Name;
             SelectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
 
-            var passFileChanged = this.WhenAnyValue(vm => vm.PassFile)!;
+            var passFileChanged = this.WhenAnyValue(vm => vm.PassFile);
             
-            var passFileNotNew = passFileChanged.Select(pf => pf.Id > 0);
             var anyChanged = this.WhenAnyValue(
                     vm => vm.Name,
-                    vm => vm.SelectedColorIndex)
+                    vm => vm.SelectedColorIndex,
+                    vm => vm.PassFile)
                 .Select(val =>
-                    val.Item1 != PassFile.Name ||
-                    PassFileColor.List[val.Item2] != PassFile.GetPassFileColor());
+                    val.Item3 is not null && (
+                        val.Item1 != val.Item3.Name || 
+                        PassFileColor.List[val.Item2] != val.Item3.GetPassFileColor()));
 
-            Title = passFileChanged.Select(pf => string.Format(pf.Id > 0 
-                    ? Resources.PASSFILE__TITLE 
-                    : Resources.PASSFILE__TITLE_NEW, pf.Name));
+            Title = passFileChanged.Select(pf => pf is null
+                ? string.Empty
+                : string.Format(pf.LocalCreated
+                    ? Resources.PASSFILE__TITLE_NEW
+                    : pf.LocalDeleted
+                        ? Resources.PASSFILE__TITLE_DELETED
+                        : Resources.PASSFILE__TITLE, pf.Name, pf.Id));
             
-            CreatedOn = passFileChanged.Select(pf => pf.CreatedOn == default 
-                    ? string.Empty 
-                    : pf.CreatedOn.ToString(CultureInfo.CurrentCulture));
+            CreatedOn = passFileChanged.Select(pf => pf?.CreatedOn.ToShortDateTimeString());
             
-            ChangedOn = passFileChanged.Select(pf => pf.InfoChangedOn == default 
-                    ? string.Empty 
-                    : pf.InfoChangedOn.ToString(CultureInfo.CurrentCulture));
+            ChangedOn = passFileChanged.Select(pf => pf?.InfoChangedOn.ToShortDateTimeString());
             
             StateColor = passFileChanged.Select(pf => pf.GetStateColor());
             
             State = passFileChanged.Select(_MakeState);
-            
-            
+
             OkBtn = new BtnState
             {
-                ContentObservable = anyChanged.Select(changed => changed ? Resources.PASSFILE__BTN_SAVE : Resources.PASSFILE__BTN_OK),
+                ContentObservable = anyChanged.Select(changed => changed 
+                    ? Resources.PASSFILE__BTN_SAVE
+                    : Resources.PASSFILE__BTN_OK),
                 CommandObservable = anyChanged.Select(changed => ReactiveCommand.Create(changed ? Save : Close))
             };
-            
-            DeleteBtn = new BtnState
+
+            ChangePasswordBtn = new BtnState
             {
-                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(DeleteAsync, passFileNotNew)),
-                IsVisibleObservable = Observable.Return(true)
+                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(ChangePasswordAsync)),
             };
             
             MergeBtn = new BtnState
             {
-                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync, passFileNotNew)),
-                IsVisibleObservable = Observable.Return(true)
+                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync)),
+                IsVisibleObservable = passFileChanged.Select(pf => pf?.Problem?.Kind is PassFileProblemKind.NeedsMerge)
             };
-        }
-        
-        private static string _MakeState(PassFile passFile)
-        {
-            // TODO
-            if (passFile.Problem is null && !passFile.LocalCreated && !passFile.LocalChanged && !passFile.LocalDeleted)
-            {
-                return passFile.Id > 0 ? Resources.PASSFILE__STATE_OK : Resources.PASSFILE__STATE_NEW;
-            }
             
-            var states = new Stack<string>();
+            DeleteBtn = new BtnState
+            {
+                ContentObservable = passFileChanged.Select(pf => pf?.LocalDeleted is false 
+                    ? Resources.PASSFILE__BTN_DELETE
+                    : Resources.PASSFILE__BTN_RESTORE),
+                CommandObservable = passFileChanged.Select(pf => ReactiveCommand.CreateFromTask(pf?.LocalDeleted is false 
+                    ? DeleteAsync
+                    : RestoreAsync)),
+                IsVisibleObservable = passFileChanged.Select(pf => pf is not null)
+            };
 
-            if (passFile.LocalCreated || passFile.LocalChanged || passFile.LocalDeleted)
-                states.Push(string.Format(Resources.PASSFILE__STATE_LOCAL_CHANGED, passFile.InfoChangedOn));
-
-            if (passFile.Problem is not null)
-                states.Push(passFile.Problem!.Info);
-
-            return string.Join(",\n", states);
+            ReadOnly = passFileChanged.Select(pf => pf?.LocalDeleted is not false);
         }
         
+        private static string _MakeState(PassFile? passFile)
+        {
+            if (passFile is null) return string.Empty;
+
+            var states = new Stack<string>();
+            states.Push(string.Format(
+                passFile.LocalCreated
+                    ? Resources.PASSFILE__STATE_LOCAL_CREATED
+                    : passFile.LocalChanged
+                        ? Resources.PASSFILE__STATE_LOCAL_CHANGED
+                        : passFile.LocalDeleted
+                            ? Resources.PASSFILE__STATE_LOCAL_DELETED
+                            : passFile.Problem is null
+                                ? Resources.PASSFILE__STATE_OK
+                                : string.Empty, passFile.GetPassFileChangePeriod()));
+            
+            if (passFile.Problem is not null)
+                states.Push(passFile.Problem.ToString());
+
+            return string.Join(',' + Environment.NewLine, states.Where(s => s != string.Empty));
+        }
+
+        #region Avalonia requirements...
 #pragma warning disable 8618
-        // Avalonia requirements...
         public PassFileWinViewModel() {}
 #pragma warning restore 8618
+        #endregion
     }
 }
