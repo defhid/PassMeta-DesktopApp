@@ -15,7 +15,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow
         public DialogWindowIcon WindowIcon { get; }
         public string Text { get; }
         public string? Details { get; }
-        public bool DetailsVisible => Details is not null;
+        public bool DetailsVisible => !string.IsNullOrWhiteSpace(Details);
         
         public TextInputBox WindowTextInputBox { get; }
         public NumericInputBox WindowNumericInputBox { get; }

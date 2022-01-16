@@ -62,7 +62,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 
             if (string.IsNullOrWhiteSpace(Name))
             {
-                _dialogService.ShowFailure(Resources.PASSFILE__INCORRECT_NAME);
+                _dialogService.ShowFailure(Resources.PASSFILE__VALIDATION__INCORRECT_NAME);
                 return;
             }
 

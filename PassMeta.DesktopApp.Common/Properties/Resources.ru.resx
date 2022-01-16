@@ -20,16 +20,16 @@
     <data name="DIALOG__BTN_YES" xml:space="preserve">
         <value>Да</value>
     </data>
-    <data name="MAIN_MENU__ACCOUNT_BTN" xml:space="preserve">
+    <data name="APP__MENU_BTN__ACCOUNT" xml:space="preserve">
         <value>Аккаунт</value>
     </data>
-    <data name="MAIN_MENU__GENERATOR_BTN" xml:space="preserve">
+    <data name="APP__MENU_BTN__GENERATOR" xml:space="preserve">
         <value>Генератор</value>
     </data>
-    <data name="MAIN_MENU__SETTINGS_BTN" xml:space="preserve">
+    <data name="APP__MENU_BTN__SETTINGS" xml:space="preserve">
         <value>Настройки</value>
     </data>
-    <data name="MAIN_MENU__STORAGE_BTN" xml:space="preserve">
+    <data name="APP__MENU_BTN__STORAGE" xml:space="preserve">
         <value>Хранилище</value>
     </data>
     <data name="APP_CONFIG__LOAD_ERR" xml:space="preserve">
@@ -171,7 +171,7 @@
         <value>Генератор паролей</value>
     </data>
     <data name="GENERATOR__BTN" xml:space="preserve">
-        <value>Сгенерировать</value>
+        <value>Сгенерировать пароль</value>
     </data>
     <data name="GENERATOR__PASSWORD_LENGTH" xml:space="preserve">
         <value>Длина</value>
@@ -182,7 +182,7 @@
     <data name="GENERATOR__INCLUDE_SPECIAL" xml:space="preserve">
         <value>Спец. символы</value>
     </data>
-    <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
+    <data name="STORAGE__TITLE" xml:space="preserve">
         <value>Пакеты</value>
     </data>
     <data name="PASSFILE__ASK_PASSPHRASE" xml:space="preserve">
@@ -194,10 +194,10 @@
     <data name="STORAGE__NO_ITEMS" xml:space="preserve">
         <value>Пусто</value>
     </data>
-    <data name="STORAGE__CONTEXT_DELETE" xml:space="preserve">
+    <data name="STORAGE__SECTION_CONTEXT__DELETE_BTN" xml:space="preserve">
         <value>Удалить</value>
     </data>
-    <data name="STORAGE__TOOLTIP_ADD_PASSFILE" xml:space="preserve">
+    <data name="STORAGE__PASSFILE_TOOLTIP__ADD" xml:space="preserve">
         <value>Добавить пакет</value>
     </data>
     <data name="STORAGE__NO_SECTIONS" xml:space="preserve">
@@ -206,22 +206,22 @@
     <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
         <value>Вы действительно хотите удалить пакет '{0}' #{1}?</value>
     </data>
-    <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
+    <data name="PASSFILE__VALIDATION__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Неверная кодовая фраза</value>
     </data>
     <data name="DICT_STORAGE__CHECK_PASSWORD" xml:space="preserve">
         <value>пароль от аккаунта</value>
     </data>
-    <data name="STORAGE__ITEM_WHAT_LABEL" xml:space="preserve">
+    <data name="STORAGE__ITEM_LABEL__WHAT" xml:space="preserve">
         <value>Логин</value>
     </data>
-    <data name="STORAGE__ITEM_PASSWORD_LABEL" xml:space="preserve">
+    <data name="STORAGE__ITEM_LABEL__PASSWORD" xml:space="preserve">
         <value>Пароль</value>
     </data>
-    <data name="STORAGE__LOGIN_COPY" xml:space="preserve">
+    <data name="STORAGE__ITEM_TOOLTIP__LOGIN_COPY" xml:space="preserve">
         <value>Скопировать 1-й</value>
     </data>
-    <data name="STORAGE__PASSWORD_COPY" xml:space="preserve">
+    <data name="STORAGE__ITEM_TOOLTIP__PASSWORD_COPY" xml:space="preserve">
         <value>Скопировать</value>
     </data>
     <data name="PASSFILE_PROBLEM__NEEDS_MERGE" xml:space="preserve">
@@ -242,10 +242,10 @@
     <data name="GENERATOR__COPY_BTN" xml:space="preserve">
         <value>Скопировать пароль</value>
     </data>
-    <data name="STORAGE__PASSWORD_COPIED" xml:space="preserve">
+    <data name="STORAGE__ITEM_INFO__PASSWORD_COPIED" xml:space="preserve">
         <value>Пароль скопирован в буфер обмена</value>
     </data>
-    <data name="STORAGE__WHAT_COPIED" xml:space="preserve">
+    <data name="STORAGE__ITEM_INFO__WHAT_COPIED" xml:space="preserve">
         <value>Логин '{0}' скопирован в буфер обмена</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">
@@ -311,11 +311,11 @@
     <data name="PASSFILE__BTN_SAVE" xml:space="preserve">
         <value>Сохранить</value>
     </data>
-    <data name="PASSFILE__INCORRECT_NAME" xml:space="preserve">
+    <data name="PASSFILE__VALIDATION__INCORRECT_NAME" xml:space="preserve">
         <value>Некорректное название!</value>
     </data>
     <data name="PASSFILE__STATE_LOCAL_CREATED" xml:space="preserve">
-        <value>Новый (локальный, {0})</value>
+        <value>Новый (локальный)</value>
     </data>
     <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
         <value>Новый пакет паролей '{0}'</value>
@@ -395,10 +395,10 @@
     <data name="DIALOG__BTN_CLOSE" xml:space="preserve">
         <value>Закрыть</value>
     </data>
-    <data name="STORAGE__TOOLTIP_ADD_SECTION" xml:space="preserve">
+    <data name="STORAGE__SECTION_TOOLTIP__ADD" xml:space="preserve">
         <value>Добавить группу</value>
     </data>
-    <data name="STORAGE__TOOLTIP_ADD_ITEM" xml:space="preserve">
+    <data name="STORAGE__ITEM_TOOLTIP__ADD" xml:space="preserve">
         <value>Добавить пароль</value>
     </data>
     <data name="STORAGE__CONFIRM_DELETE_SECTION" xml:space="preserve">
@@ -408,7 +408,7 @@
         <value>По запросу
 ничего не найдено...</value>
     </data>
-    <data name="STORAGE__CONTEXT_EDIT" xml:space="preserve">
+    <data name="STORAGE__SECTION_CONTEXT__EDIT_BTN" xml:space="preserve">
         <value>Изменить</value>
     </data>
     <data name="STORAGE__CONFIRM_ROLLBACK" xml:space="preserve">
@@ -417,7 +417,7 @@
     <data name="APP__CONFIRM_ROLLBACK_ON_QUIT" xml:space="preserve">
         <value>У вас есть несохранённые изменения, сбросить их и выйти?</value>
     </data>
-    <data name="STORAGE__NEW_SECTION_NAME" xml:space="preserve">
+    <data name="STORAGE__SECTION_NEW_NAME" xml:space="preserve">
         <value>Новая группа</value>
     </data>
     <data name="PASSFILE__STATE_LOCAL_DELETED" xml:space="preserve">
@@ -434,5 +434,44 @@
     </data>
     <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
         <value>Кодовая фраза упешно изменена!</value>
+    </data>
+    <data name="UI__COPY" xml:space="preserve">
+        <value>Копировать</value>
+    </data>
+    <data name="UI__CUT" xml:space="preserve">
+        <value>Вырезать</value>
+    </data>
+    <data name="UI__PASTE" xml:space="preserve">
+        <value>Вставить</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__SAVE" xml:space="preserve">
+        <value>Сохранить</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__EDIT_ITEMS" xml:space="preserve">
+        <value>Изменить группу</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__DISCARD_ITEMS" xml:space="preserve">
+        <value>Отменить</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__APPLY_ITEMS" xml:space="preserve">
+        <value>Применить</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__DELETE_SECTION" xml:space="preserve">
+        <value>Удалить группу</value>
+    </data>
+    <data name="STORAGE__ITEM_TOOLTIP__DELETE" xml:space="preserve">
+        <value>Удалить</value>
+    </data>
+    <data name="STORAGE__ITEM_TOOLTIP__MOVE_DOWN" xml:space="preserve">
+        <value>Переместить вниз</value>
+    </data>
+    <data name="STORAGE__ITEM_TOOLTIP__MOVE_UP" xml:space="preserve">
+        <value>Переместить вверх</value>
+    </data>
+    <data name="STORAGE__PASSFILE_CONTEXT__EDIT_BTN" xml:space="preserve">
+        <value>Изменить</value>
+    </data>
+    <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
+        <value>Обновить</value>
     </data>
 </root>

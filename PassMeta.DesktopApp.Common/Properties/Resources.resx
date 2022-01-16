@@ -27,16 +27,16 @@
     <data name="DIALOG__BTN_NO" xml:space="preserve">
         <value>No</value>
     </data>
-    <data name="MAIN_MENU__ACCOUNT_BTN" xml:space="preserve">
+    <data name="APP__MENU_BTN__ACCOUNT" xml:space="preserve">
         <value>Account</value>
     </data>
-    <data name="MAIN_MENU__STORAGE_BTN" xml:space="preserve">
+    <data name="APP__MENU_BTN__STORAGE" xml:space="preserve">
         <value>Storage</value>
     </data>
-    <data name="MAIN_MENU__GENERATOR_BTN" xml:space="preserve">
+    <data name="APP__MENU_BTN__GENERATOR" xml:space="preserve">
         <value>Generator</value>
     </data>
-    <data name="MAIN_MENU__SETTINGS_BTN" xml:space="preserve">
+    <data name="APP__MENU_BTN__SETTINGS" xml:space="preserve">
         <value>Settings</value>
     </data>
     <data name="APP_CONFIG__LOAD_ERR" xml:space="preserve">
@@ -178,7 +178,7 @@
         <value>Password generator</value>
     </data>
     <data name="GENERATOR__BTN" xml:space="preserve">
-        <value>Generate</value>
+        <value>Generate a password</value>
     </data>
     <data name="GENERATOR__PASSWORD_LENGTH" xml:space="preserve">
         <value>Length</value>
@@ -189,7 +189,7 @@
     <data name="GENERATOR__INCLUDE_SPECIAL" xml:space="preserve">
         <value>Spec. symbols</value>
     </data>
-    <data name="STORAGE__PASSFILES_TITLE" xml:space="preserve">
+    <data name="STORAGE__TITLE" xml:space="preserve">
         <value>Packages</value>
     </data>
     <data name="PASSFILE__ASK_PASSPHRASE" xml:space="preserve">
@@ -204,31 +204,31 @@
     <data name="STORAGE__NO_ITEMS" xml:space="preserve">
         <value>No items</value>
     </data>
-    <data name="STORAGE__CONTEXT_DELETE" xml:space="preserve">
+    <data name="STORAGE__SECTION_CONTEXT__DELETE_BTN" xml:space="preserve">
         <value>Delete</value>
     </data>
-    <data name="STORAGE__TOOLTIP_ADD_PASSFILE" xml:space="preserve">
+    <data name="STORAGE__PASSFILE_TOOLTIP__ADD" xml:space="preserve">
         <value>Add passfile</value>
     </data>
     <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
         <value>Do you really want to delete passfile '{0}' #{1}?</value>
     </data>
-    <data name="PASSFILE__WRONG_PASSPHRASE" xml:space="preserve">
+    <data name="PASSFILE__VALIDATION__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Wrong passphrase!</value>
     </data>
     <data name="DICT_STORAGE__CHECK_PASSWORD" xml:space="preserve">
         <value>account password</value>
     </data>
-    <data name="STORAGE__ITEM_WHAT_LABEL" xml:space="preserve">
+    <data name="STORAGE__ITEM_LABEL__WHAT" xml:space="preserve">
         <value>Login</value>
     </data>
-    <data name="STORAGE__ITEM_PASSWORD_LABEL" xml:space="preserve">
+    <data name="STORAGE__ITEM_LABEL__PASSWORD" xml:space="preserve">
         <value>Password</value>
     </data>
-    <data name="STORAGE__LOGIN_COPY" xml:space="preserve">
+    <data name="STORAGE__ITEM_TOOLTIP__LOGIN_COPY" xml:space="preserve">
         <value>Copy 1st</value>
     </data>
-    <data name="STORAGE__PASSWORD_COPY" xml:space="preserve">
+    <data name="STORAGE__ITEM_TOOLTIP__PASSWORD_COPY" xml:space="preserve">
         <value>Copy</value>
     </data>
     <data name="PASSFILE_PROBLEM__NEEDS_MERGE" xml:space="preserve">
@@ -249,10 +249,10 @@
     <data name="GENERATOR__COPY_BTN" xml:space="preserve">
         <value>Copy password</value>
     </data>
-    <data name="STORAGE__PASSWORD_COPIED" xml:space="preserve">
+    <data name="STORAGE__ITEM_INFO__PASSWORD_COPIED" xml:space="preserve">
         <value>Password is copied to clipboard</value>
     </data>
-    <data name="STORAGE__WHAT_COPIED" xml:space="preserve">
+    <data name="STORAGE__ITEM_INFO__WHAT_COPIED" xml:space="preserve">
         <value>Login '{0}' is copied to clipboard</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">
@@ -318,11 +318,11 @@
     <data name="PASSFILE__BTN_MERGE" xml:space="preserve">
         <value>Resolve conflicts...</value>
     </data>
-    <data name="PASSFILE__INCORRECT_NAME" xml:space="preserve">
+    <data name="PASSFILE__VALIDATION__INCORRECT_NAME" xml:space="preserve">
         <value>Invalid name!</value>
     </data>
     <data name="PASSFILE__STATE_LOCAL_CREATED" xml:space="preserve">
-        <value>New (local, {0})</value>
+        <value>New (local)</value>
     </data>
     <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
         <value>New passfile '{0}'</value>
@@ -402,10 +402,10 @@
     <data name="DIALOG__BTN_CLOSE" xml:space="preserve">
         <value>Close</value>
     </data>
-    <data name="STORAGE__TOOLTIP_ADD_SECTION" xml:space="preserve">
+    <data name="STORAGE__SECTION_TOOLTIP__ADD" xml:space="preserve">
         <value>Add section</value>
     </data>
-    <data name="STORAGE__TOOLTIP_ADD_ITEM" xml:space="preserve">
+    <data name="STORAGE__ITEM_TOOLTIP__ADD" xml:space="preserve">
         <value>Add password</value>
     </data>
     <data name="STORAGE__CONFIRM_DELETE_SECTION" xml:space="preserve">
@@ -415,7 +415,7 @@
         <value>Not found,
 try another keywords...</value>
     </data>
-    <data name="STORAGE__CONTEXT_EDIT" xml:space="preserve">
+    <data name="STORAGE__SECTION_CONTEXT__EDIT_BTN" xml:space="preserve">
         <value>Edit</value>
     </data>
     <data name="STORAGE__CONFIRM_ROLLBACK" xml:space="preserve">
@@ -424,7 +424,7 @@ try another keywords...</value>
     <data name="APP__CONFIRM_ROLLBACK_ON_QUIT" xml:space="preserve">
         <value>You have uncommited changes, rollback and exit?</value>
     </data>
-    <data name="STORAGE__NEW_SECTION_NAME" xml:space="preserve">
+    <data name="STORAGE__SECTION_NEW_NAME" xml:space="preserve">
         <value>New section</value>
     </data>
     <data name="PASSFILE__STATE_LOCAL_DELETED" xml:space="preserve">
@@ -441,5 +441,44 @@ try another keywords...</value>
     </data>
     <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
         <value>Passphrase successfully changed!</value>
+    </data>
+    <data name="UI__COPY" xml:space="preserve">
+        <value>Copy</value>
+    </data>
+    <data name="UI__CUT" xml:space="preserve">
+        <value>Cut</value>
+    </data>
+    <data name="UI__PASTE" xml:space="preserve">
+        <value>Paste</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__SAVE" xml:space="preserve">
+        <value>Save</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__EDIT_ITEMS" xml:space="preserve">
+        <value>Edit section</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__DISCARD_ITEMS" xml:space="preserve">
+        <value>Rollback</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__APPLY_ITEMS" xml:space="preserve">
+        <value>Apply</value>
+    </data>
+    <data name="STORAGE__RIGHT_BAR_TOOLTIP__DELETE_SECTION" xml:space="preserve">
+        <value>Delete section</value>
+    </data>
+    <data name="STORAGE__ITEM_TOOLTIP__MOVE_UP" xml:space="preserve">
+        <value>Move up</value>
+    </data>
+    <data name="STORAGE__ITEM_TOOLTIP__MOVE_DOWN" xml:space="preserve">
+        <value>Move down</value>
+    </data>
+    <data name="STORAGE__ITEM_TOOLTIP__DELETE" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="STORAGE__PASSFILE_CONTEXT__EDIT_BTN" xml:space="preserve">
+        <value>Edit</value>
+    </data>
+    <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
+        <value>Refresh</value>
     </data>
 </root>

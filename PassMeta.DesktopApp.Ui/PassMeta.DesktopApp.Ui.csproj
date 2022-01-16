@@ -6,6 +6,8 @@
     </PropertyGroup>
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
+        <AvaloniaResource Include="App\Styles\Common.xaml" />
+        <AvaloniaResource Include="App\Styles\ResourceDependingStyles.xaml" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="0.10.11" />

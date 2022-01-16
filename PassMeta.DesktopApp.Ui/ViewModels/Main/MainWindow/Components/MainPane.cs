@@ -84,10 +84,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
             
             public ButtonCollection(IObservable<bool> modeChanged)
             {
-                Account = new MainPaneBtn(Resources.MAIN_MENU__ACCOUNT_BTN, "\uE77b", modeChanged);
-                Storage = new MainPaneBtn(Resources.MAIN_MENU__STORAGE_BTN, "\uE8F1", modeChanged);
-                Generator = new MainPaneBtn(Resources.MAIN_MENU__GENERATOR_BTN, "\uEA80", modeChanged);
-                Settings = new MainPaneBtn(Resources.MAIN_MENU__SETTINGS_BTN, "\uE713", modeChanged);
+                Account = new MainPaneBtn(Resources.APP__MENU_BTN__ACCOUNT, "\uE77b", modeChanged);
+                Storage = new MainPaneBtn(Resources.APP__MENU_BTN__STORAGE, "\uE8F1", modeChanged);
+                Generator = new MainPaneBtn(Resources.APP__MENU_BTN__GENERATOR, "\uEA80", modeChanged);
+                Settings = new MainPaneBtn(Resources.APP__MENU_BTN__SETTINGS, "\uE713", modeChanged);
                 
                 _all = new[] { Account, Storage, Generator, Settings };
             }

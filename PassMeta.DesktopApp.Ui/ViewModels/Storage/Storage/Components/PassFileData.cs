@@ -32,7 +32,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 Command = ReactiveCommand.Create(ItemsEdit),
                 [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && !x.Item2)
-                    .ToBinding()
+                    .ToBinding(),
+                [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__EDIT_ITEMS,
+                [ToolTip.PlacementProperty] = PlacementMode.Left
             },
             new Button
             {
@@ -40,7 +42,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 Command = ReactiveCommand.Create(ItemsDiscardChanges),
                 [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && x.Item2)
-                    .ToBinding()
+                    .ToBinding(),
+                [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__DISCARD_ITEMS,
+                [ToolTip.PlacementProperty] = PlacementMode.Left
             },
             new Button
             {
@@ -48,7 +52,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 Command = ReactiveCommand.Create(ItemsApplyChanges),
                 [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && x.Item2)
-                    .ToBinding()
+                    .ToBinding(),
+                [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__APPLY_ITEMS,
+                [ToolTip.PlacementProperty] = PlacementMode.Left
             },
             new Button
             {
@@ -56,7 +62,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 Command = ReactiveCommand.Create(SectionDeleteAsync),
                 [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && !x.Item2)
-                    .ToBinding()
+                    .ToBinding(),
+                [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__DELETE_SECTION,
+                [ToolTip.PlacementProperty] = PlacementMode.Left
             },
         };
         
@@ -245,7 +253,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         public void SectionAdd()
         {
-            var section = new PassFile.Section { Name = Resources.STORAGE__NEW_SECTION_NAME };
+            var section = new PassFile.Section { Name = Resources.STORAGE__SECTION_NEW_NAME };
 
             using (_passFileBarExpander.DisableAutoExpandingScoped())
             {

@@ -74,13 +74,12 @@
                                                 VerticalContentAlignment="Center"
                                                 HorizontalAlignment="Left"
                                                 Margin="13 0 1 0"
-                                                Padding="0 0 4 0"
+                                                Padding="0 0 0 0"
                                                 Height="22" Width="22"
                                                 CornerRadius="50"
-                                                FontSize="11"
-                                                FontStyle="Italic" FontWeight="Bold"
+                                                FontSize="16"
                                                 FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
-                                                Content="&#xEA1f;"
+                                                Content="&#xE7B3;"
                                                 Foreground="{Binding StateColor^}"
                                                 Opacity="{Binding Opacity^}"
                                                 IsVisible="{Binding IsChecked, ElementName=PassFilesBarBtn}"
@@ -103,7 +102,7 @@
                                 <Setter Property="Padding" Value="0 9 6 9"/>
                                 <Setter Property="ContextMenu">
                                     <ContextMenu>
-                                        <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_EDIT}"
+                                        <MenuItem Header="{x:Static com:Resources.STORAGE__PASSFILE_CONTEXT__EDIT_BTN}"
                                                   Click="OpenCurrentPassFile_OnClick"/>
                                     </ContextMenu>
                                 </Setter>
@@ -116,7 +115,7 @@
                             Margin="4 0 5 5"
                             IsEnabled="{Binding !SelectedData.Edit.Mode}"
                             Command="{Binding PassFileAddAsync}"
-                            ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_PASSFILE}"/>
+                            ToolTip.Tip="{x:Static com:Resources.STORAGE__PASSFILE_TOOLTIP__ADD}"/>
                 </Grid>
             </SplitView.Pane>
             
@@ -161,9 +160,9 @@
                                         <Setter Property="Padding" Value="8"/>
                                         <Setter Property="ContextMenu">
                                             <ContextMenu>
-                                                <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_EDIT}"
+                                                <MenuItem Header="{x:Static com:Resources.STORAGE__SECTION_CONTEXT__EDIT_BTN}"
                                                           Click="EditCurrentSection_OnClick"/>
-                                                <MenuItem Header="{x:Static com:Resources.STORAGE__CONTEXT_DELETE}"
+                                                <MenuItem Header="{x:Static com:Resources.STORAGE__SECTION_CONTEXT__DELETE_BTN}"
                                                           Click="DeleteCurrentSection_OnClick"/>
                                             </ContextMenu>
                                         </Setter>
@@ -180,7 +179,7 @@
                             <Button Classes="list_add"
                                     Margin="0 0 0 -4"
                                     Command="{Binding SectionAdd}"
-                                    ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_SECTION}"/>
+                                    ToolTip.Tip="{x:Static com:Resources.STORAGE__SECTION_TOOLTIP__ADD}"/>
                             
                             <TextBlock FontSize="16"
                                        Foreground="DarkGray"
@@ -258,15 +257,21 @@
                                                     
                                                     <Button Grid.Column="1"
                                                             Content="&#xE74A;"
-                                                            Command="{Binding UpCommand}"/>
+                                                            Command="{Binding UpCommand}"
+                                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__MOVE_UP}"
+                                                            ToolTip.Placement="Bottom"/>
                                                     
                                                     <Button Grid.Column="2"
                                                             Content="&#xE74B;"
-                                                            Command="{Binding DownCommand}"/>
+                                                            Command="{Binding DownCommand}"
+                                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__MOVE_DOWN}"
+                                                            ToolTip.Placement="Bottom"/>
                                                     
                                                     <Button Grid.Column="3"
                                                             Content="&#xE74D;"
-                                                            Command="{Binding DeleteCommand}"/>
+                                                            Command="{Binding DeleteCommand}"
+                                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__DELETE}"
+                                                            ToolTip.Placement="Bottom"/>
                                                 </Grid>
                                                 
                                                 <!-- Login & password, copy buttons -->
@@ -292,7 +297,7 @@
                                                                Opacity="0.7"
                                                                Margin="2 5 12 0"
                                                                VerticalAlignment="Top"
-                                                               Text="{x:Static com:Resources.STORAGE__ITEM_WHAT_LABEL}"/>
+                                                               Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__WHAT}"/>
                                                     
                                                     <TextBox Grid.Row="0"
                                                              Grid.Column="1"
@@ -311,16 +316,17 @@
                                                             Grid.Column="2"
                                                             Margin="-20 0 2 0"
                                                             Content="&#xE8C8;"
-                                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__LOGIN_COPY}"
                                                             IsVisible="{Binding IsReadOnly}"
-                                                            Command="{Binding CopyWhatCommand}"/>
+                                                            Command="{Binding CopyWhatCommand}"
+                                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__LOGIN_COPY}"
+                                                            ToolTip.Placement="Left"/>
                                                     
                                                     <TextBlock Grid.Row="1"
                                                                Grid.Column="0"
                                                                Opacity="0.7"
                                                                Margin="2 15 12 0"
                                                                VerticalAlignment="Top"
-                                                               Text="{x:Static com:Resources.STORAGE__ITEM_PASSWORD_LABEL}"/>
+                                                               Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__PASSWORD}"/>
                                                     
                                                     <TextBox Grid.Row="1"
                                                              Grid.Column="1"
@@ -339,9 +345,10 @@
                                                             Grid.Column="2"
                                                             Margin="-20 10 2 0"
                                                             Content="&#xE8C8;"
-                                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__PASSWORD_COPY}"
                                                             IsVisible="{Binding IsReadOnly}"
-                                                            Command="{Binding CopyPasswordCommand}"/>
+                                                            Command="{Binding CopyPasswordCommand}"
+                                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__PASSWORD_COPY}"
+                                                            ToolTip.Placement="Left"/>
                                                 </Grid>
                                             </Grid>
                                         </DataTemplate>
@@ -354,7 +361,7 @@
                                 Margin="0 0 0 0"
                                 IsVisible="{Binding Edit.Mode}"
                                 Command="{Binding ItemAdd}"
-                                ToolTip.Tip="{x:Static com:Resources.STORAGE__TOOLTIP_ADD_ITEM}"/>
+                                ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__ADD}"/>
                         
                         <TextBlock FontSize="16"
                                    Foreground="DarkGray"

@@ -31,7 +31,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 Command = ReactiveCommand.CreateFromTask(SaveAsync),
                 [!Button.IsVisibleProperty] = SelectedData.Edit.WhenAnyValue(vm => vm.Mode)
                     .Select(editMode => !editMode)
-                    .ToBinding()
+                    .ToBinding(),
+                [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__SAVE,
+                [ToolTip.PlacementProperty] = PlacementMode.Left
             }
         }.Concat(SelectedData.RightBarButtons).ToArray();
 
@@ -81,7 +83,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             PassFilesBarBtn = new BtnState
             {
                 ContentObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
-                    ? Resources.STORAGE__PASSFILES_TITLE 
+                    ? Resources.STORAGE__TITLE 
                     : "\uE72b\uE72a"),
                 FontFamilyObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
                     ? FontFamilies.Default 

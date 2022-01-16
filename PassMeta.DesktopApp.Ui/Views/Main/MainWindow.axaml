@@ -5,6 +5,7 @@
         xmlns:reactiveUi="http://reactiveui.net"
         xmlns:avaloniaGif="clr-namespace:AvaloniaGif;assembly=AvaloniaGif"
         xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
+        xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
         xmlns:mainWindow="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow"
         mc:Ignorable="d"
         d:DesignWidth="800"
@@ -182,7 +183,11 @@
                             Content="&#xE72C;"
                             FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
                             HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"/>
+                            VerticalContentAlignment="Center"
+                            ToolTip.Tip="{x:Static com:Resources.APP__RIGHT_BAR_BTN__REFRESH}"
+                            ToolTip.Placement="Left"
+                            ToolTip.VerticalOffset="0"
+                            ToolTip.HorizontalOffset="-5"/>
                 </Grid>
             </Grid>
         </SplitView>

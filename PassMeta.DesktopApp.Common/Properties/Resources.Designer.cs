@@ -223,6 +223,42 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account.
+        /// </summary>
+        public static string APP__MENU_BTN__ACCOUNT {
+            get {
+                return ResourceManager.GetString("APP__MENU_BTN__ACCOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generator.
+        /// </summary>
+        public static string APP__MENU_BTN__GENERATOR {
+            get {
+                return ResourceManager.GetString("APP__MENU_BTN__GENERATOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string APP__MENU_BTN__SETTINGS {
+            get {
+                return ResourceManager.GetString("APP__MENU_BTN__SETTINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Storage.
+        /// </summary>
+        public static string APP__MENU_BTN__STORAGE {
+            get {
+                return ResourceManager.GetString("APP__MENU_BTN__STORAGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Offline.
         /// </summary>
         public static string APP__OFFLINE_MODE {
@@ -237,6 +273,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string APP__ONLINE_MODE {
             get {
                 return ResourceManager.GetString("APP__ONLINE_MODE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string APP__RIGHT_BAR_BTN__REFRESH {
+            get {
+                return ResourceManager.GetString("APP__RIGHT_BAR_BTN__REFRESH", resourceCulture);
             }
         }
         
@@ -520,7 +565,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generate.
+        ///   Looks up a localized string similar to Generate a password.
         /// </summary>
         public static string GENERATOR__BTN {
             get {
@@ -597,42 +642,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string LANG__RU {
             get {
                 return ResourceManager.GetString("LANG__RU", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Account.
-        /// </summary>
-        public static string MAIN_MENU__ACCOUNT_BTN {
-            get {
-                return ResourceManager.GetString("MAIN_MENU__ACCOUNT_BTN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Generator.
-        /// </summary>
-        public static string MAIN_MENU__GENERATOR_BTN {
-            get {
-                return ResourceManager.GetString("MAIN_MENU__GENERATOR_BTN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Settings.
-        /// </summary>
-        public static string MAIN_MENU__SETTINGS_BTN {
-            get {
-                return ResourceManager.GetString("MAIN_MENU__SETTINGS_BTN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Storage.
-        /// </summary>
-        public static string MAIN_MENU__STORAGE_BTN {
-            get {
-                return ResourceManager.GetString("MAIN_MENU__STORAGE_BTN", resourceCulture);
             }
         }
         
@@ -808,15 +817,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid name!.
-        /// </summary>
-        public static string PASSFILE__INCORRECT_NAME {
-            get {
-                return ResourceManager.GetString("PASSFILE__INCORRECT_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Passphrase successfully changed!.
         /// </summary>
         public static string PASSFILE__INFO_PASSPHRASE_CHANGED {
@@ -880,7 +880,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New (local, {0}).
+        ///   Looks up a localized string similar to New (local).
         /// </summary>
         public static string PASSFILE__STATE_LOCAL_CREATED {
             get {
@@ -934,11 +934,20 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid name!.
+        /// </summary>
+        public static string PASSFILE__VALIDATION__INCORRECT_NAME {
+            get {
+                return ResourceManager.GetString("PASSFILE__VALIDATION__INCORRECT_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wrong passphrase!.
         /// </summary>
-        public static string PASSFILE__WRONG_PASSPHRASE {
+        public static string PASSFILE__VALIDATION__WRONG_PASSPHRASE {
             get {
-                return ResourceManager.GetString("PASSFILE__WRONG_PASSPHRASE", resourceCulture);
+                return ResourceManager.GetString("PASSFILE__VALIDATION__WRONG_PASSPHRASE", resourceCulture);
             }
         }
         
@@ -1177,56 +1186,92 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
+        ///   Looks up a localized string similar to Password is copied to clipboard.
         /// </summary>
-        public static string STORAGE__CONTEXT_DELETE {
+        public static string STORAGE__ITEM_INFO__PASSWORD_COPIED {
             get {
-                return ResourceManager.GetString("STORAGE__CONTEXT_DELETE", resourceCulture);
+                return ResourceManager.GetString("STORAGE__ITEM_INFO__PASSWORD_COPIED", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit.
+        ///   Looks up a localized string similar to Login &apos;{0}&apos; is copied to clipboard.
         /// </summary>
-        public static string STORAGE__CONTEXT_EDIT {
+        public static string STORAGE__ITEM_INFO__WHAT_COPIED {
             get {
-                return ResourceManager.GetString("STORAGE__CONTEXT_EDIT", resourceCulture);
+                return ResourceManager.GetString("STORAGE__ITEM_INFO__WHAT_COPIED", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
-        public static string STORAGE__ITEM_PASSWORD_LABEL {
+        public static string STORAGE__ITEM_LABEL__PASSWORD {
             get {
-                return ResourceManager.GetString("STORAGE__ITEM_PASSWORD_LABEL", resourceCulture);
+                return ResourceManager.GetString("STORAGE__ITEM_LABEL__PASSWORD", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
-        public static string STORAGE__ITEM_WHAT_LABEL {
+        public static string STORAGE__ITEM_LABEL__WHAT {
             get {
-                return ResourceManager.GetString("STORAGE__ITEM_WHAT_LABEL", resourceCulture);
+                return ResourceManager.GetString("STORAGE__ITEM_LABEL__WHAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add password.
+        /// </summary>
+        public static string STORAGE__ITEM_TOOLTIP__ADD {
+            get {
+                return ResourceManager.GetString("STORAGE__ITEM_TOOLTIP__ADD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string STORAGE__ITEM_TOOLTIP__DELETE {
+            get {
+                return ResourceManager.GetString("STORAGE__ITEM_TOOLTIP__DELETE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Copy 1st.
         /// </summary>
-        public static string STORAGE__LOGIN_COPY {
+        public static string STORAGE__ITEM_TOOLTIP__LOGIN_COPY {
             get {
-                return ResourceManager.GetString("STORAGE__LOGIN_COPY", resourceCulture);
+                return ResourceManager.GetString("STORAGE__ITEM_TOOLTIP__LOGIN_COPY", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New section.
+        ///   Looks up a localized string similar to Move down.
         /// </summary>
-        public static string STORAGE__NEW_SECTION_NAME {
+        public static string STORAGE__ITEM_TOOLTIP__MOVE_DOWN {
             get {
-                return ResourceManager.GetString("STORAGE__NEW_SECTION_NAME", resourceCulture);
+                return ResourceManager.GetString("STORAGE__ITEM_TOOLTIP__MOVE_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move up.
+        /// </summary>
+        public static string STORAGE__ITEM_TOOLTIP__MOVE_UP {
+            get {
+                return ResourceManager.GetString("STORAGE__ITEM_TOOLTIP__MOVE_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        public static string STORAGE__ITEM_TOOLTIP__PASSWORD_COPY {
+            get {
+                return ResourceManager.GetString("STORAGE__ITEM_TOOLTIP__PASSWORD_COPY", resourceCulture);
             }
         }
         
@@ -1259,29 +1304,92 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Packages.
+        ///   Looks up a localized string similar to Edit.
         /// </summary>
-        public static string STORAGE__PASSFILES_TITLE {
+        public static string STORAGE__PASSFILE_CONTEXT__EDIT_BTN {
             get {
-                return ResourceManager.GetString("STORAGE__PASSFILES_TITLE", resourceCulture);
+                return ResourceManager.GetString("STORAGE__PASSFILE_CONTEXT__EDIT_BTN", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password is copied to clipboard.
+        ///   Looks up a localized string similar to Add passfile.
         /// </summary>
-        public static string STORAGE__PASSWORD_COPIED {
+        public static string STORAGE__PASSFILE_TOOLTIP__ADD {
             get {
-                return ResourceManager.GetString("STORAGE__PASSWORD_COPIED", resourceCulture);
+                return ResourceManager.GetString("STORAGE__PASSFILE_TOOLTIP__ADD", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copy.
+        ///   Looks up a localized string similar to Apply.
         /// </summary>
-        public static string STORAGE__PASSWORD_COPY {
+        public static string STORAGE__RIGHT_BAR_TOOLTIP__APPLY_ITEMS {
             get {
-                return ResourceManager.GetString("STORAGE__PASSWORD_COPY", resourceCulture);
+                return ResourceManager.GetString("STORAGE__RIGHT_BAR_TOOLTIP__APPLY_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete section.
+        /// </summary>
+        public static string STORAGE__RIGHT_BAR_TOOLTIP__DELETE_SECTION {
+            get {
+                return ResourceManager.GetString("STORAGE__RIGHT_BAR_TOOLTIP__DELETE_SECTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rollback.
+        /// </summary>
+        public static string STORAGE__RIGHT_BAR_TOOLTIP__DISCARD_ITEMS {
+            get {
+                return ResourceManager.GetString("STORAGE__RIGHT_BAR_TOOLTIP__DISCARD_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit section.
+        /// </summary>
+        public static string STORAGE__RIGHT_BAR_TOOLTIP__EDIT_ITEMS {
+            get {
+                return ResourceManager.GetString("STORAGE__RIGHT_BAR_TOOLTIP__EDIT_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string STORAGE__RIGHT_BAR_TOOLTIP__SAVE {
+            get {
+                return ResourceManager.GetString("STORAGE__RIGHT_BAR_TOOLTIP__SAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string STORAGE__SECTION_CONTEXT__DELETE_BTN {
+            get {
+                return ResourceManager.GetString("STORAGE__SECTION_CONTEXT__DELETE_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string STORAGE__SECTION_CONTEXT__EDIT_BTN {
+            get {
+                return ResourceManager.GetString("STORAGE__SECTION_CONTEXT__EDIT_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New section.
+        /// </summary>
+        public static string STORAGE__SECTION_NEW_NAME {
+            get {
+                return ResourceManager.GetString("STORAGE__SECTION_NEW_NAME", resourceCulture);
             }
         }
         
@@ -1295,38 +1403,47 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add password.
-        /// </summary>
-        public static string STORAGE__TOOLTIP_ADD_ITEM {
-            get {
-                return ResourceManager.GetString("STORAGE__TOOLTIP_ADD_ITEM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add passfile.
-        /// </summary>
-        public static string STORAGE__TOOLTIP_ADD_PASSFILE {
-            get {
-                return ResourceManager.GetString("STORAGE__TOOLTIP_ADD_PASSFILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add section.
         /// </summary>
-        public static string STORAGE__TOOLTIP_ADD_SECTION {
+        public static string STORAGE__SECTION_TOOLTIP__ADD {
             get {
-                return ResourceManager.GetString("STORAGE__TOOLTIP_ADD_SECTION", resourceCulture);
+                return ResourceManager.GetString("STORAGE__SECTION_TOOLTIP__ADD", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Login &apos;{0}&apos; is copied to clipboard.
+        ///   Looks up a localized string similar to Packages.
         /// </summary>
-        public static string STORAGE__WHAT_COPIED {
+        public static string STORAGE__TITLE {
             get {
-                return ResourceManager.GetString("STORAGE__WHAT_COPIED", resourceCulture);
+                return ResourceManager.GetString("STORAGE__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        public static string UI__COPY {
+            get {
+                return ResourceManager.GetString("UI__COPY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cut.
+        /// </summary>
+        public static string UI__CUT {
+            get {
+                return ResourceManager.GetString("UI__CUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste.
+        /// </summary>
+        public static string UI__PASTE {
+            get {
+                return ResourceManager.GetString("UI__PASTE", resourceCulture);
             }
         }
     }

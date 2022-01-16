@@ -1,0 +1,15 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common">
+    
+    <Style Selector="TextBox">
+        <Setter Property="ContextMenu">
+            <ContextMenu>
+                <MenuItem Header="{x:Static com:Resources.UI__CUT}" Command="{Binding $parent[TextBox].Cut}" IsEnabled="{Binding $parent[TextBox].CanCut}" InputGesture="{x:Static TextBox.CutGesture}" />
+                <MenuItem Header="{x:Static com:Resources.UI__COPY}" Command="{Binding $parent[TextBox].Copy}" IsEnabled="{Binding $parent[TextBox].CanCopy}" InputGesture="{x:Static TextBox.CopyGesture}"/>
+                <MenuItem Header="{x:Static com:Resources.UI__PASTE}" Command="{Binding $parent[TextBox].Paste}" IsEnabled="{Binding $parent[TextBox].CanPaste}" InputGesture="{x:Static TextBox.PasteGesture}"/>
+            </ContextMenu>
+        </Setter>
+    </Style>
+    
+</Styles>

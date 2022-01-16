@@ -42,7 +42,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
 
             var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase);
             if (content is null)
-                return Result.Failure(Resources.PASSFILE__WRONG_PASSPHRASE);
+                return Result.Failure(Resources.PASSFILE__VALIDATION__WRONG_PASSPHRASE);
 
             try
             {

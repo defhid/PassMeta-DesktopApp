@@ -8,5 +8,7 @@
 
     <Application.Styles>
         <FluentTheme Mode="Dark"/>
+        <StyleInclude Source="/App/Styles/Common.xaml"/>
+        <StyleInclude Source="/App/Styles/ResourceDependingStyles.xaml"/>
     </Application.Styles>
 </Application>
