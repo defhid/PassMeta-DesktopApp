@@ -71,11 +71,13 @@ namespace PassMeta.DesktopApp.Core.Utils
         }
 
         /// <summary>
-        /// Get current passfile list.
+        /// Get current passfile list filtered by current user id.
         /// Reflects uncommitted state, changed passfiles are a priority.
         /// </summary>
         public static List<PassFile> GetCurrentList() => _currentPassFiles
-            .Select(pf => (pf.changed ?? pf.source)!.Copy())
+            .Select(pf => (pf.changed ?? pf.source)!)
+            .Where(pf => pf.UserId == AppContext.Current.UserId)
+            .Select(pf => pf.Copy())
             .ToList();
         
         /// <summary>
@@ -185,7 +187,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                 Version = 1,
                 VersionChangedOn = DateTime.Now,
                 Data = new List<PassFile.Section>(),
-                PassPhrase = passPhrase
+                PassPhrase = passPhrase,
+                UserId = AppContext.Current.UserId
             };
             
             _currentPassFiles.Add((null, passFile));

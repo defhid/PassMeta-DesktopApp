@@ -32,6 +32,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         [JsonProperty("user")]
         public User? User { get; private set; }
+
+        /// <summary>
+        /// Application user id. May be 0, if <see cref="User"/> is null.
+        /// </summary>
+        [JsonIgnore]
+        public int UserId => User?.Id ?? 0;
         
         /// <summary>
         /// <see cref="Cookies"/> in form of <see cref="CookieContainer"/>.

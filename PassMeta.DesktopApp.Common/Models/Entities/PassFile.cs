@@ -16,6 +16,12 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// </summary>
         [JsonProperty("id")]
         public int Id { get; set; }
+        
+        /// <summary>
+        /// Owner user identifier.
+        /// </summary>
+        [JsonProperty("user_id")]
+        public int UserId { get; set; }
 
         /// <summary>
         /// Passfile name.
@@ -56,7 +62,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         [JsonProperty("smth")]
         // ReSharper disable once InconsistentNaming
         private string? _DataEncrypted { set => DataEncrypted = value; }
-        
+
         /// <summary>
         /// Origin passfile, unchanged from the last download from the server. 
         /// </summary>
