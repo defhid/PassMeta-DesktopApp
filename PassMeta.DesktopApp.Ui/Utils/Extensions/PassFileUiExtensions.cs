@@ -17,9 +17,9 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using Splat;
 
     /// <summary>
-    /// Extension methods for <see cref="PassFile"/>.
+    /// Extension UI-methods for <see cref="PassFile"/>.
     /// </summary>
-    public static class PassFileExtension
+    public static class PassFileUiExtensions
     {
         /// <summary>
         /// Get color depending on <see cref="PassFile.Problem"/> and <see cref="PassFile.Origin"/>.
@@ -39,7 +39,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
                 PassFileProblemKind.DownloadingError => Brushes.OrangeRed,
                 PassFileProblemKind.UploadingError => Brushes.OrangeRed,
                 PassFileProblemKind.Other => Brushes.Red,
-                _ => Brushes.Yellow
+                _ => passFile.LocalDeleted ? Brushes.LightGray : Brushes.Yellow
             };
         }
 
@@ -78,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
             }
             else if (passFile.LocalDeleted)
             {
-                dates.Add(passFile.InfoChangedOn);
+                dates.Add(passFile.LocalDeletedOn!.Value);
             }
             
             dates.Sort();

@@ -1,5 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Utils.Extensions
 {
+    using System;
+
     /// <summary>
     /// Extension methods for <see cref="string"/>.
     /// </summary>
@@ -12,6 +14,16 @@ namespace PassMeta.DesktopApp.Common.Utils.Extensions
         {
             if (string.IsNullOrEmpty(str)) return string.Empty;
             return str[..1].ToUpper() + str[1..];
+        }
+
+        /// <summary>
+        /// Add text after <see cref="Environment.NewLine"/>.
+        /// </summary>
+        public static string NewLine(this string str, string? addNewLine)
+        {
+            return addNewLine is null 
+                ? str 
+                : str + Environment.NewLine + addNewLine;
         }
     }
 }

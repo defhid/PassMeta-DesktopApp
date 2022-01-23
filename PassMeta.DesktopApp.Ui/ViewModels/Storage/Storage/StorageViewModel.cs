@@ -32,6 +32,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 [!Button.IsVisibleProperty] = SelectedData.Edit.WhenAnyValue(vm => vm.Mode)
                     .Select(editMode => !editMode)
                     .ToBinding(),
+                [!Button.IsEnabledProperty] = PassFileManager.AnyCurrentChangedSource
+                    .Select(state => state)
+                    .ToBinding(),
                 [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__SAVE,
                 [ToolTip.PlacementProperty] = PlacementMode.Left
             }
@@ -65,7 +68,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex].PassFile;
 
         #endregion
-        
+
         public PassFileData SelectedData { get; }
 
         public PassFileBarExpander PassFileBarExpander { get; }
@@ -75,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         public IObservable<LayoutState> LayoutState { get; }
 
         public readonly ViewElements ViewElements = new();
-        
+
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
             PassFileBarExpander = new PassFileBarExpander();

@@ -104,7 +104,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
 
             _CheckFileStream();
-            _fileStream!.Write(Encoding.UTF8.GetBytes(log.Section + '|' 
+            _fileStream!.Write(Encoding.Unicode.GetBytes(log.Section + '|' 
                                                       + log.CreatedOn.Value.ToString("yyyy-MM-dd hh:mm:ss", Resources.Culture) + '|' 
                                                       + log.Text.Replace("\n", " ") + '\n'));
             _fileStream.Flush();

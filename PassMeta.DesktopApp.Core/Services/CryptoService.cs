@@ -23,7 +23,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             try
             {
-                byte[] encryption = Encoding.UTF8.GetBytes(data);
+                var encryption = AppConfig.PassFileEncoding.GetBytes(data);
                 
                 using (var aes = Aes.Create())
                 {
@@ -34,7 +34,7 @@ namespace PassMeta.DesktopApp.Core.Services
                         var offset = (CryptoK + i) % keyPhrase.Length;
                         var key = keyPhrase[..offset] + Math.Pow(CryptoK - i, i % 5) + keyPhrase[offset..];
                         
-                        aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(key));
+                        aes.Key = SHA256.HashData(AppConfig.PassFileEncoding.GetBytes(key));
 
                         using var encryptor = aes.CreateEncryptor();
                         using var ms = new MemoryStream();
@@ -62,7 +62,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             try
             {
-                byte[] decryption = Convert.FromBase64String(data);
+                var decryption = Convert.FromBase64String(data);
                 
                 using (var aes = Aes.Create())
                 {
@@ -73,7 +73,7 @@ namespace PassMeta.DesktopApp.Core.Services
                         var offset = (CryptoK + i) % keyPhrase.Length;
                         var key = keyPhrase[..offset] + Math.Pow(CryptoK - i, i % 5) + keyPhrase[offset..];
                         
-                        aes.Key = SHA256.HashData(Encoding.UTF8.GetBytes(key));
+                        aes.Key = SHA256.HashData(AppConfig.PassFileEncoding.GetBytes(key));
 
                         using var decryptor = aes.CreateDecryptor();
                         using var ms = new MemoryStream(decryption);
@@ -85,7 +85,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     }
                 }
 
-                return Encoding.UTF8.GetString(decryption);
+                return AppConfig.PassFileEncoding.GetString(decryption);
             }
             catch (Exception ex)
             {

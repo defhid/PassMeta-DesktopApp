@@ -61,6 +61,11 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Application version.
         /// </summary>
         public const string Version = "0.9.0";
+        
+        /// <summary>
+        /// Encoding for passfile's data.
+        /// </summary>
+        public static readonly Encoding PassFileEncoding = Encoding.Unicode;
 
         /// <summary>
         /// Password files encryption salt.

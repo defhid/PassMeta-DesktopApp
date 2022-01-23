@@ -68,6 +68,12 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// </summary>
         [JsonProperty("__origin")]
         public PassFile? Origin { get; set; }
+        
+        /// <summary>
+        /// Local passfile deletion timestamp.
+        /// </summary>
+        [JsonProperty("__del")]
+        public DateTime? LocalDeletedOn { get; set; }
 
         /// <summary>
         /// Passfile encrypted data.
@@ -99,25 +105,25 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// Is passfile created locally, but not uploaded to the server?
         /// </summary>
         [JsonIgnore]
-        public bool LocalCreated => Id < 1 && Origin is null;
+        public bool LocalCreated => Id < 1 && Origin is null && LocalDeletedOn is null;
 
         /// <summary>
         /// Is passfile changed locally, but not updated on the server?
         /// </summary>
         [JsonIgnore]
-        public bool LocalChanged => Origin is not null;
-        
-        /// <summary>
-        /// Is passfile deleted locally, but not deleted from the server?
-        /// </summary>
-        [JsonIgnore]
-        public bool LocalDeleted => Id < 1 && Origin is not null;
-        
+        public bool LocalChanged => Id > 0 && Origin is not null && LocalDeletedOn is null;
+
         /// <summary>
         /// Is passfile unchanged locally?
         /// </summary>
         [JsonIgnore]
-        public bool LocalNotChanged => Id > 0 && Origin is null;
+        public bool LocalNotChanged => Id > 0 && Origin is null && LocalDeletedOn is null;
+
+        /// <summary>
+        /// Is passfile deleted locally, but not deleted from the server?
+        /// </summary>
+        [JsonIgnore]
+        public bool LocalDeleted => LocalDeletedOn is not null;
 
         #endregion
 
@@ -139,33 +145,6 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             clone.Origin = Origin?.Copy(false);
             clone.Data = copyData ? clone.Data?.Select(section => section.Copy()).ToList() : null;
             return clone;
-        }
-
-        /// <summary>
-        /// Set information fields from other <paramref name="passFile"/>.
-        /// </summary>
-        public void RefreshInfoFieldsFrom(PassFile passFile)
-        {
-            Name = passFile.Name;
-            Color = passFile.Color;
-            Origin = passFile.Origin?.Copy(false);
-            InfoChangedOn = passFile.InfoChangedOn;
-        }
-        
-        /// <summary>
-        /// Set data fields from other <paramref name="passFile"/>.
-        /// </summary>
-        public void RefreshDataFieldsFrom(PassFile passFile, bool refreshDecryptedData)
-        {
-            if (refreshDecryptedData)
-            {
-                Data = passFile.Data?.Select(section => section.Copy()).ToList();
-            }
-            DataEncrypted = passFile.DataEncrypted;
-            PassPhrase = passFile.PassPhrase;
-            Origin = passFile.Origin?.Copy(false);
-            Version = passFile.Version;
-            VersionChangedOn = passFile.VersionChangedOn;
         }
 
         /// <summary>

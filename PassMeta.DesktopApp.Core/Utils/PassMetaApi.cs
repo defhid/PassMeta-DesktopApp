@@ -10,6 +10,8 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Text;
     using System.Threading.Tasks;
     using Common.Interfaces.Mapping;
+    using Common.Utils.Extensions;
+    using Extensions;
     using Newtonsoft.Json;
     using Splat;
     
@@ -127,14 +129,14 @@ namespace PassMeta.DesktopApp.Core.Utils
                 request.Method = method;
                 return request;
             }
-            catch (UriFormatException ex)
+            catch (UriFormatException)
             {
-                Logger.Error(ex, AppConfig.Current.ServerUrl + url);
-                DialogService.ShowError(Resources.API__URL_ERR);
+                DialogService.ShowError(Resources.API__URL_ERR, more: $"{method} {AppConfig.Current.ServerUrl}{url}");
                 return null;
             }
             catch (Exception ex)
             {
+                Logger.Error(ex, $"Request creation error: {method} {AppConfig.Current.ServerUrl}{url}");
                 DialogService.ShowError(ex.Message);
                 return null;
             }
@@ -145,7 +147,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             try
             {
                 var request = WebRequest.CreateHttp(AppConfig.Current.ServerUrl + url);
-                var dataBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+                var dataBytes = Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(data));
 
                 request.Method = method;
                 request.ContentType = "application/json";
@@ -156,14 +158,14 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 return request;
             }
-            catch (UriFormatException ex)
+            catch (UriFormatException)
             {
-                Logger.Error(ex, AppConfig.Current.ServerUrl + url);
-                DialogService.ShowError(Resources.API__URL_ERR);
+                DialogService.ShowError(Resources.API__URL_ERR, more: $"{method} {AppConfig.Current.ServerUrl}{url}");
                 return null;
             }
             catch (Exception ex)
             {
+                Logger.Error(ex, $"Request creation error: {method} {AppConfig.Current.ServerUrl}{url}");
                 DialogService.ShowError(ex.Message);
                 return null;
             }
@@ -172,8 +174,9 @@ namespace PassMeta.DesktopApp.Core.Utils
         private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, string? context, IMapper<string, string>? badWhatMapper)
             where TResponse : OkBadResponse
         {
-            string responseBody;
-            string? errMessage;
+            TResponse? responseData = null;
+            string? responseBody = null;
+            string? errMessage = null;
 
             try
             {
@@ -199,6 +202,27 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (WebException ex)
             {
+                try
+                {
+                    await using var stream = ex.Response!.GetResponseStream();
+                    using var reader = new StreamReader(stream);
+
+                    responseBody = await reader.ReadToEndAsync();
+                    responseData = JsonConvert.DeserializeObject<TResponse>(responseBody);
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                if (responseData is not null)
+                {
+                    if (badWhatMapper is not null)
+                        OkBadService.ShowResponseFailure(responseData, badWhatMapper);
+
+                    return responseData;
+                }
+                
                 errMessage = ex.Status switch
                 {
                     WebExceptionStatus.ConnectFailure => Resources.API__CONNECTION_ERR,
@@ -206,55 +230,44 @@ namespace PassMeta.DesktopApp.Core.Utils
                     _ => ex.Message
                 };
 
-                var more = ReferenceEquals(errMessage, ex.Message) ? null : ex.Message;
+                var more = responseBody ?? (ReferenceEquals(errMessage, ex.Message) ? null : ex.Message);
 
-                try
-                {
-                    await using var stream = ex.Response!.GetResponseStream();
-                    using var reader = new StreamReader(stream);
-
-                    responseBody = await reader.ReadToEndAsync();
-                    more = responseBody;
-                }
-                catch
-                {
-                    // ignored
-                }
-
-                DialogService.ShowError(errMessage, context, more);
+                DialogService.ShowError(errMessage, context, request.GetShortInformation().NewLine(more));
                 return null;
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Unknown error, making request failure");
+                Logger.Error(ex, "Unknown error, making request failure: " + request.GetShortInformation());
                 DialogService.ShowError(ex.Message, context);
                 return null;
             }
 
             try
             {
-                var data = JsonConvert.DeserializeObject<TResponse>(responseBody);
+                responseData = JsonConvert.DeserializeObject<TResponse>(responseBody);
                 if (errMessage is null)
                 {
-                    if (data is null)
+                    if (responseData is null)
                         throw new FormatException();
                     
-                    if (badWhatMapper is not null && !data.Success)
-                        OkBadService.ShowResponseFailure(data, badWhatMapper);
+                    if (badWhatMapper is not null && !responseData.Success)
+                        OkBadService.ShowResponseFailure(responseData, badWhatMapper);
                     
-                    return data;
+                    return responseData;
                 }
 
-                DialogService.ShowError(errMessage, context, responseBody);
+                DialogService.ShowError(errMessage, context, request.GetShortInformation().NewLine(responseBody));
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, request.RequestUri.ToString());
+                Logger.Error(ex, request.GetShortInformation());
                 DialogService.ShowError(errMessage ?? Resources.API__INVALID_RESPONSE_ERR, context, responseBody);
             }
 
             return null;
         }
+        
+        
 
         #endregion
 

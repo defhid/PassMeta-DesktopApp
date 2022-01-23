@@ -1,5 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Models
 {
+    using System.Runtime.CompilerServices;
+
     /// <summary>
     /// Common result model.
     /// </summary>
@@ -29,31 +31,37 @@ namespace PassMeta.DesktopApp.Common.Models
         /// <summary>
         /// Cast to <see cref="Result{TData}"/> with null data.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Result<TData> WithNullData<TData>() => new(Ok, Message);
         
         /// <summary>
         /// Make success result with optional message.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result Success(string? message = null) => new(true, message);
         
         /// <summary>
         /// Make failure result with optional message.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result Failure(string? message = null) => new(false, message);
         
         /// <summary>
         /// Make success result with data and optional message.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<TData> Success<TData>(TData data, string? message = null) => new(data, message);
         
         /// <summary>
         /// Make failure data result with optional message.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<TData> Failure<TData>(string? message = null) => new(false, message);
         
         /// <summary>
         /// Make success/failure result from response.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result FromResponse(OkBadResponse? response) => response?.Success is true
             ? new Result()
             : new Result(false, response?.Message);
@@ -61,6 +69,7 @@ namespace PassMeta.DesktopApp.Common.Models
         /// <summary>
         /// Make success/failure result from response.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<TData> FromResponse<TData>(OkBadResponse<TData>? response) => response?.Success is true
             ? new Result<TData>(response.Data!)
             : new Result<TData>(false, response?.Message);
@@ -68,14 +77,21 @@ namespace PassMeta.DesktopApp.Common.Models
         /// <summary>
         /// Make success/failure result depending on boolean <paramref name="ok"/> value.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result From(bool ok) => new(ok);
         
         /// <summary>
         /// Make success/failure data result depending on boolean <paramref name="ok"/> value.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<TData> From<TData>(bool ok, TData data) where TData : notnull => ok
             ? new Result<TData>(data) 
             : new Result<TData>(false);
+
+        /// <summary>
+        /// Cast to bool (<see cref="Ok"/>).
+        /// </summary>
+        public static implicit operator bool(Result result) => result.Ok;
     }
     
     /// <summary>
@@ -118,8 +134,20 @@ namespace PassMeta.DesktopApp.Common.Models
         }
         
         /// <summary>
-        /// Cast to <see cref="Result{TData}"/> with null data of other type.
+        /// Cast to <see cref="Result{TNewData}"/> with null data of other type.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Result<TNewData> WithNullData<TNewData>() => new(Ok, Message);
+        
+        /// <summary>
+        /// Cast to <see cref="Result"/> without data.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Result WithoutData() => new(Ok, Message);
+        
+        /// <summary>
+        /// Cast to bool (<see cref="Ok"/>).
+        /// </summary>
+        public static implicit operator bool(Result<TData> result) => result.Ok;
     }
 }

@@ -34,13 +34,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             return passFileBtn;
         }
 
-        private async Task _LoadPassFilesAsync(PassFileItemPath lastItemPath)
+        private async Task _LoadPassFilesAsync(PassFileItemPath lastItemPath, bool applyLocalChanges = true)
         {
             using var preloader = MainWindow.Current!.StartPreloader();
 
             if (!_loaded)
             {
-                await _passFileService.RefreshLocalPassFilesAsync();
+                await _passFileService.RefreshLocalPassFilesAsync(applyLocalChanges);
                 _loaded = true;
             }
 
@@ -104,7 +104,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             }
 
             _loaded = false;
-            await _LoadPassFilesAsync(LastItemPath.Copy());
+            await _LoadPassFilesAsync(LastItemPath.Copy(), false);
         }
 
         public async Task PassFileAddAsync()

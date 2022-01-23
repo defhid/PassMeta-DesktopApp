@@ -11,6 +11,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Common.Utils.Extensions;
     using Components;
     using Constants;
+    using Core.Utils.Extensions;
     using ReactiveUI;
     using Utils.Extensions;
 

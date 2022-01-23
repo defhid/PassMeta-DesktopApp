@@ -13,6 +13,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Core.Utils;
+    using Core.Utils.Extensions;
     using Models;
     using ReactiveUI;
     using Splat;
@@ -323,6 +324,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                     _dialogService.ShowError(res.Message!);
                     return;
                 }
+
+                _addingSectionMode = false;
             }
 
             var items = _sectionItemsList.Select(btn => btn.ToItem()).ToList();
@@ -331,6 +334,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             if (string.IsNullOrEmpty(sectionName))
             {
                 sectionName = section.Name;
+            }
+
+            if (!section.DiffersFrom(new PassFile.Section { Name = sectionName, Items = items }))
+            {
+                Edit.Mode = false;
+                return;
             }
             
             var result = PassFileManager.UpdateDataSelectively(passFile, data =>

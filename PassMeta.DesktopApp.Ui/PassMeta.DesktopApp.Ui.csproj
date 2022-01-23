@@ -15,7 +15,7 @@
         <PackageReference Include="Avalonia.Diagnostics" Version="0.10.11" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
-        <PackageReference Include="TextCopy" Version="5.0.0" />
+        <PackageReference Include="TextCopy" Version="5.0.2" />
     </ItemGroup>
     <ItemGroup>
       <Compile Update="Views\AccountView.axaml.cs">

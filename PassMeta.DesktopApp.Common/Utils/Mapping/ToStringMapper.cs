@@ -31,6 +31,17 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
         }
 
         /// <inheritdoc />
+        [return: NotNullIfNotNull("defaultValueTo")]
+        public string? Map(TValueFrom? value, string? defaultValueTo)
+        {
+            if (value is null) return defaultValueTo;
+            
+            return _mappings.TryGetValue(value, out var mapping) 
+                ? mapping.To 
+                : defaultValueTo;
+        }
+
+        /// <inheritdoc />
         public IEnumerable<IMapping<TValueFrom, string>> GetMappings() => _mappings.Values;
 
         /// <summary>
