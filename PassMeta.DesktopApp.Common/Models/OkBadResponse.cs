@@ -3,6 +3,7 @@ namespace PassMeta.DesktopApp.Common.Models
 {
     using System;
     using System.Collections.Generic;
+    using Interfaces.Mapping;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     
@@ -11,34 +12,61 @@ namespace PassMeta.DesktopApp.Common.Models
     /// </summary>
     public class OkBadResponse
     {
+        private string? _message;
+
         /// <summary>
         /// Response message.
         /// </summary>
         [JsonProperty("message")]
-        public string Message { get; set; }
+        public string Message
+        {
+            get => _message!;
+            private set
+            {
+                if (_message is null)
+                {
+                    Success = value == "OK";
+                }
+                _message = value;
+            }
+        }
         
         /// <summary>
         /// If not <see cref="Success"/>, short reason.
         /// </summary>
         [JsonProperty("what")]
-        public string? What { get; set; }
+        public string? What { get; private set; }
         
         /// <summary>
         /// Sub-responses. Sub-error information list.
         /// </summary>
         [JsonProperty("sub")]
-        public List<OkBadResponse>? Sub { get; set; }
+        public List<OkBadResponse>? Sub { get; private set; }
         
         /// <summary>
         /// Additional failure information.
         /// </summary>
         [JsonProperty("more")]
-        public OkBadMore? More { get; set; }
+        public OkBadMore? More { get; private set; }
 
         /// <summary>
         /// Is response success?
         /// </summary>
-        public bool Success => Message == "OK";
+        public bool Success { get; private set; }
+
+        /// <summary>
+        /// Replace response field value with mapped values.
+        /// </summary>
+        public void ApplyMapping(IMapper<string, string> mapper)
+        {
+            Message = mapper.Map(Message, Message);
+            What = mapper.Map(What, What);
+            if (Sub is null) return;
+            foreach (var sub in Sub)
+            {
+                sub.ApplyMapping(mapper);
+            }
+        }
     }
 
     /// <summary>
@@ -50,7 +78,7 @@ namespace PassMeta.DesktopApp.Common.Models
         /// If <see cref="OkBadResponse.Success"/>, response data.
         /// </summary>
         [JsonProperty("data")]
-        public TData? Data { get; set; }
+        public TData? Data { get; init; }
     }
     
     /// <summary>
@@ -62,43 +90,43 @@ namespace PassMeta.DesktopApp.Common.Models
         /// Some text message.
         /// </summary>
         [JsonProperty("text")]
-        public string? Text { get; set; }
+        public string? Text { get; init; }
         
         /// <summary>
         /// Json-information.
         /// </summary>
         [JsonProperty("info")]
-        public JObject? Info { get; set; }
+        public JObject? Info { get; init; }
         
         /// <summary>
         /// Allowed values.
         /// </summary>
         [JsonProperty("allowed")]
-        public JArray? Allowed { get; set; }
+        public JArray? Allowed { get; init; }
         
         /// <summary>
         /// Disallowed values.
         /// </summary>
         [JsonProperty("disallowed")]
-        public JArray? Disallowed { get; set; }
+        public JArray? Disallowed { get; init; }
 
         /// <summary>
         /// Required fields/values.
         /// </summary>
         [JsonProperty("required")]
-        public JArray? Required { get; set; }
+        public JArray? Required { get; init; }
 
         /// <summary>
         /// Minimum valid value.
         /// </summary>
         [JsonProperty("min_allowed")]
-        public object? MinAllowed { get; set; }
+        public object? MinAllowed { get; init; }
         
         /// <summary>
         /// Maximum valid value.
         /// </summary>
         [JsonProperty("max_allowed")]
-        public object? MaxAllowed { get; set; }
+        public object? MaxAllowed { get; init; }
 
         /// <summary>
         /// Build string with information from notnull fields.

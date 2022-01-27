@@ -12,7 +12,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
         
         public bool IsVisible { get; }
 
-        public string? Content => IsVisible ? ButtonKindToName.Map(ButtonKind) : null;
+        public string? Content => IsVisible ? ButtonKindToName.Map(ButtonKind, "?") : null;
         
         public ResultButton(DialogButton buttonKind, IEnumerable<DialogButton>? requiredButtonKinds)
         {
@@ -20,7 +20,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
             IsVisible = requiredButtonKinds?.Contains(buttonKind) ?? false;
         }
         
-        private static readonly ToStringMapper<DialogButton> ButtonKindToName = new MapToResource<DialogButton>[]
+        private static readonly SimpleMapper<DialogButton, string> ButtonKindToName = new MapToResource<DialogButton>[]
         {
             new(DialogButton.Ok, () => Resources.DIALOG__BTN_OK),
             new(DialogButton.Yes, () => Resources.DIALOG__BTN_YES),

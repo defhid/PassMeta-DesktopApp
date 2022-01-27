@@ -29,7 +29,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Represents <see cref="AnyCurrentChanged"/>.
         /// </summary>
-        public static readonly Subject<bool> AnyCurrentChangedSource = new();
+        public static readonly BehaviorSubject<bool> AnyCurrentChangedSource = new(false);
         
         /// <summary>
         /// Has any uncommited changed/deleted passfile?

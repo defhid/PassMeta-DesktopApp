@@ -1,6 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Utils.Mapping
 {
     using System;
+    using System.Diagnostics;
     using System.Linq.Expressions;
     using Interfaces.Mapping;
 
@@ -17,13 +18,14 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
         public TValueFrom From => _fromValue;
 
         /// <inheritdoc />
-        public string To => Resources.ResourceManager.GetString(_toResourceName)!;
+        public string To => Resources.ResourceManager.GetString(_toResourceName, Resources.Culture)!;
 
         /// <summary>
         /// Create mapping from resource name.
         /// </summary>
         public MapToResource(TValueFrom value, string resourceName)
         {
+            Debug.Assert(value is not null);
             _fromValue = value;
             _toResourceName = resourceName;
         }

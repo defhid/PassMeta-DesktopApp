@@ -38,6 +38,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
                 PassFileProblemKind.NeedsMerge => Brushes.Orange,
                 PassFileProblemKind.DownloadingError => Brushes.OrangeRed,
                 PassFileProblemKind.UploadingError => Brushes.OrangeRed,
+                PassFileProblemKind.RemoteDeletingError => Brushes.OrangeRed,
                 PassFileProblemKind.Other => Brushes.Red,
                 _ => passFile.LocalDeleted ? Brushes.LightGray : Brushes.Yellow
             };

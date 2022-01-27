@@ -22,7 +22,7 @@ namespace PassMeta.DesktopApp.Ui.Constants
         /// <summary>
         /// PassMeta common color name.
         /// </summary>
-        public string Name => ColorToName.Map(this);
+        public string Name => ColorToName.Map(this, "?");
 
         private PassFileColor(string? hex)
         {
@@ -41,7 +41,7 @@ namespace PassMeta.DesktopApp.Ui.Constants
         public static readonly PassFileColor Purple = new("#9370DB");
         public static readonly PassFileColor Yellow = new("#D5D500");
 
-        private static readonly ToStringMapper<PassFileColor> ColorToName = new IMapping<PassFileColor, string>[]
+        private static readonly SimpleMapper<PassFileColor, string> ColorToName = new IMapping<PassFileColor, string>[]
         {
             new MapToString<PassFileColor>(None, "-"),
             new MapToResource<PassFileColor>(Red, () => Resources.PASSFILE_COLOR__RED),

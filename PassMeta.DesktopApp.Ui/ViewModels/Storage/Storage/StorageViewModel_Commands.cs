@@ -84,13 +84,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 return;
             }
 
-            using var preloader = MainWindow.Current!.StartPreloader();
-
-            var result = await passFile.LoadIfRequiredAndDecryptAsync();
-            if (result.Ok)
+            if (!passFile.LocalDeleted)
             {
-                SelectedData.PassFile = passFile;
-                return;
+                using var preloader = MainWindow.Current!.StartPreloader();
+
+                var result = await passFile.LoadIfRequiredAndDecryptAsync();
+                if (result.Ok)
+                {
+                    SelectedData.PassFile = passFile;
+                    return;
+                }
             }
 
             PassFilesSelectedIndex = _passFilesPrevSelectedIndex;

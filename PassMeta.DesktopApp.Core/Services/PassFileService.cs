@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Utils.Mapping;
+    using DesktopApp.Common.Utils.Extensions;
     using DesktopApp.Core.Utils;
     using DesktopApp.Core.Utils.Extensions;
     
@@ -18,7 +19,7 @@ namespace PassMeta.DesktopApp.Core.Services
     /// <inheritdoc />
     public class PassFileService : IPassFileService
     {
-        private static readonly ToStringMapper<string> WhatToStringMapper = new MapToResource<string>[]
+        private static readonly SimpleMapper<string, string> WhatToStringMapper = new MapToResource<string>[]
         {
             new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
             new("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
@@ -73,7 +74,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     }
                     else if (applyLocalChanges)
                     {
-                        await _TryDeleteAsync(remote);
+                        await _TryDeleteAsync(local);
                     }
 
                     continue;
@@ -219,7 +220,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             var answer = await _dialogService.AskPasswordAsync(string.Format(
                 Resources.PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE, 
-                passFile.Name, passFile.Id, passFile.LocalDeletedOn?.ToShortDateString()));
+                passFile.Name, passFile.Id, passFile.LocalDeletedOn?.ToShortDateTimeString()));
 
             if (answer.Ok)
             {
@@ -231,7 +232,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 else
                 {
                     PassFileManager.Delete(passFile);
-                    PassFileManager.TrySetProblem(passFile.Id, PassFileProblemKind.RemoteDeletingError);
+                    PassFileManager.TrySetProblem(passFile.Id, 
+                        PassFileProblemKind.RemoteDeletingError.ToProblemWithInfo(response.GetFullMessage()));
                 }
             }
             else
@@ -324,7 +326,8 @@ namespace PassMeta.DesktopApp.Core.Services
             });
 
             return request.WithContext(passFile.GetTitle())
-                .WithBadHandling(WhatToStringMapper)
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling()
                 .ExecuteAsync<PassFile>();
         }
         
@@ -336,7 +339,8 @@ namespace PassMeta.DesktopApp.Core.Services
             });
 
             return request.WithContext(passFile.GetTitle())
-                .WithBadHandling(WhatToStringMapper)
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling()
                 .ExecuteAsync<PassFile>();
         }
 
@@ -351,7 +355,8 @@ namespace PassMeta.DesktopApp.Core.Services
             });
 
             return request.WithContext(passFile.GetTitle())
-                .WithBadHandling(WhatToStringMapper)
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling()
                 .ExecuteAsync<PassFile>();
         }
 
@@ -363,7 +368,8 @@ namespace PassMeta.DesktopApp.Core.Services
             });
                 
             return request.WithContext(passFile.GetTitle())
-                .WithBadHandling(WhatToStringMapper)
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling()
                 .ExecuteAsync();
         }
 

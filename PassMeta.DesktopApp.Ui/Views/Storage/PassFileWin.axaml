@@ -7,11 +7,10 @@
         xmlns:passFileWin="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin"
         mc:Ignorable="d"
         Width="520"
-        Height="265"
         MinWidth="520"
-        MinHeight="250"
         MaxWidth="520"
-        MaxHeight="250"
+        SizeToContent="Height"
+        CanResize="False"
         x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileWin"
         Icon="/Assets/PassMeta.ico"
         Title="{Binding Title^}"
@@ -38,6 +37,7 @@
                      Margin="0 0 0 10"
                      Text="{Binding Name}"
                      IsReadOnly="{Binding ReadOnly^}"
+                     Focusable="{Binding !ReadOnly^}"
                      AttachedToVisualTree="NameTextBox__OnAttachedToVisualTree"/>
             
             <TextBlock Grid.Row="1" Grid.Column="0"
@@ -89,11 +89,15 @@
                   ColumnDefinitions="Auto,*">
                 <Ellipse Grid.Column="0" 
                          Width="8" Height="8"
-                         Margin="0 0 6 10"
+                         Margin="0 0 6 18"
                          VerticalAlignment="Center"
                          Fill="{Binding StateColor^}"/>  
                 
                 <TextBlock Grid.Column="1"
+                           x:Name="StateBlock"
+                           Margin="0 0 0 20"
+                           TextWrapping="Wrap"
+                           LineHeight="18"
                            Text="{Binding State^}"/>
             </Grid>
         </Grid>
@@ -115,12 +119,13 @@
                         HorizontalAlignment="Right"
                         Margin="0 0 0 0"
                         Content="{x:Static com:Resources.PASSFILE__BTN_CHANGE_PWD}"
+                        IsVisible="{Binding ChangePasswordBtn.IsVisible}"
                         Command="{Binding ChangePasswordBtn.Command}"/>
                 
                 <Button Grid.Column="2" 
                         HorizontalAlignment="Right"
                         Margin="0 0 0 0"
-                        Content="{x:Static com:Resources.PASSFILE__BTN_MERGE}" 
+                        Content="{x:Static com:Resources.PASSFILE__BTN_MERGE}"
                         IsVisible="{Binding MergeBtn.IsVisible}"
                         Command="{Binding MergeBtn.Command}"/>
             

@@ -1,6 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Models
 {
     using System.Runtime.CompilerServices;
+    using Utils.Extensions;
 
     /// <summary>
     /// Common result model.
@@ -64,7 +65,7 @@ namespace PassMeta.DesktopApp.Common.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result FromResponse(OkBadResponse? response) => response?.Success is true
             ? new Result()
-            : new Result(false, response?.Message);
+            : new Result(false, response.GetFullMessage());
         
         /// <summary>
         /// Make success/failure result from response.
@@ -72,7 +73,7 @@ namespace PassMeta.DesktopApp.Common.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<TData> FromResponse<TData>(OkBadResponse<TData>? response) => response?.Success is true
             ? new Result<TData>(response.Data!)
-            : new Result<TData>(false, response?.Message);
+            : new Result<TData>(false, response.GetFullMessage());
         
         /// <summary>
         /// Make success/failure result depending on boolean <paramref name="ok"/> value.

@@ -19,7 +19,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities.Extra
         /// <summary>
         /// Localized name of the problem.
         /// </summary>
-        public string Name => KindToName.Map(Kind);
+        public string Name => KindToName.Map(Kind, "?");
 
         /// <summary></summary>
         public PassFileProblem(PassFileProblemKind kind)
@@ -46,7 +46,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities.Extra
         /// </summary>
         public static implicit operator PassFileProblem(PassFileProblemKind kind) => new(kind);
 
-        private static readonly ToStringMapper<PassFileProblemKind> KindToName = new MapToResource<PassFileProblemKind>[]
+        private static readonly SimpleMapper<PassFileProblemKind, string> KindToName = new MapToResource<PassFileProblemKind>[]
         {
             new(PassFileProblemKind.NeedsMerge, () => Resources.PASSFILE_PROBLEM__NEEDS_MERGE),
             new(PassFileProblemKind.DownloadingError, () => Resources.PASSFILE_PROBLEM__DOWNLOAD_ERR),

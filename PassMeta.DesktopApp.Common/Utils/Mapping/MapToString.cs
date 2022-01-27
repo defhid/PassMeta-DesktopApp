@@ -1,5 +1,6 @@
 namespace PassMeta.DesktopApp.Common.Utils.Mapping
 {
+    using System.Diagnostics;
     using Interfaces.Mapping;
 
     /// <summary>
@@ -17,6 +18,7 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
         /// <summary></summary>
         public MapToString(TValueFrom valueFrom, string valueTo)
         {
+            Debug.Assert(valueFrom is not null);
             From = valueFrom;
             To = valueTo;
         }

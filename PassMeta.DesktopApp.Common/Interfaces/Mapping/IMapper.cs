@@ -2,6 +2,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Mapping
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using Utils.Mapping;
 
     /// <summary>
     /// Simple mapper.
@@ -11,21 +12,38 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Mapping
         where TValueTo : notnull
     {
         /// <summary>
-        /// Get mapped value corresponding to parameter <paramref name="value"/>
+        /// Try get a value corresponding to parameter <paramref name="value"/>
         /// </summary>
-        [return: NotNullIfNotNull("value")]
-        TValueTo? Map(TValueFrom? value);
+        bool TryMap(TValueFrom? value, [NotNullWhen(true)] out TValueTo? valueTo);
         
         /// <summary>
-        /// Get mapped value corresponding to parameter <paramref name="value"/>.
+        /// Get a value corresponding to parameter <paramref name="value"/>.
         /// If <paramref name="value"/> is null or wasn't found, return <paramref name="defaultValueTo"/>.
         /// </summary>
         [return: NotNullIfNotNull("defaultValueTo")]
         TValueTo? Map(TValueFrom? value, TValueTo? defaultValueTo);
 
         /// <summary>
+        /// Does mapper contain value to map it?
+        /// </summary>
+        bool Contains(TValueFrom valueFrom);
+
+        /// <summary>
         /// Get all mappings.
         /// </summary>
         IEnumerable<IMapping<TValueFrom, TValueTo>> GetMappings();
+        
+        /// <summary>
+        /// Concatenate mappers.
+        /// </summary>
+        public static ICombinedMapper<TValueFrom, TValueTo> operator +(
+            IMapper<TValueFrom, TValueTo> first, 
+            IMapper<TValueFrom, TValueTo> second)
+        {
+            var combined = new DefaultCombinedMapper<TValueFrom, TValueTo>();
+            combined.Mappers.Add(first);
+            combined.Mappers.Add(second);
+            return combined;
+        }
     }
 }

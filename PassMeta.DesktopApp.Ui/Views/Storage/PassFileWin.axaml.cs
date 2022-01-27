@@ -33,12 +33,13 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
         public PassFileWin(PassFile passFile) : this()
         {
             PassFile = passFile;
-            DataContext = new PassFileWinViewModel(passFile.Copy(), Close);
+            DataContext = new PassFileWinViewModel(passFile.Copy());
+            DataContext.ViewElements.Window = this;
 
             _changeNameAdvice = PassFile!.Name.Trim() == Common.Resources.PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME;
         }
 
-        private new void Close()
+        public new void Close()
         {
             if (DataContext!.PassFileChanged)
             {
@@ -65,10 +66,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
         
         private void OkBtn__OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            if (!_changeNameAdvice)
-            {
-                (sender as Button)!.Focus();
-            }
+            if (!_changeNameAdvice) (sender as Button)!.Focus();
         }
     }
 }

@@ -1,6 +1,7 @@
 namespace PassMeta.DesktopApp.Core.Utils
 {
     using Common.Interfaces.Services;
+    using Common.Interfaces.Mapping;
     using Common.Models.Dto.Response;
     using Common.Models.Entities;
     
@@ -10,7 +11,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    
+    using Common.Utils.Mapping;
     using Newtonsoft.Json;
     using Splat;
 
@@ -56,7 +57,8 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Translate package for server response messages.
         /// </summary>
         [JsonIgnore]
-        public Dictionary<string, Dictionary<string, string>> OkBadMessagesTranslatePack { get; private set; } = new();
+        public IMapper<string, string> OkBadMessagesMapper { get; private set; } 
+            = new SimpleMapper<string, string>(Enumerable.Empty<IMapping<string, string>>());
         
         /// <summary>
         /// Current application context.
@@ -68,7 +70,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
 
         #endregion
-        
+
         private AppContext()
         {
         }
@@ -123,7 +125,12 @@ namespace PassMeta.DesktopApp.Core.Utils
                         var info = response.Data!;
                         Current.ServerVersion = info.AppVersion;
                         Current.User = info.User;
-                        Current.OkBadMessagesTranslatePack = info.OkBadMessagesTranslatePack;
+                        
+                        var pack = info.OkBadMessagesTranslatePack ??
+                                   new Dictionary<string, Dictionary<string, string>>(0);
+                        Current.OkBadMessagesMapper = new SimpleMapper<string, string>(
+                            pack.Select(pair => new OkBadMessageMapping(pair.Key, pair.Value)));
+                        
                         await _SaveToFileAsync(Current);
                     }
                 }
@@ -237,5 +244,29 @@ namespace PassMeta.DesktopApp.Core.Utils
                 Logger.Error(ex, "Context file saving failed");
             }
         }
+        
+        #region OkBadMessageMapping
+        
+        private class OkBadMessageMapping : IMapping<string, string>
+        {
+            private readonly Dictionary<string, string> _translates;
+                
+            public string From { get; }
+
+            public string To =>
+                _translates.TryGetValue(AppConfig.Current.CultureCode, out var result)
+                    ? result
+                    : _translates.TryGetValue("default", out result)
+                        ? result
+                        : From;
+
+            public OkBadMessageMapping(string message, Dictionary<string, string> translates)
+            {
+                From = message;
+                _translates = translates;
+            }
+        }
+        
+        #endregion
     }
 }

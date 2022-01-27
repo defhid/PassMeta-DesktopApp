@@ -7,6 +7,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System;
     using System.IO;
     using System.Net;
+    using System.Reactive.Subjects;
     using System.Text;
     using System.Threading.Tasks;
     using Common.Interfaces.Mapping;
@@ -26,13 +27,14 @@ namespace PassMeta.DesktopApp.Core.Utils
         public static bool Online { get; private set; }
 
         /// <summary>
-        /// Invokes if <see cref="Online"/> value changed.
+        /// Represents <see cref="Online"/>.
         /// </summary>
-        public static event Action? OnlineChanged;
+        public static readonly BehaviorSubject<bool> OnlineSource = new(false);
 
         static PassMetaApi()
         {
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+            OnlineSource.Subscribe(online => Online = online);
         }
 
         #region Services
@@ -110,11 +112,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 await AppContext.RefreshFromServerAsync(false);
             }
 
-            if (has != Online)
-            {
-                Online = has;
-                OnlineChanged?.Invoke();
-            }
+            if (has != Online) OnlineSource.OnNext(has);
 
             return Online;
         }
@@ -171,7 +169,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
         }
 
-        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, string? context, IMapper<string, string>? badWhatMapper)
+        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, string? context, IMapper<string, string> badMapper, bool handleBad)
             where TResponse : OkBadResponse
         {
             TResponse? responseData = null;
@@ -214,11 +212,17 @@ namespace PassMeta.DesktopApp.Core.Utils
                 {
                     // ignored
                 }
-
-                if (responseData is not null)
+                
+                if (ex.Status is WebExceptionStatus.ConnectFailure)
                 {
-                    if (badWhatMapper is not null)
-                        OkBadService.ShowResponseFailure(responseData, badWhatMapper);
+                    if (Online) OnlineSource.OnNext(false);
+                }
+                else if (responseData is not null)
+                {
+                    responseData.ApplyMapping(badMapper);
+                    
+                    if (handleBad)
+                        OkBadService.ShowResponseFailure(responseData);
 
                     return responseData;
                 }
@@ -250,8 +254,10 @@ namespace PassMeta.DesktopApp.Core.Utils
                     if (responseData is null)
                         throw new FormatException();
                     
-                    if (badWhatMapper is not null && !responseData.Success)
-                        OkBadService.ShowResponseFailure(responseData, badWhatMapper);
+                    responseData.ApplyMapping(badMapper);
+                    
+                    if (handleBad && !responseData.Success)
+                        OkBadService.ShowResponseFailure(responseData);
                     
                     return responseData;
                 }
@@ -266,8 +272,6 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             return null;
         }
-        
-        
 
         #endregion
 
@@ -284,7 +288,9 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             private string? _context;
 
-            private IMapper<string, string>? _handleBad;
+            private IMapper<string, string> _badMapper;
+
+            private bool _handleBad;
 
             /// <summary></summary>
             public Request(string method, string url, object? data)
@@ -293,15 +299,25 @@ namespace PassMeta.DesktopApp.Core.Utils
                 _url = url;
                 _method = method;
                 _context = null;
-                _handleBad = null;
+                _badMapper = AppContext.Current.OkBadMessagesMapper;
+                _handleBad = false;
+            }
+
+            /// <summary>
+            /// Add response <see cref="OkBadResponse.What"/> mapping.
+            /// </summary>
+            public Request WithBadMapping(IMapper<string, string> whatMapper)
+            {
+                _badMapper += whatMapper;
+                return this;
             }
             
             /// <summary>
             /// Enable bad response handling (failure auto-showing).
             /// </summary>
-            public Request WithBadHandling(IMapper<string, string>? whatMapper = null)
+            public Request WithBadHandling()
             {
-                _handleBad = whatMapper;
+                _handleBad = true;
                 return this;
             }
             
@@ -325,7 +341,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 
                 return request is null
                     ? Task.FromResult<OkBadResponse?>(null)
-                    : _ExecuteRequest<OkBadResponse>(request, _context, _handleBad);
+                    : _ExecuteRequest<OkBadResponse>(request, _context, _badMapper, _handleBad);
             }
             
             /// <summary>
@@ -339,7 +355,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 
                 return request is null
                     ? Task.FromResult<OkBadResponse<TResponseData>?>(null)
-                    : _ExecuteRequest<OkBadResponse<TResponseData>>(request, _context, _handleBad);
+                    : _ExecuteRequest<OkBadResponse<TResponseData>>(request, _context, _badMapper, _handleBad);
             }
         }
     }

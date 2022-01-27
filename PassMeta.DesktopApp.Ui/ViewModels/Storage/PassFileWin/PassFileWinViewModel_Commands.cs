@@ -13,11 +13,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     {
         private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
         
-        public void Close()
-        {
-            _closeAction?.Invoke();
-            _closeAction = null;
-        }
+        public void Close() => ViewElements.Window!.Close();
 
         public async Task ChangePasswordAsync()
         {

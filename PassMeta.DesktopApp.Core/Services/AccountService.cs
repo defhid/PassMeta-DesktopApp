@@ -17,7 +17,7 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <summary>
         /// Requests bad mapping.
         /// </summary>
-        public static readonly ToStringMapper<string> WhatToStringMapper = new MapToResource<string>[]
+        public static readonly SimpleMapper<string, string> WhatToStringMapper = new MapToResource<string>[]
         {
             new("first_name", () => Resources.DICT_ACCOUNT__FIRST_NAME),
             new("last_name", () => Resources.DICT_ACCOUNT__LAST_NAME),
@@ -45,7 +45,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
 
             var response = await PassMetaApi.Patch("/users/me", data)
-                .WithBadHandling(WhatToStringMapper)
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling()
                 .ExecuteAsync<User>();
             
             if (response?.Success is not true)

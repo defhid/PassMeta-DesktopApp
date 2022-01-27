@@ -20,12 +20,12 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Response
         /// Server version.
         /// </summary>
         [JsonProperty("app_version")]
-        public string AppVersion { get; set; }
+        public string? AppVersion { get; set; }
         
         /// <summary>
         /// <see cref="OkBadResponse"/> message translation package.
         /// </summary>
         [JsonProperty("messages_translate_pack")]
-        public Dictionary<string, Dictionary<string, string>> OkBadMessagesTranslatePack { get; set; }
+        public Dictionary<string, Dictionary<string, string>>? OkBadMessagesTranslatePack { get; set; }
     }
 }

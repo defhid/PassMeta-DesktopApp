@@ -11,11 +11,12 @@
         MinHeight="150"
         MaxWidth="750"
         MaxHeight="300"
+        SizeToContent="Height"
+        CanResize="False"
         x:Class="PassMeta.DesktopApp.Ui.Views.Main.DialogWindow"
         Icon="/Assets/PassMeta.ico"
         Title="{Binding Title}"
-        WindowStartupLocation="CenterOwner"
-        Opened="Window_OnOpened">
+        WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
         <dialogWindow:DialogWindowViewModel></dialogWindow:DialogWindowViewModel>
@@ -64,7 +65,7 @@
                          SelectionEnd="{Binding WindowTextInputBox.SelectionEnd}"
                          Classes.revealPasswordButton="{Binding WindowTextInputBox.IsForPassword}"
                          Classes.clearButton="{Binding !WindowTextInputBox.IsForPassword}"
-                         Margin="80 10 20 0"
+                         Margin="80 5 20 0"
                          VerticalAlignment="Bottom"
                          KeyDown="Input_OnKeyDown"
                          AttachedToVisualTree="Input_OnAttachedToVisualTree"/>
@@ -74,7 +75,7 @@
                                AllowSpin="False"
                                ShowButtonSpinner="False"
                                Watermark="{Binding WindowNumericInputBox.Placeholder}"
-                               Margin="80 10 20 0"
+                               Margin="80 5 20 0"
                                VerticalAlignment="Bottom"
                                KeyDown="Input_OnKeyDown"
                                AttachedToVisualTree="Input_OnAttachedToVisualTree"/>
@@ -88,7 +89,7 @@
                     <Style Selector="Button">
                         <Setter Property="HorizontalAlignment" Value="Right" />
                         <Setter Property="VerticalAlignment" Value="Bottom"/>
-                        <Setter Property="Margin" Value="10 10 20 20"/>
+                        <Setter Property="Margin" Value="10 15 20 15"/>
                         <Setter Property="Padding" Value="12 7 12 7"/>
                     </Style>
                 </StackPanel.Styles>

@@ -89,8 +89,6 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             }
 
             _loaded = true;
-            
-            PassMetaApi.OnlineChanged += DataContext.Mode.OnChanged;
         }
         
         private async void OnClosing(object? sender, CancelEventArgs e)
@@ -107,8 +105,6 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
                     win.Close();
                 }
             }
-            
-            PassMetaApi.OnlineChanged -= DataContext.Mode.OnChanged;
         }
         
         private void SubscribeOnPageEvents()

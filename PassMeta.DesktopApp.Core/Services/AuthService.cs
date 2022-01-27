@@ -13,7 +13,7 @@ namespace PassMeta.DesktopApp.Core.Services
     /// <inheritdoc />
     public class AuthService : IAuthService
     {
-        private static readonly ToStringMapper<string> WhatToStringMapper = AccountService.WhatToStringMapper + new MapToResource<string>[]
+        private static readonly SimpleMapper<string, string> WhatToStringMapper = AccountService.WhatToStringMapper + new MapToResource<string>[]
         {
             new("user", () => Resources.DICT_AUTH__USER),
         };
@@ -30,7 +30,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             
             var response = await PassMetaApi.Post("/auth/sign-in", data)
-                .WithBadHandling(WhatToStringMapper)
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling()
                 .ExecuteAsync<User>();
             
             if (response?.Success is not true)
@@ -48,7 +49,8 @@ namespace PassMeta.DesktopApp.Core.Services
             if (answer.Bad) return;
             
             await PassMetaApi.Post("/auth/sign-out")
-                .WithBadHandling(WhatToStringMapper)
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling()
                 .ExecuteAsync();
 
             await AppContext.SetUserAsync(null);
@@ -64,7 +66,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             
             var response = await PassMetaApi.Post("/users/new", data)
-                .WithBadHandling(WhatToStringMapper)
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling()
                 .ExecuteAsync<User>();
             
             if (response?.Success is not true) 

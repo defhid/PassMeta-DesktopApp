@@ -11,16 +11,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Common.Utils.Extensions;
     using Components;
     using Constants;
-    using Core.Utils.Extensions;
+    using Models;
     using ReactiveUI;
     using Utils.Extensions;
 
     public partial class PassFileWinViewModel : ReactiveObject
     {
         public bool PassFileChanged { get; private set; }
-        
-        private Action? _closeAction;
-        
+
         public PassFile? PassFile { get; private set; }
         
         public IObservable<string> Title { get; }
@@ -63,10 +61,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         
         public IObservable<bool> ReadOnly { get; }
 
-        public PassFileWinViewModel(PassFile passFile, Action closeAction)
+        public ViewElements ViewElements { get; } = new();
+
+        public PassFileWinViewModel(PassFile passFile)
         {
             PassFile = passFile;
-            _closeAction = closeAction;
 
             PassFileChanged = false;
             
@@ -111,6 +110,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             ChangePasswordBtn = new BtnState
             {
                 CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(ChangePasswordAsync)),
+                IsVisibleObservable = passFileChanged.Select(pf => pf?.LocalDeleted is false)
             };
             
             MergeBtn = new BtnState
@@ -152,7 +152,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             if (passFile.Problem is not null)
                 states.Push(passFile.Problem.ToString());
 
-            return string.Join(',' + Environment.NewLine, states.Where(s => s != string.Empty));
+            return string.Join(Environment.NewLine, states.Where(s => s != string.Empty));
         }
 
         #region Avalonia requirements...

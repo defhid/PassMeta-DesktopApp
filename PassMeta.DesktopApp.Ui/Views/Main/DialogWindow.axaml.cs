@@ -1,11 +1,9 @@
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
-    using System;
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Input;
     using Avalonia.Interactivity;
-    using Avalonia.LogicalTree;
     using Avalonia.Markup.Xaml;
     using Common.Enums;
     using ViewModels.Main.DialogWindow;
@@ -69,30 +67,6 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
                 ((Control)sender!).Focus();
                 _focused = true;
             }
-        }
-        
-        private void Window_OnOpened(object? sender, EventArgs e)
-        {
-            var dataContext = (DialogWindowViewModel)DataContext!;
-            var heightCorrection = 0;
-
-            if (dataContext.WindowTextInputBox.Visible || dataContext.WindowNumericInputBox.Visible)
-            {
-                heightCorrection += 25;
-            }
-
-            if (dataContext.Text.Length > 100)
-            {
-                heightCorrection += Math.Max(25, dataContext.Text.Length % 100);
-            }
-
-            if (dataContext.DetailsVisible)
-            {
-                heightCorrection += Math.Max(50, 10 * dataContext.Details!.Length % 100);
-            }
-
-            Height += heightCorrection;
-            MinHeight += heightCorrection;
         }
     }
 }
