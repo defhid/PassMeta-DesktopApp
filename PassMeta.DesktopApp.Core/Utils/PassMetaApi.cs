@@ -14,7 +14,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using Common.Utils.Extensions;
     using Extensions;
     using Newtonsoft.Json;
-    using Splat;
     
     /// <summary>
     /// Utility for making requests to PassMeta server.
@@ -39,9 +38,9 @@ namespace PassMeta.DesktopApp.Core.Utils
 
         #region Services
 
-        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
-        private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
-        private static IOkBadService OkBadService => Locator.Current.GetService<IOkBadService>()!;
+        private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
+        private static IDialogService DialogService => EnvironmentContainer.Resolve<IDialogService>();
+        private static IOkBadService OkBadService => EnvironmentContainer.Resolve<IOkBadService>();
 
         #endregion
 

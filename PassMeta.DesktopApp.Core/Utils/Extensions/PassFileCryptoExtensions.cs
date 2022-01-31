@@ -7,14 +7,13 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
     using Common.Models;
     using Common.Models.Entities;
     using Newtonsoft.Json;
-    using Splat;
 
     /// <summary>
     /// Extension crypto-methods for <see cref="PassFile"/>.
     /// </summary>
     public static class PassFileCryptoExtensions
     {
-        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
+        private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
         private static Result DecryptionError => Result.Failure(Resources.PASSFILE__DECRYPTION_ERROR);
         private static Result EncryptionError => Result.Failure(Resources.PASSFILE__ENCRYPTION_ERROR);
 
@@ -38,7 +37,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 return DecryptionError;
             }
             
-            var service = Locator.Current.GetService<ICryptoService>()!;
+            var service = EnvironmentContainer.Resolve<ICryptoService>();
 
             var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase);
             if (content is null)
@@ -88,7 +87,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 return EncryptionError;
             }
             
-            var service = Locator.Current.GetService<ICryptoService>()!;
+            var service = EnvironmentContainer.Resolve<ICryptoService>();
             
             passFile.DataEncrypted = service.Encrypt(data, passFile.PassPhrase);
             if (passFile.DataEncrypted is null)

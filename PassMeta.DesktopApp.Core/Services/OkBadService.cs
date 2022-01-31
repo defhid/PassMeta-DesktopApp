@@ -7,12 +7,11 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Collections.Generic;
     using System.Linq;
     using Common.Utils.Extensions;
-    using Splat;
 
     /// <inheritdoc />
     public class OkBadService : IOkBadService
     {
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         /// <inheritdoc />
         public void ShowResponseFailure(OkBadResponse response)

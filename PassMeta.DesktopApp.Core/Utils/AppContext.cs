@@ -13,7 +13,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Threading.Tasks;
     using Common.Utils.Mapping;
     using Newtonsoft.Json;
-    using Splat;
 
     /// <summary>
     /// Application context: cookies, user, etc.
@@ -67,7 +66,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
         #region Services
         
-        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
+        private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
 
         #endregion
 

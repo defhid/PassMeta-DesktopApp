@@ -11,7 +11,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Threading.Tasks;
     using Common.Constants;
     using Newtonsoft.Json;
-    using Splat;
 
     /// <summary>
     /// Application configuration.
@@ -110,8 +109,8 @@ namespace PassMeta.DesktopApp.Core.Utils
 
         #region Services
         
-        private static IDialogService DialogService => Locator.Current.GetService<IDialogService>()!;
-        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
+        private static IDialogService DialogService => EnvironmentContainer.Resolve<IDialogService>();
+        private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
 
         #endregion
 

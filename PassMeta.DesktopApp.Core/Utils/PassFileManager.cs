@@ -14,7 +14,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Reactive.Subjects;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Splat;
 
     /// <summary>
     /// Application passfiles manager.
@@ -22,7 +21,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     /// <remarks>Not designed for concurrent work.</remarks>
     public static class PassFileManager
     {
-        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
+        private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
         
         private const string EmptyListJson = "[]";
 
@@ -314,9 +313,6 @@ namespace PassMeta.DesktopApp.Core.Utils
             var actual = _OptimizeAndSetChanged(found, source, changed);
             
             passFile.RefreshInfoFieldsFrom(actual);
-            
-            AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
-            
             return Result.Success();
         }
         
@@ -372,9 +368,6 @@ namespace PassMeta.DesktopApp.Core.Utils
             var actual = _OptimizeAndSetChanged(found, source, changed);
             
             passFile.RefreshDataFieldsFrom(actual, false);
-            
-            AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
-            
             return Result.Success();
         }
         
@@ -424,9 +417,6 @@ namespace PassMeta.DesktopApp.Core.Utils
             var actual = _OptimizeAndSetChanged(found, source, changed);
             
             passFile.RefreshDataFieldsFrom(actual, false);
-            
-            AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
-            
             return Result.Success();
         }
 
@@ -442,6 +432,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             if (found < 0)
             {
                 _currentPassFiles.RemoveAll(pf => pf.changed?.Id == passFile.Id);
+                AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
                 return null;
             }
             
@@ -449,17 +440,15 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             if (changed.LocalCreated || fromRemote)
             {
-                _deletedPassFiles.Add(changed);
+                _deletedPassFiles.Add(source!);
                 _currentPassFiles.RemoveAt(found);
+                AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
                 return null;
             }
 
             changed.LocalDeletedOn = DateTime.Now;
 
             var actual = _OptimizeAndSetChanged(found, source, changed);
-            
-            AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
-            
             return actual.Copy();
         }
 
@@ -482,6 +471,9 @@ namespace PassMeta.DesktopApp.Core.Utils
                     }
                 }
             }
+
+            _currentPassFiles.AddRange(_deletedPassFiles.Select(source => ((PassFile?)source, (PassFile?)null)));
+            _deletedPassFiles.Clear();
             
             AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
         }
@@ -598,6 +590,9 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             
             _currentPassFiles[index] = (source, changed);
+            
+            AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
+            
             return (changed ?? source)!;
         }
 

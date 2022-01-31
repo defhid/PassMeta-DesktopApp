@@ -68,7 +68,8 @@
                                                       Content="{TemplateBinding Content}"
                                                       Padding="0"
                                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                      HorizontalContentAlignment="Center"
+                                                      HorizontalContentAlignment="Left"
+                                                      Margin="8 0 0 0"
                                                       TextBlock.Foreground="#52C049"
                                                       TextBlock.FontWeight="Bold"/>
                                 </ControlTemplate>
@@ -104,7 +105,18 @@
                         <Button Click="GeneratorBtn_OnClick"
                                 Classes.active="{Binding MainPane.Buttons.Generator.IsActive}"
                                 Content="{Binding MainPane.Buttons.Generator.Content^}"/>
+                        
+                        <Button Click="HistoryBtn_OnClick"
+                                Classes.active="{Binding MainPane.Buttons.History.IsActive}"
+                                Content="{Binding MainPane.Buttons.History.Content^}"/>
                     </StackPanel>
+                    
+                    <Button Click="LogsBtn_OnClick"
+                            Classes.active="{Binding MainPane.Buttons.Logs.IsActive}"
+                            Content="{Binding MainPane.Buttons.Logs.Content^}"
+                            VerticalAlignment="Bottom"
+                            Margin="4 4 4 50"
+                            Opacity="0.8"/>
                     
                     <Button Click="SettingsBtn_OnClick"
                             Classes.active="{Binding MainPane.Buttons.Settings.IsActive}"

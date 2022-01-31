@@ -474,4 +474,46 @@
     <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
         <value>Обновить</value>
     </data>
+    <data name="LOGS__INCORRECT_PERIOD_ERR" xml:space="preserve">
+        <value>Выбран недопустимый период!</value>
+    </data>
+    <data name="APP__MENU_BTN__LOGS" xml:space="preserve">
+        <value>Логи</value>
+    </data>
+    <data name="APP__MENU_BTN__HISTORY" xml:space="preserve">
+        <value>История</value>
+    </data>
+    <data name="LOG_SECTION__INFO_SHORT" xml:space="preserve">
+        <value>Инфо.</value>
+    </data>
+    <data name="LOG_SECTION__INFO" xml:space="preserve">
+        <value>Информация</value>
+    </data>
+    <data name="LOG_SECTION__ERROR" xml:space="preserve">
+        <value>Ошибка</value>
+    </data>
+    <data name="LOG_SECTION__ERROR_SHORT" xml:space="preserve">
+        <value>Ошиб.</value>
+    </data>
+    <data name="LOG_SECTION__UNKNOWN" xml:space="preserve">
+        <value>Неизвестная секция</value>
+    </data>
+    <data name="LOG_SECTION__UNKNOWN_SHORT" xml:space="preserve">
+        <value>?</value>
+    </data>
+    <data name="LOG_SECTION__WARN" xml:space="preserve">
+        <value>Предупреждение</value>
+    </data>
+    <data name="LOG_SECTION__WARN_SHORT" xml:space="preserve">
+        <value>Пред.</value>
+    </data>
+    <data name="LOGS__TOOLTIP_DATE_FROM" xml:space="preserve">
+        <value>Период логов (начало)</value>
+    </data>
+    <data name="LOGS__TOOLTIP_DATE_TO" xml:space="preserve">
+        <value>Период логов (окончание)</value>
+    </data>
+    <data name="LOGS__NOT_FOUND_LABEL" xml:space="preserve">
+        <value>Ничего...</value>
+    </data>
 </root>

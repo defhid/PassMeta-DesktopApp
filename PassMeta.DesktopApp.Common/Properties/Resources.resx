@@ -481,4 +481,46 @@ try another keywords...</value>
     <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
         <value>Refresh</value>
     </data>
+    <data name="LOGS__INCORRECT_PERIOD_ERR" xml:space="preserve">
+        <value>Invalid period selected!</value>
+    </data>
+    <data name="APP__MENU_BTN__LOGS" xml:space="preserve">
+        <value>Logs</value>
+    </data>
+    <data name="APP__MENU_BTN__HISTORY" xml:space="preserve">
+        <value>History</value>
+    </data>
+    <data name="LOG_SECTION__INFO" xml:space="preserve">
+        <value>Information</value>
+    </data>
+    <data name="LOG_SECTION__WARN" xml:space="preserve">
+        <value>Warning</value>
+    </data>
+    <data name="LOG_SECTION__INFO_SHORT" xml:space="preserve">
+        <value>INFO</value>
+    </data>
+    <data name="LOG_SECTION__UNKNOWN" xml:space="preserve">
+        <value>Unknown</value>
+    </data>
+    <data name="LOG_SECTION__UNKNOWN_SHORT" xml:space="preserve">
+        <value>?</value>
+    </data>
+    <data name="LOG_SECTION__WARN_SHORT" xml:space="preserve">
+        <value>WARN</value>
+    </data>
+    <data name="LOG_SECTION__ERROR" xml:space="preserve">
+        <value>Error</value>
+    </data>
+    <data name="LOG_SECTION__ERROR_SHORT" xml:space="preserve">
+        <value>ERR</value>
+    </data>
+    <data name="LOGS__TOOLTIP_DATE_FROM" xml:space="preserve">
+        <value>Logs period (start)</value>
+    </data>
+    <data name="LOGS__TOOLTIP_DATE_TO" xml:space="preserve">
+        <value>Logs period (end)</value>
+    </data>
+    <data name="LOGS__NOT_FOUND_LABEL" xml:space="preserve">
+        <value>Nothing...</value>
+    </data>
 </root>

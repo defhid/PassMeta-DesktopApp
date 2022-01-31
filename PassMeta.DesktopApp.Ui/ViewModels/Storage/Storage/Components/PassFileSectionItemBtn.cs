@@ -7,14 +7,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using Common;
     using Common.Interfaces.Services;
     using Common.Models.Entities;
+    using Core;
     using ReactiveUI;
-    using Splat;
     
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
 
     public class PassFileSectionItemBtn : ReactiveObject
     {
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
         
         private readonly ObservableAsPropertyHelper<bool> _isReadOnly;
         public bool IsReadOnly => _isReadOnly.Value;

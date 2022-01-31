@@ -241,6 +241,24 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to History.
+        /// </summary>
+        public static string APP__MENU_BTN__HISTORY {
+            get {
+                return ResourceManager.GetString("APP__MENU_BTN__HISTORY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logs.
+        /// </summary>
+        public static string APP__MENU_BTN__LOGS {
+            get {
+                return ResourceManager.GetString("APP__MENU_BTN__LOGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string APP__MENU_BTN__SETTINGS {
@@ -642,6 +660,114 @@ namespace PassMeta.DesktopApp.Common {
         public static string LANG__RU {
             get {
                 return ResourceManager.GetString("LANG__RU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string LOG_SECTION__ERROR {
+            get {
+                return ResourceManager.GetString("LOG_SECTION__ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ERR.
+        /// </summary>
+        public static string LOG_SECTION__ERROR_SHORT {
+            get {
+                return ResourceManager.GetString("LOG_SECTION__ERROR_SHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        public static string LOG_SECTION__INFO {
+            get {
+                return ResourceManager.GetString("LOG_SECTION__INFO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to INFO.
+        /// </summary>
+        public static string LOG_SECTION__INFO_SHORT {
+            get {
+                return ResourceManager.GetString("LOG_SECTION__INFO_SHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        public static string LOG_SECTION__UNKNOWN {
+            get {
+                return ResourceManager.GetString("LOG_SECTION__UNKNOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ?.
+        /// </summary>
+        public static string LOG_SECTION__UNKNOWN_SHORT {
+            get {
+                return ResourceManager.GetString("LOG_SECTION__UNKNOWN_SHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string LOG_SECTION__WARN {
+            get {
+                return ResourceManager.GetString("LOG_SECTION__WARN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARN.
+        /// </summary>
+        public static string LOG_SECTION__WARN_SHORT {
+            get {
+                return ResourceManager.GetString("LOG_SECTION__WARN_SHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid period selected!.
+        /// </summary>
+        public static string LOGS__INCORRECT_PERIOD_ERR {
+            get {
+                return ResourceManager.GetString("LOGS__INCORRECT_PERIOD_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing....
+        /// </summary>
+        public static string LOGS__NOT_FOUND_LABEL {
+            get {
+                return ResourceManager.GetString("LOGS__NOT_FOUND_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logs period (start).
+        /// </summary>
+        public static string LOGS__TOOLTIP_DATE_FROM {
+            get {
+                return ResourceManager.GetString("LOGS__TOOLTIP_DATE_FROM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logs period (end).
+        /// </summary>
+        public static string LOGS__TOOLTIP_DATE_TO {
+            get {
+                return ResourceManager.GetString("LOGS__TOOLTIP_DATE_TO", resourceCulture);
             }
         }
         

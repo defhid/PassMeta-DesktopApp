@@ -14,7 +14,6 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
-    using Splat;
 
     /// <inheritdoc />
     public class PassFileService : IPassFileService
@@ -29,7 +28,7 @@ namespace PassMeta.DesktopApp.Core.Services
             new("check_password", () => Resources.DICT_STORAGE__CHECK_PASSWORD)
         };
         
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         /// <inheritdoc />
         public async Task RefreshLocalPassFilesAsync(bool applyLocalChanges = true)

@@ -4,14 +4,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Common;
     using Common.Interfaces.Services;
     using Constants;
+    using Core;
     using Core.Utils;
     using ReactiveUI;
-    using Splat;
     using Utils.Extensions;
 
     public partial class PassFileWinViewModel
     {
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>()!;
         
         public void Close() => ViewElements.Window!.Close();
 

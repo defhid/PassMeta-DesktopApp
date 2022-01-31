@@ -10,12 +10,12 @@
         <AvaloniaResource Include="App\Styles\ResourceDependingStyles.xaml" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.10.11" />
-        <PackageReference Include="Avalonia.Desktop" Version="0.10.11" />
-        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.11" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11" />
+        <PackageReference Include="Avalonia" Version="0.10.12" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.12" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.12" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
-        <PackageReference Include="TextCopy" Version="5.0.2" />
+        <PackageReference Include="TextCopy" Version="6.1.0" />
     </ItemGroup>
     <ItemGroup>
       <Compile Update="Views\AccountView.axaml.cs">
@@ -48,6 +48,10 @@
       </Compile>
       <Compile Update="App\App.axaml.cs">
         <DependentUpon>App.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\LogsView.axaml.cs">
+        <DependentUpon>LogsView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

@@ -31,8 +31,13 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         void Error(Exception ex, string? text = null);
 
         /// <summary>
-        /// Get application logs by period. TODO: UI
+        /// Get application logs by period.
         /// </summary>
-        Task<List<Log>> ReadLogsAsync(DateTime dateFrom, DateTime dateTo);
+        List<Log> ReadLogs(DateTime dateFrom, DateTime dateTo);
+
+        /// <summary>
+        /// Delete old logs.
+        /// </summary>
+        void OptimizeLogs();
     }
 }

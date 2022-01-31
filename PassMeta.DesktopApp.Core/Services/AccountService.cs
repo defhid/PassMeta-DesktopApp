@@ -9,7 +9,6 @@ namespace PassMeta.DesktopApp.Core.Services
 
     using System.Threading.Tasks;
     using Common.Utils.Mapping;
-    using Splat;
 
     /// <inheritdoc />
     public class AccountService : IAccountService
@@ -26,7 +25,7 @@ namespace PassMeta.DesktopApp.Core.Services
             new("password_confirm", () => Resources.DICT_ACCOUNT__PASSWORD_CONFIRM)
         };
 
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         /// <inheritdoc />
         public async Task<Result<User>> GetUserDataAsync()

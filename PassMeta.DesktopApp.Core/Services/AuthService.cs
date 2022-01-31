@@ -8,7 +8,6 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Utils.Mapping;
     using DesktopApp.Core.Utils;
     using System.Threading.Tasks;
-    using Splat;
 
     /// <inheritdoc />
     public class AuthService : IAuthService
@@ -18,7 +17,7 @@ namespace PassMeta.DesktopApp.Core.Services
             new("user", () => Resources.DICT_AUTH__USER),
         };
         
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         /// <inheritdoc />
         public async Task<Result<User>> SignInAsync(SignInPostData data)

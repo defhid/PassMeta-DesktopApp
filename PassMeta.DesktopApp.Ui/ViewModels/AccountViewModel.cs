@@ -13,13 +13,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     
     using Avalonia.Controls;
     using Avalonia.Media;
+    using Core;
     using ReactiveUI;
-    using Splat;
 
     public class AccountViewModel : ViewModelPage
     {
-        private static IAccountService AccountService => Locator.Current.GetService<IAccountService>()!;
-        private static IAuthService AuthService => Locator.Current.GetService<IAuthService>()!;
+        private static IAccountService AccountService => EnvironmentContainer.Resolve<IAccountService>();
+        private static IAuthService AuthService => EnvironmentContainer.Resolve<IAuthService>();
 
         public override ContentControl[] RightBarButtons => new ContentControl[]
         {

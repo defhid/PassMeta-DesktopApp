@@ -3,6 +3,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using DesktopApp.Common.Constants;
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Core.Utils;
+    using DesktopApp.Core;
     using DesktopApp.Ui.ViewModels.Base;
     
     using System.Collections.Generic;
@@ -12,12 +13,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
     
     using ReactiveUI;
-    using Splat;
     using Views.Main;
 
     public class SettingsViewModel : ViewModelPage
     {
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         public IReadOnlyList<AppCulture> Cultures => AppCulture.All;
 

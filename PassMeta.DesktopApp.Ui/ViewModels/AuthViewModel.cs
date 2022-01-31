@@ -8,12 +8,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     
     using System.Threading.Tasks;
     using System.Windows.Input;
+    using Core;
     using ReactiveUI;
-    using Splat;
 
     public class AuthViewModel : ViewModelPage
     {
-        private static IAuthService AuthService => Locator.Current.GetService<IAuthService>()!;
+        private static IAuthService AuthService => EnvironmentContainer.Resolve<IAuthService>();
 
         public string? Login { get; set; }
         

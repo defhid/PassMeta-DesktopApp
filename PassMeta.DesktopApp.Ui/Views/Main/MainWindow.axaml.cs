@@ -19,7 +19,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
     using Common.Interfaces.Services;
-    using Splat;
+    using Core;
+    using ViewModels.Logs;
 
     public class MainWindow : Window
     {
@@ -51,16 +52,32 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         public Preloader StartPreloader() => new Preloader(DataContext).Start();
 
         private void AccountBtn_OnClick(object? sender, RoutedEventArgs e) 
-            => new AccountViewModel(DataContext).Navigate();
+            => MenuBtnClick(sender, () => new AccountViewModel(DataContext).Navigate());
 
         private void StorageBtn_OnClick(object? sender, RoutedEventArgs e)
-            => new StorageViewModel(DataContext).Navigate();
+            => MenuBtnClick(sender, () => new StorageViewModel(DataContext).Navigate());
 
         private void GeneratorBtn_OnClick(object? sender, RoutedEventArgs e)
-            => new GeneratorViewModel(DataContext).Navigate();
+            => MenuBtnClick(sender, () => new GeneratorViewModel(DataContext).Navigate());
+        
+        private void HistoryBtn_OnClick(object? sender, RoutedEventArgs e)
+            //=> BtnClick(sender, () => new HistoryViewModel(DataContext).Navigate());  TODO
+        {}
+        
+        private void LogsBtn_OnClick(object? sender, RoutedEventArgs e)
+            => MenuBtnClick(sender, () => new LogsViewModel(DataContext).Navigate());
 
         private void SettingsBtn_OnClick(object? sender, RoutedEventArgs e)
-            => new SettingsViewModel(DataContext).Navigate();
+            => MenuBtnClick(sender, () => new SettingsViewModel(DataContext).Navigate());
+
+        private static void MenuBtnClick(object? sender, Action action)
+        {
+            var btn = (Button)sender!;
+            if (!btn.Classes.Contains("active"))
+            {
+                action();
+            }
+        }
 
         private async void RefreshBtn_OnClick(object? sender, RoutedEventArgs e)
         {
@@ -96,7 +113,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             if (ReferenceEquals(Current, this) && PassFileManager.AnyCurrentChanged)
             {
                 e.Cancel = true;
-                var dialogService = Locator.Current.GetService<IDialogService>()!;
+                var dialogService = EnvironmentContainer.Resolve<IDialogService>()!;
                 var confirm = await dialogService.ConfirmAsync(Common.Resources.APP__CONFIRM_ROLLBACK_ON_QUIT);
                 if (confirm.Ok)
                 {
@@ -118,6 +135,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
                     AccountViewModel => mainPaneButtons.Account,
                     StorageViewModel => mainPaneButtons.Storage,
                     GeneratorViewModel => mainPaneButtons.Generator,
+                    //HistoryViewModel => mainPaneButtons.History,
+                    LogsViewModel => mainPaneButtons.Logs,
                     SettingsViewModel => mainPaneButtons.Settings,
                     _ => mainPaneButtons.CurrentActive
                 };

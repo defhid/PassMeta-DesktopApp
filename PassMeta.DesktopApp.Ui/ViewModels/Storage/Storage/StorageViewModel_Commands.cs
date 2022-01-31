@@ -8,17 +8,17 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Components;
+    using Core;
     using Core.Utils;
     using Models;
-    using Splat;
     using Ui.Utils.Extensions;
     using Utils.Comparers;
     using Views.Main;
 
     public partial class StorageViewModel
     {
-        private readonly IPassFileService _passFileService = Locator.Current.GetService<IPassFileService>()!;
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IPassFileService _passFileService = EnvironmentContainer.Resolve<IPassFileService>();
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         private void OnPassFileChangedFromBtn(object? sender, PassFileBtn.PassFileChangedEventArgs ev)
         {

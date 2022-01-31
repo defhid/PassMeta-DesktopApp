@@ -15,6 +15,7 @@ namespace PassMeta.DesktopApp.Ui.App
     using System.Threading.Tasks;
     using System.Reflection;
     using System.Threading;
+    using Core;
     using ReactiveUI;
     using Services;
     using Splat;
@@ -49,12 +50,14 @@ namespace PassMeta.DesktopApp.Ui.App
 
         private static async Task BeforeLaunch()
         {
+            EnvironmentContainer.Initialize(Locator.Current);
+            
             Locator.CurrentMutable.RegisterConstant<ILogService>(new LogService());
             
             Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
 
             await StartUp.CheckSystemAndLoadApplicationConfigAsync();
-            
+
             AppConfig.OnCultureChanged += Restart;
 
             Locator.CurrentMutable.RegisterConstant<IOkBadService>(new OkBadService());
@@ -68,6 +71,8 @@ namespace PassMeta.DesktopApp.Ui.App
             Locator.CurrentMutable.RegisterConstant<ICryptoService>(new CryptoService());
             
             Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
+            
+            Locator.Current.GetService<ILogService>()!.OptimizeLogs();
         }
 
         private static MainWindow MakeWindow()

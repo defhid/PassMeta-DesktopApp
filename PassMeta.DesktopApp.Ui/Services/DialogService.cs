@@ -4,10 +4,8 @@ namespace PassMeta.DesktopApp.Ui.Services
     using DesktopApp.Common.Enums;
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
-    using DesktopApp.Ui.ViewModels.Main;
     using DesktopApp.Ui.Views.Main;
     
-    using Splat;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -15,6 +13,7 @@ namespace PassMeta.DesktopApp.Ui.Services
     using Avalonia.Controls;
     using Avalonia.Controls.Notifications;
     using Constants;
+    using Core;
     using Utils.Extensions;
     using ViewModels.Main.DialogWindow;
     using ViewModels.Main.DialogWindow.Components;
@@ -22,8 +21,8 @@ namespace PassMeta.DesktopApp.Ui.Services
     /// <inheritdoc />
     public class DialogService : IDialogService
     {
-        private static INotificationManager? NotificationManager => Locator.Current.GetService<INotificationManager>();
-        private static ILogService Logger => Locator.Current.GetService<ILogService>()!;
+        private static INotificationManager? NotificationManager => EnvironmentContainer.Resolve<INotificationManager>();
+        private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
         
         private static readonly List<Action> Deferred = new();
         private static readonly List<Window> Opened = new();

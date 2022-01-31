@@ -6,8 +6,6 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
-    using System.Text;
-    using Splat;
 
     /// <inheritdoc />
     public class CryptoService : ICryptoService
@@ -15,8 +13,8 @@ namespace PassMeta.DesktopApp.Core.Services
         private static readonly Random Random = new();
 
         private const int CryptoK = 100;
-        
-        private readonly ILogService _logger = Locator.Current.GetService<ILogService>()!;
+
+        private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
 
         /// <inheritdoc />
         public string? Encrypt(string data, string keyPhrase)
@@ -63,29 +61,37 @@ namespace PassMeta.DesktopApp.Core.Services
             try
             {
                 var decryption = Convert.FromBase64String(data);
-                
+
                 using (var aes = Aes.Create())
                 {
                     aes.IV = AppConfig.PassFileSalt;
-                    
+
                     for (var i = CryptoK - 1; i >= 0; --i)
                     {
                         var offset = (CryptoK + i) % keyPhrase.Length;
                         var key = keyPhrase[..offset] + Math.Pow(CryptoK - i, i % 5) + keyPhrase[offset..];
-                        
+
                         aes.Key = SHA256.HashData(AppConfig.PassFileEncoding.GetBytes(key));
 
                         using var decryptor = aes.CreateDecryptor();
                         using var ms = new MemoryStream(decryption);
                         using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
                         using var msResult = new MemoryStream();
-                        
+
                         cs.CopyTo(msResult);
                         decryption = msResult.ToArray();
                     }
                 }
 
                 return AppConfig.PassFileEncoding.GetString(decryption);
+            }
+            catch (CryptographicException ex)
+            {
+                if (ex.Message != "Padding is invalid and cannot be removed.")  // fix excess logs
+                {
+                    _logger.Error("Decryption failed: " + ex.Message);
+                }
+                return null;
             }
             catch (Exception ex)
             {

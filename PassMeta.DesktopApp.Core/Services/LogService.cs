@@ -5,11 +5,9 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System.Threading.Tasks;
     using Common;
     using Common.Interfaces.Services;
     using Common.Models.Entities;
-    using Splat;
     using Utils;
 
     /// <inheritdoc />
@@ -19,25 +17,27 @@ namespace PassMeta.DesktopApp.Core.Services
 
         private FileStream? _fileStream;
         private DateTime? _fileStreamDateOpened;
+        
+        private readonly object _lockObject = new();
 
         /// <inheritdoc />
         public void Info(string text)
-            => _Write(new Log { Section = "INFO", Text = text });
+            => _Write(new Log { Section = Log.Sections.Info, Text = text });
 
         /// <inheritdoc />
         public void Warning(string text)
-            => _Write(new Log { Section = "WARNING", Text = text });
+            => _Write(new Log { Section = Log.Sections.Warning, Text = text });
         
         /// <inheritdoc />
         public void Error(string text)
-            => _Write(new Log { Section = "ERROR", Text = text });
+            => _Write(new Log { Section = Log.Sections.Error, Text = text });
 
         /// <inheritdoc />
         public void Error(Exception ex, string? text = null)
             => Error(text is null ? ex.ToString() : text + $" [{ex}]");
 
         /// <inheritdoc />
-        public async Task<List<Log>> ReadLogsAsync(DateTime dateFrom, DateTime dateTo)
+        public List<Log> ReadLogs(DateTime dateFrom, DateTime dateTo)
         {
             var dates = new List<DateTime> { dateFrom };
             var curr = dateFrom;
@@ -49,6 +49,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
 
             var logs = new List<Log>();
+            var errors = new List<(string, Exception)>();
 
             foreach (var fileName in dates.Select(_GetFileNameFor))
             {
@@ -56,45 +57,80 @@ namespace PassMeta.DesktopApp.Core.Services
                 {
                     if (!File.Exists(fileName)) continue;
                     
-                    var lines = await File.ReadAllLinesAsync(fileName);
-                    foreach (var line in lines.Where(l => !string.IsNullOrWhiteSpace(l)))
+                    lock (_lockObject)
                     {
-                        try
+                        _fileStream?.Dispose();
+                        _fileStreamDateOpened = null;
+                        
+                        using var stream = new StreamReader(fileName);
+                        while (!stream.EndOfStream)
                         {
-                            var i1 = line.IndexOf('|');
-                            var i2 = line.IndexOf('|', i1);
+                            var line = stream.ReadLine();
+                            if (string.IsNullOrWhiteSpace(line))
+                            {
+                                continue;
+                            }
 
-                            logs.Add(new Log
+                            var i1 = line.IndexOf('|');
+                            var i2 = line.IndexOf('|', i1 + 1);
+
+                            if (i1 > 0 && i2 > 0 && DateTime.TryParse(line[(i1 + 1)..i2], out var createdOn))
                             {
-                                Section = line[..i1],
-                                CreatedOn = DateTime.Parse(line[(i1 + 1)..i2]),
-                                Text = line[(i2 + 1)..]
-                            });
+                                if (createdOn < dateFrom) continue;
+                                if (createdOn.Date > dateTo) break;
+
+                                logs.Add(new Log
+                                {
+                                    Section = line[..i1],
+                                    CreatedOn = createdOn,
+                                    Text = line[(i2 + 1)..]
+                                });
+                            }
                         }
-                        catch
-                        {
-                            logs.Add(new Log
-                            {
-                                Section = "UNKNOWN",
-                                CreatedOn = DateTime.MinValue,
-                                Text = line
-                            });
-                        }
+                    
+                        stream.Close();
                     }
                 }
                 catch (Exception ex)
                 {
-                    Locator.Current.GetService<IDialogService>()!
-                        .ShowError($"Can't read log file '{fileName}'", more: ex.ToString());
+                    errors.Add(($"Can't read log file '{fileName}'", ex));
                 }
+            }
+
+            foreach (var (text, exception) in errors)
+            {
+                EnvironmentContainer.Resolve<IDialogService>()
+                    .ShowError(text, more: exception.ToString());
             }
 
             return logs;
         }
+        
+        /// <inheritdoc />
+        public void OptimizeLogs()
+        {
+            var logFiles = Directory.EnumerateFiles(Folder).ToList();
+            
+            for (var i = logFiles.Count - 1; i >= 0; --i)
+            {
+                if (!logFiles[i].EndsWith(".log"))
+                {
+                    File.Delete(logFiles[i]);
+                    logFiles.RemoveAt(i);
+                }
+            }
+            
+            logFiles.Sort(StringComparer.Ordinal);
+            
+            for (var i = logFiles.Count - 3; i >= 0; --i)
+            {
+                File.Delete(logFiles[i]);
+            }
+        }
 
         private void _Write(Log log)
         {
-            log.Section ??= "UNKNOWN";
+            log.Section ??= Log.Sections.Unknown;
             log.Text ??= "?";
             log.CreatedOn ??= DateTime.Now;
             
@@ -103,11 +139,14 @@ namespace PassMeta.DesktopApp.Core.Services
                 Directory.CreateDirectory(Folder);
             }
 
-            _CheckFileStream();
-            _fileStream!.Write(Encoding.Unicode.GetBytes(log.Section + '|' 
-                                                      + log.CreatedOn.Value.ToString("yyyy-MM-dd hh:mm:ss", Resources.Culture) + '|' 
-                                                      + log.Text.Replace("\n", " ") + '\n'));
-            _fileStream.Flush();
+            lock (_lockObject)
+            {
+                _CheckFileStream();
+                _fileStream!.Write(Encoding.Unicode.GetBytes(log.Section + '|' 
+                                                                         + log.CreatedOn.Value.ToString("yyyy-MM-dd HH:mm:ss", Resources.Culture) + '|' 
+                                                                         + log.Text.Replace(Environment.NewLine, " ") + Environment.NewLine));
+                _fileStream.Flush();
+            }
         }
         
         private static string _GetFileNameFor(DateTime date) => Path.Combine(Folder, $"{date:yyyy-MM}.log");
@@ -118,7 +157,6 @@ namespace PassMeta.DesktopApp.Core.Services
             
             if (_fileStreamDateOpened is null || _fileStreamDateOpened.Value.Month != today.Month)
             {
-                _fileStream?.Close();
                 _fileStream?.Dispose();
                 _fileStream = new FileStream(_GetFileNameFor(today), FileMode.Append);
                 _fileStreamDateOpened = today;
@@ -131,7 +169,6 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public void Dispose()
         {
-            _fileStream?.Close();
             _fileStream?.Dispose();
             _fileStream = null;
             GC.SuppressFinalize(this);

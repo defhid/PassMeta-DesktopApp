@@ -12,9 +12,9 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Constants;
+    using Core;
     using Core.Utils;
     using Core.Utils.Extensions;
-    using Splat;
 
     /// <summary>
     /// Extension UI-methods for <see cref="PassFile"/>.
@@ -101,7 +101,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         /// <remarks>Automatic show failure.</remarks>
         public static async Task<Result> LoadIfRequiredAndDecryptAsync(this PassFile passFile)
         {
-            var dialogService = Locator.Current.GetService<IDialogService>()!;
+            var dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
             if (passFile.PassPhrase is null)
             {

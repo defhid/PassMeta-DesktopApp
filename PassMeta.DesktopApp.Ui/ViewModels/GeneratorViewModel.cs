@@ -1,5 +1,6 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
+    using Core;
     using DesktopApp.Common;
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Ui.ViewModels.Base;
@@ -7,9 +8,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    
     using ReactiveUI;
-    using Splat;
 
     public class GeneratorViewModel : ViewModelPage
     {
@@ -69,14 +68,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private void _Generate()
         {
-            var service = Locator.Current.GetService<ICryptoService>()!;
+            var service = EnvironmentContainer.Resolve<ICryptoService>();
             Result = service.GeneratePassword(Length, IncludeDigits, IncludeSpecial);
         }
 
         private async Task _CopyResultAsync()
         {
             await TextCopy.ClipboardService.SetTextAsync(Result ?? string.Empty);
-            Locator.Current.GetService<IDialogService>()!.ShowInfo(Resources.GENERATOR__RESULT_COPIED);
+            EnvironmentContainer.Resolve<IDialogService>().ShowInfo(Resources.GENERATOR__RESULT_COPIED);
         }
     }
 }

@@ -12,17 +12,17 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using Common.Interfaces.Services;
     using Common.Models.Entities;
     using Common.Utils.Extensions;
+    using Core;
     using Core.Utils;
     using Core.Utils.Extensions;
     using Models;
     using ReactiveUI;
-    using Splat;
     using Utils.Comparers;
     using Views.Main;
 
     public class PassFileData : ReactiveObject
     {
-        private readonly IDialogService _dialogService = Locator.Current.GetService<IDialogService>()!;
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
         
         public IEnumerable<ContentControl> RightBarButtons => new ContentControl[]
         {
