@@ -58,10 +58,26 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public string? Decrypt(string data, string keyPhrase)
         {
+            byte[] dataBytes;
+            
             try
             {
-                var decryption = Convert.FromBase64String(data);
+                dataBytes = Convert.FromBase64String(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Decryption failed");
+                return null;
+            }
+            
+            return Decrypt(dataBytes, keyPhrase);
+        }
 
+        /// <inheritdoc />
+        public string? Decrypt(byte[] data, string keyPhrase)
+        {
+            try
+            {
                 using (var aes = Aes.Create())
                 {
                     aes.IV = AppConfig.PassFileSalt;
@@ -74,16 +90,16 @@ namespace PassMeta.DesktopApp.Core.Services
                         aes.Key = SHA256.HashData(AppConfig.PassFileEncoding.GetBytes(key));
 
                         using var decryptor = aes.CreateDecryptor();
-                        using var ms = new MemoryStream(decryption);
+                        using var ms = new MemoryStream(data);
                         using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
                         using var msResult = new MemoryStream();
 
                         cs.CopyTo(msResult);
-                        decryption = msResult.ToArray();
+                        data = msResult.ToArray();
                     }
                 }
 
-                return AppConfig.PassFileEncoding.GetString(decryption);
+                return AppConfig.PassFileEncoding.GetString(data);
             }
             catch (CryptographicException ex)
             {

@@ -12,10 +12,16 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         string? Encrypt(string data, string keyPhrase);
         
         /// <summary>
-        /// Decrypt data with keyphrase.
+        /// Decrypt data from base64 string with keyphrase.
         /// </summary>
         /// <returns>Decrypted string or null if error occured.</returns>
         string? Decrypt(string data, string keyPhrase);
+        
+        /// <summary>
+        /// Decrypt data from bytes with keyphrase.
+        /// </summary>
+        /// <returns>Decrypted string or null if error occured.</returns>
+        string? Decrypt(byte[] data, string keyPhrase);
 
         /// <summary>
         /// Generate random password by length, using digits and special symbols.

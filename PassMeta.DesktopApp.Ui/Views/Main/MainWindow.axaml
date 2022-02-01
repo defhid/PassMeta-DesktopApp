@@ -116,7 +116,7 @@
                             Content="{Binding MainPane.Buttons.Logs.Content^}"
                             VerticalAlignment="Bottom"
                             Margin="4 4 4 50"
-                            Opacity="0.8"/>
+                            Opacity="0.65"/>
                     
                     <Button Click="SettingsBtn_OnClick"
                             Classes.active="{Binding MainPane.Buttons.Settings.IsActive}"
@@ -129,7 +129,7 @@
             
             <Grid ColumnDefinitions="*,48">
                 <reactiveUi:RoutedViewHost Grid.Column="0"
-                                           Router="{Binding Router}">
+                                           Router="{Binding Router}" >
                     <reactiveUi:RoutedViewHost.DefaultContent>
                         <avaloniaGif:GifImage
                             SourceUri="{x:Static const:ManifestResourcePaths.GifPreloader}"/>

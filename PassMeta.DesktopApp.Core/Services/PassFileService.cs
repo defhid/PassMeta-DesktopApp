@@ -14,6 +14,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using Common.Interfaces.Services.PassFile;
 
     /// <inheritdoc />
     public class PassFileService : IPassFileService

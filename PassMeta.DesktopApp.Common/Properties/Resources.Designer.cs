@@ -385,6 +385,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clipboard error! (see logs).
+        /// </summary>
+        public static string CLIPBOARD__UNKNOWN_ERR {
+            get {
+                return ResourceManager.GetString("CLIPBOARD__UNKNOWN_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string DIALOG__BTN_CANCEL {
@@ -880,6 +889,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export.
+        /// </summary>
+        public static string PASSFILE__BTN_EXPORT {
+            get {
+                return ResourceManager.GetString("PASSFILE__BTN_EXPORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resolve conflicts....
         /// </summary>
         public static string PASSFILE__BTN_MERGE {
@@ -898,7 +916,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restore.
+        ///   Looks up a localized string similar to Restore....
         /// </summary>
         public static string PASSFILE__BTN_RESTORE {
             get {
@@ -939,6 +957,24 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE__ENCRYPTION_ERROR {
             get {
                 return ResourceManager.GetString("PASSFILE__ENCRYPTION_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfiles.
+        /// </summary>
+        public static string PASSFILE__EXPORT_PASSFILE {
+            get {
+                return ResourceManager.GetString("PASSFILE__EXPORT_PASSFILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open passfiles.
+        /// </summary>
+        public static string PASSFILE__EXPORT_PASSFILE_OPEN {
+            get {
+                return ResourceManager.GetString("PASSFILE__EXPORT_PASSFILE_OPEN", resourceCulture);
             }
         }
         
@@ -1200,6 +1236,105 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE_PROBLEM__UPLOAD_ERR {
             get {
                 return ResourceManager.GetString("PASSFILE_PROBLEM__UPLOAD_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string PASSFILELIST__BTN_CLOSE {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__BTN_CLOSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import from....
+        /// </summary>
+        public static string PASSFILELIST__BTN_IMPORT {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__BTN_IMPORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        public static string PASSFILELIST__BTN_SELECT {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__BTN_SELECT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string PASSFILELIST__COLUMN_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__COLUMN_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filename.
+        /// </summary>
+        public static string PASSFILELIST__COLUMN_FILENAME {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__COLUMN_FILENAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfiles.
+        /// </summary>
+        public static string PASSFILELIST__FILTER_PASSFILES {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__FILTER_PASSFILES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile selection.
+        /// </summary>
+        public static string PASSFILELIST__TITLE {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input passphrase for &apos;{0}&apos;:.
+        /// </summary>
+        public static string PASSIMPORT__ASK_PASSPHRASE {
+            get {
+                return ResourceManager.GetString("PASSIMPORT__ASK_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrong passphrase for &apos;{0}&apos;, try again:.
+        /// </summary>
+        public static string PASSIMPORT__ASK_PASSPHRASE_AGAIN {
+            get {
+                return ResourceManager.GetString("PASSIMPORT__ASK_PASSPHRASE_AGAIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile importer error! (see logs).
+        /// </summary>
+        public static string PASSIMPORT__ERR {
+            get {
+                return ResourceManager.GetString("PASSIMPORT__ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension &apos;{0}&apos; is not supported!.
+        /// </summary>
+        public static string PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR {
+            get {
+                return ResourceManager.GetString("PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR", resourceCulture);
             }
         }
         

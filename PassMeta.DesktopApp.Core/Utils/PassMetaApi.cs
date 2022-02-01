@@ -63,12 +63,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Build PATCH-request.
         /// </summary>
         public static Request Patch(string url, object? data = null) => new("PATCH", url, data);
-        
-        /// <summary>
-        /// Build PUT-request.
-        /// </summary>
-        public static Request Put(string url, object? data = null) => new("PUT", url, data);
-        
+
         /// <summary>
         /// Build DELETE-request.
         /// </summary>
@@ -155,9 +150,10 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 return request;
             }
-            catch (UriFormatException)
+            catch (UriFormatException ex)
             {
-                DialogService.ShowError(Resources.API__URL_ERR, more: $"{method} {AppConfig.Current.ServerUrl}{url}");
+                Logger.Error(ex, $"Request creation error: {method} {AppConfig.Current.ServerUrl}{url}");
+                DialogService.ShowError(Resources.API__URL_ERR);
                 return null;
             }
             catch (Exception ex)
@@ -173,7 +169,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             TResponse? responseData = null;
             string? responseBody = null;
-            string? errMessage = null;
+            string? errMessage;
 
             try
             {
@@ -211,7 +207,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 {
                     // ignored
                 }
-                
+
                 if (ex.Status is WebExceptionStatus.ConnectFailure)
                 {
                     if (Online) OnlineSource.OnNext(false);
@@ -220,8 +216,10 @@ namespace PassMeta.DesktopApp.Core.Utils
                 {
                     responseData.ApplyMapping(badMapper);
                     
+                    Logger.Warning($"{responseBody} [{context}]");
+                    
                     if (handleBad)
-                        OkBadService.ShowResponseFailure(responseData);
+                        OkBadService.ShowResponseFailure(responseData, context);
 
                     return responseData;
                 }
@@ -235,12 +233,13 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 var more = responseBody ?? (ReferenceEquals(errMessage, ex.Message) ? null : ex.Message);
 
+                Logger.Error(ex, request.GetShortInformation() + $" [{context}]");
                 DialogService.ShowError(errMessage, context, request.GetShortInformation().NewLine(more));
                 return null;
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Unknown error, making request failure: " + request.GetShortInformation());
+                Logger.Error(ex, $"Unknown error, request failed: {request.GetShortInformation()} [{context}]");
                 DialogService.ShowError(ex.Message, context);
                 return null;
             }
@@ -261,11 +260,12 @@ namespace PassMeta.DesktopApp.Core.Utils
                     return responseData;
                 }
 
+                Logger.Error($"{errMessage} {request.GetShortInformation()} {responseBody} [{context}]");
                 DialogService.ShowError(errMessage, context, request.GetShortInformation().NewLine(responseBody));
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, request.GetShortInformation());
+                Logger.Error(ex, $"{request.GetShortInformation()} {responseBody} [{context}]");
                 DialogService.ShowError(errMessage ?? Resources.API__INVALID_RESPONSE_ERR, context, responseBody);
             }
 

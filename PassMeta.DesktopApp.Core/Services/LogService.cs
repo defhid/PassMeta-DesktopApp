@@ -2,10 +2,10 @@ namespace PassMeta.DesktopApp.Core.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
-    using Common;
     using Common.Interfaces.Services;
     using Common.Models.Entities;
     using Utils;
@@ -19,6 +19,8 @@ namespace PassMeta.DesktopApp.Core.Services
         private DateTime? _fileStreamDateOpened;
         
         private readonly object _lockObject = new();
+
+        private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
         /// <inheritdoc />
         public void Info(string text)
@@ -62,7 +64,7 @@ namespace PassMeta.DesktopApp.Core.Services
                         _fileStream?.Dispose();
                         _fileStreamDateOpened = null;
                         
-                        using var stream = new StreamReader(fileName);
+                        using var stream = new StreamReader(fileName, Encoding.UTF8);
                         while (!stream.EndOfStream)
                         {
                             var line = stream.ReadLine();
@@ -74,7 +76,8 @@ namespace PassMeta.DesktopApp.Core.Services
                             var i1 = line.IndexOf('|');
                             var i2 = line.IndexOf('|', i1 + 1);
 
-                            if (i1 > 0 && i2 > 0 && DateTime.TryParse(line[(i1 + 1)..i2], out var createdOn))
+                            if (i1 > 0 && i2 > 0 && DateTime.TryParseExact(line[(i1 + 1)..i2], DateTimeFormat, 
+                                    CultureInfo.InvariantCulture, DateTimeStyles.None, out var createdOn))
                             {
                                 if (createdOn < dateFrom) continue;
                                 if (createdOn.Date > dateTo) break;
@@ -142,9 +145,9 @@ namespace PassMeta.DesktopApp.Core.Services
             lock (_lockObject)
             {
                 _CheckFileStream();
-                _fileStream!.Write(Encoding.Unicode.GetBytes(log.Section + '|' 
-                                                                         + log.CreatedOn.Value.ToString("yyyy-MM-dd HH:mm:ss", Resources.Culture) + '|' 
-                                                                         + log.Text.Replace(Environment.NewLine, " ") + Environment.NewLine));
+                _fileStream!.Write(Encoding.UTF8.GetBytes(log.Section + '|' 
+                                                                      + log.CreatedOn.Value.ToString(DateTimeFormat, CultureInfo.InvariantCulture) + '|' 
+                                                                      + log.Text.Replace(Environment.NewLine, " ") + Environment.NewLine));
                 _fileStream.Flush();
             }
         }

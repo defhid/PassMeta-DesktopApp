@@ -11,6 +11,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// Show to user failure message by <see cref="OkBadResponse"/>.
         /// </summary>
         /// <param name="response">Response to show.</param>
-        void ShowResponseFailure(OkBadResponse response);
+        /// <param name="context">Request context.</param>
+        void ShowResponseFailure(OkBadResponse response, string? context = null);
     }
 }

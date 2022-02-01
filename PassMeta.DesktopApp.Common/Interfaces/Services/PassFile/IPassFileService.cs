@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services
+namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
 {
     using System.Threading.Tasks;
 

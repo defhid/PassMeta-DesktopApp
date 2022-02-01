@@ -4,24 +4,35 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using System.Collections.Generic;
     using System.Linq;
     using System.Reactive.Linq;
+    using System.Threading.Tasks;
+    using Avalonia.Controls;
     using Avalonia.Media;
     using Common;
+    using Common.Constants;
     using Common.Enums;
+    using Common.Interfaces.Services;
+    using Common.Interfaces.Services.PassFile;
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Components;
     using Constants;
+    using Core;
+    using Core.Utils;
     using Models;
     using ReactiveUI;
     using Utils.Extensions;
+    using Views.Main;
+    using Views.Storage;
 
-    public partial class PassFileWinViewModel : ReactiveObject
+    public class PassFileWinViewModel : ReactiveObject
     {
         public bool PassFileChanged { get; private set; }
 
         public PassFile? PassFile { get; private set; }
         
         public IObservable<string> Title { get; }
+        
+        public IObservable<bool> ReadOnly { get; }
         
         #region Input
         
@@ -55,32 +66,35 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         public BtnState OkBtn { get; }
         public BtnState ChangePasswordBtn { get; }
         public BtnState MergeBtn { get; }
+        public BtnState ExportBtn { get; }
+        public BtnState RestoreBtn { get; }
         public BtnState DeleteBtn { get; }
         
         #endregion
         
-        public IObservable<bool> ReadOnly { get; }
+        public readonly ViewElements ViewElements = new();
 
-        public ViewElements ViewElements { get; } = new();
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly IPassFileImportService _importService = EnvironmentContainer.Resolve<IPassFileImportService>();
+        private readonly IPassFileExportService _exportService = EnvironmentContainer.Resolve<IPassFileExportService>();
 
         public PassFileWinViewModel(PassFile passFile)
         {
             PassFile = passFile;
-
             PassFileChanged = false;
-            
+
             _name = passFile.Name;
             SelectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
 
             var passFileChanged = this.WhenAnyValue(vm => vm.PassFile);
-            
+
             var anyChanged = this.WhenAnyValue(
                     vm => vm.Name,
                     vm => vm.SelectedColorIndex,
                     vm => vm.PassFile)
                 .Select(val =>
                     val.Item3 is not null && (
-                        val.Item1 != val.Item3.Name || 
+                        val.Item1 != val.Item3.Name ||
                         PassFileColor.List[val.Item2] != val.Item3.GetPassFileColor()));
 
             Title = passFileChanged.Select(pf => pf is null
@@ -90,18 +104,18 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                     : pf.LocalDeleted
                         ? Resources.PASSFILE__TITLE_DELETED
                         : Resources.PASSFILE__TITLE, pf.Name, pf.Id));
-            
+
             CreatedOn = passFileChanged.Select(pf => pf?.CreatedOn.ToShortDateTimeString());
-            
+
             ChangedOn = passFileChanged.Select(pf => pf?.InfoChangedOn.ToShortDateTimeString());
-            
+
             StateColor = passFileChanged.Select(pf => pf.GetStateColor());
-            
-            State = passFileChanged.Select(_MakeState);
+
+            State = passFileChanged.Select(pf => pf is null ? string.Empty : _MakeState(pf));
 
             OkBtn = new BtnState
             {
-                ContentObservable = anyChanged.Select(changed => changed 
+                ContentObservable = anyChanged.Select(changed => changed
                     ? Resources.PASSFILE__BTN_SAVE
                     : Resources.PASSFILE__BTN_OK),
                 CommandObservable = anyChanged.Select(changed => ReactiveCommand.Create(changed ? Save : Close))
@@ -112,32 +126,38 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                 CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(ChangePasswordAsync)),
                 IsVisibleObservable = passFileChanged.Select(pf => pf?.LocalDeleted is false)
             };
-            
+
             MergeBtn = new BtnState
             {
                 CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync)),
                 IsVisibleObservable = passFileChanged.Select(pf => pf?.Problem?.Kind is PassFileProblemKind.NeedsMerge)
             };
             
+            ExportBtn = new BtnState
+            {
+                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(ExportAsync)),
+                IsVisibleObservable = passFileChanged.Select(pf => pf?.LocalDeleted is false)
+            };
+
+            RestoreBtn = new BtnState
+            {
+                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(RestoreAsync)),
+                IsVisibleObservable = passFileChanged.Select(pf => pf is not null)
+            };
+
             DeleteBtn = new BtnState
             {
-                ContentObservable = passFileChanged.Select(pf => pf?.LocalDeleted is false 
-                    ? Resources.PASSFILE__BTN_DELETE
-                    : Resources.PASSFILE__BTN_RESTORE),
-                CommandObservable = passFileChanged.Select(pf => ReactiveCommand.CreateFromTask(pf?.LocalDeleted is false 
-                    ? DeleteAsync
-                    : RestoreAsync)),
-                IsVisibleObservable = passFileChanged.Select(pf => pf is not null)
+                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(DeleteAsync)),
+                IsVisibleObservable = passFileChanged.Select(pf => pf?.LocalDeleted is false)
             };
 
             ReadOnly = passFileChanged.Select(pf => pf?.LocalDeleted is not false);
         }
         
-        private static string _MakeState(PassFile? passFile)
+        private static string _MakeState(PassFile passFile)
         {
-            if (passFile is null) return string.Empty;
-
             var states = new Stack<string>();
+
             states.Push(string.Format(
                 passFile.LocalCreated
                     ? Resources.PASSFILE__STATE_LOCAL_CREATED
@@ -155,10 +175,160 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             return string.Join(Environment.NewLine, states.Where(s => s != string.Empty));
         }
 
-        #region Avalonia requirements...
+        public void Close() => ViewElements.Window!.Close();
+
+        public async Task ChangePasswordAsync()
+        {
+            if (PassFile?.LocalDeleted is not false) return;
+
+            var result = await PassFile.LoadIfRequiredAndDecryptAsync();
+            if (result.Bad) return;
+
+            var passPhraseNew = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_NEW_PASSPHRASE);
+            if (passPhraseNew.Bad || passPhraseNew.Data == string.Empty) return;
+
+            var passfile = PassFile.Copy();
+            passfile.PassPhrase = passPhraseNew.Data;
+            result = PassFileManager.UpdateData(passfile);
+
+            if (result.Ok)
+            {
+                PassFile = passfile;
+                PassFileChanged = true;
+                this.RaisePropertyChanged(nameof(PassFile));
+                
+                _dialogService.ShowInfo(Resources.PASSFILE__INFO_PASSPHRASE_CHANGED);
+            }
+            else
+            {
+                _dialogService.ShowError(result.Message!);
+            }
+        }
+        
+        private void Save()
+        {
+            if (PassFile is null)
+            {
+                Close();
+                return;
+            }
+
+            if (PassFile.LocalDeleted)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                _dialogService.ShowFailure(Resources.PASSFILE__VALIDATION__INCORRECT_NAME);
+                return;
+            }
+
+            var passFile = PassFile.Copy();
+            passFile.Name = Name.Trim();
+            passFile.Color = PassFileColor.List[SelectedColorIndex].Hex;
+
+            var result = PassFileManager.UpdateInfo(passFile);
+            if (result.Ok)
+            {
+                PassFile = passFile;
+                PassFileChanged = true;
+                this.RaisePropertyChanged(nameof(PassFile));
+            }
+            else
+            {
+                _dialogService.ShowError(result.Message!);
+            }
+        }
+
+        private async Task DeleteAsync()
+        {
+            if (PassFile?.LocalDeleted is not false) return;
+
+            var confirm = await _dialogService.ConfirmAsync(
+                string.Format(Resources.PASSFILE__CONFIRM_DELETE, PassFile!.Name, PassFile.Id));
+
+            if (confirm.Bad) return;
+
+            PassFile = PassFileManager.Delete(PassFile);
+            PassFileChanged = true;
+
+            this.RaisePropertyChanged(nameof(PassFile));
+            
+            if (PassFile is null) Close();
+        }
+
+        private async Task ExportAsync()
+        {
+            if (PassFile?.LocalDeleted is not false) return;
+            
+            var fileDialog = new SaveFileDialog
+            {
+                InitialFileName = PassFile.Name + ExternalFormat.PassfileEncrypted.FullExtension,
+                DefaultExtension = ExternalFormat.PassfileEncrypted.FullExtension,
+                Filters = new List<FileDialogFilter>
+                {
+                    new()
+                    {
+                        Name = ExternalFormat.PassfileEncrypted.Name,
+                        Extensions = new List<string> { ExternalFormat.PassfileEncrypted.PureExtension }
+                    },
+                    new()
+                    {
+                        Name = ExternalFormat.PassfileDecrypted.Name,
+                        Extensions = new List<string> { ExternalFormat.PassfileDecrypted.PureExtension }
+                    }
+                }
+            };
+            
+            var filePath = await fileDialog.ShowAsync(MainWindow.Current!);
+            if (string.IsNullOrEmpty(filePath)) return;
+
+            var result = await _exportService.ExportAsync(PassFile, filePath);
+            if (result.Message is not null)
+            {
+                if (result.Ok) _dialogService.ShowInfo(result.Message);
+                else _dialogService.ShowFailure(result.Message);
+            }
+        }
+
+        private async Task RestoreAsync()
+        {
+            if (PassFile is null) return;
+
+            var path = await new PassFileLocalListWin(PassFile).ShowDialog<string?>(MainWindow.Current);
+            if (path is null) return;
+            
+            var result = await _importService.ImportAsync(path);
+            if (result.Bad)
+            {
+                if (result.Message is not null)
+                {
+                    _dialogService.ShowFailure(result.Message);
+                }
+
+                return;
+            }
+
+            if (PassFile.LocalDeleted)
+            {
+                PassFile.Data = result.Data.Sections;
+                PassFile.PassPhrase = result.Data.PassPhrase;
+                
+                // TODO: restore...
+            }
+            
+            // TODO: save passfile data...
+        }
+        
+        private Task MergeAsync()
+        {
+            _dialogService.ShowInfo("Not implemented...");  // TODO
+            return Task.CompletedTask;
+        }
+
 #pragma warning disable 8618
         public PassFileWinViewModel() {}
 #pragma warning restore 8618
-        #endregion
     }
 }

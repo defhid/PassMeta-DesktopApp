@@ -54,6 +54,10 @@
         <DependentUpon>LogsView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Storage\PassFileLocalListWin.axaml.cs">
+        <DependentUpon>PassFileLocalList'Win.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\AvaloniaGif\AvaloniaGif.csproj" />

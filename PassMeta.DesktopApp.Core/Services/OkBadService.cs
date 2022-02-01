@@ -14,11 +14,11 @@ namespace PassMeta.DesktopApp.Core.Services
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         /// <inheritdoc />
-        public void ShowResponseFailure(OkBadResponse response)
+        public void ShowResponseFailure(OkBadResponse response, string? context = null)
         {
             var lines = _ResponseToText(response);
             
-            _dialogService.ShowFailure(lines[0], string.Join(Environment.NewLine, lines.Skip(1)));
+            _dialogService.ShowFailure(lines[0], context, string.Join(Environment.NewLine, lines.Skip(1)));
         }
 
         private static List<string> _ResponseToText(OkBadResponse response, int level = 0)

@@ -15,6 +15,7 @@ namespace PassMeta.DesktopApp.Ui.App
     using System.Threading.Tasks;
     using System.Reflection;
     using System.Threading;
+    using Common.Interfaces.Services.PassFile;
     using Core;
     using ReactiveUI;
     using Services;
@@ -51,8 +52,10 @@ namespace PassMeta.DesktopApp.Ui.App
         private static async Task BeforeLaunch()
         {
             EnvironmentContainer.Initialize(Locator.Current);
-            
-            Locator.CurrentMutable.RegisterConstant<ILogService>(new LogService());
+
+            var logger = new LogService();
+
+            Locator.CurrentMutable.RegisterConstant<ILogService>(logger);
             
             Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
 
@@ -66,9 +69,15 @@ namespace PassMeta.DesktopApp.Ui.App
 
             Locator.CurrentMutable.RegisterConstant<IAccountService>(new AccountService());
             
+            Locator.CurrentMutable.RegisterConstant<ICryptoService>(new CryptoService());
+            
             Locator.CurrentMutable.RegisterConstant<IPassFileService>(new PassFileService());
             
-            Locator.CurrentMutable.RegisterConstant<ICryptoService>(new CryptoService());
+            Locator.CurrentMutable.RegisterConstant<IPassFileImportService>(new PassFileImportService());
+            
+            Locator.CurrentMutable.RegisterConstant<IPassFileExportService>(new PassFileExportService());
+            
+            Locator.CurrentMutable.RegisterConstant<IClipboardService>(new ClipboardService());
             
             Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
             

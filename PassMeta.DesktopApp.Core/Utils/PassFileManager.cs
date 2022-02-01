@@ -16,7 +16,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Application passfiles manager.
+    /// Passfiles manager.
     /// </summary>
     /// <remarks>Not designed for concurrent work.</remarks>
     public static class PassFileManager
@@ -751,9 +751,15 @@ namespace PassMeta.DesktopApp.Core.Utils
         
         #region Paths
         
-        private static readonly string PassFilesPath = AppConfig.PassFilesDirectory;
+        /// <summary>
+        /// Full path to passfiles directory.
+        /// </summary>
+        public static readonly string PassFilesPath = AppConfig.PassFilesDirectory;
 
-        private static readonly string PassFileListPath = Path.Combine(PassFilesPath, "__all__");
+        /// <summary>
+        /// Full path to file that contains passfiles list.
+        /// </summary>
+        public static readonly string PassFileListPath = Path.Combine(PassFilesPath, "__all__");
 
         private static string _GetPassFilePath(int passFileId)
             => Path.Combine(PassFilesPath, passFileId + ".passfile");

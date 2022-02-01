@@ -9,13 +9,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Avalonia.Controls;
     using Base;
     using Common;
+    using Common.Interfaces.Services;
+    using Common.Interfaces.Services.PassFile;
     using Common.Models.Entities;
+    using Common.Utils.Extensions;
     using Components;
     using Constants;
+    using Core;
     using Core.Utils;
     using Models;
     using ReactiveUI;
+    using Utils.Comparers;
+    using Utils.Extensions;
     using ViewModels.Components;
+    using Views.Main;
+    
     using AppContext = Core.Utils.AppContext;
 
     public partial class StorageViewModel : ViewModelPage
@@ -78,6 +86,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         public IObservable<LayoutState> LayoutState { get; }
 
         public readonly ViewElements ViewElements = new();
+        
+        private readonly IPassFileService _passFileService = EnvironmentContainer.Resolve<IPassFileService>();
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {
@@ -115,7 +126,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 .Subscribe(_ => SelectedData.PassFile = null);
             
             this.WhenAnyValue(vm => vm.PassFilesSelectedIndex)
-                .InvokeCommand(ReactiveCommand.CreateFromTask<int>(_DecryptIfRequiredAndSetSectionsAsync));
+                .InvokeCommand(ReactiveCommand.CreateFromTask<int>(DecryptIfRequiredAndSetSectionsAsync));
 
             SelectedData.WhenAnyValue(vm => vm.SelectedSectionIndex)
                 .Subscribe(index =>
@@ -131,7 +142,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 });
 
             this.WhenNavigatedToObservable()
-                .InvokeCommand(ReactiveCommand.CreateFromTask(() => _LoadPassFilesAsync(lastItemPath)));
+                .InvokeCommand(ReactiveCommand.CreateFromTask(() => LoadPassFilesAsync(lastItemPath)));
         }
 
         public override void Navigate()
@@ -163,7 +174,116 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             }
 
             _loaded = false;
-            await _LoadPassFilesAsync(LastItemPath.Copy());
+            await LoadPassFilesAsync(LastItemPath.Copy());
+        }
+
+        private PassFileBtn _MakePassFileBtn(PassFile passFile)
+        {
+            var passFileBtn = new PassFileBtn(passFile, PassFileBarExpander.ShortModeObservable);
+            passFileBtn.PassFileChanged += (sender, ev) =>
+            {
+                if (ev.PassFileNew != null) return;
+            
+                PassFileList.Remove((PassFileBtn)sender!);
+            };
+            return passFileBtn;
+        }
+
+        private async Task LoadPassFilesAsync(PassFileItemPath lastItemPath, bool applyLocalChanges = true)
+        {
+            using var preloader = MainWindow.Current!.StartPreloader();
+
+            if (!_loaded)
+            {
+                await _passFileService.RefreshLocalPassFilesAsync(applyLocalChanges);
+                _loaded = true;
+            }
+
+            UpdatePassFileList();
+
+            if (lastItemPath.PassFileId is not null)
+            {
+                PassFilesSelectedIndex = 
+                    _passFileList.FindIndex(btn => btn.PassFile!.Id == lastItemPath.PassFileId.Value);
+                
+                if (PassFilesSelectedIndex >= 0 && lastItemPath.PassFileSectionId is not null)
+                {
+                    SelectedData.SelectedSectionIndex =
+                        SelectedData.SectionsList!.FindIndex(btn => btn.Section.Id == lastItemPath.PassFileSectionId);
+                }
+            }
+
+            PassFileBarExpander.IsOpened = true;
+        }
+
+        private void UpdatePassFileList()
+        {
+            var list = PassFileManager.GetCurrentList();
+            list.Sort(new PassFileComparer());
+
+            var localCreated = list.Where(pf => pf.LocalCreated);
+            var localChanged = list.Where(pf => pf.LocalChanged); 
+            var unchanged = list.Where(pf => pf.LocalNotChanged);
+            var localDeleted = list.Where(pf => pf.LocalDeleted);
+
+            PassFileList = new ObservableCollection<PassFileBtn>(
+                localCreated.Concat(localChanged).Concat(unchanged).Concat(localDeleted).Select(_MakePassFileBtn));
+        }
+
+        private async Task DecryptIfRequiredAndSetSectionsAsync(int _)
+        {
+            var passFile = SelectedPassFile;
+            if (passFile is null || passFile.Data is not null)
+            {
+                SelectedData.PassFile = passFile;
+                return;
+            }
+
+            if (!passFile.LocalDeleted)
+            {
+                using var preloader = MainWindow.Current!.StartPreloader();
+
+                var result = await passFile.LoadIfRequiredAndDecryptAsync();
+                if (result.Ok)
+                {
+                    SelectedData.PassFile = passFile;
+                    return;
+                }
+            }
+
+            PassFilesSelectedIndex = _passFilesPrevSelectedIndex;
+        }
+
+        private async Task SaveAsync()
+        {
+            using (MainWindow.Current!.StartPreloader())
+            {
+                await _passFileService.ApplyPassFileLocalChangesAsync();
+            }
+
+            _loaded = false;
+            await LoadPassFilesAsync(LastItemPath.Copy(), false);
+        }
+
+        public async Task PassFileAddAsync()
+        {
+            using var preloader = MainWindow.Current!.StartPreloader();
+            
+            var askPassPhrase = await _dialogService.AskPasswordAsync(Resources.STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE);
+            if (askPassPhrase.Bad || askPassPhrase.Data == string.Empty) return;
+            
+            var passFile = PassFileManager.CreateNew(askPassPhrase.Data!);
+            var passFileBtn = _MakePassFileBtn(passFile);
+            
+            PassFileList.Insert(0, passFileBtn);
+            PassFilesSelectedIndex = 0;
+             
+            await passFileBtn.OpenAsync();
+        }
+
+        public async Task PassFileOpenAsync()
+        {
+            await SelectedPassFileBtn!.OpenAsync();
         }
 
         #region Layout states

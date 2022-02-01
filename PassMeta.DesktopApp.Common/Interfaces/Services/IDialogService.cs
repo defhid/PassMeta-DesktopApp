@@ -32,10 +32,11 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// Show failure message to user.
         /// </summary>
         /// <param name="message">Primary content.</param>
+        /// <param name="title">Message title.</param>
         /// <param name="more">Secondary content.</param>
         /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
         /// <remarks>Auto-logging.</remarks>
-        public void ShowFailure(string message, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.Window);
+        public void ShowFailure(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.Window);
 
         /// <summary>
         /// Ask user for confirmation.

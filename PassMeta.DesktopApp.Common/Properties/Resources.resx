@@ -434,7 +434,7 @@ try another keywords...</value>
         <value>Change password</value>
     </data>
     <data name="PASSFILE__BTN_RESTORE" xml:space="preserve">
-        <value>Restore</value>
+        <value>Restore...</value>
     </data>
     <data name="PASSFILE__ASK_NEW_PASSPHRASE" xml:space="preserve">
         <value>Input NEW passphrase</value>
@@ -522,5 +522,50 @@ try another keywords...</value>
     </data>
     <data name="LOGS__NOT_FOUND_LABEL" xml:space="preserve">
         <value>Nothing...</value>
+    </data>
+    <data name="PASSFILELIST__COLUMN_FILENAME" xml:space="preserve">
+        <value>Filename</value>
+    </data>
+    <data name="PASSFILELIST__COLUMN_DESCRIPTION" xml:space="preserve">
+        <value>Description</value>
+    </data>
+    <data name="PASSFILELIST__BTN_SELECT" xml:space="preserve">
+        <value>Select</value>
+    </data>
+    <data name="PASSFILELIST__TITLE" xml:space="preserve">
+        <value>Passfile selection</value>
+    </data>
+    <data name="PASSFILELIST__BTN_CLOSE" xml:space="preserve">
+        <value>Close</value>
+    </data>
+    <data name="PASSFILELIST__BTN_IMPORT" xml:space="preserve">
+        <value>Import from...</value>
+    </data>
+    <data name="PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR" xml:space="preserve">
+        <value>Extension '{0}' is not supported!</value>
+    </data>
+    <data name="PASSIMPORT__ERR" xml:space="preserve">
+        <value>Passfile importer error! (see logs)</value>
+    </data>
+    <data name="PASSIMPORT__ASK_PASSPHRASE" xml:space="preserve">
+        <value>Input passphrase for '{0}':</value>
+    </data>
+    <data name="PASSIMPORT__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Wrong passphrase for '{0}', try again:</value>
+    </data>
+    <data name="CLIPBOARD__UNKNOWN_ERR" xml:space="preserve">
+        <value>Clipboard error! (see logs)</value>
+    </data>
+    <data name="PASSFILELIST__FILTER_PASSFILES" xml:space="preserve">
+        <value>Passfiles</value>
+    </data>
+    <data name="PASSFILE__BTN_EXPORT" xml:space="preserve">
+        <value>Export</value>
+    </data>
+    <data name="PASSFILE__EXPORT_PASSFILE" xml:space="preserve">
+        <value>Passfiles</value>
+    </data>
+    <data name="PASSFILE__EXPORT_PASSFILE_OPEN" xml:space="preserve">
+        <value>Open passfiles</value>
     </data>
 </root>

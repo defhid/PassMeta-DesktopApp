@@ -18,7 +18,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
 
-        private const int InitIntervalDays = 7;
+        private const int InitIntervalDays = 3;
         private const int MaxIntervalDays = 60;
 
         private DateTimeOffset _fromDate = DateTime.Now.Date.AddDays(-InitIntervalDays);

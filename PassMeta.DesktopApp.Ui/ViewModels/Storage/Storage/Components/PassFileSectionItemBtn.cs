@@ -15,6 +15,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     public class PassFileSectionItemBtn : ReactiveObject
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly IClipboardService _clipboardService = EnvironmentContainer.Resolve<IClipboardService>();
         
         private readonly ObservableAsPropertyHelper<bool> _isReadOnly;
         public bool IsReadOnly => _isReadOnly.Value;
@@ -77,17 +78,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         private async Task _CopyWhatAsync()
         {
             var what = _NormalizeWhat().Split('\n').FirstOrDefault(x => x != string.Empty) ?? string.Empty;
-            await TextCopy.ClipboardService.SetTextAsync(what);
 
-            _dialogService.ShowInfo(string.Format(Resources.STORAGE__ITEM_INFO__WHAT_COPIED, what));
+            if (await _clipboardService.TrySetTextAsync(what))
+            {
+                _dialogService.ShowInfo(string.Format(Resources.STORAGE__ITEM_INFO__WHAT_COPIED, what));
+            }
         }
 
         private async Task _CopyPasswordAsync()
         {
             var password = Password ?? string.Empty;
-            await TextCopy.ClipboardService.SetTextAsync(password);
             
-            _dialogService.ShowInfo(Resources.STORAGE__ITEM_INFO__PASSWORD_COPIED);
+            if (await _clipboardService.TrySetTextAsync(password))
+            {
+                _dialogService.ShowInfo(Resources.STORAGE__ITEM_INFO__PASSWORD_COPIED);
+            }
         }
 
         #endregion

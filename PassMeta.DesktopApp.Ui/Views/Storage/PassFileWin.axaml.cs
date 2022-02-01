@@ -37,19 +37,16 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
             DataContext.ViewElements.Window = this;
 
             _changeNameAdvice = PassFile!.Name.Trim() == Common.Resources.PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME;
-        }
-
-        public new void Close()
-        {
-            if (DataContext!.PassFileChanged)
+            Closing += (_, _) =>
             {
-                PassFile = DataContext.PassFile;
-                PassFileChanged = true;
-            }
-
-            base.Close();
+                if (DataContext!.PassFileChanged)
+                {
+                    PassFile = DataContext.PassFile;
+                    PassFileChanged = true;
+                }
+            };
         }
-        
+
         private void NameTextBox__OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
             var textBox = (sender as TextBox)!;

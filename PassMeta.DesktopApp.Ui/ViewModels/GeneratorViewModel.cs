@@ -12,6 +12,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
     public class GeneratorViewModel : ViewModelPage
     {
+        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly ICryptoService _cryptoService = EnvironmentContainer.Resolve<ICryptoService>();
+        private readonly IClipboardService _clipboardService = EnvironmentContainer.Resolve<IClipboardService>();
+        
         private int _length = 12;
         public int Length
         {
@@ -68,14 +72,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private void _Generate()
         {
-            var service = EnvironmentContainer.Resolve<ICryptoService>();
-            Result = service.GeneratePassword(Length, IncludeDigits, IncludeSpecial);
+            Result = _cryptoService.GeneratePassword(Length, IncludeDigits, IncludeSpecial);
         }
 
         private async Task _CopyResultAsync()
         {
-            await TextCopy.ClipboardService.SetTextAsync(Result ?? string.Empty);
-            EnvironmentContainer.Resolve<IDialogService>().ShowInfo(Resources.GENERATOR__RESULT_COPIED);
+            if (await _clipboardService.TrySetTextAsync(Result ?? string.Empty))
+            {
+                _dialogService.ShowInfo(Resources.GENERATOR__RESULT_COPIED);
+            }
         }
     }
 }

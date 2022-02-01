@@ -21,6 +21,7 @@ namespace PassMeta.DesktopApp.Ui.Services
     /// <inheritdoc />
     public class DialogService : IDialogService
     {
+        // ReSharper disable once ReturnTypeCanBeNotNullable
         private static INotificationManager? NotificationManager => EnvironmentContainer.Resolve<INotificationManager>();
         private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
         
@@ -82,7 +83,6 @@ namespace PassMeta.DesktopApp.Ui.Services
         public void ShowError(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.PopUp)
         {
-            Logger.Error(message + (string.IsNullOrWhiteSpace(more) ? string.Empty : Environment.NewLine + $"[{more}]"));
             _CallOrDeffer(() =>
             {
                 if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
@@ -107,16 +107,15 @@ namespace PassMeta.DesktopApp.Ui.Services
         }
 
         /// <inheritdoc />
-        public void ShowFailure(string message, string? more = null, 
+        public void ShowFailure(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.Window)
         {
-            Logger.Warning(message + (string.IsNullOrWhiteSpace(more) ? string.Empty : Environment.NewLine + $"[{more}]"));
             _CallOrDeffer(() =>
             {
                 if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
                 {
                     _ShowNotification(new Notification(
-                        Resources.DIALOG__DEFAULT_FAILURE_TITLE,
+                        title ?? Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                         message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
                         NotificationType.Error,
                         TimeSpan.FromSeconds(8)));
@@ -124,7 +123,7 @@ namespace PassMeta.DesktopApp.Ui.Services
                 else
                 {
                     _ShowDialog(new DialogWindowViewModel(
-                        Resources.DIALOG__DEFAULT_FAILURE_TITLE,
+                        title ?? Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                         message,
                         more,
                         new[] { DialogButton.Close },

@@ -427,7 +427,7 @@
         <value>Изменить пароль</value>
     </data>
     <data name="PASSFILE__BTN_RESTORE" xml:space="preserve">
-        <value>Восстановить</value>
+        <value>Восстановить...</value>
     </data>
     <data name="PASSFILE__ASK_NEW_PASSPHRASE" xml:space="preserve">
         <value>Введите НОВУЮ кодовую фразу</value>
@@ -515,5 +515,50 @@
     </data>
     <data name="LOGS__NOT_FOUND_LABEL" xml:space="preserve">
         <value>Ничего...</value>
+    </data>
+    <data name="PASSFILELIST__COLUMN_FILENAME" xml:space="preserve">
+        <value>Название файла</value>
+    </data>
+    <data name="PASSFILELIST__COLUMN_DESCRIPTION" xml:space="preserve">
+        <value>Описание</value>
+    </data>
+    <data name="PASSFILELIST__BTN_SELECT" xml:space="preserve">
+        <value>Выбрать</value>
+    </data>
+    <data name="PASSFILELIST__TITLE" xml:space="preserve">
+        <value>Выбор пакета паролей</value>
+    </data>
+    <data name="PASSFILELIST__BTN_IMPORT" xml:space="preserve">
+        <value>Импортировать из...</value>
+    </data>
+    <data name="PASSFILELIST__BTN_CLOSE" xml:space="preserve">
+        <value>Закрыть</value>
+    </data>
+    <data name="PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR" xml:space="preserve">
+        <value>Расширение '{0}' не поддерживается!</value>
+    </data>
+    <data name="PASSIMPORT__ERR" xml:space="preserve">
+        <value>Ошибка во время работы утилиты импорта пакетов! (см. логи)</value>
+    </data>
+    <data name="PASSIMPORT__ASK_PASSPHRASE" xml:space="preserve">
+        <value>Введите кодовую фразу для '{0}':</value>
+    </data>
+    <data name="PASSIMPORT__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Неверная кодовая фраза для '{0}', попробуйте ввести заново: </value>
+    </data>
+    <data name="CLIPBOARD__UNKNOWN_ERR" xml:space="preserve">
+        <value>Ошибка буфера обмена! (см. логи)</value>
+    </data>
+    <data name="PASSFILELIST__FILTER_PASSFILES" xml:space="preserve">
+        <value>Пакеты паролей</value>
+    </data>
+    <data name="PASSFILE__BTN_EXPORT" xml:space="preserve">
+        <value>Экспортировать...</value>
+    </data>
+    <data name="PASSFILE__EXPORT_PASSFILE" xml:space="preserve">
+        <value>Пакеты паролей</value>
+    </data>
+    <data name="PASSFILE__EXPORT_PASSFILE_OPEN" xml:space="preserve">
+        <value>Открытые пакеты паролей</value>
     </data>
 </root>

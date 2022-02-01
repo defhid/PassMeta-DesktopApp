@@ -19,6 +19,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
     using Common.Interfaces.Services;
+    using Common.Interfaces.Services.PassFile;
     using Core;
     using ViewModels.Logs;
 

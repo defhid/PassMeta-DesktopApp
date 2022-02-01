@@ -92,7 +92,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
                 Storage = new MainPaneBtn(Resources.APP__MENU_BTN__STORAGE, "\uE8F1", modeChanged);
                 Generator = new MainPaneBtn(Resources.APP__MENU_BTN__GENERATOR, "\uEA80", modeChanged);
                 History = new MainPaneBtn(Resources.APP__MENU_BTN__HISTORY, "\uE81C", modeChanged);
-                Logs = new MainPaneBtn(Resources.APP__MENU_BTN__LOGS, "\uE7BA", modeChanged);
+                Logs = new MainPaneBtn(Resources.APP__MENU_BTN__LOGS, "\uE9F9", modeChanged);
                 Settings = new MainPaneBtn(Resources.APP__MENU_BTN__SETTINGS, "\uE713", modeChanged);
                 
                 _all = new[] { Account, Storage, Generator, Logs, Settings };
