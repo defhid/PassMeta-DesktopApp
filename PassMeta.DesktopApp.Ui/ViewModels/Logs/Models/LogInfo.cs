@@ -10,7 +10,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs.Models
         private readonly Log? _log;
 
         public string CreatedOnShort => _log?.CreatedOn?.ToShortDateTimeString() ?? string.Empty;
-        public string? CreatedOnFull => _log?.CreatedOn?.ToString("F");
+        public string? CreatedOnFull => _log?.CreatedOn?.ToString("F").Capitalize();
 
         public string SectionShort => Log.Sections.MappingShort.Map(_log?.Section, "?");
         public string? SectionFull => Log.Sections.Mapping.Map(_log?.Section, _log?.Section);

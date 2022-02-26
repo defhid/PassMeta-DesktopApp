@@ -853,11 +853,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input NEW passphrase.
+        ///   Looks up a localized string similar to Input passphrase to export &apos;{0}&apos;.
         /// </summary>
-        public static string PASSFILE__ASK_NEW_PASSPHRASE {
+        public static string PASSEXPORT__ASK_PASSPHRASE {
             get {
-                return ResourceManager.GetString("PASSFILE__ASK_NEW_PASSPHRASE", resourceCulture);
+                return ResourceManager.GetString("PASSEXPORT__ASK_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrong passphrase for &apos;{0}&apos;, try again.
+        /// </summary>
+        public static string PASSEXPORT__ASK_PASSPHRASE_AGAIN {
+            get {
+                return ResourceManager.GetString("PASSEXPORT__ASK_PASSPHRASE_AGAIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension &apos;{0}&apos; is not supported by export!.
+        /// </summary>
+        public static string PASSEXPORT__NOT_SUPPORTED_EXTENSION_ERR {
+            get {
+                return ResourceManager.GetString("PASSEXPORT__NOT_SUPPORTED_EXTENSION_ERR", resourceCulture);
             }
         }
         
@@ -867,6 +885,24 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE__ASK_PASSPHRASE {
             get {
                 return ResourceManager.GetString("PASSFILE__ASK_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input NEW passphrase.
+        /// </summary>
+        public static string PASSFILE__ASK_PASSPHRASE_NEW {
+            get {
+                return ResourceManager.GetString("PASSFILE__ASK_PASSPHRASE_NEW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input current passphrase.
+        /// </summary>
+        public static string PASSFILE__ASK_PASSPHRASE_OLD {
+            get {
+                return ResourceManager.GetString("PASSFILE__ASK_PASSPHRASE_OLD", resourceCulture);
             }
         }
         
@@ -1065,6 +1101,24 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE__STATE_OK {
             get {
                 return ResourceManager.GetString("PASSFILE__STATE_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; successfully exported to &apos;{1}&apos;.
+        /// </summary>
+        public static string PASSFILE__SUCCESS_EXPORT {
+            get {
+                return ResourceManager.GetString("PASSFILE__SUCCESS_EXPORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; successfully restored from &apos;{1}&apos;.
+        /// </summary>
+        public static string PASSFILE__SUCCESS_RESTORE {
+            get {
+                return ResourceManager.GetString("PASSFILE__SUCCESS_RESTORE", resourceCulture);
             }
         }
         
@@ -1285,6 +1339,33 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to current.
+        /// </summary>
+        public static string PASSFILELIST__DESCRIPTION_CURRENT {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__DESCRIPTION_CURRENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to old version.
+        /// </summary>
+        public static string PASSFILELIST__DESCRIPTION_OLD_VERSION {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__DESCRIPTION_OLD_VERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        public static string PASSFILELIST__DESCRIPTION_UNKNOWN {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__DESCRIPTION_UNKNOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Passfiles.
         /// </summary>
         public static string PASSFILELIST__FILTER_PASSFILES {
@@ -1303,7 +1384,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input passphrase for &apos;{0}&apos;:.
+        ///   Looks up a localized string similar to Input passphrase for &apos;{0}&apos;.
         /// </summary>
         public static string PASSIMPORT__ASK_PASSPHRASE {
             get {
@@ -1312,11 +1393,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wrong passphrase for &apos;{0}&apos;, try again:.
+        ///   Looks up a localized string similar to Wrong passphrase for &apos;{0}&apos;, try again.
         /// </summary>
         public static string PASSIMPORT__ASK_PASSPHRASE_AGAIN {
             get {
                 return ResourceManager.GetString("PASSIMPORT__ASK_PASSPHRASE_AGAIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input NEW passphrase for passfile &apos;{0}&apos;.
+        /// </summary>
+        public static string PASSIMPORT__ASK_PASSPHRASE_NEW {
+            get {
+                return ResourceManager.GetString("PASSIMPORT__ASK_PASSPHRASE_NEW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incorrect NEW passphrase, try again.
+        /// </summary>
+        public static string PASSIMPORT__ASK_PASSPHRASE_NEW_AGAIN {
+            get {
+                return ResourceManager.GetString("PASSIMPORT__ASK_PASSPHRASE_NEW_AGAIN", resourceCulture);
             }
         }
         
@@ -1330,7 +1429,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extension &apos;{0}&apos; is not supported!.
+        ///   Looks up a localized string similar to Extension &apos;{0}&apos; is not supported by import!.
         /// </summary>
         public static string PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR {
             get {

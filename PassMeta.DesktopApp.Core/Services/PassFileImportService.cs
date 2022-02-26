@@ -71,12 +71,14 @@ namespace PassMeta.DesktopApp.Core.Services
 
         private async Task<Result<(List<PassFile.Section>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName)
         {
+            var i = 0;
             while (true)
             {
-                var passPhrase = await _AskPassPhraseAsync(fileName);
+                var passPhrase = await _AskPassPhraseAsync(fileName, i > 0);
                 if (passPhrase is null)
                     return Result.Failure<(List<PassFile.Section>, string)>();
 
+                ++i;
                 var passFileData = _cryptoService.Decrypt(fileBytes, passPhrase);
                 if (passFileData is null) continue;
                 
@@ -98,40 +100,43 @@ namespace PassMeta.DesktopApp.Core.Services
             string passFileData;
             try
             {
-                passFileData = AppConfig.PassFileEncoding.GetString(fileBytes);
+                passFileData = PassFileConvention.JsonEncoding.GetString(fileBytes);
             }
             catch (Exception ex)
             {
-                return ImporterError($"Converting bytes (encoding: {AppConfig.PassFileEncoding.EncodingName})", ex);
+                return ImporterError($"Converting bytes (encoding: {PassFileConvention.JsonEncoding.EncodingName})", ex);
             }
 
             List<PassFile.Section> sections;
             try
             {
-                sections = JsonConvert.DeserializeObject<List<PassFile.Section>>(passFileData) 
-                           ?? new List<PassFile.Section>();
+                sections = PassFileConvention.Convert.ToRaw(passFileData);
             }
             catch (Exception ex)
             {
                 return ImporterError("Passfile deserializing", ex);
             }
 
-            var passPhrase = await _AskPassPhraseAsync(fileName);
+            var passPhrase = await _AskPassPhraseAsync(fileName, askNew: true);
             if (passPhrase is null)
                 return Result.Failure<(List<PassFile.Section>, string)>();
             
             return Result.Success((sections, passPhrase));
         }
         
-        private async Task<string?> _AskPassPhraseAsync(string fileName)
+        private async Task<string?> _AskPassPhraseAsync(string fileName, bool again = false, bool askNew = false)
         {
-            var passPhrase = await _dialogService.AskPasswordAsync(
-                string.Format(Resources.PASSIMPORT__ASK_PASSPHRASE, fileName));
+            var passPhrase = await _dialogService.AskPasswordAsync(string.Format(again 
+                ? Resources.PASSIMPORT__ASK_PASSPHRASE_AGAIN 
+                : askNew 
+                    ? Resources.PASSIMPORT__ASK_PASSPHRASE_NEW 
+                    : Resources.PASSIMPORT__ASK_PASSPHRASE, fileName));
 
             while (passPhrase.Ok && passPhrase.Data == string.Empty)
             {
-                passPhrase = await _dialogService.AskPasswordAsync(
-                    string.Format(Resources.PASSIMPORT__ASK_PASSPHRASE_AGAIN, fileName));
+                passPhrase = await _dialogService.AskPasswordAsync(string.Format(askNew 
+                    ? Resources.PASSIMPORT__ASK_PASSPHRASE_NEW_AGAIN 
+                    : Resources.PASSIMPORT__ASK_PASSPHRASE_AGAIN, fileName));
             }
 
             return passPhrase.Ok ? passPhrase.Data! : null;

@@ -76,7 +76,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         public DateTime? LocalDeletedOn { get; set; }
 
         /// <summary>
-        /// Passfile encrypted data.
+        /// Passfile encrypted data string.
         /// </summary>
         [JsonIgnore]
         public string? DataEncrypted { get; set; }

@@ -6,7 +6,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System;
     using System.Globalization;
     using System.IO;
-    using System.Text;
     using System.Reflection;
     using System.Threading.Tasks;
     using Common.Constants;
@@ -60,16 +59,6 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Application version.
         /// </summary>
         public const string Version = "0.9.0";
-        
-        /// <summary>
-        /// Encoding for passfile's data.
-        /// </summary>
-        public static readonly Encoding PassFileEncoding = Encoding.Unicode;
-
-        /// <summary>
-        /// Password files encryption salt.
-        /// </summary>
-        public static readonly byte[] PassFileSalt = Encoding.UTF8.GetBytes("PassMetaFileSalt");
 
         /// <summary>
         /// Application root directory.

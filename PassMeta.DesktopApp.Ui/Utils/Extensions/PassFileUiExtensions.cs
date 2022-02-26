@@ -12,7 +12,6 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Constants;
-    using Core;
     using Core.Utils;
     using Core.Utils.Extensions;
 
@@ -99,10 +98,8 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         /// Ask user for passphrase (if required), load and decode data.
         /// </summary>
         /// <remarks>Automatic show failure.</remarks>
-        public static async Task<Result> LoadIfRequiredAndDecryptAsync(this PassFile passFile)
+        public static async Task<Result> LoadIfRequiredAndDecryptAsync(this PassFile passFile, IDialogService dialogService, bool askOld = false)
         {
-            var dialogService = EnvironmentContainer.Resolve<IDialogService>();
-
             if (passFile.PassPhrase is null)
             {
                 var passPhrase = await dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);

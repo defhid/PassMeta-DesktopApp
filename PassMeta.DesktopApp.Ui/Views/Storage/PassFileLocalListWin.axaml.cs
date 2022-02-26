@@ -29,8 +29,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
             DataContext = new PassFileLocalListWinViewModel(currentPassFile);
             DataContext.ViewElements.Window = this;
             
-            Opened += async (_, _) 
-                => await DataContext.LoadAsync();
+            Opened += (_, _) => DataContext.Load();
         }
     }
 }

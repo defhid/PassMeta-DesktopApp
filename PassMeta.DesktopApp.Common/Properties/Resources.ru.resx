@@ -429,7 +429,7 @@
     <data name="PASSFILE__BTN_RESTORE" xml:space="preserve">
         <value>Восстановить...</value>
     </data>
-    <data name="PASSFILE__ASK_NEW_PASSPHRASE" xml:space="preserve">
+    <data name="PASSFILE__ASK_PASSPHRASE_NEW" xml:space="preserve">
         <value>Введите НОВУЮ кодовую фразу</value>
     </data>
     <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
@@ -498,9 +498,6 @@
     <data name="LOG_SECTION__UNKNOWN" xml:space="preserve">
         <value>Неизвестная секция</value>
     </data>
-    <data name="LOG_SECTION__UNKNOWN_SHORT" xml:space="preserve">
-        <value>?</value>
-    </data>
     <data name="LOG_SECTION__WARN" xml:space="preserve">
         <value>Предупреждение</value>
     </data>
@@ -535,16 +532,16 @@
         <value>Закрыть</value>
     </data>
     <data name="PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR" xml:space="preserve">
-        <value>Расширение '{0}' не поддерживается!</value>
+        <value>Расширение '{0}' не поддерживается при импорте!</value>
     </data>
     <data name="PASSIMPORT__ERR" xml:space="preserve">
         <value>Ошибка во время работы утилиты импорта пакетов! (см. логи)</value>
     </data>
     <data name="PASSIMPORT__ASK_PASSPHRASE" xml:space="preserve">
-        <value>Введите кодовую фразу для '{0}':</value>
+        <value>Введите кодовую фразу для '{0}'</value>
     </data>
     <data name="PASSIMPORT__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
-        <value>Неверная кодовая фраза для '{0}', попробуйте ввести заново: </value>
+        <value>Неверная кодовая фраза для '{0}', попробуйте ввести заново</value>
     </data>
     <data name="CLIPBOARD__UNKNOWN_ERR" xml:space="preserve">
         <value>Ошибка буфера обмена! (см. логи)</value>
@@ -560,5 +557,41 @@
     </data>
     <data name="PASSFILE__EXPORT_PASSFILE_OPEN" xml:space="preserve">
         <value>Открытые пакеты паролей</value>
+    </data>
+    <data name="PASSEXPORT__ASK_PASSPHRASE" xml:space="preserve">
+        <value>Введите кодовую фразу для экспорта '{0}'</value>
+    </data>
+    <data name="PASSEXPORT__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Неверная кодовая фраза для '{0}', попробуйте ввести заново</value>
+    </data>
+    <data name="PASSEXPORT__NOT_SUPPORTED_EXTENSION_ERR" xml:space="preserve">
+        <value>Расширение '{0}' не поддерживается при экспорте!</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_OLD_VERSION" xml:space="preserve">
+        <value>старая версия</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_CURRENT" xml:space="preserve">
+        <value>текущий</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_UNKNOWN" xml:space="preserve">
+        <value>Неизвестный</value>
+    </data>
+    <data name="LOG_SECTION__UNKNOWN_SHORT" xml:space="preserve">
+        <value>?</value>
+    </data>
+    <data name="PASSFILE__SUCCESS_EXPORT" xml:space="preserve">
+        <value>Пакет '{0}' успешно экспортирован в '{1}'</value>
+    </data>
+    <data name="PASSFILE__SUCCESS_RESTORE" xml:space="preserve">
+        <value>Пакет '{0}' успешно восстановлен из '{1}'</value>
+    </data>
+    <data name="PASSIMPORT__ASK_PASSPHRASE_NEW" xml:space="preserve">
+        <value>Введите НОВУЮ кодовую фразу для пакета '{0}'</value>
+    </data>
+    <data name="PASSIMPORT__ASK_PASSPHRASE_NEW_AGAIN" xml:space="preserve">
+        <value>Некорректная НОВАЯ кодовая фраза, попробуйте ввести заново</value>
+    </data>
+    <data name="PASSFILE__ASK_PASSPHRASE_OLD" xml:space="preserve">
+        <value>Введите текущую кодовую фразу</value>
     </data>
 </root>

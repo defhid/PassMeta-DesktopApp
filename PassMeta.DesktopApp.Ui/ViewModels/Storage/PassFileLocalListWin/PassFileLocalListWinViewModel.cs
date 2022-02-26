@@ -2,6 +2,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
     using Common;
     using Common.Constants;
     using Common.Models.Entities;
+    using Core.Utils;
     using Models;
     using ReactiveUI;
     using Views.Main;
@@ -19,23 +21,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
     {
         private readonly int _currentPassFileId;
         
-        public ObservableCollection<DataFile> FoundList { get; } = new()
-        {
-            new DataFile
-            {
-                Name = "123.passfile",
-                Description = "Lalalalalalalla123",
-                PassFileId = 1234
-            }
-        };
+        public ObservableCollection<DataFile> FoundList { get; } = new();
 
-        private int _selectedFileIndex;
-        public int SelectedFileIndex
+        private DataFile? _selectedFile;
+        public DataFile? SelectedFile
         {
-            get => _selectedFileIndex;
-            set => this.RaiseAndSetIfChanged(ref _selectedFileIndex, value);
+            get => _selectedFile;
+            set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
         }
-        
+
         public ReactCommand SelectCommand { get; }
         public ReactCommand ImportCommand { get; }
         public ReactCommand CloseCommand { get; }
@@ -47,29 +41,71 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
             _currentPassFileId = currentPassFile.Id;
 
             SelectCommand = ReactiveCommand.Create(Select, 
-                this.WhenAnyValue(vm => vm.SelectedFileIndex).Select(i => i >= 0));
+                this.WhenAnyValue(vm => vm.SelectedFile).Select(file => file is not null));
             
             ImportCommand = ReactiveCommand.CreateFromTask(ImportForeignAsync);
             
             CloseCommand = ReactiveCommand.Create(Close);
         }
 
-        public async Task LoadAsync()
+        public void Load()
         {
             FoundList.Clear();
-            FoundList.Add(new DataFile
+
+            var passFileList = PassFileManager.GetCurrentList();
+            var descriptionParts = new Stack<string>();
+
+            foreach (var filePath in Directory.EnumerateFiles(AppConfig.PassFilesDirectory).OrderBy(x => x))
             {
-                Name = "123.passfile",
-                Description = "Lalalalalalalla",
-                PassFileId = 123
-            });
+                var fileName = Path.GetFileName(filePath);
+                descriptionParts.Clear();
+
+                if (fileName.EndsWith(".old"))
+                {
+                    if (!fileName.EndsWith(ExternalFormat.PassfileEncrypted.FullExtension + ".old"))
+                    {
+                        continue;
+                    }
+
+                    descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_OLD_VERSION);
+                }
+                else if (!fileName.EndsWith(ExternalFormat.PassfileEncrypted.FullExtension))
+                {
+                    continue;
+                }
+
+                if (!int.TryParse(fileName.Split('.').First(), out var passFileId))
+                {
+                    continue;
+                }
+
+                if (passFileId == _currentPassFileId)
+                {
+                    descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_CURRENT);
+                }
+
+                var passFileName = passFileList.FirstOrDefault(pf => pf.Id == passFileId)?.Name;
+
+                descriptionParts.Push(passFileName is null ? Resources.PASSFILELIST__DESCRIPTION_UNKNOWN : $"'{passFileName}'");
+                
+                FoundList.Add(new DataFile(filePath)
+                {
+                    Name = fileName,
+                    Description = string.Join(", ", descriptionParts),
+                });
+                
+                if (passFileId == _currentPassFileId)
+                {
+                    SelectedFile = FoundList.Last();
+                }
+            }
         }
 
         private void Select()
         {
-            if (SelectedFileIndex < 0) return;
+            if (SelectedFile is null) return;
 
-            ViewElements.Window!.Close(FoundList[SelectedFileIndex].FilePath);
+            ViewElements.Window!.Close(SelectedFile.FilePath);
         }
 
         private async Task ImportForeignAsync()

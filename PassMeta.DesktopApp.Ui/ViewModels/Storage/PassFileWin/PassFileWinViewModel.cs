@@ -2,6 +2,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
@@ -28,7 +29,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     {
         public bool PassFileChanged { get; private set; }
 
-        public PassFile? PassFile { get; private set; }
+        private PassFile? _passFile;
+        public PassFile? PassFile 
+        { 
+            get => _passFile;
+            private set => this.RaiseAndSetIfChanged(ref _passFile, value);
+        }
         
         public IObservable<string> Title { get; }
         
@@ -181,10 +187,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         {
             if (PassFile?.LocalDeleted is not false) return;
 
-            var result = await PassFile.LoadIfRequiredAndDecryptAsync();
+            var result = await PassFile.LoadIfRequiredAndDecryptAsync(_dialogService, true);
             if (result.Bad) return;
 
-            var passPhraseNew = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_NEW_PASSPHRASE);
+            var passPhraseNew = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE_NEW);
             if (passPhraseNew.Bad || passPhraseNew.Data == string.Empty) return;
 
             var passfile = PassFile.Copy();
@@ -195,7 +201,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             {
                 PassFile = passfile;
                 PassFileChanged = true;
-                this.RaisePropertyChanged(nameof(PassFile));
                 
                 _dialogService.ShowInfo(Resources.PASSFILE__INFO_PASSPHRASE_CHANGED);
             }
@@ -233,7 +238,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             {
                 PassFile = passFile;
                 PassFileChanged = true;
-                this.RaisePropertyChanged(nameof(PassFile));
             }
             else
             {
@@ -253,8 +257,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             PassFile = PassFileManager.Delete(PassFile);
             PassFileChanged = true;
 
-            this.RaisePropertyChanged(nameof(PassFile));
-            
             if (PassFile is null) Close();
         }
 
@@ -285,40 +287,61 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             if (string.IsNullOrEmpty(filePath)) return;
 
             var result = await _exportService.ExportAsync(PassFile, filePath);
-            if (result.Message is not null)
+            if (result.Ok)
             {
-                if (result.Ok) _dialogService.ShowInfo(result.Message);
-                else _dialogService.ShowFailure(result.Message);
+                _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_EXPORT, PassFile.Name, filePath));
+            }
+            else if (result.Message is not null)
+            {
+                _dialogService.ShowFailure(result.Message);
             }
         }
 
         private async Task RestoreAsync()
         {
-            if (PassFile is null) return;
+            var passFile = PassFile;
+            if (passFile is null) return;
 
-            var path = await new PassFileLocalListWin(PassFile).ShowDialog<string?>(MainWindow.Current);
-            if (path is null) return;
+            var filePath = await new PassFileLocalListWin(passFile).ShowDialog<string?>(ViewElements.Window);
+            if (filePath is null) return;
             
-            var result = await _importService.ImportAsync(path);
-            if (result.Bad)
+            var importResult = await _importService.ImportAsync(filePath);
+            if (importResult.Ok)
             {
-                if (result.Message is not null)
+                if (passFile.LocalDeleted)
                 {
-                    _dialogService.ShowFailure(result.Message);
+                    var restoreResult = PassFileManager.Restore(passFile);
+                    if (restoreResult.Bad)
+                    {
+                        _dialogService.ShowError(restoreResult.Message!);
+                        return;
+                    }
+
+                    PassFile = null;
+                    PassFile = passFile;
+                    PassFileChanged = true;
                 }
 
-                return;
-            }
-
-            if (PassFile.LocalDeleted)
-            {
-                PassFile.Data = result.Data.Sections;
-                PassFile.PassPhrase = result.Data.PassPhrase;
-                
-                // TODO: restore...
-            }
+                passFile.Data = importResult.Data.Sections;
+                passFile.PassPhrase = importResult.Data.PassPhrase;
             
-            // TODO: save passfile data...
+                var updateResult = PassFileManager.UpdateData(passFile);
+                if (updateResult.Ok)
+                {
+                    PassFile = null;
+                    PassFile = passFile;
+                    PassFileChanged = true;
+                    _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_RESTORE, PassFile.Name, Path.GetFileName(filePath)));
+                } 
+                else
+                {
+                    _dialogService.ShowError(updateResult.Message!);
+                }
+            }
+            else if (importResult.Message is not null)
+            {
+                _dialogService.ShowFailure(importResult.Message);
+            }
         }
         
         private Task MergeAsync()

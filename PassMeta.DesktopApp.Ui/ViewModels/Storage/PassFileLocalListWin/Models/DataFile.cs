@@ -2,12 +2,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin.Models
 {
     public class DataFile
     {
-        public int PassFileId { get; set; }
+        public string? Name { get; init; }
         
-        public string Name { get; set; }
+        public string? Description { get; init; }
         
-        public string Description { get; set; }
-        
-        public string FilePath { get; set; }
+        public string FilePath { get; }
+
+        public DataFile(string filePath)
+        {
+            FilePath = filePath;
+        }
     }
 }

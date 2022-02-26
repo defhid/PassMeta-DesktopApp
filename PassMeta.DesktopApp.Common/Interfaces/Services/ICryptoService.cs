@@ -6,13 +6,13 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
     public interface ICryptoService
     {
         /// <summary>
-        /// Encrypt data with keyphrase.
+        /// Encrypt data from decrypted string with keyphrase.
         /// </summary>
         /// <returns>Encrypted string or null if error occured.</returns>
         string? Encrypt(string data, string keyPhrase);
         
         /// <summary>
-        /// Decrypt data from base64 string with keyphrase.
+        /// Decrypt data from encrypted string with keyphrase.
         /// </summary>
         /// <returns>Decrypted string or null if error occured.</returns>
         string? Decrypt(string data, string keyPhrase);

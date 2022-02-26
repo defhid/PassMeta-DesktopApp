@@ -436,7 +436,7 @@ try another keywords...</value>
     <data name="PASSFILE__BTN_RESTORE" xml:space="preserve">
         <value>Restore...</value>
     </data>
-    <data name="PASSFILE__ASK_NEW_PASSPHRASE" xml:space="preserve">
+    <data name="PASSFILE__ASK_PASSPHRASE_NEW" xml:space="preserve">
         <value>Input NEW passphrase</value>
     </data>
     <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
@@ -542,16 +542,16 @@ try another keywords...</value>
         <value>Import from...</value>
     </data>
     <data name="PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR" xml:space="preserve">
-        <value>Extension '{0}' is not supported!</value>
+        <value>Extension '{0}' is not supported by import!</value>
     </data>
     <data name="PASSIMPORT__ERR" xml:space="preserve">
         <value>Passfile importer error! (see logs)</value>
     </data>
     <data name="PASSIMPORT__ASK_PASSPHRASE" xml:space="preserve">
-        <value>Input passphrase for '{0}':</value>
+        <value>Input passphrase for '{0}'</value>
     </data>
     <data name="PASSIMPORT__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
-        <value>Wrong passphrase for '{0}', try again:</value>
+        <value>Wrong passphrase for '{0}', try again</value>
     </data>
     <data name="CLIPBOARD__UNKNOWN_ERR" xml:space="preserve">
         <value>Clipboard error! (see logs)</value>
@@ -567,5 +567,38 @@ try another keywords...</value>
     </data>
     <data name="PASSFILE__EXPORT_PASSFILE_OPEN" xml:space="preserve">
         <value>Open passfiles</value>
+    </data>
+    <data name="PASSEXPORT__ASK_PASSPHRASE" xml:space="preserve">
+        <value>Input passphrase to export '{0}'</value>
+    </data>
+    <data name="PASSEXPORT__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Wrong passphrase for '{0}', try again</value>
+    </data>
+    <data name="PASSEXPORT__NOT_SUPPORTED_EXTENSION_ERR" xml:space="preserve">
+        <value>Extension '{0}' is not supported by export!</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_OLD_VERSION" xml:space="preserve">
+        <value>old version</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_CURRENT" xml:space="preserve">
+        <value>current</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_UNKNOWN" xml:space="preserve">
+        <value>Unknown</value>
+    </data>
+    <data name="PASSFILE__SUCCESS_RESTORE" xml:space="preserve">
+        <value>Passfile '{0}' successfully restored from '{1}'</value>
+    </data>
+    <data name="PASSFILE__SUCCESS_EXPORT" xml:space="preserve">
+        <value>Passfile '{0}' successfully exported to '{1}'</value>
+    </data>
+    <data name="PASSIMPORT__ASK_PASSPHRASE_NEW" xml:space="preserve">
+        <value>Input NEW passphrase for passfile '{0}'</value>
+    </data>
+    <data name="PASSIMPORT__ASK_PASSPHRASE_NEW_AGAIN" xml:space="preserve">
+        <value>Incorrect NEW passphrase, try again</value>
+    </data>
+    <data name="PASSFILE__ASK_PASSPHRASE_OLD" xml:space="preserve">
+        <value>Input current passphrase</value>
     </data>
 </root>

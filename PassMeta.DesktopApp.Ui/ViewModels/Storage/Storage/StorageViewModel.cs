@@ -26,7 +26,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     
     using AppContext = Core.Utils.AppContext;
 
-    public partial class StorageViewModel : ViewModelPage
+    public class StorageViewModel : ViewModelPage
     {
         private static bool _loaded;
         private static readonly PassFileItemPath LastItemPath = new();
@@ -243,7 +243,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             {
                 using var preloader = MainWindow.Current!.StartPreloader();
 
-                var result = await passFile.LoadIfRequiredAndDecryptAsync();
+                var result = await passFile.LoadIfRequiredAndDecryptAsync(_dialogService);
                 if (result.Ok)
                 {
                     SelectedData.PassFile = passFile;

@@ -103,10 +103,6 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             if (!oldVersion && actual is not null)
             {
-                if (actual.DataEncrypted != null)
-                {
-                    return Result.Success<string>(actual.DataEncrypted);
-                }
                 if (actual.Data != null)
                 {
                     var res = actual.Encrypt();
@@ -125,7 +121,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 if (!File.Exists(path))
                     return Result.Failure<string>(Resources.PASSMANAGER__VERSION_NOT_FOUND_ERR);
                 
-                var dataEncrypted = await File.ReadAllTextAsync(path);
+                var dataEncrypted = PassFileConvention.Convert.EncryptedBytesToString(await File.ReadAllBytesAsync(path));
                 if (!oldVersion && actual is not null)
                 {
                     actual.DataEncrypted = dataEncrypted;
@@ -453,6 +449,28 @@ namespace PassMeta.DesktopApp.Core.Utils
         }
 
         /// <summary>
+        /// Restore local deleted passfile.
+        /// </summary>
+        /// <param name="passFile">Passfile information.</param>
+        public static Result Restore(PassFile passFile)
+        {
+            var found = _currentPassFiles.FindIndex(pf =>
+                pf.source?.Id == passFile.Id || 
+                pf.changed?.Id == passFile.Id);
+
+            if (found < 0)
+                return ManagerError($"Can't find {passFile} to restore!");
+
+            var (source, changed) = _GetPairForChange(found);
+            changed.LocalDeletedOn = null;
+
+            var actual = _OptimizeAndSetChanged(found, source, changed);
+            passFile.RefreshInfoFieldsFrom(actual);
+
+            return Result.Success();
+        }
+
+        /// <summary>
         /// Cancel all passfile changes without finally deleted.
         /// </summary>
         public static void Rollback()
@@ -601,7 +619,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             try
             {
                 var path = _GetPassFilePath(passFile.Id);
-                await File.WriteAllTextAsync(path, passFile.DataEncrypted, AppConfig.PassFileEncoding);
+                await File.WriteAllBytesAsync(path, PassFileConvention.Convert.EncryptedStringToBytes(passFile.DataEncrypted!));
             }
             catch (Exception ex)
             {
@@ -666,7 +684,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             try
             {
                 var listData = JsonConvert.SerializeObject(list);
-                await File.WriteAllTextAsync(PassFileListPath, listData, AppConfig.PassFileEncoding);
+                await File.WriteAllTextAsync(PassFileListPath, listData, PassFileConvention.JsonEncoding);
             }
             catch (Exception ex)
             {
@@ -681,7 +699,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             string listData;
             try
             {
-                listData = await File.ReadAllTextAsync(PassFileListPath, AppConfig.PassFileEncoding);
+                listData = await File.ReadAllTextAsync(PassFileListPath, PassFileConvention.JsonEncoding);
             }
             catch (Exception ex)
             {
@@ -734,7 +752,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     File.Move(PassFileListPath, $"{PassFileListPath}invalid{DateTime.Now:dd_MM_yyyy__mm_ss}");
                 }
                 
-                File.WriteAllText(PassFileListPath, EmptyListJson, AppConfig.PassFileEncoding);
+                File.WriteAllText(PassFileListPath, EmptyListJson, PassFileConvention.JsonEncoding);
             }
             catch (Exception ex)
             {

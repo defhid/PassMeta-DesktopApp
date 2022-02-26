@@ -12,8 +12,6 @@ namespace PassMeta.DesktopApp.Core.Services
     {
         private static readonly Random Random = new();
 
-        private const int CryptoK = 100;
-
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
 
         /// <inheritdoc />
@@ -21,24 +19,21 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             try
             {
-                var encryption = AppConfig.PassFileEncoding.GetBytes(data);
+                var encryption = PassFileConvention.JsonEncoding.GetBytes(data);
                 
                 using (var aes = Aes.Create())
                 {
-                    aes.IV = AppConfig.PassFileSalt;
+                    aes.IV = PassFileConvention.Encryption.Salt;
                 
-                    for (var i = 0; i < CryptoK; ++i)
+                    for (var i = 0; i < PassFileConvention.Encryption.CryptoK; ++i)
                     {
-                        var offset = (CryptoK + i) % keyPhrase.Length;
-                        var key = keyPhrase[..offset] + Math.Pow(CryptoK - i, i % 5) + keyPhrase[offset..];
-                        
-                        aes.Key = SHA256.HashData(AppConfig.PassFileEncoding.GetBytes(key));
+                        aes.Key = PassFileConvention.Encryption.MakeKey(i, keyPhrase);
 
                         using var encryptor = aes.CreateEncryptor();
                         using var ms = new MemoryStream();
                         using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                         {
-                            cs.Write(encryption);
+                            cs.Write(encryption, 0, encryption.Length);
                             cs.Flush();
                         }
 
@@ -46,7 +41,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     }
                 }
 
-                return Convert.ToBase64String(encryption);
+                return PassFileConvention.Convert.EncryptedBytesToString(encryption);
             }
             catch (Exception ex)
             {
@@ -62,7 +57,7 @@ namespace PassMeta.DesktopApp.Core.Services
             
             try
             {
-                dataBytes = Convert.FromBase64String(data);
+                dataBytes = PassFileConvention.Convert.EncryptedStringToBytes(data);
             }
             catch (Exception ex)
             {
@@ -80,14 +75,11 @@ namespace PassMeta.DesktopApp.Core.Services
             {
                 using (var aes = Aes.Create())
                 {
-                    aes.IV = AppConfig.PassFileSalt;
+                    aes.IV = PassFileConvention.Encryption.Salt;
 
-                    for (var i = CryptoK - 1; i >= 0; --i)
+                    for (var i = PassFileConvention.Encryption.CryptoK - 1; i >= 0; --i)
                     {
-                        var offset = (CryptoK + i) % keyPhrase.Length;
-                        var key = keyPhrase[..offset] + Math.Pow(CryptoK - i, i % 5) + keyPhrase[offset..];
-
-                        aes.Key = SHA256.HashData(AppConfig.PassFileEncoding.GetBytes(key));
+                        aes.Key = PassFileConvention.Encryption.MakeKey(i, keyPhrase);
 
                         using var decryptor = aes.CreateDecryptor();
                         using var ms = new MemoryStream(data);
@@ -99,14 +91,11 @@ namespace PassMeta.DesktopApp.Core.Services
                     }
                 }
 
-                return AppConfig.PassFileEncoding.GetString(data);
+                return PassFileConvention.JsonEncoding.GetString(data);
             }
             catch (CryptographicException ex)
             {
-                if (ex.Message != "Padding is invalid and cannot be removed.")  // fix excess logs
-                {
-                    _logger.Error("Decryption failed: " + ex.Message);
-                }
+                _logger.Warning("Decryption failed: " + ex.Message);
                 return null;
             }
             catch (Exception ex)
