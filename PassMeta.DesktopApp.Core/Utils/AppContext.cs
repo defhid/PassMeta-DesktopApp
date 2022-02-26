@@ -32,6 +32,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         [JsonProperty("user")]
         public User? User { get; private set; }
+        
+        /// <summary>
+        /// Total count of locally created passfiles.
+        /// </summary>
+        [JsonProperty("pf")]
+        public uint PassFilesCounter { get; set; }
 
         /// <summary>
         /// Application user id. May be 0, if <see cref="User"/> is null.
@@ -73,7 +79,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         private AppContext()
         {
         }
-        
+
+        /// <summary>
+        /// Save <see cref="Current"/> context.
+        /// </summary>
+        public static Task SaveCurrentAsync() => _SaveToFileAsync(Current);
+
         /// <summary>
         /// Load and set context to <see cref="Current"/>.
         /// </summary>

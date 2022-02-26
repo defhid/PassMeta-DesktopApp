@@ -171,10 +171,15 @@ namespace PassMeta.DesktopApp.Core.Utils
         public static PassFile CreateNew(string passPhrase)
         {
             var ids = _currentPassFiles.Select(pf => Math.Min(pf.source?.Id ?? 0, pf.changed?.Id ?? 0)).ToList();
+            int passFileId;
+            do
+            {
+                passFileId = -(int)++AppContext.Current.PassFilesCounter;
+            } while (ids.Contains(passFileId));
             
             var passFile = new PassFile
             {
-                Id = (ids.Any() ? Math.Min(ids.Min() - 1, 0) : 0) - 1,
+                Id = passFileId,
                 Name = Resources.PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME,
                 CreatedOn = DateTime.Now,
                 InfoChangedOn = DateTime.Now,
@@ -690,6 +695,8 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 return ManagerError("Passfile list writing error", ex);
             }
+            
+            await AppContext.SaveCurrentAsync();  // save local passfiles counter
             
             return Result.Success();
         }

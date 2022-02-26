@@ -102,7 +102,10 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         {
             if (passFile.PassPhrase is null)
             {
-                var passPhrase = await dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE);
+                var passPhrase = await dialogService.AskPasswordAsync(askOld 
+                    ? Resources.PASSFILE__ASK_PASSPHRASE_OLD
+                    : Resources.PASSFILE__ASK_PASSPHRASE);
+
                 if (passPhrase.Bad || passPhrase.Data == string.Empty)
                 {
                     return Result.Failure();

@@ -325,7 +325,7 @@
         <value>New (local)</value>
     </data>
     <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
-        <value>New passfile '{0}'</value>
+        <value>New passfile '{0}' (#{1})</value>
     </data>
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Passfile encryption failed</value>

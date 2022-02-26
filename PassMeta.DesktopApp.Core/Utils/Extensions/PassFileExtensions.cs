@@ -58,7 +58,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         public static string GetTitle(this PassFile passFile)
         {
             if (passFile.LocalCreated) 
-                return string.Format(Resources.PASSFILE__TITLE_NEW, passFile.Name);
+                return string.Format(Resources.PASSFILE__TITLE_NEW, passFile.Name, passFile.Id);
             
             if (passFile.LocalDeleted) 
                 return string.Format(Resources.PASSFILE__TITLE_DELETED, passFile.Name, passFile.Id);

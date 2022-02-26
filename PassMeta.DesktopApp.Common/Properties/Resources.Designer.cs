@@ -1141,7 +1141,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New passfile &apos;{0}&apos;.
+        ///   Looks up a localized string similar to New passfile &apos;{0}&apos; (#{1}).
         /// </summary>
         public static string PASSFILE__TITLE_NEW {
             get {
