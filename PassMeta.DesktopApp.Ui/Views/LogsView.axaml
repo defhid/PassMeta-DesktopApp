@@ -15,13 +15,11 @@
               ColumnDefinitions="Auto,Auto"
               Margin="5">
             <DatePicker Grid.Column="0" 
-                        x:Name="FromDate"
                         HorizontalAlignment="Left"
                         SelectedDate="{Binding FromDate}"
                         ToolTip.Tip="{x:Static com:Resources.LOGS__TOOLTIP_DATE_FROM}"/>
         
-            <DatePicker Grid.Column="1" 
-                        x:Name="ToDate"
+            <DatePicker Grid.Column="1"
                         HorizontalAlignment="Left"
                         Margin="20 0 0 0"
                         SelectedDate="{Binding ToDate}"

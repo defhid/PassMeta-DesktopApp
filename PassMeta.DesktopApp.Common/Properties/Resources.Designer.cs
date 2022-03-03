@@ -243,9 +243,9 @@ namespace PassMeta.DesktopApp.Common {
         /// <summary>
         ///   Looks up a localized string similar to History.
         /// </summary>
-        public static string APP__MENU_BTN__HISTORY {
+        public static string APP__MENU_BTN__JOURNAL {
             get {
-                return ResourceManager.GetString("APP__MENU_BTN__HISTORY", resourceCulture);
+                return ResourceManager.GetString("APP__MENU_BTN__JOURNAL", resourceCulture);
             }
         }
         
@@ -651,6 +651,60 @@ namespace PassMeta.DesktopApp.Common {
         public static string GENERATOR__TITLE {
             get {
                 return ResourceManager.GetString("GENERATOR__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event.
+        /// </summary>
+        public static string JOURNAL__HEADER_KIND {
+            get {
+                return ResourceManager.GetString("JOURNAL__HEADER_KIND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User.
+        /// </summary>
+        public static string JOURNAL__HEADER_LOGIN {
+            get {
+                return ResourceManager.GetString("JOURNAL__HEADER_LOGIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More info.
+        /// </summary>
+        public static string JOURNAL__HEADER_MORE {
+            get {
+                return ResourceManager.GetString("JOURNAL__HEADER_MORE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date &amp; time.
+        /// </summary>
+        public static string JOURNAL__HEADER_TIMESTAMP {
+            get {
+                return ResourceManager.GetString("JOURNAL__HEADER_TIMESTAMP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event type.
+        /// </summary>
+        public static string JOURNAL__TOOLTIP_KIND {
+            get {
+                return ResourceManager.GetString("JOURNAL__TOOLTIP_KIND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page number.
+        /// </summary>
+        public static string JOURNAL__TOOLTIP_PAGE_NUM {
+            get {
+                return ResourceManager.GetString("JOURNAL__TOOLTIP_PAGE_NUM", resourceCulture);
             }
         }
         

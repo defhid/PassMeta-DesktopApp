@@ -12,6 +12,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Net;
     using System.Threading.Tasks;
     using Common.Utils.Mapping;
+    using Mapping;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -139,7 +140,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                         var pack = info.OkBadMessagesTranslatePack ??
                                    new Dictionary<string, Dictionary<string, string>>(0);
                         Current.OkBadMessagesMapper = new SimpleMapper<string, string>(
-                            pack.Select(pair => new OkBadMessageMapping(pair.Key, pair.Value)));
+                            pack.Select(pair => new MapToTranslate<string>(pair.Key, pair.Value)));
                         
                         await _SaveToFileAsync(Current);
                     }
@@ -254,29 +255,5 @@ namespace PassMeta.DesktopApp.Core.Utils
                 Logger.Error(ex, "Context file saving failed");
             }
         }
-        
-        #region OkBadMessageMapping
-        
-        private class OkBadMessageMapping : IMapping<string, string>
-        {
-            private readonly Dictionary<string, string> _translates;
-                
-            public string From { get; }
-
-            public string To =>
-                _translates.TryGetValue(AppConfig.Current.CultureCode, out var result)
-                    ? result
-                    : _translates.TryGetValue("default", out result)
-                        ? result
-                        : From;
-
-            public OkBadMessageMapping(string message, Dictionary<string, string> translates)
-            {
-                From = message;
-                _translates = translates;
-            }
-        }
-        
-        #endregion
     }
 }

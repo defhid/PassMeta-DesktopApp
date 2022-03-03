@@ -480,7 +480,7 @@
     <data name="APP__MENU_BTN__LOGS" xml:space="preserve">
         <value>Логи</value>
     </data>
-    <data name="APP__MENU_BTN__HISTORY" xml:space="preserve">
+    <data name="APP__MENU_BTN__JOURNAL" xml:space="preserve">
         <value>История</value>
     </data>
     <data name="LOG_SECTION__INFO_SHORT" xml:space="preserve">
@@ -593,5 +593,23 @@
     </data>
     <data name="PASSFILE__ASK_PASSPHRASE_OLD" xml:space="preserve">
         <value>Введите текущую кодовую фразу</value>
+    </data>
+    <data name="JOURNAL__TOOLTIP_PAGE_NUM" xml:space="preserve">
+        <value>Номер страницы</value>
+    </data>
+    <data name="JOURNAL__TOOLTIP_KIND" xml:space="preserve">
+        <value>Тип события</value>
+    </data>
+    <data name="JOURNAL__HEADER_KIND" xml:space="preserve">
+        <value>Событие</value>
+    </data>
+    <data name="JOURNAL__HEADER_TIMESTAMP" xml:space="preserve">
+        <value>Дата и время</value>
+    </data>
+    <data name="JOURNAL__HEADER_LOGIN" xml:space="preserve">
+        <value>Пользователь</value>
+    </data>
+    <data name="JOURNAL__HEADER_MORE" xml:space="preserve">
+        <value>Доп. информация</value>
     </data>
 </root>

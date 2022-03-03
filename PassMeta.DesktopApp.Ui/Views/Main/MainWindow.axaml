@@ -107,8 +107,8 @@
                                 Content="{Binding MainPane.Buttons.Generator.Content^}"/>
                         
                         <Button Click="HistoryBtn_OnClick"
-                                Classes.active="{Binding MainPane.Buttons.History.IsActive}"
-                                Content="{Binding MainPane.Buttons.History.Content^}"/>
+                                Classes.active="{Binding MainPane.Buttons.Journal.IsActive}"
+                                Content="{Binding MainPane.Buttons.Journal.Content^}"/>
                     </StackPanel>
                     
                     <Button Click="LogsBtn_OnClick"

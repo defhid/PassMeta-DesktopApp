@@ -487,7 +487,7 @@ try another keywords...</value>
     <data name="APP__MENU_BTN__LOGS" xml:space="preserve">
         <value>Logs</value>
     </data>
-    <data name="APP__MENU_BTN__HISTORY" xml:space="preserve">
+    <data name="APP__MENU_BTN__JOURNAL" xml:space="preserve">
         <value>History</value>
     </data>
     <data name="LOG_SECTION__INFO" xml:space="preserve">
@@ -600,5 +600,23 @@ try another keywords...</value>
     </data>
     <data name="PASSFILE__ASK_PASSPHRASE_OLD" xml:space="preserve">
         <value>Input current passphrase</value>
+    </data>
+    <data name="JOURNAL__TOOLTIP_PAGE_NUM" xml:space="preserve">
+        <value>Page number</value>
+    </data>
+    <data name="JOURNAL__TOOLTIP_KIND" xml:space="preserve">
+        <value>Event type</value>
+    </data>
+    <data name="JOURNAL__HEADER_KIND" xml:space="preserve">
+        <value>Event</value>
+    </data>
+    <data name="JOURNAL__HEADER_TIMESTAMP" xml:space="preserve">
+        <value>Date &amp; time</value>
+    </data>
+    <data name="JOURNAL__HEADER_LOGIN" xml:space="preserve">
+        <value>User</value>
+    </data>
+    <data name="JOURNAL__HEADER_MORE" xml:space="preserve">
+        <value>More info</value>
     </data>
 </root>

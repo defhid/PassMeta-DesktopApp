@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+             xmlns:jour="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Journal"
+             x:Class="PassMeta.DesktopApp.Ui.Views.JournalView"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             d:DataContext="{d:DesignInstance jour:JournalViewModel}">
+    <Grid RowDefinitions="52,*">
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,Auto"
+              Margin="5">
+            <ComboBox Grid.Column="0"
+                      HorizontalAlignment="Left"
+                      Margin="20 0 0 0"
+                      Items="{Binding PageList}"
+                      SelectedIndex="{Binding SelectedPageIndex}"
+                      ToolTip.Tip="{x:Static com:Resources.JOURNAL__TOOLTIP_PAGE_NUM}"/>
+            
+            <ComboBox Grid.Column="1"
+                      HorizontalAlignment="Left"
+                      Margin="20 0 0 0"
+                      SelectionMode="Multiple"
+                      Items="{Binding Kinds}"
+                      SelectedItems="{Binding SelectedKinds}"
+                      ToolTip.Tip="{x:Static com:Resources.JOURNAL__TOOLTIP_KIND}"/>
+        </Grid>
+        <Grid Grid.Row="1"
+              Margin="5">
+            <DataGrid IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      Items="{Binding Records}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_TIMESTAMP}" 
+                                        Binding="{Binding CreatedOn}"
+                                        Width="1*"/>
+                    
+                    <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_KIND}" 
+                                        Binding="{Binding RecordKind}"
+                                        Width="3*"/>
+                    
+                    <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_LOGIN}" 
+                                        Binding="{Binding UserLogin}"
+                                        Width="2*"/>
+                    
+                    <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_MORE}"
+                                        Binding="{Binding More}"
+                                        Width="3*"/>
+                </DataGrid.Columns>     
+            </DataGrid>
+        </Grid>
+    </Grid>
+</UserControl>

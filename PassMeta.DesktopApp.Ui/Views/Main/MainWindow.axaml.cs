@@ -1,11 +1,16 @@
 namespace PassMeta.DesktopApp.Ui.Views.Main
 {
+    using DesktopApp.Core;
     using DesktopApp.Core.Utils;
+    using DesktopApp.Common.Interfaces.Services;
+    
     using DesktopApp.Ui.Utils;
     using DesktopApp.Ui.ViewModels;
     using DesktopApp.Ui.ViewModels.Base;
     using DesktopApp.Ui.ViewModels.Main.MainWindow;
     using DesktopApp.Ui.ViewModels.Storage.Storage;
+    using DesktopApp.Ui.ViewModels.Journal;
+    using DesktopApp.Ui.ViewModels.Logs;
     
     using AppContext = Core.Utils.AppContext;
     
@@ -18,10 +23,6 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Controls;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
-    using Common.Interfaces.Services;
-    using Common.Interfaces.Services.PassFile;
-    using Core;
-    using ViewModels.Logs;
 
     public class MainWindow : Window
     {
@@ -62,9 +63,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             => MenuBtnClick(sender, () => new GeneratorViewModel(DataContext).Navigate());
         
         private void HistoryBtn_OnClick(object? sender, RoutedEventArgs e)
-            //=> BtnClick(sender, () => new HistoryViewModel(DataContext).Navigate());  TODO
-        {}
-        
+            => MenuBtnClick(sender, () => new JournalViewModel(DataContext).Navigate());
+
         private void LogsBtn_OnClick(object? sender, RoutedEventArgs e)
             => MenuBtnClick(sender, () => new LogsViewModel(DataContext).Navigate());
 
@@ -136,7 +136,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
                     AccountViewModel => mainPaneButtons.Account,
                     StorageViewModel => mainPaneButtons.Storage,
                     GeneratorViewModel => mainPaneButtons.Generator,
-                    //HistoryViewModel => mainPaneButtons.History,
+                    JournalViewModel => mainPaneButtons.Journal,
                     LogsViewModel => mainPaneButtons.Logs,
                     SettingsViewModel => mainPaneButtons.Settings,
                     _ => mainPaneButtons.CurrentActive

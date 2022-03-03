@@ -58,6 +58,10 @@
         <DependentUpon>PassFileLocalList'Win.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\JournalView.axaml.cs">
+        <DependentUpon>JournalView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\AvaloniaGif\AvaloniaGif.csproj" />

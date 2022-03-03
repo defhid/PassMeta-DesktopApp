@@ -80,7 +80,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
             
             public MainPaneBtn Generator { get; }
             
-            public MainPaneBtn History { get; }
+            public MainPaneBtn Journal { get; }
             
             public MainPaneBtn Logs { get; }
             
@@ -91,7 +91,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
                 Account = new MainPaneBtn(Resources.APP__MENU_BTN__ACCOUNT, "\uE77b", modeChanged);
                 Storage = new MainPaneBtn(Resources.APP__MENU_BTN__STORAGE, "\uE8F1", modeChanged);
                 Generator = new MainPaneBtn(Resources.APP__MENU_BTN__GENERATOR, "\uEA80", modeChanged);
-                History = new MainPaneBtn(Resources.APP__MENU_BTN__HISTORY, "\uE81C", modeChanged);
+                Journal = new MainPaneBtn(Resources.APP__MENU_BTN__JOURNAL, "\uE81C", modeChanged);
                 Logs = new MainPaneBtn(Resources.APP__MENU_BTN__LOGS, "\uE9F9", modeChanged);
                 Settings = new MainPaneBtn(Resources.APP__MENU_BTN__SETTINGS, "\uE713", modeChanged);
                 
