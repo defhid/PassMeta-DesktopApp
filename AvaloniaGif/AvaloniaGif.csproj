@@ -6,6 +6,6 @@
 		<Description>GIF image renderer and player for Avalonia UI Framework</Description>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="0.10.12" />
+		<PackageReference Include="Avalonia" Version="0.10.13" />
 	</ItemGroup>
 </Project>

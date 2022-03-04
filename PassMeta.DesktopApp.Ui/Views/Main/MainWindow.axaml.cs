@@ -62,7 +62,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         private void GeneratorBtn_OnClick(object? sender, RoutedEventArgs e)
             => MenuBtnClick(sender, () => new GeneratorViewModel(DataContext).Navigate());
         
-        private void HistoryBtn_OnClick(object? sender, RoutedEventArgs e)
+        private void JournalBtn_OnClick(object? sender, RoutedEventArgs e)
             => MenuBtnClick(sender, () => new JournalViewModel(DataContext).Navigate());
 
         private void LogsBtn_OnClick(object? sender, RoutedEventArgs e)

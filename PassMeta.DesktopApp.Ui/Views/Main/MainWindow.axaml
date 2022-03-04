@@ -106,7 +106,7 @@
                                 Classes.active="{Binding MainPane.Buttons.Generator.IsActive}"
                                 Content="{Binding MainPane.Buttons.Generator.Content^}"/>
                         
-                        <Button Click="HistoryBtn_OnClick"
+                        <Button Click="JournalBtn_OnClick"
                                 Classes.active="{Binding MainPane.Buttons.Journal.IsActive}"
                                 Content="{Binding MainPane.Buttons.Journal.Content^}"/>
                     </StackPanel>

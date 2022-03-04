@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Response
     using Newtonsoft.Json;
 
     /// <summary>
-    /// PassMeta server response when starting the application.
+    /// PassMeta server info DTO.
     /// </summary>
     public class PassMetaInfo
     {
