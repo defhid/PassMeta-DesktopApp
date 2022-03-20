@@ -21,6 +21,7 @@ namespace PassMeta.DesktopApp.Core.Services
         private readonly object _lockObject = new();
 
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+        private const int LogLifeTimeMonths = 2;
 
         /// <inheritdoc />
         public void Info(string text)
@@ -125,7 +126,7 @@ namespace PassMeta.DesktopApp.Core.Services
             
             logFiles.Sort(StringComparer.Ordinal);
             
-            for (var i = logFiles.Count - 3; i >= 0; --i)
+            for (var i = logFiles.Count - 1 - LogLifeTimeMonths; i >= 0; --i)
             {
                 File.Delete(logFiles[i]);
             }

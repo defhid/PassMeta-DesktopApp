@@ -11,6 +11,6 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// Get method and url in one line.
         /// </summary>
         public static string GetShortInformation(this HttpWebRequest request)
-            => $"{request.Method} {request.RequestUri}";
+            => $"{request.Method} \"{request.RequestUri}\"";
     }
 }

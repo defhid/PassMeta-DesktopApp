@@ -48,8 +48,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 if (local is not null)
                     localList.Remove(local);
 
-                if (applyLocalChanges)
-                    PassFileManager.TryResetProblem(remote.Id);
+                PassFileManager.TryResetProblem(remote.Id);
 
                 if (local is null)
                 {

@@ -75,16 +75,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
                 .InvokeCommand(ReactiveCommand.CreateFromTask(InitLoadAsync));
         }
 
-        public override Task RefreshAsync()
-        {
-            return LoadRecordsAsync(SelectedPageIndex);
-        }
+        public override Task RefreshAsync() => LoadRecordsAsync(SelectedPageIndex);
 
         private async Task LoadRecordsAsync(int pageIndex)
         {
             using var preloader = MainWindow.Current!.StartPreloader();
 
-            if (pageIndex < 0) pageIndex = 0;
+            if (pageIndex < 0) return;
 
             var kind = SelectedKind?.Id > 0 ? ("&kind=" + SelectedKind.Id) : string.Empty;
             var limit = "limit=" + _pageLimit;

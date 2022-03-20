@@ -220,6 +220,12 @@
                                               CornerRadius="3"
                                               Padding="5 5 5 100"
                                               VerticalAlignment="Top">
+                                    <ItemsControl.Styles>
+                                        <Style Selector="ItemsPresenter">
+                                            <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue"/>
+                                        </Style>
+                                    </ItemsControl.Styles>
+
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Grid RowDefinitions="Auto,Auto,Auto">
@@ -257,18 +263,21 @@
                                                     
                                                     <Button Grid.Column="1"
                                                             Content="&#xE74A;"
+                                                            IsTabStop="False"
                                                             Command="{Binding UpCommand}"
                                                             ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__MOVE_UP}"
                                                             ToolTip.Placement="Bottom"/>
                                                     
                                                     <Button Grid.Column="2"
                                                             Content="&#xE74B;"
+                                                            IsTabStop="False"
                                                             Command="{Binding DownCommand}"
                                                             ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__MOVE_DOWN}"
                                                             ToolTip.Placement="Bottom"/>
                                                     
                                                     <Button Grid.Column="3"
                                                             Content="&#xE74D;"
+                                                            IsTabStop="False"
                                                             Command="{Binding DeleteCommand}"
                                                             ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__DELETE}"
                                                             ToolTip.Placement="Bottom"/>
