@@ -8,5 +8,8 @@ PassMeta DesktopApp is a cross-platform client application of PassMeta System fo
 Currently under development.
 
 
+![screenshot](docs/Screenshot.png)
+
+
 ### Technologies
 *.NET 5.0, C#, Avalonia UI.*
