@@ -1,6 +1,5 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
-    using DesktopApp.Common.Models;
     using DesktopApp.Common.Enums;
     using System.Threading.Tasks;
 
@@ -44,7 +43,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <param name="message">Confirmation content.</param>
         /// <param name="title">Window title.</param>
         /// <returns>Did user answered YES?</returns>
-        public Task<Result> ConfirmAsync(string message, string? title = null);
+        public Task<IResult> ConfirmAsync(string message, string? title = null);
 
         /// <summary>
         /// Ask user for string value.
@@ -55,7 +54,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <returns>
         /// Result with not null trimmed string value.
         /// </returns>
-        public Task<Result<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null);
+        public Task<IResult<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null);
         
         /// <summary>
         /// Ask user for string password.
@@ -65,6 +64,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <returns>
         /// Result with not null raw password.
         /// </returns>
-        public Task<Result<string>> AskPasswordAsync(string message, string? title = null);
+        public Task<IResult<string>> AskPasswordAsync(string message, string? title = null);
     }
 }

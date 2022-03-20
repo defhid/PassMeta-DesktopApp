@@ -130,7 +130,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 if (!checkConnection || await PassMetaApi.CheckConnectionAsync(true))
                 {
-                    var response = await PassMetaApi.GetAsync<PassMetaInfo>("/info", true);
+                    var response = await PassMetaApi.GetAsync<PassMetaInfo>("info", true);
                     if (response?.Success is true)
                     {
                         var info = response.Data!;

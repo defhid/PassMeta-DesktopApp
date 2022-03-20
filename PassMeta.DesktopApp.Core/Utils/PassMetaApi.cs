@@ -295,7 +295,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             public Request(string method, string url, object? data)
             {
                 _data = data;
-                _url = url;
+                _url = '/' + url;
                 _method = method;
                 _context = null;
                 _badMapper = AppContext.Current.OkBadMessagesMapper;

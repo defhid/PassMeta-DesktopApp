@@ -113,22 +113,29 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public void OptimizeLogs()
         {
-            var logFiles = Directory.EnumerateFiles(Folder).ToList();
-            
-            for (var i = logFiles.Count - 1; i >= 0; --i)
+            try
             {
-                if (!logFiles[i].EndsWith(".log"))
+                var logFiles = Directory.EnumerateFiles(Folder).ToList();
+
+                for (var i = logFiles.Count - 1; i >= 0; --i)
+                {
+                    if (!logFiles[i].EndsWith(".log"))
+                    {
+                        File.Delete(logFiles[i]);
+                        logFiles.RemoveAt(i);
+                    }
+                }
+
+                logFiles.Sort(StringComparer.Ordinal);
+
+                for (var i = logFiles.Count - 1 - LogLifeTimeMonths; i >= 0; --i)
                 {
                     File.Delete(logFiles[i]);
-                    logFiles.RemoveAt(i);
                 }
             }
-            
-            logFiles.Sort(StringComparer.Ordinal);
-            
-            for (var i = logFiles.Count - 1 - LogLifeTimeMonths; i >= 0; --i)
+            catch (Exception ex)
             {
-                File.Delete(logFiles[i]);
+                Error(ex, "Logs optimizing failed");
             }
         }
 

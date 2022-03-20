@@ -5,6 +5,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Threading.Tasks;
     using Common;
     using Common.Constants;
+    using Common.Interfaces;
     using Common.Interfaces.Services;
     using Common.Interfaces.Services.PassFile;
     using Common.Models;
@@ -18,13 +19,13 @@ namespace PassMeta.DesktopApp.Core.Services
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
-        private Result ExporterSuccess(PassFile passFile, string resultFilePath)
+        private IResult ExporterSuccess(PassFile passFile, string resultFilePath)
         {
             _logger.Info($"{passFile} exported to '{resultFilePath}'");
             return Result.Success();
         }
         
-        private Result ExporterError(string log, Exception? ex = null)
+        private IResult ExporterError(string log, Exception? ex = null)
         {
             LogError(log, ex);
             _dialogService.ShowFailure(Resources.PASSIMPORT__ERR, more: ex?.Message ?? log);
@@ -39,7 +40,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
         
         /// <inheritdoc />
-        public async Task<Result> ExportAsync(PassFile passFile, string resultFilePath)
+        public async Task<IResult> ExportAsync(PassFile passFile, string resultFilePath)
         {
             try
             {
@@ -63,7 +64,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
         
-        private async Task<Result> ExportPassfileEncryptedAsync(PassFile passFile, string path)
+        private async Task<IResult> ExportPassfileEncryptedAsync(PassFile passFile, string path)
         {
             var result = await PassFileManager.GetEncryptedDataAsync(passFile.Id);
             if (result.Bad)
@@ -80,7 +81,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
         
-        private async Task<Result> ExportPassfileDecryptedAsync(PassFile passFile, string path)
+        private async Task<IResult> ExportPassfileDecryptedAsync(PassFile passFile, string path)
         {
             if (passFile.Data is null)
             {
@@ -91,7 +92,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 }
 
                 passFile.DataEncrypted = result.Data!;
-                if (!await _AskPassPhraseAndDecryptAsync(passFile))
+                if ((await _AskPassPhraseAndDecryptAsync(passFile)).Bad)
                 {
                     return Result.Failure();
                 }
@@ -99,7 +100,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             try
             {
-                var data = PassFileConvention.Convert.FromRaw(passFile.Data!);
+                var data = PassFileConvention.Convert.FromRaw(passFile.Data!, true);
                 await File.WriteAllTextAsync(path, data, PassFileConvention.JsonEncoding);
                 return ExporterSuccess(passFile, path);
             }
@@ -109,7 +110,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
         
-        private async Task<Result> _AskPassPhraseAndDecryptAsync(PassFile passFile)
+        private async Task<IResult> _AskPassPhraseAndDecryptAsync(PassFile passFile)
         {
             bool TryDecrypt(string passPhrase)
             {
@@ -126,7 +127,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name));
             }
             
-            return passPhrase.WithoutData();
+            return passPhrase;
         }
     }
 }

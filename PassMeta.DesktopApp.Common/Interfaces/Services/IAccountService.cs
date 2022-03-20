@@ -1,6 +1,5 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
-    using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using System.Threading.Tasks;
     using Models.Dto.Request;
@@ -13,11 +12,11 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <summary>
         /// Get information about current authorized user.
         /// </summary>
-        public Task<Result<User>> GetUserDataAsync();
+        public Task<IResult<User>> GetUserDataAsync();
         
         /// <summary>
         /// Edit information about current authorized user.
         /// </summary>
-        public Task<Result> UpdateUserDataAsync(UserPatchData data);
+        public Task<IResult> UpdateUserDataAsync(UserPatchData data);
     }
 }

@@ -13,6 +13,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
         /// Export passfile to <paramref name="resultFilePath"/>.
         /// </summary>
         /// <returns>Success?</returns>
-        Task<Result> ExportAsync(PassFile passFile, string resultFilePath);
+        Task<IResult> ExportAsync(PassFile passFile, string resultFilePath);
     }
 }

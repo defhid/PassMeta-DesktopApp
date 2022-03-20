@@ -12,6 +12,7 @@ namespace PassMeta.DesktopApp.Ui.Services
     
     using Avalonia.Controls;
     using Avalonia.Controls.Notifications;
+    using Common.Interfaces;
     using Constants;
     using Core;
     using Utils.Extensions;
@@ -135,7 +136,7 @@ namespace PassMeta.DesktopApp.Ui.Services
 
         /// <inheritdoc />
         /// <remarks>Use only when the main window has been rendered.</remarks>
-        public async Task<Result> ConfirmAsync(string message, string? title = null)
+        public async Task<IResult> ConfirmAsync(string message, string? title = null)
         {
             if (MainWindow.Current is null) return Result.Failure();
 
@@ -152,7 +153,7 @@ namespace PassMeta.DesktopApp.Ui.Services
 
         /// <inheritdoc />
         /// <remarks>Use only when the main window has been rendered.</remarks>
-        public async Task<Result<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null)
+        public async Task<IResult<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null)
         {
             if (MainWindow.Current is null) return Result.Failure<string>();
 
@@ -171,7 +172,7 @@ namespace PassMeta.DesktopApp.Ui.Services
         
         /// <inheritdoc />
         /// <remarks>Use only when the main window has been rendered.</remarks>
-        public async Task<Result<string>> AskPasswordAsync(string message, string? title = null)
+        public async Task<IResult<string>> AskPasswordAsync(string message, string? title = null)
         {
             if (MainWindow.Current is null) return Result.Failure<string>();
 

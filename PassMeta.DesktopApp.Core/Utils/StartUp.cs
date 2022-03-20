@@ -1,9 +1,10 @@
 namespace PassMeta.DesktopApp.Core.Utils
 {
     using System.Threading.Tasks;
+    using Common.Interfaces.Services;
 
     /// <summary>
-    /// Checking and loading at startup.
+    /// Checking, loading and optimizing at startup.
     /// </summary>
     public static class StartUp
     {
@@ -16,6 +17,8 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             await AppContext.LoadAndSetCurrentAsync();
             await AppConfig.LoadAndSetCurrentAsync();
+
+            EnvironmentContainer.Resolve<ILogService>().OptimizeLogs();
         }
     }
 }

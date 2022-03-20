@@ -2,7 +2,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Models.Entities;
 
     /// <summary>
@@ -36,7 +35,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         List<Log> ReadLogs(DateTime dateFrom, DateTime dateTo);
 
         /// <summary>
-        /// Delete old logs.
+        /// Delete old logs without throwing exceptions.
         /// </summary>
         void OptimizeLogs();
     }

@@ -9,6 +9,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Reflection;
     using System.Threading.Tasks;
     using Common.Constants;
+    using Common.Interfaces;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -143,7 +144,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Create and set app configuration to <see cref="Current"/>.
         /// </summary>
         /// <returns>Success + created configuration.</returns>
-        public static async Task<Result> CreateAndSetCurrentAsync(string? serverUrl, AppCulture? culture)
+        public static async Task<IDetailedResult> CreateAndSetCurrentAsync(string? serverUrl, AppCulture? culture)
         {
             var config = new AppConfig
             {
@@ -180,7 +181,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             await PassMetaApi.CheckConnectionAsync(true);
         }
 
-        private static async Task<Result> _SaveToFileAsync(AppConfig config)
+        private static async Task<IDetailedResult> _SaveToFileAsync(AppConfig config)
         {
             try
             {

@@ -14,6 +14,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using Common.Interfaces;
     using Common.Interfaces.Services.PassFile;
 
     /// <inheritdoc />
@@ -30,6 +31,13 @@ namespace PassMeta.DesktopApp.Core.Services
         };
         
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+
+        /// <inheritdoc />
+        public async Task<IResult<PassFile>> GetPassFileRemoteAsync(int passFileId)
+        {
+            var response = await PassMetaApi.GetAsync<PassFile>($"passfiles/{passFileId}", true);
+            return Result.FromResponse(response);
+        }
 
         /// <inheritdoc />
         public async Task RefreshLocalPassFilesAsync(bool applyLocalChanges = true)
@@ -86,7 +94,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     if (local.InfoChangedOn > remote.InfoChangedOn && applyLocalChanges)
                     {
                         var res = Result.FromResponse(await _SavePassFileInfoRemoteAsync(local));
-                        if (CheckAsUploading(local, res.WithoutData()))
+                        if (CheckAsUploading(local, res))
                         {
                             actual = res.Data!;
                         }
@@ -108,7 +116,7 @@ namespace PassMeta.DesktopApp.Core.Services
                             if (CheckAsUploading(actual, await _EnsureHasLocalEncryptedAsync(actual)))
                             {
                                 var res = Result.FromResponse(await _SavePassFileDataRemoteAsync(actual));
-                                CheckAsUploading(actual, res.WithoutData());
+                                CheckAsUploading(actual, res);
                             }
                         }
                     }
@@ -166,7 +174,7 @@ namespace PassMeta.DesktopApp.Core.Services
                         if (passFile.IsInformationChanged())
                         {
                             var res = Result.FromResponse(await _SavePassFileInfoRemoteAsync(passFile));
-                            if (CheckAsUploading(passFile, res.WithoutData()))
+                            if (CheckAsUploading(passFile, res))
                             {
                                 var actual = res.Data!;
                                 CheckAsDownloading(actual, PassFileManager.UpdateInfo(actual, true));
@@ -178,7 +186,7 @@ namespace PassMeta.DesktopApp.Core.Services
                             if (CheckAsUploading(passFile, await _EnsureHasLocalEncryptedAsync(passFile)))
                             {
                                 var res = Result.FromResponse(await _SavePassFileDataRemoteAsync(passFile));
-                                if (CheckAsUploading(passFile, res.WithoutData()))
+                                if (CheckAsUploading(passFile, res))
                                 {
                                     var actual = res.Data!.WithEncryptedDataFrom(passFile);
                                     CheckAsDownloading(actual, PassFileManager.UpdateData(actual, true));
@@ -245,30 +253,30 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             var result = Result.FromResponse(await _GetPassFileDataRemoteAsync(passFile.Id));
 
-            if (!CheckAsDownloading(passFile, result.WithoutData())) return false;
+            if (!CheckAsDownloading(passFile, result)) return false;
             
             passFile.DataEncrypted = result.Data!;
             return true;
         }
         
-        private async Task<Result> _EnsureHasLocalEncryptedAsync(PassFile passFile)
+        private async Task<IDetailedResult> _EnsureHasLocalEncryptedAsync(PassFile passFile)
         {
             if (passFile.DataEncrypted is null)
             {
                 var result = await PassFileManager.GetEncryptedDataAsync(passFile.Id);
                 
-                var res = EnsureOk(passFile, result.WithoutData());
+                var res = EnsureOk(passFile, result);
                 if (res.Bad) return res;
 
                 passFile.DataEncrypted = result.Data;
             }
 
-            return Result.From(passFile.DataEncrypted is not null);
+            return Result.Success();
         }
 
         #region Checking
 
-        private bool CheckAsDownloading(PassFile passFile, Result result)
+        private bool CheckAsDownloading(PassFile passFile, IDetailedResult result)
         {
             var res = EnsureOk(passFile, result);
             if (res.Bad)
@@ -278,7 +286,7 @@ namespace PassMeta.DesktopApp.Core.Services
             return res.Ok;
         }
         
-        private bool CheckAsUploading(PassFile passFile, Result result)
+        private bool CheckAsUploading(PassFile passFile, IDetailedResult result)
         {
             var res = EnsureOk(passFile, result);
             if (res.Bad)
@@ -289,7 +297,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Result EnsureOk(PassFile passFile, Result result)
+        private IDetailedResult EnsureOk(PassFile passFile, IDetailedResult result)
         {
             if (result.Bad)
                 _dialogService.ShowError(result.Message!, passFile.GetTitle());
@@ -303,22 +311,22 @@ namespace PassMeta.DesktopApp.Core.Services
 
         private static async Task<List<PassFile>?> _GetPassFileListRemoteAsync()
         {
-            var response = await PassMetaApi.GetAsync<List<PassFile>>("/passfiles/list", true);
+            var response = await PassMetaApi.GetAsync<List<PassFile>>("passfiles/list", true);
             return response?.Data;
         }
 
         private static Task<OkBadResponse<string>?> _GetPassFileDataRemoteAsync(int passFileId, int? version = null)
         {
             var url = version is null
-                ? $"/passfiles/{passFileId}/smth"
-                : $"/passfiles/{passFileId}/smth?version={version}";
+                ? $"passfiles/{passFileId}/smth"
+                : $"passfiles/{passFileId}/smth?version={version}";
             
             return PassMetaApi.GetAsync<string>(url, true);
         }
 
         private static Task<OkBadResponse<PassFile>?> _SavePassFileInfoRemoteAsync(PassFile passFile)
         {
-            var request = PassMetaApi.Patch($"/passfiles/{passFile.Id}/info", new
+            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/info", new
             {
                 name = passFile.Name,
                 color = passFile.Color
@@ -332,7 +340,7 @@ namespace PassMeta.DesktopApp.Core.Services
         
         private static Task<OkBadResponse<PassFile>?> _SavePassFileDataRemoteAsync(PassFile passFile)
         {
-            var request = PassMetaApi.Patch($"/passfiles/{passFile.Id}/smth", new
+            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/smth", new
             {
                 smth = passFile.DataEncrypted!
             });
@@ -345,7 +353,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
         private static Task<OkBadResponse<PassFile>?> _AddPassFileRemoteAsync(PassFile passFile)
         {
-            var request = PassMetaApi.Post("/passfiles/new", new
+            var request = PassMetaApi.Post("passfiles/new", new
             {
                 name = passFile.Name,
                 color = passFile.Color,
@@ -361,7 +369,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
         private static Task<OkBadResponse?> _DeletePassFileRemoteAsync(PassFile passFile, string accountPassword)
         {
-            var request = PassMetaApi.Delete($"/passfiles/{passFile.Id}", new
+            var request = PassMetaApi.Delete($"passfiles/{passFile.Id}", new
             {
                 check_password = accountPassword
             });

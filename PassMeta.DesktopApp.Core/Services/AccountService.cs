@@ -8,6 +8,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Core.Utils;
 
     using System.Threading.Tasks;
+    using Common.Interfaces;
     using Common.Utils.Mapping;
 
     /// <inheritdoc />
@@ -28,14 +29,14 @@ namespace PassMeta.DesktopApp.Core.Services
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         /// <inheritdoc />
-        public async Task<Result<User>> GetUserDataAsync()
+        public async Task<IResult<User>> GetUserDataAsync()
         {
-            var response = await PassMetaApi.GetAsync<User>("/users/me", true);
+            var response = await PassMetaApi.GetAsync<User>("users/me", true);
             return Result.FromResponse(response);
         }
 
         /// <inheritdoc />
-        public async Task<Result> UpdateUserDataAsync(UserPatchData data)
+        public async Task<IResult> UpdateUserDataAsync(UserPatchData data)
         {
             if (data.PasswordConfirm is null || data.PasswordConfirm.Length == 0)
             {
@@ -43,7 +44,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure();
             }
 
-            var response = await PassMetaApi.Patch("/users/me", data)
+            var response = await PassMetaApi.Patch("users/me", data)
                 .WithBadMapping(WhatToStringMapper)
                 .WithBadHandling()
                 .ExecuteAsync<User>();

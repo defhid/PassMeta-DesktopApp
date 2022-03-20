@@ -46,13 +46,21 @@ namespace PassMeta.DesktopApp.Core.Utils
             /// <summary>
             /// Convert raw sections list to decrypted json data.
             /// </summary>
-            public static string FromRaw(List<PassFile.Section> sections)
-                => JsonConvert.SerializeObject(sections, JsonSettings);
+            public static string FromRaw(List<PassFile.Section> sections, bool indented = false)
+                => JsonConvert.SerializeObject(sections, indented ? JsonIndentedSettings : JsonSettings);
 
             private static readonly JsonSerializerSettings JsonSettings = new()
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore,
-                NullValueHandling = NullValueHandling.Ignore
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.None
+            };
+            
+            private static readonly JsonSerializerSettings JsonIndentedSettings = new()
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented
             };
         }
         

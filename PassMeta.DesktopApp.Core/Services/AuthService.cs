@@ -8,6 +8,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Utils.Mapping;
     using DesktopApp.Core.Utils;
     using System.Threading.Tasks;
+    using Common.Interfaces;
 
     /// <inheritdoc />
     public class AuthService : IAuthService
@@ -20,7 +21,7 @@ namespace PassMeta.DesktopApp.Core.Services
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         /// <inheritdoc />
-        public async Task<Result<User>> SignInAsync(SignInPostData data)
+        public async Task<IResult<User>> SignInAsync(SignInPostData data)
         {
             if (!_Validate(data).Ok)
             {
@@ -28,7 +29,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure<User>();
             }
             
-            var response = await PassMetaApi.Post("/auth/sign-in", data)
+            var response = await PassMetaApi.Post("auth/sign-in", data)
                 .WithBadMapping(WhatToStringMapper)
                 .WithBadHandling()
                 .ExecuteAsync<User>();
@@ -47,7 +48,7 @@ namespace PassMeta.DesktopApp.Core.Services
             var answer = await _dialogService.ConfirmAsync(Common.Resources.ACCOUNT__SIGN_OUT_CONFIRM);
             if (answer.Bad) return;
             
-            await PassMetaApi.Post("/auth/sign-out")
+            await PassMetaApi.Post("auth/sign-out")
                 .WithBadMapping(WhatToStringMapper)
                 .WithBadHandling()
                 .ExecuteAsync();
@@ -56,7 +57,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task<Result<User>> SignUpAsync(SignUpPostData data)
+        public async Task<IResult<User>> SignUpAsync(SignUpPostData data)
         {
             if (!_Validate(data).Ok)
             {
@@ -64,7 +65,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure<User>();
             }
             
-            var response = await PassMetaApi.Post("/users/new", data)
+            var response = await PassMetaApi.Post("users/new", data)
                 .WithBadMapping(WhatToStringMapper)
                 .WithBadHandling()
                 .ExecuteAsync<User>();
@@ -76,7 +77,7 @@ namespace PassMeta.DesktopApp.Core.Services
             return Result.Success(response.Data!);
         }
         
-        private static Result<TData> _Validate<TData>(TData data)
+        private static IResult<TData> _Validate<TData>(TData data)
             where TData : SignInPostData
         {
             data.Login = data.Login.Trim();

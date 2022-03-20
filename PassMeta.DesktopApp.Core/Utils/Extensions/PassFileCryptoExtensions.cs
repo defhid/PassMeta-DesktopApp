@@ -3,6 +3,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
     using System;
     using System.Collections.Generic;
     using Common;
+    using Common.Interfaces;
     using Common.Interfaces.Services;
     using Common.Models;
     using Common.Models.Entities;
@@ -14,8 +15,8 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
     public static class PassFileCryptoExtensions
     {
         private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
-        private static Result DecryptionError => Result.Failure(Resources.PASSFILE__DECRYPTION_ERROR);
-        private static Result EncryptionError => Result.Failure(Resources.PASSFILE__ENCRYPTION_ERROR);
+        private static IDetailedResult DecryptionError => Result.Failure(Resources.PASSFILE__DECRYPTION_ERROR);
+        private static IDetailedResult EncryptionError => Result.Failure(Resources.PASSFILE__ENCRYPTION_ERROR);
 
         /// <summary>
         /// Decrypts <see cref="PassFile.DataEncrypted"/> and returns result.
@@ -23,7 +24,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// <remarks>
         /// <see cref="PassFile.PassPhrase"/> must be not null.
         /// </remarks>
-        public static Result Decrypt(this PassFile passFile)
+        public static IDetailedResult Decrypt(this PassFile passFile)
         {
             if (string.IsNullOrEmpty(passFile.PassPhrase))
             {
@@ -62,7 +63,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// <remarks>
         /// <see cref="PassFile.PassPhrase"/> must be not null.
         /// </remarks>
-        public static Result Encrypt(this PassFile passFile)
+        public static IDetailedResult Encrypt(this PassFile passFile)
         {
             if (string.IsNullOrEmpty(passFile.PassPhrase))
             {

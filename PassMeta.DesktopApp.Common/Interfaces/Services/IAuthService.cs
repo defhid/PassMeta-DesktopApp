@@ -1,6 +1,5 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services
 {
-    using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using System.Threading.Tasks;
     using Models.Dto.Request;
@@ -13,7 +12,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <summary>
         /// Logging in.
         /// </summary>
-        Task<Result<User>> SignInAsync(SignInPostData data);
+        Task<IResult<User>> SignInAsync(SignInPostData data);
         
         /// <summary>
         /// Logging out.
@@ -23,6 +22,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// <summary>
         /// Registration.
         /// </summary>
-        Task<Result<User>> SignUpAsync(SignUpPostData data);
+        Task<IResult<User>> SignUpAsync(SignUpPostData data);
     }
 }

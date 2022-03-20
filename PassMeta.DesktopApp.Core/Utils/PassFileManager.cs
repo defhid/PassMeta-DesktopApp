@@ -9,10 +9,13 @@ namespace PassMeta.DesktopApp.Core.Utils
     
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Reactive.Subjects;
     using System.Threading.Tasks;
+    using Common.Interfaces;
+    using Common.Utils.Extensions;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -50,7 +53,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Log error and return result with common manager error message.
         /// </summary>
-        private static Result ManagerError(string log, Exception? ex = null)
+        private static IDetailedResult ManagerError(string log, Exception? ex = null)
         {
             log = nameof(PassFileManager) + ": " + log;
             if (ex is null) Logger.Error(log);
@@ -93,7 +96,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Load <see cref="PassFile.DataEncrypted"/> for passfile with id = <paramref name="passFileId"/>.
         /// </summary>
-        public static async Task<Result<string>> GetEncryptedDataAsync(int passFileId, bool oldVersion = false)
+        public static async Task<IDetailedResult<string>> GetEncryptedDataAsync(int passFileId, bool oldVersion = false)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFileId || 
@@ -106,8 +109,9 @@ namespace PassMeta.DesktopApp.Core.Utils
                 if (actual.Data != null)
                 {
                     var res = actual.Encrypt();
+                    Debug.Assert(res.Ok);
                     return res.Ok 
-                        ? Result.Success<string>(actual.DataEncrypted!) 
+                        ? Result.Success(actual.DataEncrypted!) 
                         : res.WithNullData<string>();
                 }
             }
@@ -127,7 +131,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     actual.DataEncrypted = dataEncrypted;
                 }
 
-                return Result.Success<string>(dataEncrypted);
+                return Result.Success(dataEncrypted);
             }
             catch (Exception ex)
             {
@@ -139,7 +143,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Load <see cref="PassFile.DataEncrypted"/> (if not loaded), decrypt it, set to actual passfile and return copy.
         /// </summary>
         /// <remarks><see cref="PassFile.PassPhrase"/> must be set.</remarks>
-        public static async Task<Result<List<PassFile.Section>>> TryLoadIfRequiredAndDecryptAsync(int passFileId)
+        public static async Task<IDetailedResult<List<PassFile.Section>>> TryLoadIfRequiredAndDecryptAsync(int passFileId)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFileId || 
@@ -200,7 +204,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Add a new existing <see cref="PassFile"/> that is not in the current list.
         /// </summary>
-        public static Result AddFromRemote(PassFile passFile, int? localPassFileId = null)
+        public static IDetailedResult AddFromRemote(PassFile passFile, int? localPassFileId = null)
         {
             if (_currentPassFiles.Any(pf => pf.source?.Id == passFile.Id || pf.changed?.Id == passFile.Id))
             {
@@ -289,7 +293,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         /// <param name="passFile">Passfile information. Will be refreshed if success.</param>
         /// <param name="fromRemote">Is <paramref name="passFile"/> information from remote?</param>
-        public static Result UpdateInfo(PassFile passFile, bool fromRemote = false)
+        public static IDetailedResult UpdateInfo(PassFile passFile, bool fromRemote = false)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
@@ -327,7 +331,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <param name="fromRemote">
         /// Is <paramref name="passFile"/> data from remote?
         /// </param>
-        public static Result UpdateData(PassFile passFile, bool fromRemote = false)
+        public static IDetailedResult UpdateData(PassFile passFile, bool fromRemote = false)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
@@ -383,7 +387,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Action to perform on <paramref name="passFile"/> data.
         /// </param>
         /// <remarks>Ensure that <paramref name="update"/> algorithm only works with copies of new data!</remarks>
-        public static Result UpdateDataSelectively(PassFile passFile, Action<List<PassFile.Section>> update)
+        public static IDetailedResult UpdateDataSelectively(PassFile passFile, Action<List<PassFile.Section>> update)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
@@ -457,7 +461,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Restore local deleted passfile.
         /// </summary>
         /// <param name="passFile">Passfile information.</param>
-        public static Result Restore(PassFile passFile)
+        public static IDetailedResult Restore(PassFile passFile)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
@@ -504,7 +508,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Save all passfile changes to the file system.
         /// </summary>
-        public static async Task<Result> CommitAsync()
+        public static async Task<IDetailedResult> CommitAsync()
         {
             var hasWarnings = false;
             var listChange = false;
@@ -544,13 +548,13 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 foreach (var passFile in delete)
                 {
-                    if (_Delete(passFile)) _deletedPassFiles.Remove(passFile);
+                    if (_Delete(passFile).Ok) _deletedPassFiles.Remove(passFile);
                     else hasWarnings = true;
                 }
 
                 foreach (var passFile in dataChange)
                 {
-                    var ok = _Delete(passFile) && await _SaveAsync(passFile);
+                    var ok = _Delete(passFile).Ok && (await _SaveAsync(passFile)).Ok;
                     hasWarnings |= !ok;
                 }
 
@@ -619,7 +623,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             return (changed ?? source)!;
         }
 
-        private static async Task<Result> _SaveAsync(PassFile passFile)
+        private static async Task<IDetailedResult> _SaveAsync(PassFile passFile)
         {
             try
             {
@@ -634,7 +638,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             return Result.Success();
         }
 
-        private static Result _Delete(PassFile passFile)
+        private static IDetailedResult _Delete(PassFile passFile)
         {
             void Move(string from, string to)
             {
@@ -684,7 +688,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             return Result.Success();
         }
 
-        private static async Task<Result> _SaveListAsync(List<PassFile> list)
+        private static async Task<IDetailedResult> _SaveListAsync(List<PassFile> list)
         {
             try
             {

@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Threading.Tasks;
     using Common;
     using Common.Constants;
+    using Common.Interfaces;
     using Common.Interfaces.Services;
     using Common.Interfaces.Services.PassFile;
     using Common.Models;
@@ -23,7 +24,7 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <summary>
         /// Log error, show failure message and return failure result.
         /// </summary>
-        private Result<(List<PassFile.Section>, string)> ImporterError(string log, Exception? ex = null)
+        private IResult<(List<PassFile.Section>, string)> ImporterError(string log, Exception? ex = null)
         {
             LogError(log, ex);
             _dialogService.ShowFailure(Resources.PASSIMPORT__ERR, more: ex?.Message ?? log);
@@ -38,7 +39,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task<Result<(List<PassFile.Section>, string)>> ImportAsync(string sourceFilePath)
+        public async Task<IResult<(List<PassFile.Section>, string)>> ImportAsync(string sourceFilePath)
         {
             try
             {
@@ -69,7 +70,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
 
-        private async Task<Result<(List<PassFile.Section>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName)
+        private async Task<IResult<(List<PassFile.Section>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName)
         {
             var i = 0;
             while (true)
@@ -95,7 +96,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
         
-        private async Task<Result<(List<PassFile.Section>, string)>> ImportPassfileDecryptedAsync(byte[] fileBytes, string fileName)
+        private async Task<IResult<(List<PassFile.Section>, string)>> ImportPassfileDecryptedAsync(byte[] fileBytes, string fileName)
         {
             string passFileData;
             try

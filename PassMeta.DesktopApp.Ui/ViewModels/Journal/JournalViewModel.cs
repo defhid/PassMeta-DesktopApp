@@ -87,7 +87,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             var limit = "limit=" + _pageLimit;
             var offset = "offset=" + pageIndex * _pageLimit;
 
-            var response = await PassMetaApi.GetAsync<PageResult<JournalRecord>>($"/history?{limit}&{offset}{kind}", true);
+            var response = await PassMetaApi.GetAsync<PageResult<JournalRecord>>($"history?{limit}&{offset}{kind}", true);
             if (response?.Success is not true) return;
 
             _pageLimit = response.Data!.Limit;
@@ -110,7 +110,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             {
                 using var preloader = MainWindow.Current!.StartPreloader();
                 
-                var kindsResponse = await PassMetaApi.GetAsync<List<JournalRecordKind>>("/history/kinds", true);
+                var kindsResponse = await PassMetaApi.GetAsync<List<JournalRecordKind>>("history/kinds", true);
 
                 if (kindsResponse?.Success is not true) return;
 

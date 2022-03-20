@@ -7,6 +7,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using Avalonia.Media;
     using Common;
     using Common.Enums;
+    using Common.Interfaces;
     using Common.Interfaces.Services;
     using Common.Models;
     using Common.Models.Entities;
@@ -98,7 +99,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         /// Ask user for passphrase (if required), load and decode data.
         /// </summary>
         /// <remarks>Automatic show failure.</remarks>
-        public static async Task<Result> LoadIfRequiredAndDecryptAsync(this PassFile passFile, IDialogService dialogService, bool askOld = false)
+        public static async Task<IResult> LoadIfRequiredAndDecryptAsync(this PassFile passFile, IDialogService dialogService, bool askOld = false)
         {
             if (passFile.PassPhrase is null)
             {

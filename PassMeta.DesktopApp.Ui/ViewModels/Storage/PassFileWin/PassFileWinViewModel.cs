@@ -195,9 +195,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 
             var passfile = PassFile.Copy();
             passfile.PassPhrase = passPhraseNew.Data;
-            result = PassFileManager.UpdateData(passfile);
+            var updateResult = PassFileManager.UpdateData(passfile);
 
-            if (result.Ok)
+            if (updateResult.Ok)
             {
                 PassFile = passfile;
                 PassFileChanged = true;
@@ -206,7 +206,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             }
             else
             {
-                _dialogService.ShowError(result.Message!);
+                _dialogService.ShowError(updateResult.Message!);
             }
         }
         
@@ -287,14 +287,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             if (string.IsNullOrEmpty(filePath)) return;
 
             var result = await _exportService.ExportAsync(PassFile, filePath);
-            if (result.Ok)
-            {
-                _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_EXPORT, PassFile.Name, filePath));
-            }
-            else if (result.Message is not null)
-            {
-                _dialogService.ShowFailure(result.Message);
-            }
+            if (result.Bad) return;
+
+            _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_EXPORT, PassFile.Name, filePath));
         }
 
         private async Task RestoreAsync()
@@ -306,48 +301,42 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             if (filePath is null) return;
             
             var importResult = await _importService.ImportAsync(filePath);
-            if (importResult.Ok)
-            {
-                if (passFile.LocalDeleted)
-                {
-                    var restoreResult = PassFileManager.Restore(passFile);
-                    if (restoreResult.Bad)
-                    {
-                        _dialogService.ShowError(restoreResult.Message!);
-                        return;
-                    }
-
-                    PassFile = null;
-                    PassFile = passFile;
-                    PassFileChanged = true;
-                }
-
-                passFile.Data = importResult.Data.Sections;
-                passFile.PassPhrase = importResult.Data.PassPhrase;
+            if (importResult.Bad) return;
             
-                var updateResult = PassFileManager.UpdateData(passFile);
-                if (updateResult.Ok)
-                {
-                    PassFile = null;
-                    PassFile = passFile;
-                    PassFileChanged = true;
-                    _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_RESTORE, PassFile.Name, Path.GetFileName(filePath)));
-                } 
-                else
-                {
-                    _dialogService.ShowError(updateResult.Message!);
-                }
-            }
-            else if (importResult.Message is not null)
+            if (passFile.LocalDeleted)
             {
-                _dialogService.ShowFailure(importResult.Message);
+                var restoreResult = PassFileManager.Restore(passFile);
+                if (restoreResult.Bad)
+                {
+                    _dialogService.ShowError(restoreResult.Message!);
+                    return;
+                }
+
+                PassFile = null;
+                PassFile = passFile;
+                PassFileChanged = true;
+            }
+
+            passFile.Data = importResult.Data.Sections;
+            passFile.PassPhrase = importResult.Data.PassPhrase;
+            
+            var updateResult = PassFileManager.UpdateData(passFile);
+            if (updateResult.Ok)
+            {
+                PassFile = null;
+                PassFile = passFile;
+                PassFileChanged = true;
+                _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_RESTORE, PassFile.Name, Path.GetFileName(filePath)));
+            } 
+            else
+            {
+                _dialogService.ShowError(updateResult.Message!);
             }
         }
         
-        private Task MergeAsync()
+        private async Task MergeAsync()
         {
-            _dialogService.ShowInfo("Not implemented...");  // TODO
-            return Task.CompletedTask;
+            // TODO
         }
 
 #pragma warning disable 8618

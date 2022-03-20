@@ -20,8 +20,4 @@
       </EmbeddedResource>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Models\Dto" />
-    </ItemGroup>
-
 </Project>

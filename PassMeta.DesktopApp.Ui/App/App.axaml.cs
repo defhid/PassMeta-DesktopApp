@@ -53,15 +53,11 @@ namespace PassMeta.DesktopApp.Ui.App
         {
             EnvironmentContainer.Initialize(Locator.Current);
 
-            var logger = new LogService();
-
-            Locator.CurrentMutable.RegisterConstant<ILogService>(logger);
+            Locator.CurrentMutable.RegisterConstant<ILogService>(new LogService());
             
             Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
 
             await StartUp.CheckSystemAndLoadApplicationConfigAsync();
-
-            AppConfig.OnCultureChanged += Restart;
 
             Locator.CurrentMutable.RegisterConstant<IOkBadService>(new OkBadService());
 
@@ -77,11 +73,13 @@ namespace PassMeta.DesktopApp.Ui.App
             
             Locator.CurrentMutable.RegisterConstant<IPassFileExportService>(new PassFileExportService());
             
+            Locator.CurrentMutable.RegisterConstant<IPassFileMergeService>(new PassFileMergeService());
+            
             Locator.CurrentMutable.RegisterConstant<IClipboardService>(new ClipboardService());
             
             Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
-            
-            Locator.Current.GetService<ILogService>()!.OptimizeLogs();
+
+            AppConfig.OnCultureChanged += Restart;
         }
 
         private static MainWindow MakeWindow()
