@@ -83,6 +83,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
         private readonly IPassFileImportService _importService = EnvironmentContainer.Resolve<IPassFileImportService>();
         private readonly IPassFileExportService _exportService = EnvironmentContainer.Resolve<IPassFileExportService>();
+        private readonly IPassFileMergeService _mergeService = EnvironmentContainer.Resolve<IPassFileMergeService>();
 
         public PassFileWinViewModel(PassFile passFile)
         {
@@ -136,7 +137,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             MergeBtn = new BtnState
             {
                 CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync)),
-                IsVisibleObservable = passFileChanged.Select(pf => pf?.Problem?.Kind is PassFileProblemKind.NeedsMerge)
+                IsVisibleObservable = passFileChanged.Select(pf => pf?.LocalDeleted is false
+                                                                   && pf.Problem?.Kind is PassFileProblemKind.NeedsMerge)
             };
             
             ExportBtn = new BtnState
@@ -336,6 +338,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         
         private async Task MergeAsync()
         {
+            if (PassFile?.LocalDeleted is not false) return;
+            
+            var merge = await _mergeService.LoadAndPrepareMergeAsync(PassFile!);
+            if (merge.Bad) return;
+            
             // TODO
         }
 

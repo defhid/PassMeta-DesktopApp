@@ -92,7 +92,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 }
 
                 passFile.DataEncrypted = result.Data!;
-                if ((await _AskPassPhraseAndDecryptAsync(passFile)).Bad)
+                if (!await _DecryptAsync(passFile))
                 {
                     return Result.Failure();
                 }
@@ -110,24 +110,18 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
         
-        private async Task<IResult> _AskPassPhraseAndDecryptAsync(PassFile passFile)
+        private async Task<bool> _DecryptAsync(PassFile passFile)
         {
-            bool TryDecrypt(string passPhrase)
-            {
-                passFile.PassPhrase = passPhrase;
-                return passFile.Decrypt().Ok;
-            }
-
             var passPhrase = await _dialogService.AskPasswordAsync(
                 string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE, passFile.Name));
 
-            while (passPhrase.Ok && (passPhrase.Data == string.Empty || !TryDecrypt(passPhrase.Data!)))
+            while (passPhrase.Ok && (passPhrase.Data == string.Empty || passFile.Decrypt(passPhrase.Data!).Bad))
             {
                 passPhrase = await _dialogService.AskPasswordAsync(
                     string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name));
             }
             
-            return passPhrase;
+            return passFile.Data is not null;
         }
     }
 }

@@ -1528,6 +1528,42 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Input passphrase for local version.
+        /// </summary>
+        public static string PASSMERGE__ASK_PASSPHRASE {
+            get {
+                return ResourceManager.GetString("PASSMERGE__ASK_PASSPHRASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrong passphrase for local version, try again.
+        /// </summary>
+        public static string PASSMERGE__ASK_PASSPHRASE_AGAIN {
+            get {
+                return ResourceManager.GetString("PASSMERGE__ASK_PASSPHRASE_AGAIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input passphrase from remote version.
+        /// </summary>
+        public static string PASSMERGE__ASK_PASSPHRASE_REMOTE {
+            get {
+                return ResourceManager.GetString("PASSMERGE__ASK_PASSPHRASE_REMOTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrong passphrase for remote version, try again.
+        /// </summary>
+        public static string PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN {
+            get {
+                return ResourceManager.GetString("PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to URL is incorrect!.
         /// </summary>
         public static string SETTINGS__INCORRECT_API {

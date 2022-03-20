@@ -1,7 +1,9 @@
 namespace PassMeta.DesktopApp.Common.Models.Dto
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using Entities;
 
     /// <summary>
@@ -9,6 +11,16 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
     /// </summary>
     public class PassFileMerge
     {
+        /// <summary>
+        /// Local and remote passfile versions.
+        /// </summary>
+        public readonly (int Local, int Remote, int Splitting) Versions;
+        
+        /// <summary>
+        /// Local and remote passfile "changed on" timestamps.
+        /// </summary>
+        public readonly (DateTime Local, DateTime Remote, DateTime Splitting) VersionsChangedOn;
+
         /// <summary>
         /// Sections from local passfile version.
         /// </summary>
@@ -22,13 +34,15 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
         /// <summary>
         /// Conflicts between <see cref="LocalSections"/> and <see cref="RemoteSections"/>.
         /// </summary>
-        public readonly List<PassFile.Section> Conflicts = new();
+        public readonly List<Conflict> Conflicts = new();
 
         /// <summary></summary>
-        public PassFileMerge(List<PassFile.Section> localSections, List<PassFile.Section> remoteSections)
+        public PassFileMerge(PassFile localPassFile, PassFile remotePassFile)
         {
-            LocalSections = localSections;
-            RemoteSections = remoteSections;
+            Versions = (localPassFile.Version, remotePassFile.Version, localPassFile.Origin!.Version);
+            VersionsChangedOn = (localPassFile.VersionChangedOn, remotePassFile.VersionChangedOn, localPassFile.Origin!.VersionChangedOn);
+            LocalSections = localPassFile.Data!.Select(section => section.Copy()).ToList();
+            RemoteSections = remotePassFile.Data!.Select(section => section.Copy()).ToList();
         }
 
         /// <summary>

@@ -612,4 +612,16 @@
     <data name="JOURNAL__HEADER_MORE" xml:space="preserve">
         <value>Доп. информация</value>
     </data>
+    <data name="PASSMERGE__ASK_PASSPHRASE" xml:space="preserve">
+        <value>Введите кодовую фразу для локальной версии</value>
+    </data>
+    <data name="PASSMERGE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Неверная кодовая фраза для локальной версии, попробуйте ввести заново</value>
+    </data>
+    <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE" xml:space="preserve">
+        <value>Введите кодовую фразу из новой версии</value>
+    </data>
+    <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN" xml:space="preserve">
+        <value>Неверная кодовая фраза для новой версии, попробуйте ввести заново</value>
+    </data>
 </root>

@@ -24,16 +24,24 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// <remarks>
         /// <see cref="PassFile.PassPhrase"/> must be not null.
         /// </remarks>
-        public static IDetailedResult Decrypt(this PassFile passFile)
+        public static IDetailedResult Decrypt(this PassFile passFile, string? passPhrase = null)
         {
+            var originPassPhrase = passFile.PassPhrase;
+            if (passPhrase is not null)
+            {
+                passFile.PassPhrase = passPhrase;
+            }
+            
             if (string.IsNullOrEmpty(passFile.PassPhrase))
             {
+                passFile.PassPhrase = originPassPhrase;
                 Logger.Error("Using Decrypt method without key phrase!");
                 return DecryptionError;
             }
             
             if (string.IsNullOrEmpty(passFile.DataEncrypted))
             {
+                passFile.PassPhrase = originPassPhrase;
                 Logger.Error("Using Decrypt method without encrypted data!");
                 return DecryptionError;
             }
@@ -42,7 +50,10 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
 
             var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase);
             if (content is null)
+            {
+                passFile.PassPhrase = originPassPhrase;
                 return Result.Failure(Resources.PASSFILE__VALIDATION__WRONG_PASSPHRASE);
+            }
 
             try
             {
@@ -50,6 +61,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             }
             catch (Exception ex)
             {
+                passFile.PassPhrase = originPassPhrase;
                 Logger.Error(ex, "Passfile deserializing");
                 return DecryptionError;
             }

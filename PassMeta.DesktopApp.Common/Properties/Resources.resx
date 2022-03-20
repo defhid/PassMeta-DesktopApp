@@ -619,4 +619,16 @@ try another keywords...</value>
     <data name="JOURNAL__HEADER_MORE" xml:space="preserve">
         <value>More info</value>
     </data>
+    <data name="PASSMERGE__ASK_PASSPHRASE" xml:space="preserve">
+        <value>Input passphrase for local version</value>
+    </data>
+    <data name="PASSMERGE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Wrong passphrase for local version, try again</value>
+    </data>
+    <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE" xml:space="preserve">
+        <value>Input passphrase from remote version</value>
+    </data>
+    <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN" xml:space="preserve">
+        <value>Wrong passphrase for remote version, try again</value>
+    </data>
 </root>

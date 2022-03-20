@@ -12,6 +12,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
         /// <summary>
         /// Build <see cref="PassFileMerge"/> from enumerable passfile sections.
         /// </summary>
-        Task<IResult<PassFileMerge>> LoadRemoteAndPrepareAsync(PassFile localPassFile);
+        Task<IResult<PassFileMerge>> LoadAndPrepareMergeAsync(PassFile localPassFile);
     }
 }
