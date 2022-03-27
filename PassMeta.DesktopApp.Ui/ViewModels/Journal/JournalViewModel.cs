@@ -18,6 +18,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
     using ReactiveUI;
     using Views.Main;
 
+    using AppContext = Core.Utils.AppContext;
+
     public class JournalViewModel : PageViewModel
     {
         private static int _pageLimit = 50;
@@ -74,6 +76,19 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
 
             this.WhenNavigatedToObservable()
                 .InvokeCommand(ReactiveCommand.CreateFromTask(InitLoadAsync));
+        }
+        
+        public override void Navigate()
+        {
+            if (AppContext.Current.User is null)
+            {
+                FakeNavigated();
+                NavigateTo<AuthRequiredViewModel>(typeof(JournalViewModel));
+            }
+            else
+            {
+                base.Navigate();
+            }
         }
 
         public override Task RefreshAsync() => LoadRecordsAsync(SelectedPageIndex);
