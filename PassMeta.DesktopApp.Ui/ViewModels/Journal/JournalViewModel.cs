@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using Base;
+    using Common;
     using Common.Interfaces.Mapping;
     using Common.Models.Dto.Response;
     using Common.Models.Entities;
@@ -17,7 +18,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
     using ReactiveUI;
     using Views.Main;
 
-    public class JournalViewModel : ViewModelPage
+    public class JournalViewModel : PageViewModel
     {
         private static int _pageLimit = 50;
         
@@ -118,7 +119,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
                     kindsResponse.Data!.Select(kind => new MapToTranslate<int>(kind.Id, kind.NamePack)));
             }
 
-            var defaultKind = new JournalRecordKindInfo(-1, "-");
+            var defaultKind = new JournalRecordKindInfo(-1, Resources.JOURNAL__ALL_KINDS);
             
             Kinds = _kindMapper.GetMappings()
                 .Select(map => new JournalRecordKindInfo(map.From, map.To))

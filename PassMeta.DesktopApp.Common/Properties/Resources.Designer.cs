@@ -655,6 +655,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string JOURNAL__ALL_KINDS {
+            get {
+                return ResourceManager.GetString("JOURNAL__ALL_KINDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Event.
         /// </summary>
         public static string JOURNAL__HEADER_KIND {
@@ -801,9 +810,9 @@ namespace PassMeta.DesktopApp.Common {
         /// <summary>
         ///   Looks up a localized string similar to Invalid period selected!.
         /// </summary>
-        public static string LOGS__INCORRECT_PERIOD_ERR {
+        public static string LOGS__INCORRECT_PERIOD_LABEL {
             get {
-                return ResourceManager.GetString("LOGS__INCORRECT_PERIOD_ERR", resourceCulture);
+                return ResourceManager.GetString("LOGS__INCORRECT_PERIOD_LABEL", resourceCulture);
             }
         }
         
@@ -1065,6 +1074,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILE__EXPORT_PASSFILE_OPEN {
             get {
                 return ResourceManager.GetString("PASSFILE__EXPORT_PASSFILE_OPEN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile merged successfully!.
+        /// </summary>
+        public static string PASSFILE__INFO_MERGED {
+            get {
+                return ResourceManager.GetString("PASSFILE__INFO_MERGED", resourceCulture);
             }
         }
         
@@ -1434,6 +1452,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILELIST__TITLE {
             get {
                 return ResourceManager.GetString("PASSFILELIST__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile merge.
+        /// </summary>
+        public static string PASSFILEMERGE__TITLE {
+            get {
+                return ResourceManager.GetString("PASSFILEMERGE__TITLE", resourceCulture);
             }
         }
         

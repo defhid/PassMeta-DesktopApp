@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin.Models
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Models
 {
     using Base;
 

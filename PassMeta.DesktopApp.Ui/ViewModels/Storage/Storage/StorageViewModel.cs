@@ -26,7 +26,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     
     using AppContext = Core.Utils.AppContext;
 
-    public class StorageViewModel : ViewModelPage
+    public class StorageViewModel : PageViewModel
     {
         private static bool _loaded;
         private static readonly PassFileItemPath LastItemPath = new();

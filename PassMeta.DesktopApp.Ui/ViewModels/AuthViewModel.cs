@@ -11,7 +11,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using Core;
     using ReactiveUI;
 
-    public class AuthViewModel : ViewModelPage
+    public class AuthViewModel : PageViewModel
     {
         private static IAuthService AuthService => EnvironmentContainer.Resolve<IAuthService>();
 

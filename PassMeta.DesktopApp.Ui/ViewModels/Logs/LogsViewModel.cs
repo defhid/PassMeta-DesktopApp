@@ -13,9 +13,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
     using ReactiveUI;
     using Views.Main;
 
-    public class LogsViewModel : ViewModelPage
+    public class LogsViewModel : PageViewModel
     {
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
 
         private const int InitIntervalDays = 3;
@@ -50,8 +49,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
         }
         
         public IObservable<LogInfo> SelectedLog { get; }
-        
-        public IObservable<bool> AnyFound { get; }
+
+        private string? _foundText;
+        public string? FoundText
+        {
+            get => _foundText;
+            set => this.RaiseAndSetIfChanged(ref _foundText, value);
+        }
 
         public LogsViewModel(IScreen hostScreen) : base(hostScreen)
         {
@@ -62,9 +66,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
             SelectedLog = this.WhenAnyValue(vm => vm.SelectedLogIndex)
                 .Select(index => index < 0 ? new LogInfo(null) : _logs[index]);
 
-            AnyFound = this.WhenAnyValue(vm => vm.Logs)
-                .Select(logs => logs.Any());
-            
             this.WhenAnyValue(vm => vm.FromDate, vm => vm.ToDate)
                 .Skip(1)
                 .InvokeCommand(loadCommand);
@@ -87,7 +88,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
             
             if ((toDate - fromDate).Days > MaxIntervalDays || fromDate > toDate)
             {
-                _dialogService.ShowFailure(Resources.LOGS__INCORRECT_PERIOD_ERR);
+                FoundText = Resources.LOGS__INCORRECT_PERIOD_LABEL;
                 return;
             }
 
@@ -95,6 +96,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
             logs.Reverse();
 
             Logs = logs.Select(l => new LogInfo(l)).ToList();
+            FoundText = Logs.Any() ? null : Resources.LOGS__NOT_FOUND_LABEL;
         }
     }
 }

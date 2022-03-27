@@ -3,7 +3,6 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Linq;
     using Entities;
 
     /// <summary>
@@ -22,17 +21,12 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
         public readonly (DateTime Local, DateTime Remote, DateTime Splitting) VersionsChangedOn;
 
         /// <summary>
-        /// Sections from local passfile version.
+        /// Result passfile sections.
         /// </summary>
-        public readonly List<PassFile.Section> LocalSections;
+        public readonly List<PassFile.Section> ResultSections = new();
 
         /// <summary>
-        /// Sections from remote passfile version.
-        /// </summary>
-        public readonly List<PassFile.Section> RemoteSections;
-
-        /// <summary>
-        /// Conflicts between <see cref="LocalSections"/> and <see cref="RemoteSections"/>.
+        /// Conflicts between sections from remote and local versions.
         /// </summary>
         public readonly List<Conflict> Conflicts = new();
 
@@ -41,8 +35,6 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
         {
             Versions = (localPassFile.Version, remotePassFile.Version, localPassFile.Origin!.Version);
             VersionsChangedOn = (localPassFile.VersionChangedOn, remotePassFile.VersionChangedOn, localPassFile.Origin!.VersionChangedOn);
-            LocalSections = localPassFile.Data!.Select(section => section.Copy()).ToList();
-            RemoteSections = remotePassFile.Data!.Select(section => section.Copy()).ToList();
         }
 
         /// <summary>

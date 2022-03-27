@@ -1,9 +1,8 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin.Models
 {
-    using Views.Storage;
+    using Base;
 
-    public class ViewElements
+    public class ViewElements : WinViewElements
     {
-        public PassFileLocalListWin? Window { get; set; }
     }
 }

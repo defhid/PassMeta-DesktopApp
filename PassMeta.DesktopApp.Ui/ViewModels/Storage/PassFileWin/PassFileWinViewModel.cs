@@ -342,8 +342,25 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             
             var merge = await _mergeService.LoadAndPrepareMergeAsync(PassFile!);
             if (merge.Bad) return;
+
+            var data = await new PassFileMergeWin(merge.Data!).ShowDialog<List<PassFile.Section>>(MainWindow.Current);
+            if (data is null) return;
             
-            // TODO
+            var passfile = PassFile.Copy();
+            passfile.Data = data;
+            var updateResult = PassFileManager.UpdateData(PassFile);
+            
+            if (updateResult.Ok)
+            {
+                PassFile = passfile;
+                PassFileChanged = true;
+                
+                _dialogService.ShowInfo(Resources.PASSFILE__INFO_MERGED);
+            }
+            else
+            {
+                _dialogService.ShowError(updateResult.Message!);
+            }
         }
 
 #pragma warning disable 8618

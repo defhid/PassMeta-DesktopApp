@@ -24,7 +24,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
 
-    public class MainWindow : Window
+    public class MainWindow : WinView<MainWindowViewModel>
     {
         private bool _loaded;
         
@@ -45,31 +45,25 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 #endif
         }
 
-        public new MainWindowViewModel DataContext
-        {
-            get => (MainWindowViewModel)base.DataContext!;
-            init => base.DataContext = value;
-        }
-        
-        public Preloader StartPreloader() => new Preloader(DataContext).Start();
+        public Preloader StartPreloader() => new Preloader(DataContext!).Start();
 
         private void AccountBtn_OnClick(object? sender, RoutedEventArgs e) 
-            => MenuBtnClick(sender, () => new AccountViewModel(DataContext).Navigate());
+            => MenuBtnClick(sender, () => new AccountViewModel(DataContext!).Navigate());
 
         private void StorageBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new StorageViewModel(DataContext).Navigate());
+            => MenuBtnClick(sender, () => new StorageViewModel(DataContext!).Navigate());
 
         private void GeneratorBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new GeneratorViewModel(DataContext).Navigate());
+            => MenuBtnClick(sender, () => new GeneratorViewModel(DataContext!).Navigate());
         
         private void JournalBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new JournalViewModel(DataContext).Navigate());
+            => MenuBtnClick(sender, () => new JournalViewModel(DataContext!).Navigate());
 
         private void LogsBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new LogsViewModel(DataContext).Navigate());
+            => MenuBtnClick(sender, () => new LogsViewModel(DataContext!).Navigate());
 
         private void SettingsBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new SettingsViewModel(DataContext).Navigate());
+            => MenuBtnClick(sender, () => new SettingsViewModel(DataContext!).Navigate());
 
         private static void MenuBtnClick(object? sender, Action action)
         {
@@ -86,7 +80,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             
             await PassMetaApi.CheckConnectionAsync();
 
-            await DataContext.Router.CurrentViewModel!.OfType<ViewModelPage>()
+            await DataContext!.Router.CurrentViewModel!.OfType<PageViewModel>()
                 .FirstAsync()
                 .Select(vm => vm.RefreshAsync());
         }
@@ -101,9 +95,9 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             if (!_loaded)
             {
                 if (AppContext.Current.User is null)
-                    new AuthViewModel(DataContext).Navigate();
+                    new AuthViewModel(DataContext!).Navigate();
                 else
-                    new StorageViewModel(DataContext).Navigate();
+                    new StorageViewModel(DataContext!).Navigate();
             }
 
             _loaded = true;
@@ -127,9 +121,9 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         
         private void SubscribeOnPageEvents()
         {
-            ViewModelPage.OnNavigated += (page) =>
+            PageViewModel.OnNavigated += (page) =>
             {
-                var mainPaneButtons = DataContext.MainPane.Buttons;
+                var mainPaneButtons = DataContext!.MainPane.Buttons;
                 mainPaneButtons.CurrentActive = page switch
                 {
                     AuthViewModel => mainPaneButtons.Account,

@@ -55,8 +55,7 @@
                        Opacity="0.7"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
-                       IsVisible="{Binding !AnyFound^}"
-                       Text="{x:Static com:Resources.LOGS__NOT_FOUND_LABEL}"/>
+                       Text="{Binding FoundText}"/>
             
             <ScrollViewer Grid.Column="1"
                           Margin="10 0 2 0"

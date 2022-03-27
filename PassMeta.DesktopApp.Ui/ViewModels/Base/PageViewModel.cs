@@ -6,9 +6,9 @@
     using Avalonia.Controls;
     using ReactiveUI;
     
-    public abstract class ViewModelPage : ReactiveObject, IRoutableViewModel
+    public abstract class PageViewModel : ReactiveObject, IRoutableViewModel
     {
-        public static event Action<ViewModelPage>? OnNavigated;
+        public static event Action<PageViewModel>? OnNavigated;
 
         public string? UrlPathSegment { get; }
         
@@ -16,14 +16,14 @@
 
         public virtual ContentControl[] RightBarButtons { get; } = Array.Empty<ContentControl>();
 
-        protected ViewModelPage(IScreen hostScreen)
+        protected PageViewModel(IScreen hostScreen)
         {
             HostScreen = hostScreen;
             UrlPathSegment = GetType().Name;
         }
         
         protected void NavigateTo<TViewModel>(params object?[]? args) 
-            where TViewModel : ViewModelPage
+            where TViewModel : PageViewModel
         {
             args ??= Array.Empty<object>();
             var vm = (TViewModel)Activator.CreateInstance(typeof(TViewModel), new object[] {HostScreen}.Concat(args).ToArray())!;
@@ -32,7 +32,7 @@
         
         protected void NavigateTo(Type viewModelType)
         {
-            var vm = (ViewModelPage)Activator.CreateInstance(viewModelType, HostScreen)!;
+            var vm = (PageViewModel)Activator.CreateInstance(viewModelType, HostScreen)!;
             vm.Navigate();
         }
 

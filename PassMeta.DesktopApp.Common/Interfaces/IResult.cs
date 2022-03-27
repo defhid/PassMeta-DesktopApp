@@ -24,7 +24,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces
         /// <summary>
         /// Result optional data.
         /// </summary>
-        /// <remarks>Must be not default when <see cref="IDetailedResult.Ok"/>.</remarks>
+        /// <remarks>Must be not default when <see cref="IResult.Ok"/>.</remarks>
         TData? Data { get; }
     }
 
@@ -36,7 +36,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces
         /// <summary>
         /// Result optional message.
         /// </summary>
-        /// <remarks>Must be not null when <see cref="IDetailedResult.Bad"/>.</remarks>
+        /// <remarks>Must be not null when <see cref="IResult.Bad"/>.</remarks>
         string? Message { get; }
     }
     

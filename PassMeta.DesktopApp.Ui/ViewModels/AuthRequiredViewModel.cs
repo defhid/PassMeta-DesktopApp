@@ -8,9 +8,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System.Threading.Tasks;
     using ReactiveUI;
 
-    public class AuthRequiredViewModel : ViewModelPage
+    public class AuthRequiredViewModel : PageViewModel
     {
-        /// <summary><see cref="ViewModelPage"/></summary>
+        /// <summary><see cref="PageViewModel"/></summary>
         public Type ForViewModelPageType { get; }
 
         public AuthRequiredViewModel(IScreen hostScreen, Type forPage) : base(hostScreen)

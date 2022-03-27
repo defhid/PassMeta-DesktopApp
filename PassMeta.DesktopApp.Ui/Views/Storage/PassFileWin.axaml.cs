@@ -5,29 +5,21 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
     using Avalonia.Markup.Xaml;
     using Common.Models.Entities;
     using Utils.Extensions;
+    using ViewModels.Base;
     using ViewModels.Storage.PassFileWin;
 
-    public class PassFileWin : Window
+    public class PassFileWin : WinView<PassFileWinViewModel>
     {
         public PassFile? PassFile { get; private set; }
 
         public bool PassFileChanged { get; private set; }
 
         private readonly bool _changeNameAdvice;
-        
-        private new PassFileWinViewModel? DataContext
-        {
-            get => (PassFileWinViewModel?)base.DataContext;
-            init => base.DataContext = value;
-        }
-        
+
         public PassFileWin()
         {
             AvaloniaXamlLoader.Load(this);
             this.CorrectMainWindowFocusWhileOpened();
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         public PassFileWin(PassFile passFile) : this()

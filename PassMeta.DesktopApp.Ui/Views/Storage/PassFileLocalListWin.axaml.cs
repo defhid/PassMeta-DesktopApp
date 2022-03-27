@@ -1,34 +1,26 @@
 namespace PassMeta.DesktopApp.Ui.Views.Storage
 {
-    using Avalonia;
-    using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
     using Common.Models.Entities;
     using Utils.Extensions;
+    using ViewModels.Base;
     using ViewModels.Storage.PassFileLocalListWin;
 
-    public class PassFileLocalListWin : Window
+    public class PassFileLocalListWin : WinView<PassFileLocalListWinViewModel>
     {
-        private new PassFileLocalListWinViewModel? DataContext
-        {
-            get => (PassFileLocalListWinViewModel?)base.DataContext;
-            init => base.DataContext = value;
-        }
-        
         public PassFileLocalListWin()
         {
             AvaloniaXamlLoader.Load(this);
             this.CorrectMainWindowFocusWhileOpened();
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         public PassFileLocalListWin(PassFile currentPassFile) : this()
         {
-            DataContext = new PassFileLocalListWinViewModel(currentPassFile);
-            DataContext.ViewElements.Window = this;
-            
+            DataContext = new PassFileLocalListWinViewModel(currentPassFile)
+            {
+                ViewElements = { Window = this }
+            };
+
             Opened += (_, _) => DataContext.Load();
         }
     }

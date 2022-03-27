@@ -6,9 +6,10 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
     using Common.Enums;
+    using ViewModels.Base;
     using ViewModels.Main.DialogWindow;
 
-    public class DialogWindow : Window
+    public class DialogWindow : WinView<object>
     {
         public DialogButton ResultButton { get; private set; }
 
@@ -16,11 +17,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
         public DialogWindow()
         {
-            ResultButton = DialogButton.Close;
             AvaloniaXamlLoader.Load(this);
-#if DEBUG
-            this.AttachDevTools();
-#endif
+            ResultButton = DialogButton.Close;
         }
         
         private void Button_OnClick(object? sender, RoutedEventArgs e)

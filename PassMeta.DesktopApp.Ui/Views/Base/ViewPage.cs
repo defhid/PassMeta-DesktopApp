@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Base
     using Avalonia.ReactiveUI;
     
     public abstract class ViewPage<TViewModel> : ReactiveUserControl<TViewModel>
-        where TViewModel : ViewModelPage
+        where TViewModel : PageViewModel
     {
         /// <inheritdoc cref="ReactiveUserControl{TViewModel}.DataContext"/>
         protected new TViewModel? DataContext
@@ -18,7 +18,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Base
         /// Navigate to a page by ViewModel.
         /// </summary>
         protected void NavigateTo<TNewViewModel>()
-            where TNewViewModel : ViewModelPage
+            where TNewViewModel : PageViewModel
         {
             var vm = (TNewViewModel) Activator.CreateInstance(typeof(TNewViewModel), DataContext!.HostScreen)!;
             vm.Navigate();

@@ -62,6 +62,10 @@
         <DependentUpon>JournalView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Storage\PassFileMergeWin.axaml.cs">
+        <DependentUpon>PassFileMergeWin.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\AvaloniaGif\AvaloniaGif.csproj" />

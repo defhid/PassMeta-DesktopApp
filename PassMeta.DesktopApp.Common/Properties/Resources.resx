@@ -481,7 +481,7 @@ try another keywords...</value>
     <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
         <value>Refresh</value>
     </data>
-    <data name="LOGS__INCORRECT_PERIOD_ERR" xml:space="preserve">
+    <data name="LOGS__INCORRECT_PERIOD_LABEL" xml:space="preserve">
         <value>Invalid period selected!</value>
     </data>
     <data name="APP__MENU_BTN__LOGS" xml:space="preserve">
@@ -630,5 +630,14 @@ try another keywords...</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN" xml:space="preserve">
         <value>Wrong passphrase for remote version, try again</value>
+    </data>
+    <data name="JOURNAL__ALL_KINDS" xml:space="preserve">
+        <value>All</value>
+    </data>
+    <data name="PASSFILEMERGE__TITLE" xml:space="preserve">
+        <value>Passfile merge</value>
+    </data>
+    <data name="PASSFILE__INFO_MERGED" xml:space="preserve">
+        <value>Passfile merged successfully!</value>
     </data>
 </root>

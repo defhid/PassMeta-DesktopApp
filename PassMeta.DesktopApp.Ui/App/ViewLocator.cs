@@ -27,7 +27,7 @@ namespace PassMeta.DesktopApp.Ui.App
 
         public bool Match(object data)
         {
-            return data is ViewModelPage;
+            return data is PageViewModel;
         }
     }
 }

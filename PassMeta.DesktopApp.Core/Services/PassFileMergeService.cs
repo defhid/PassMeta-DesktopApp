@@ -47,17 +47,17 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure<PassFileMerge>();
             }
 
-            var merge = FillConflicts(new PassFileMerge(localPassFile, fetchResult.Data!));
+            var merge = _PrepareMerge(localPassFile, remotePassFile);
 
             return Result.Success(merge);
         }
 
-        private static PassFileMerge FillConflicts(PassFileMerge merge)
+        private static PassFileMerge _PrepareMerge(PassFile localPassFile, PassFile remotePassFile)
         {
-            void Find(
+            void FillMerge(
                 IList<PassFile.Section> localSections,
                 ICollection<PassFile.Section> remoteSections,
-                ICollection<PassFileMerge.Conflict> conflicts,
+                PassFileMerge merge,
                 bool reverse)
             {
                 for (var i = localSections.Count - 1; i >= 0; --i)
@@ -67,23 +67,32 @@ namespace PassMeta.DesktopApp.Core.Services
 
                     if (remote is null)
                     {
-                        localSections.RemoveAt(i);
+                        merge.Conflicts.Add(new PassFileMerge.Conflict(reverse ? null : local, reverse ? local : null));
                     }
                     else if (remote.Items.Count != local.Items.Count ||
                              remote.Items.Exists(it1 => 
                                  local.Items.All(it2 => it2.DiffersFrom(it1))))
                     {
-                        localSections.Remove(local);
                         remoteSections.Remove(remote);
+                        merge.Conflicts.Add(new PassFileMerge.Conflict(reverse ? remote : local, reverse ? local : remote));
                     }
-                    else continue;
-
-                    conflicts.Add(new PassFileMerge.Conflict(reverse ? remote : local, reverse ? local : remote));
+                    else
+                    {
+                        remoteSections.Remove(remote);
+                        merge.ResultSections.Add(local);
+                    }
                 }
+                
+                localSections.Clear();
             }
+
+            var merge = new PassFileMerge(localPassFile, remotePassFile);
+
+            var localList = localPassFile.Data!.Select(section => section.Copy()).ToList();
+            var remoteList = remotePassFile.Data!.Select(section => section.Copy()).ToList();
             
-            Find(merge.LocalSections, merge.RemoteSections, merge.Conflicts, false);
-            Find(merge.RemoteSections, merge.LocalSections, merge.Conflicts, true);
+            FillMerge(localList, remoteList, merge, false);
+            FillMerge(remoteList, localList, merge, true);
 
             return merge;
         }

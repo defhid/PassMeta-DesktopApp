@@ -10,7 +10,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System.Windows.Input;
     using ReactiveUI;
 
-    public class GeneratorViewModel : ViewModelPage
+    public class GeneratorViewModel : PageViewModel
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
         private readonly ICryptoService _cryptoService = EnvironmentContainer.Resolve<ICryptoService>();

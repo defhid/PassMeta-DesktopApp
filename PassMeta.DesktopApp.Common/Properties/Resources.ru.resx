@@ -474,7 +474,7 @@
     <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
         <value>Обновить</value>
     </data>
-    <data name="LOGS__INCORRECT_PERIOD_ERR" xml:space="preserve">
+    <data name="LOGS__INCORRECT_PERIOD_LABEL" xml:space="preserve">
         <value>Выбран недопустимый период!</value>
     </data>
     <data name="APP__MENU_BTN__LOGS" xml:space="preserve">
@@ -623,5 +623,14 @@
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN" xml:space="preserve">
         <value>Неверная кодовая фраза для новой версии, попробуйте ввести заново</value>
+    </data>
+    <data name="JOURNAL__ALL_KINDS" xml:space="preserve">
+        <value>Все</value>
+    </data>
+    <data name="PASSFILEMERGE__TITLE" xml:space="preserve">
+        <value>Слияние пакета паролей</value>
+    </data>
+    <data name="PASSFILE__INFO_MERGED" xml:space="preserve">
+        <value>Пакет паролей успешно слит!</value>
     </data>
 </root>

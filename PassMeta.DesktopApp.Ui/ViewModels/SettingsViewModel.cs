@@ -15,7 +15,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using ReactiveUI;
     using Views.Main;
 
-    public class SettingsViewModel : ViewModelPage
+    public class SettingsViewModel : PageViewModel
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
