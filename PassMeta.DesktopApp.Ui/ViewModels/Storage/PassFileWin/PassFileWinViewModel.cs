@@ -115,7 +115,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 
             CreatedOn = passFileChanged.Select(pf => pf?.CreatedOn.ToShortDateTimeString());
 
-            ChangedOn = passFileChanged.Select(pf => pf?.InfoChangedOn.ToShortDateTimeString());
+            ChangedOn = passFileChanged.Select(pf => string.Join(" / ", 
+                new[] {pf?.InfoChangedOn, pf?.VersionChangedOn}
+                    .Where(dt => dt is not null)
+                    .Select(dt => dt!.Value.ToShortDateTimeString())));
 
             StateColor = passFileChanged.Select(pf => pf.GetStateColor());
 

@@ -42,7 +42,11 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Has any uncommited changed/deleted passfile?
         /// </summary>
         public static bool AnyCurrentChanged =>
-            _deletedPassFiles.Any() || _currentPassFiles.Any(pf => pf.changed is not null);
+            _deletedPassFiles.Any() || 
+            _currentPassFiles.Any(pf => pf.changed is not null && 
+                                        (pf.source is null || 
+                                         pf.changed.IsInformationDifferentFrom(pf.source) || 
+                                         pf.changed.IsVersionDifferentFrom(pf.source)));
         
         /// <summary>
         /// Has any commited changed/deleted passfile?

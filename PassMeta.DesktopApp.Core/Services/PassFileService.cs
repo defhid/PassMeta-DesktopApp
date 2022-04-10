@@ -12,7 +12,6 @@ namespace PassMeta.DesktopApp.Core.Services
     
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using Common.Interfaces;
     using Common.Interfaces.Services.PassFile;
@@ -156,12 +155,15 @@ namespace PassMeta.DesktopApp.Core.Services
             
             _dialogService.ShowInfo(Resources.PASSERVICE__INFO_SYNCHRONIZED);
 
-            var commitResult = await PassFileManager.CommitAsync();
+            if (PassFileManager.AnyCurrentChanged)
+            {
+                var commitResult = await PassFileManager.CommitAsync();
             
-            if (commitResult.Ok)
-                _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
-            else
-                _dialogService.ShowError(commitResult.Message!);
+                if (commitResult.Ok)
+                    _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
+                else
+                    _dialogService.ShowError(commitResult.Message!);
+            }
         }
 
         /// <inheritdoc />
@@ -211,12 +213,15 @@ namespace PassMeta.DesktopApp.Core.Services
                 _dialogService.ShowInfo(Resources.PASSERVICE__INFO_SYNCHRONIZED);
             }
 
-            var commitResult = await PassFileManager.CommitAsync();
+            if (PassFileManager.AnyCurrentChanged)
+            {
+                var commitResult = await PassFileManager.CommitAsync();
             
-            if (commitResult.Ok)
-                _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
-            else
-                _dialogService.ShowError(commitResult.Message!);
+                if (commitResult.Ok)
+                    _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
+                else
+                    _dialogService.ShowError(commitResult.Message!);
+            }
         }
 
         private async Task _TryAddPassFileAsync(PassFile passFile)
@@ -314,8 +319,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             return res.Ok;
         }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         private IDetailedResult EnsureOk(PassFile passFile, IDetailedResult result)
         {
             if (result.Bad)
