@@ -204,7 +204,7 @@
         <value>Пусто</value>
     </data>
     <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
-        <value>Вы действительно хотите удалить пакет '{0}' #{1}?</value>
+        <value>Вы действительно хотите удалить пакет {0}?</value>
     </data>
     <data name="PASSFILE__VALIDATION__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Неверная кодовая фраза</value>
@@ -249,7 +249,7 @@
         <value>Логин '{0}' скопирован в буфер обмена</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">
-        <value>Пакет паролей '{0}' (#{1})</value>
+        <value>Пакет паролей {0}</value>
     </data>
     <data name="PASSFILE_COLOR__BLUE" xml:space="preserve">
         <value>Синий</value>
@@ -318,18 +318,18 @@
         <value>Новый (локальный)</value>
     </data>
     <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
-        <value>Новый пакет паролей '{0}' (#{1})</value>
+        <value>Новый пакет паролей {0}</value>
     </data>
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Не удаётся зашифровать файл</value>
     </data>
-    <data name="PASSMANAGER__VERSION_NOT_FOUND_ERR" xml:space="preserve">
+    <data name="PASSMGR__VERSION_NOT_FOUND_ERR" xml:space="preserve">
         <value>Версия локального пакета не найдена!</value>
     </data>
-    <data name="PASSMANAGER__ERR" xml:space="preserve">
+    <data name="PASSMGR__ERR" xml:space="preserve">
         <value>Ошибка во время работы локального менеджера пакетов! (см. логи)</value>
     </data>
-    <data name="PASSMANAGER__COMMIT_WARNING" xml:space="preserve">
+    <data name="PASSMGR__COMMIT_WARNING" xml:space="preserve">
         <value>Пакеты сохранены локально с ошибками! (см. логи)</value>
     </data>
     <data name="PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE" xml:space="preserve">
@@ -339,7 +339,7 @@
         <value>Ошибка удаления с сервера</value>
     </data>
     <data name="PASSFILE__TITLE_DELETED" xml:space="preserve">
-        <value>Удалённый локально пакет паролей '{0}' (#{1})</value>
+        <value>Удалённый локально пакет паролей {0}</value>
     </data>
     <data name="DICT_STORAGE__PASSFILE_CREATED_ON" xml:space="preserve">
         <value>время создания пакета</value>
@@ -380,13 +380,13 @@
     <data name="DICT_AUTH__USER" xml:space="preserve">
         <value>пользователь</value>
     </data>
-    <data name="PASSERVICE__SUCCESS_COMMIT" xml:space="preserve">
-        <value>Успешно сохранено!</value>
+    <data name="PASSERVICE__INFO_COMMITED" xml:space="preserve">
+        <value>Сохранено локально</value>
     </data>
     <data name="STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE" xml:space="preserve">
         <value>Введите кодовую фразу для нового пакета</value>
     </data>
-    <data name="PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
+    <data name="PASSMGR__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
         <value>Новый</value>
     </data>
     <data name="STORAGE__SECTION_SEARCH_INPUT_WATERMARK" xml:space="preserve">
@@ -632,5 +632,8 @@
     </data>
     <data name="PASSFILE__INFO_MERGED" xml:space="preserve">
         <value>Пакет паролей успешно слит!</value>
+    </data>
+    <data name="PASSERVICE__INFO_SYNCHRONIZED" xml:space="preserve">
+        <value>Cинхронизировано с сервером</value>
     </data>
 </root>

@@ -907,11 +907,20 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Successfully saved!.
+        ///   Looks up a localized string similar to Saved locally.
         /// </summary>
-        public static string PASSERVICE__SUCCESS_COMMIT {
+        public static string PASSERVICE__INFO_COMMITED {
             get {
-                return ResourceManager.GetString("PASSERVICE__SUCCESS_COMMIT", resourceCulture);
+                return ResourceManager.GetString("PASSERVICE__INFO_COMMITED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronized with the server.
+        /// </summary>
+        public static string PASSERVICE__INFO_SYNCHRONIZED {
+            get {
+                return ResourceManager.GetString("PASSERVICE__INFO_SYNCHRONIZED", resourceCulture);
             }
         }
         
@@ -1033,7 +1042,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you really want to delete passfile &apos;{0}&apos; #{1}?.
+        ///   Looks up a localized string similar to Do you really want to delete passfile {0}?.
         /// </summary>
         public static string PASSFILE__CONFIRM_DELETE {
             get {
@@ -1195,7 +1204,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; (#{1}).
+        ///   Looks up a localized string similar to Passfile {0}.
         /// </summary>
         public static string PASSFILE__TITLE {
             get {
@@ -1204,7 +1213,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted locally passfile &apos;{0}&apos; (#{1}).
+        ///   Looks up a localized string similar to Deleted locally passfile {0}.
         /// </summary>
         public static string PASSFILE__TITLE_DELETED {
             get {
@@ -1213,7 +1222,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New passfile &apos;{0}&apos; (#{1}).
+        ///   Looks up a localized string similar to New passfile {0}.
         /// </summary>
         public static string PASSFILE__TITLE_NEW {
             get {
@@ -1519,42 +1528,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Passfiles are saved to the local storage with errors! (see logs).
-        /// </summary>
-        public static string PASSMANAGER__COMMIT_WARNING {
-            get {
-                return ResourceManager.GetString("PASSMANAGER__COMMIT_WARNING", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New.
-        /// </summary>
-        public static string PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME {
-            get {
-                return ResourceManager.GetString("PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile local manager error! (see logs).
-        /// </summary>
-        public static string PASSMANAGER__ERR {
-            get {
-                return ResourceManager.GetString("PASSMANAGER__ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passfile local version not found!.
-        /// </summary>
-        public static string PASSMANAGER__VERSION_NOT_FOUND_ERR {
-            get {
-                return ResourceManager.GetString("PASSMANAGER__VERSION_NOT_FOUND_ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Input passphrase for local version.
         /// </summary>
         public static string PASSMERGE__ASK_PASSPHRASE {
@@ -1587,6 +1560,42 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN {
             get {
                 return ResourceManager.GetString("PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfiles are saved to the local storage with errors! (see logs).
+        /// </summary>
+        public static string PASSMGR__COMMIT_WARNING {
+            get {
+                return ResourceManager.GetString("PASSMGR__COMMIT_WARNING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New.
+        /// </summary>
+        public static string PASSMGR__DEFAULT_NEW_PASSFILE_NAME {
+            get {
+                return ResourceManager.GetString("PASSMGR__DEFAULT_NEW_PASSFILE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile local manager error! (see logs).
+        /// </summary>
+        public static string PASSMGR__ERR {
+            get {
+                return ResourceManager.GetString("PASSMGR__ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile local version not found!.
+        /// </summary>
+        public static string PASSMGR__VERSION_NOT_FOUND_ERR {
+            get {
+                return ResourceManager.GetString("PASSMGR__VERSION_NOT_FOUND_ERR", resourceCulture);
             }
         }
         

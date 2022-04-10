@@ -53,17 +53,23 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         }
 
         /// <summary>
+        /// Get passfile short identity string (id + name).
+        /// </summary>
+        public static string GetIdentityString(this PassFile passFile) 
+            => $"#{passFile.Id.ToString().Replace('-', '~')} '{passFile.Name.Replace("'", "")}'";
+
+        /// <summary>
         /// Get title for passfile, depending on its current state.
         /// </summary>
         public static string GetTitle(this PassFile passFile)
         {
             if (passFile.LocalCreated) 
-                return string.Format(Resources.PASSFILE__TITLE_NEW, passFile.Name, passFile.Id);
+                return string.Format(Resources.PASSFILE__TITLE_NEW, passFile.GetIdentityString());
             
             if (passFile.LocalDeleted) 
-                return string.Format(Resources.PASSFILE__TITLE_DELETED, passFile.Name, passFile.Id);
+                return string.Format(Resources.PASSFILE__TITLE_DELETED, passFile.GetIdentityString());
             
-            return string.Format(Resources.PASSFILE__TITLE, passFile.Name, passFile.Id);
+            return string.Format(Resources.PASSFILE__TITLE, passFile.GetIdentityString());
         }
 
         /// <summary>

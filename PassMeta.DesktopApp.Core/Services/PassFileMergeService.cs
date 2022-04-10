@@ -103,7 +103,7 @@ namespace PassMeta.DesktopApp.Core.Services
             
             var passPhrase = await _dialogService.AskPasswordAsync(askPhraseFirst);
 
-            while (passPhrase.Ok && passPhrase.Data == string.Empty && passFile.Decrypt(passPhrase.Data!).Bad)
+            while (passPhrase.Ok && (passPhrase.Data == string.Empty || passFile.Decrypt(passPhrase.Data!).Bad))
             {
                 passPhrase = await _dialogService.AskPasswordAsync(askPhraseAgain);
             }

@@ -65,7 +65,7 @@ namespace PassMeta.DesktopApp.Ui.Services
                 {
                     _ShowNotification(new Notification(title,
                         message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
-                        NotificationType.Information, TimeSpan.FromSeconds(2)));
+                        NotificationType.Information, TimeSpan.FromSeconds(2.5)));
                 }
                 else
                 {

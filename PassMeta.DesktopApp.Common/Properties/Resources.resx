@@ -211,7 +211,7 @@
         <value>Add passfile</value>
     </data>
     <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
-        <value>Do you really want to delete passfile '{0}' #{1}?</value>
+        <value>Do you really want to delete passfile {0}?</value>
     </data>
     <data name="PASSFILE__VALIDATION__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Wrong passphrase!</value>
@@ -256,7 +256,7 @@
         <value>Login '{0}' is copied to clipboard</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">
-        <value>Passfile '{0}' (#{1})</value>
+        <value>Passfile {0}</value>
     </data>
     <data name="PASSFILE_COLOR__GREEN" xml:space="preserve">
         <value>Green</value>
@@ -325,18 +325,18 @@
         <value>New (local)</value>
     </data>
     <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
-        <value>New passfile '{0}' (#{1})</value>
+        <value>New passfile {0}</value>
     </data>
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Passfile encryption failed</value>
     </data>
-    <data name="PASSMANAGER__VERSION_NOT_FOUND_ERR" xml:space="preserve">
+    <data name="PASSMGR__VERSION_NOT_FOUND_ERR" xml:space="preserve">
         <value>Passfile local version not found!</value>
     </data>
-    <data name="PASSMANAGER__ERR" xml:space="preserve">
+    <data name="PASSMGR__ERR" xml:space="preserve">
         <value>Passfile local manager error! (see logs)</value>
     </data>
-    <data name="PASSMANAGER__COMMIT_WARNING" xml:space="preserve">
+    <data name="PASSMGR__COMMIT_WARNING" xml:space="preserve">
         <value>Passfiles are saved to the local storage with errors! (see logs)</value>
     </data>
     <data name="PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE" xml:space="preserve">
@@ -346,7 +346,7 @@
         <value>Remote deleting error</value>
     </data>
     <data name="PASSFILE__TITLE_DELETED" xml:space="preserve">
-        <value>Deleted locally passfile '{0}' (#{1})</value>
+        <value>Deleted locally passfile {0}</value>
     </data>
     <data name="DICT_STORAGE__PASSFILE_ID" xml:space="preserve">
         <value>passfile ID</value>
@@ -387,13 +387,13 @@
     <data name="DICT_AUTH__USER" xml:space="preserve">
         <value>user</value>
     </data>
-    <data name="PASSERVICE__SUCCESS_COMMIT" xml:space="preserve">
-        <value>Successfully saved!</value>
+    <data name="PASSERVICE__INFO_COMMITED" xml:space="preserve">
+        <value>Saved locally</value>
     </data>
     <data name="STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE" xml:space="preserve">
         <value>Input passphrase for a new passfile</value>
     </data>
-    <data name="PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
+    <data name="PASSMGR__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
         <value>New</value>
     </data>
     <data name="STORAGE__SECTION_SEARCH_INPUT_WATERMARK" xml:space="preserve">
@@ -639,5 +639,8 @@ try another keywords...</value>
     </data>
     <data name="PASSFILE__INFO_MERGED" xml:space="preserve">
         <value>Passfile merged successfully!</value>
+    </data>
+    <data name="PASSERVICE__INFO_SYNCHRONIZED" xml:space="preserve">
+        <value>Synchronized with the server</value>
     </data>
 </root>

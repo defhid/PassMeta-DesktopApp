@@ -1,6 +1,7 @@
 namespace PassMeta.DesktopApp.Ui.Utils
 {
     using System;
+    using System.Collections.Generic;
     using Interfaces;
 
     /// <summary>
@@ -8,6 +9,8 @@ namespace PassMeta.DesktopApp.Ui.Utils
     /// </summary>
     public sealed class Preloader : IDisposable
     {
+        private static readonly Dictionary<IPreloaderSupport, int> Counters = new();
+
         private readonly IPreloaderSupport _vm;
         private bool _disposed;
         
@@ -15,6 +18,13 @@ namespace PassMeta.DesktopApp.Ui.Utils
         public Preloader(IPreloaderSupport viewModel)
         {
             _vm = viewModel;
+            lock (Counters)
+            {
+                if (!Counters.ContainsKey(_vm))
+                {
+                    Counters[_vm] = 0;
+                }
+            }
         }
         
         /// <summary>
@@ -26,8 +36,13 @@ namespace PassMeta.DesktopApp.Ui.Utils
         {
             if (_disposed)
                 throw new Exception("Preloader manager object is disposed, it can't be started");
-            
-            _vm.PreloaderEnabled = true;
+
+            lock (Counters)
+            {
+                ++Counters[_vm];
+                _vm.PreloaderEnabled = true;
+            }
+
             return this;
         }
 
@@ -36,8 +51,14 @@ namespace PassMeta.DesktopApp.Ui.Utils
         /// </summary>
         public void Finish()
         {
-            if (!_disposed)
-                _vm.PreloaderEnabled = false;
+            if (_disposed) return;
+            lock (Counters)
+            {
+                if (--Counters[_vm] == 0)
+                {
+                    _vm.PreloaderEnabled = false;
+                }
+            }
         }
         
         /// <inheritdoc />

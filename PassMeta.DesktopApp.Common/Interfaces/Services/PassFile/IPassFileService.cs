@@ -18,7 +18,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
         /// </summary>
         /// <remarks>Automatic errors showing.</remarks>
         /// <returns>Actual current passfile list.</returns>
-        Task RefreshLocalPassFilesAsync(bool applyLocalChanges);
+        Task RefreshLocalPassFilesAsync();
 
         /// <summary>
         /// Apply changes from local manager and commit locally.

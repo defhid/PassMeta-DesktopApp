@@ -32,12 +32,23 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Represents <see cref="AnyCurrentChanged"/>.
         /// </summary>
         public static readonly BehaviorSubject<bool> AnyCurrentChangedSource = new(false);
+
+        /// <summary>
+        /// Represents <see cref="AnyChanged"/>.
+        /// </summary>
+        public static readonly BehaviorSubject<bool> AnyChangedSource = new(false);
         
         /// <summary>
         /// Has any uncommited changed/deleted passfile?
         /// </summary>
         public static bool AnyCurrentChanged =>
             _deletedPassFiles.Any() || _currentPassFiles.Any(pf => pf.changed is not null);
+        
+        /// <summary>
+        /// Has any commited changed/deleted passfile?
+        /// </summary>
+        public static bool AnyChanged =>
+            _currentPassFiles.Any(pf => pf.source?.Origin is not null);
 
         /// <summary>
         /// Source reflects data from the local storage.
@@ -58,7 +69,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             log = nameof(PassFileManager) + ": " + log;
             if (ex is null) Logger.Error(log);
             else Logger.Error(ex, log);
-            return Result.Failure(Resources.PASSMANAGER__ERR);
+            return Result.Failure(Resources.PASSMGR__ERR);
         }
 
         /// <summary>
@@ -66,7 +77,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         /// <remarks>Errors auto-logging.</remarks>
         /// <exception cref="Exception">Throws critical exceptions.</exception>
-        public static void Initialize()
+        public static async Task InitializeAsync()
         {
             if (!Directory.Exists(PassFilesPath))
             {
@@ -80,7 +91,9 @@ namespace PassMeta.DesktopApp.Core.Utils
                 _AutoCorrectPassFileList(true);
             }
             
-            _LoadListAsync().GetAwaiter().GetResult();
+            await _LoadListAsync();
+
+            AnyChangedSource.OnNext(AnyChanged);
         }
 
         /// <summary>
@@ -123,7 +136,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     : _GetPassFilePath(passFileId);
 
                 if (!File.Exists(path))
-                    return Result.Failure<string>(Resources.PASSMANAGER__VERSION_NOT_FOUND_ERR);
+                    return Result.Failure<string>(Resources.PASSMGR__VERSION_NOT_FOUND_ERR);
                 
                 var dataEncrypted = PassFileConvention.Convert.EncryptedBytesToString(await File.ReadAllBytesAsync(path));
                 if (!oldVersion && actual is not null)
@@ -184,7 +197,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             var passFile = new PassFile
             {
                 Id = passFileId,
-                Name = Resources.PASSMANAGER__DEFAULT_NEW_PASSFILE_NAME,
+                Name = Resources.PASSMGR__DEFAULT_NEW_PASSFILE_NAME,
                 CreatedOn = DateTime.Now,
                 InfoChangedOn = DateTime.Now,
                 Version = 1,
@@ -536,7 +549,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                         }
                         dataChange.Add(changed);
                     }
-                    else if (changed.InfoChangedOn != source.InfoChangedOn)
+                    else if (changed.InfoChangedOn != source.InfoChangedOn
+                             || changed.Origin is null != source.Origin is null)
                     {
                         listChange = true;
                     }
@@ -573,8 +587,9 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
 
             AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
+            AnyChangedSource.OnNext(AnyChanged);
 
-            return Result.Success(hasWarnings ? Resources.PASSMANAGER__COMMIT_WARNING : null);
+            return Result.Success(hasWarnings ? Resources.PASSMGR__COMMIT_WARNING : null);
         }
 
         private static (PassFile? source, PassFile changed) _GetPairForChange(int index)
@@ -604,7 +619,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 if (!dataDiff)
                     changed.VersionChangedOn = source.VersionChangedOn;
 
-                if (!infoDiff && !dataDiff)
+                if (!infoDiff && !dataDiff && source.Origin is null)
                     changed = null;
             }
             

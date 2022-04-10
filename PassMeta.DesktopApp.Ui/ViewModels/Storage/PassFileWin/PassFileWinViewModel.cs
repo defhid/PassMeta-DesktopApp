@@ -19,6 +19,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Constants;
     using Core;
     using Core.Utils;
+    using Core.Utils.Extensions;
     using Models;
     using ReactiveUI;
     using Utils.Extensions;
@@ -110,7 +111,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                     ? Resources.PASSFILE__TITLE_NEW
                     : pf.LocalDeleted
                         ? Resources.PASSFILE__TITLE_DELETED
-                        : Resources.PASSFILE__TITLE, pf.Name, pf.Id));
+                        : Resources.PASSFILE__TITLE, pf.GetIdentityString()));
 
             CreatedOn = passFileChanged.Select(pf => pf?.CreatedOn.ToShortDateTimeString());
 
@@ -252,7 +253,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             if (PassFile?.LocalDeleted is not false) return;
 
             var confirm = await _dialogService.ConfirmAsync(
-                string.Format(Resources.PASSFILE__CONFIRM_DELETE, PassFile!.Name, PassFile.Id));
+                string.Format(Resources.PASSFILE__CONFIRM_DELETE, PassFile!.GetIdentityString()));
 
             if (confirm.Bad) return;
 

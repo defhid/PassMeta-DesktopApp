@@ -13,7 +13,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         public static async Task CheckSystemAndLoadApplicationConfigAsync()
         {
-            PassFileManager.Initialize();
+            await PassFileManager.InitializeAsync();
             
             await AppContext.LoadAndSetCurrentAsync();
             await AppConfig.LoadAndSetCurrentAsync();

@@ -31,6 +31,7 @@ namespace PassMeta.DesktopApp.Core.Services
         };
         
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
 
         /// <inheritdoc />
         public async Task<IResult<PassFile>> GetPassFileRemoteAsync(int passFileId)
@@ -40,7 +41,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task RefreshLocalPassFilesAsync(bool applyLocalChanges = true)
+        public async Task RefreshLocalPassFilesAsync()
         {
             if (!PassMetaApi.Online) return;
 
@@ -79,7 +80,7 @@ namespace PassMeta.DesktopApp.Core.Services
                             CheckAsDownloading(remote, PassFileManager.UpdateData(remote));
                         }
                     }
-                    else if (applyLocalChanges)
+                    else
                     {
                         await _TryDeleteAsync(local);
                     }
@@ -91,7 +92,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 {
                     PassFile actual;
 
-                    if (local.InfoChangedOn > remote.InfoChangedOn && applyLocalChanges)
+                    if (local.InfoChangedOn > remote.InfoChangedOn)
                     {
                         var res = Result.FromResponse(await _SavePassFileInfoRemoteAsync(local));
                         if (CheckAsUploading(local, res))
@@ -111,12 +112,14 @@ namespace PassMeta.DesktopApp.Core.Services
                         {
                             PassFileManager.TrySetProblem(actual.Id, PassFileProblemKind.NeedsMerge);
                         }
-                        else if (applyLocalChanges)
+                        else
                         {
                             if (CheckAsUploading(actual, await _EnsureHasLocalEncryptedAsync(actual)))
                             {
-                                var res = Result.FromResponse(await _SavePassFileDataRemoteAsync(actual));
-                                CheckAsUploading(actual, res);
+                                if (CheckAsUploading(actual, Result.FromResponse(await _SavePassFileDataRemoteAsync(actual))))
+                                {
+                                    CheckAsDownloading(actual, PassFileManager.UpdateData(actual, true));
+                                }
                             }
                         }
                     }
@@ -150,9 +153,14 @@ namespace PassMeta.DesktopApp.Core.Services
                 if (local.LocalCreated) await _TryAddPassFileAsync(local);
                 else PassFileManager.Delete(local, true);
             }
+            
+            _dialogService.ShowInfo(Resources.PASSERVICE__INFO_SYNCHRONIZED);
 
             var commitResult = await PassFileManager.CommitAsync();
-            if (commitResult.Bad)
+            
+            if (commitResult.Ok)
+                _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
+            else
                 _dialogService.ShowError(commitResult.Message!);
         }
 
@@ -161,7 +169,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             var list = PassFileManager.GetCurrentList();
 
-            if (PassMetaApi.Online)
+            if (await PassMetaApi.CheckConnectionAsync())
             {
                 foreach (var passFile in list)
                 {
@@ -199,12 +207,14 @@ namespace PassMeta.DesktopApp.Core.Services
                         await _TryDeleteAsync(passFile);
                     }
                 }
+                
+                _dialogService.ShowInfo(Resources.PASSERVICE__INFO_SYNCHRONIZED);
             }
 
             var commitResult = await PassFileManager.CommitAsync();
             
             if (commitResult.Ok)
-                _dialogService.ShowInfo(Resources.PASSERVICE__SUCCESS_COMMIT);
+                _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
             else
                 _dialogService.ShowError(commitResult.Message!);
         }
@@ -216,6 +226,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 var response = await _AddPassFileRemoteAsync(passFile);
                 if (response?.Success is true)
                 {
+                    _logger.Info($"{passFile} created on the server");
+
                     var actual = response.Data!.WithEncryptedDataFrom(passFile);
 
                     CheckAsDownloading(actual, PassFileManager.AddFromRemote(actual, passFile.Id));
@@ -229,23 +241,18 @@ namespace PassMeta.DesktopApp.Core.Services
                 Resources.PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE, 
                 passFile.Name, passFile.Id, passFile.LocalDeletedOn?.ToShortDateTimeString()));
 
-            if (answer.Ok)
+            if (answer.Bad) return;
+
+            var response = await _DeletePassFileRemoteAsync(passFile, answer.Data!);
+            if (response?.Success is true)
             {
-                var response = await _DeletePassFileRemoteAsync(passFile, answer.Data!);
-                if (response?.Success is true)
-                {
-                    PassFileManager.Delete(passFile, true);
-                }
-                else
-                {
-                    PassFileManager.Delete(passFile);
-                    PassFileManager.TrySetProblem(passFile.Id, 
-                        PassFileProblemKind.RemoteDeletingError.ToProblemWithInfo(response.GetFullMessage()));
-                }
+                _logger.Info($"{passFile} deleted from the server");
+                PassFileManager.Delete(passFile, true);
             }
             else
             {
-                PassFileManager.Delete(passFile);
+                PassFileManager.TrySetProblem(passFile.Id, 
+                    PassFileProblemKind.RemoteDeletingError.ToProblemWithInfo(response.GetFullMessage()));
             }
         }
 
@@ -279,9 +286,15 @@ namespace PassMeta.DesktopApp.Core.Services
         private bool CheckAsDownloading(PassFile passFile, IDetailedResult result)
         {
             var res = EnsureOk(passFile, result);
-            if (res.Bad)
+            if (res.Ok)
+            {
+                _logger.Info($"{passFile} downloaded from the server");
+            }
+            else
+            {
                 PassFileManager.TrySetProblem(passFile.Id,
                     PassFileProblemKind.DownloadingError.ToProblemWithInfo(res.Message));
+            }
 
             return res.Ok;
         }
@@ -289,9 +302,15 @@ namespace PassMeta.DesktopApp.Core.Services
         private bool CheckAsUploading(PassFile passFile, IDetailedResult result)
         {
             var res = EnsureOk(passFile, result);
-            if (res.Bad)
+            if (res.Ok)
+            {
+                _logger.Info($"{passFile} uploaded to the server");
+            }
+            else
+            {
                 PassFileManager.TrySetProblem(passFile.Id,
                     PassFileProblemKind.UploadingError.ToProblemWithInfo(res.Message));
+            }
 
             return res.Ok;
         }

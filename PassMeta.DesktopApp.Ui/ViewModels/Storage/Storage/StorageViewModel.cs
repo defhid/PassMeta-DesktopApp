@@ -195,7 +195,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
             if (!_loaded)
             {
-                await _passFileService.RefreshLocalPassFilesAsync(false);
+                await _passFileService.RefreshLocalPassFilesAsync();
                 _loaded = true;
             }
 
@@ -261,7 +261,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 await _passFileService.ApplyPassFileLocalChangesAsync();
             }
 
-            _loaded = false;
             await LoadPassFilesAsync(LastItemPath.Copy());
         }
 
