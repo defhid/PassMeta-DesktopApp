@@ -642,4 +642,16 @@
     <data name="STORAGE__CONFIRM_SECTION_RESET" xml:space="preserve">
         <value>Вы редактируете группу. Хотите сбросить текущие изменения?</value>
     </data>
+    <data name="PASSMERGE__ITEM_TOOLTIP__TRANSFER" xml:space="preserve">
+        <value>Переместить в другую версию</value>
+    </data>
+    <data name="PASSMERGE__LABEL_LOCAL" xml:space="preserve">
+        <value>локальный</value>
+    </data>
+    <data name="PASSMERGE__LABEL_REMOTE" xml:space="preserve">
+        <value>сервер</value>
+    </data>
+    <data name="PASSMERGE__BTN_TOOLTIP_APPLY" xml:space="preserve">
+        <value>Применить</value>
+    </data>
 </root>

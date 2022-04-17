@@ -16,6 +16,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Common.Models.Entities.Extra;
 
     /// <inheritdoc />
     public class PassFileService : IPassFileService
@@ -160,7 +161,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     }
                     else if (local.InfoChangedOn < remote.InfoChangedOn)
                     {
-                        actual = remote;
+                        actual = remote.Copy(false);
                         CheckAsDownloading(actual, PassFileManager.UpdateInfo(actual, true));
                     }
                     else actual = local;
@@ -169,7 +170,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
                     if (local.IsVersionChanged())
                     {
-                        if (local.Origin!.Version != remote.Version)
+                        if (local.Origin!.Version != remote.Version && !local.Marks.HasFlag(PassFileMark.Merged))
                         {
                             PassFileManager.TrySetProblem(actual.Id, PassFileProblemKind.NeedsMerge);
                             _dialogService.ShowFailure(Resources.PASSERVICE__WARN_NEED_MERGE, actual.GetTitle(), 

@@ -15,6 +15,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Common.Interfaces.Services;
     using Common.Interfaces.Services.PassFile;
     using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using Common.Utils.Extensions;
     using Components;
     using Constants;
@@ -352,16 +353,20 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 
             if (merge.Conflicts.Any())
             {
-                var result = await new PassFileMergeWin(merge).ShowDialog<IResult>(MainWindow.Current);
-                if (result.Bad) return;
+                var result = await new PassFileMergeWin(merge).ShowDialog<IResult?>(ViewElements.Window);
+                if (result?.Ok is not true) return;
             }
 
             var passfile = PassFile.Copy();
             passfile.Data = merge.ResultSections;
+            passfile.Marks |= PassFileMark.Merged;
 
             var updateResult = PassFileManager.UpdateData(passfile);
             if (updateResult.Ok)
             {
+                passfile.Problem = null;
+                PassFileManager.TryResetProblem(passfile.Id);
+
                 PassFile = passfile;
                 PassFileChanged = true;
                 

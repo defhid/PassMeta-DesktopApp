@@ -110,6 +110,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             passFile.Origin = otherPassFile.Origin?.Copy(false);
             passFile.Version = otherPassFile.Version;
             passFile.VersionChangedOn = otherPassFile.VersionChangedOn;
+            passFile.Marks = otherPassFile.Marks;
         }
         
         /// <summary>

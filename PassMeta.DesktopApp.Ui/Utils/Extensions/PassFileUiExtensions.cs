@@ -104,6 +104,8 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         /// <remarks>Automatic show failure.</remarks>
         public static async Task<IResult> LoadIfRequiredAndDecryptAsync(this PassFile passFile, IDialogService dialogService, bool askOld = false)
         {
+            passFile.PassPhrase ??= PassFileManager.GetPassPhrase(passFile.Id);
+            
             if (passFile.PassPhrase is null)
             {
                 var passPhrase = await dialogService.AskPasswordAsync(askOld 

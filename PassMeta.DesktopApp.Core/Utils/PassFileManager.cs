@@ -46,7 +46,8 @@ namespace PassMeta.DesktopApp.Core.Utils
             _currentPassFiles.Any(pf => pf.changed is not null && 
                                         (pf.source is null || 
                                          pf.changed.IsInformationDifferentFrom(pf.source) || 
-                                         pf.changed.IsVersionDifferentFrom(pf.source)));
+                                         pf.changed.IsVersionDifferentFrom(pf.source) ||
+                                         pf.source.Origin is null != pf.changed.Origin is null));
         
         /// <summary>
         /// Has any commited changed/deleted passfile?
@@ -274,19 +275,8 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Clear passfile problem.
         /// </summary>
-        public static bool TryResetProblem(int passFileId)
-        {
-            var found = _currentPassFiles.FindIndex(pf =>
-                pf.source?.Id == passFileId || 
-                pf.changed?.Id == passFileId);
-            
-            if (found < 0) return false;
-            
-            var (source, changed) = _currentPassFiles[found];
-            (changed ?? source)!.Problem = null;
-            
-            return true;
-        }
+        public static bool TryResetProblem(int passFileId) 
+            => TrySetProblem(passFileId, null);
         
         /// <summary>
         /// Set passphrase to passfile.
@@ -303,6 +293,21 @@ namespace PassMeta.DesktopApp.Core.Utils
             (changed ?? source)!.PassPhrase = passPhrase;
             
             return true;
+        }
+
+        /// <summary>
+        /// Get passphrase after call <see cref="TrySetPassPhrase"/>.
+        /// </summary>
+        public static string? GetPassPhrase(int passFileId)
+        {
+            var found = _currentPassFiles.FindIndex(pf =>
+                pf.source?.Id == passFileId || 
+                pf.changed?.Id == passFileId);
+
+            if (found < 0) return null;
+            
+            var (source, changed) = _currentPassFiles[found];
+            return (changed ?? source)!.PassPhrase;
         }
 
         /// <summary>
@@ -371,6 +376,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 changed.VersionChangedOn = passFile.VersionChangedOn;
                 changed.Origin!.Version = changed.Version;
                 changed.Origin!.VersionChangedOn = changed.VersionChangedOn;
+                changed.Marks = PassFileMark.None;
             }
             else
             {
@@ -385,6 +391,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 changed.PassPhrase = passFile.PassPhrase;
                 changed.Version = source is null ? changed.Version : source.Version + 1;
                 changed.VersionChangedOn = DateTime.Now;
+                changed.Marks |= passFile.Marks;
             }
 
             var actual = _OptimizeAndSetChanged(found, source, changed);
@@ -633,8 +640,13 @@ namespace PassMeta.DesktopApp.Core.Utils
                 {
                     changed.Origin = null;
                 }
+                
+                if (changed.Origin?.Origin is not null)
+                {
+                    changed.Origin.Origin = null;
+                }
             }
-            
+
             _currentPassFiles[index] = (source, changed);
             
             AnyCurrentChangedSource.OnNext(AnyCurrentChanged);

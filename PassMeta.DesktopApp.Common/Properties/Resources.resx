@@ -649,4 +649,16 @@ try another keywords...</value>
     <data name="STORAGE__CONFIRM_SECTION_RESET" xml:space="preserve">
         <value>Edit mode is enabled. Discard current section changes?</value>
     </data>
+    <data name="PASSMERGE__ITEM_TOOLTIP__TRANSFER" xml:space="preserve">
+        <value>Move to opposite version</value>
+    </data>
+    <data name="PASSMERGE__LABEL_LOCAL" xml:space="preserve">
+        <value>local</value>
+    </data>
+    <data name="PASSMERGE__LABEL_REMOTE" xml:space="preserve">
+        <value>remote</value>
+    </data>
+    <data name="PASSMERGE__BTN_TOOLTIP_APPLY" xml:space="preserve">
+        <value>Accept</value>
+    </data>
 </root>

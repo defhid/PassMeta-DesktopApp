@@ -79,25 +79,32 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// Passfile encrypted data string.
         /// </summary>
         [JsonIgnore]
-        public string? DataEncrypted { get; set; }
-        
+        public string? DataEncrypted;
+
         /// <summary>
         /// Passfile passphrase to decrypt <see cref="DataEncrypted"/> and encrypt <see cref="Data"/>.
         /// </summary>
         [JsonIgnore]
-        public string? PassPhrase { get; set; }
-        
+        public string? PassPhrase;
+
         /// <summary>
         /// Passfile decrypted data.
         /// </summary>
         [JsonIgnore]
-        public List<Section>? Data { get; set; }
+        public List<Section>? Data;
 
         /// <summary>
         /// Passfile local problem.
         /// </summary>
         [JsonIgnore]
-        public PassFileProblem? Problem { get; set; }
+        public PassFileProblem? Problem;
+
+        /// <summary>
+        /// Passfile marks.
+        /// </summary>
+        /// <remarks>Relates to data fields.</remarks>
+        [JsonIgnore]
+        public PassFileMark Marks;
 
         #region State (one or nothing)
 

@@ -1573,6 +1573,42 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accept.
+        /// </summary>
+        public static string PASSMERGE__BTN_TOOLTIP_APPLY {
+            get {
+                return ResourceManager.GetString("PASSMERGE__BTN_TOOLTIP_APPLY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move to opposite version.
+        /// </summary>
+        public static string PASSMERGE__ITEM_TOOLTIP__TRANSFER {
+            get {
+                return ResourceManager.GetString("PASSMERGE__ITEM_TOOLTIP__TRANSFER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to local.
+        /// </summary>
+        public static string PASSMERGE__LABEL_LOCAL {
+            get {
+                return ResourceManager.GetString("PASSMERGE__LABEL_LOCAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to remote.
+        /// </summary>
+        public static string PASSMERGE__LABEL_REMOTE {
+            get {
+                return ResourceManager.GetString("PASSMERGE__LABEL_REMOTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Passfiles are saved to the local storage with errors! (see logs).
         /// </summary>
         public static string PASSMGR__COMMIT_WARNING {
