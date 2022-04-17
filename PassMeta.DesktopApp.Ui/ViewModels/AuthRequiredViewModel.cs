@@ -22,7 +22,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         {
             if (AppContext.Current.User is not null)
             {
-                NavigateTo(ForViewModelPageType);
+                TryNavigateTo(ForViewModelPageType);
             }
             
             return Task.CompletedTask;

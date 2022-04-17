@@ -79,8 +79,8 @@
                                                 CornerRadius="50"
                                                 FontSize="16"
                                                 FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
-                                                Content="&#xE7B3;"
-                                                Foreground="{Binding StateColor^}"
+                                                Content="&#xF78D;"
+                                                Foreground="{Binding StateColor}"
                                                 Opacity="{Binding Opacity^}"
                                                 IsVisible="{Binding IsChecked, ElementName=PassFilesBarBtn}"
                                                 Command="{Binding OpenCommand}"/>

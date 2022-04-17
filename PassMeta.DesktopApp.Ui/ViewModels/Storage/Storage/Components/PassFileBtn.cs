@@ -21,12 +21,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             private set => this.RaiseAndSetIfChanged(ref _passFile, value);
         }
 
+        public ISolidColorBrush StateColor { get; private set; }
+
         public IObservable<string> Name { get; }
          
         public IObservable<ISolidColorBrush?> Color { get; }
-        
-        public IObservable<ISolidColorBrush?> StateColor { get; }
-        
+
         public IObservable<double> Opacity { get; }
 
         public ReactCommand OpenCommand { get; }
@@ -41,6 +41,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             _passFile = passFile;
             _shortMode = shortModeObservable.ToProperty(this, nameof(ShortMode));
             
+            StateColor = passFile.GetStateColor();
+            
             Name = this.WhenAnyValue(btn => btn.PassFile, btn => btn.ShortMode)
                 .Select(pair => pair.Item1 is null 
                     ? "~"
@@ -52,11 +54,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
             Color = passFileObservable.Select(pf => pf?.GetPassFileColor().Brush);
 
-            StateColor = passFileObservable.Select(pf => pf?.GetStateColor());
-
             Opacity = passFileObservable.Select(pf => pf?.LocalDeleted ?? true ? 0.6d : 1d);
 
             OpenCommand = ReactiveCommand.CreateFromTask(OpenAsync, passFileObservable.Select(pf => pf is not null));
+
         }
 
         public async Task OpenAsync()
@@ -69,7 +70,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             {
                 PassFileChanged?.Invoke(this, new PassFileChangedEventArgs(PassFile!, win.PassFile));
                 PassFile = win.PassFile;
+                RefreshState();
             }
+        }
+
+        public void RefreshState()
+        {
+            StateColor = PassFile.GetStateColor();
+            this.RaisePropertyChanged(nameof(StateColor));
         }
         
         public class PassFileChangedEventArgs : EventArgs

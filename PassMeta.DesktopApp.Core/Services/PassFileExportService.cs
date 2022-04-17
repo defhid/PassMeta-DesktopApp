@@ -120,8 +120,11 @@ namespace PassMeta.DesktopApp.Core.Services
                 passPhrase = await _dialogService.AskPasswordAsync(
                     string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name));
             }
-            
-            return passFile.Data is not null;
+
+            if (passFile.Data is null) return false;
+
+            PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
+            return true;
         }
     }
 }

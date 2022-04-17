@@ -2,19 +2,20 @@ namespace PassMeta.DesktopApp.Core.Services
 {
     using DesktopApp.Common;
     using DesktopApp.Common.Enums;
+    using DesktopApp.Common.Interfaces;
     using DesktopApp.Common.Interfaces.Services;
+    using DesktopApp.Common.Interfaces.Services.PassFile;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Utils.Mapping;
     using DesktopApp.Common.Utils.Extensions;
+
     using DesktopApp.Core.Utils;
     using DesktopApp.Core.Utils.Extensions;
     
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Common.Interfaces;
-    using Common.Interfaces.Services.PassFile;
 
     /// <inheritdoc />
     public class PassFileService : IPassFileService
@@ -49,7 +50,63 @@ namespace PassMeta.DesktopApp.Core.Services
             
             var localList = PassFileManager.GetCurrentList();
 
-            foreach (var remote in remoteList)
+            await _SynchronizeAsync(localList, remoteList);
+
+            if (PassFileManager.AnyCurrentChanged)
+            {
+                var commitResult = await PassFileManager.CommitAsync();
+            
+                if (commitResult.Ok)
+                    _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
+                else
+                    _dialogService.ShowError(commitResult.Message!);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task ApplyPassFileLocalChangesAsync()
+        {
+            var committed = false;
+            var synced = false;
+            
+            if (PassFileManager.AnyCurrentChanged)
+            {
+                var commitResult = await PassFileManager.CommitAsync();
+                committed |= commitResult.Ok;
+
+                if (commitResult.Bad)
+                    _dialogService.ShowError(commitResult.Message!);
+            }
+            
+            if (await PassMetaApi.CheckConnectionAsync())
+            {
+                var remoteList = await _GetPassFileListRemoteAsync();
+                if (remoteList is not null)
+                {
+                    var localList = PassFileManager.GetCurrentList();
+                    await _SynchronizeAsync(localList, remoteList);
+                    synced = true;
+                }
+            }
+
+            if (synced && PassFileManager.AnyCurrentChanged)
+            {
+                var commitResult = await PassFileManager.CommitAsync();
+                committed |= commitResult.Ok;
+
+                if (commitResult.Bad)
+                    _dialogService.ShowError(commitResult.Message!);
+            }
+
+            if (committed)
+                _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
+        }
+
+        private async Task _SynchronizeAsync(IEnumerable<PassFile> localPassFiles, IEnumerable<PassFile> remotePassFiles)
+        {
+            var localList = new LinkedList<PassFile>(localPassFiles);
+            
+            foreach (var remote in remotePassFiles)
             {
                 var local = localList.FirstOrDefault(pf => pf.Id == remote.Id);
                 
@@ -97,26 +154,37 @@ namespace PassMeta.DesktopApp.Core.Services
                         if (CheckAsUploading(local, res))
                         {
                             actual = res.Data!;
+                            CheckAsDownloading(actual, PassFileManager.UpdateInfo(actual, true));
                         }
                         else actual = local;
                     }
-                    else if (local.InfoChangedOn < remote.InfoChangedOn) actual = remote;
+                    else if (local.InfoChangedOn < remote.InfoChangedOn)
+                    {
+                        actual = remote;
+                        CheckAsDownloading(actual, PassFileManager.UpdateInfo(actual, true));
+                    }
                     else actual = local;
 
-                    CheckAsDownloading(actual, PassFileManager.UpdateInfo(actual, true));
+                    actual.RefreshDataFieldsFrom(local, true);
 
                     if (local.IsVersionChanged())
                     {
                         if (local.Origin!.Version != remote.Version)
                         {
                             PassFileManager.TrySetProblem(actual.Id, PassFileProblemKind.NeedsMerge);
+                            _dialogService.ShowFailure(Resources.PASSERVICE__WARN_NEED_MERGE, actual.GetTitle(), 
+                                defaultPresenter: DialogPresenter.PopUp);
                         }
                         else
                         {
                             if (CheckAsUploading(actual, await _EnsureHasLocalEncryptedAsync(actual)))
                             {
-                                if (CheckAsUploading(actual, Result.FromResponse(await _SavePassFileDataRemoteAsync(actual))))
+                                var res = Result.FromResponse(await _SavePassFileDataRemoteAsync(actual));
+                                if (CheckAsUploading(actual, res))
                                 {
+                                    PassFileManager.TryResetProblem(actual.Id);
+                                    actual.RefreshDataFieldsFrom(res.Data!.WithEncryptedDataFrom(local), false);
+
                                     CheckAsDownloading(actual, PassFileManager.UpdateData(actual, true));
                                 }
                             }
@@ -154,74 +222,6 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             
             _dialogService.ShowInfo(Resources.PASSERVICE__INFO_SYNCHRONIZED);
-
-            if (PassFileManager.AnyCurrentChanged)
-            {
-                var commitResult = await PassFileManager.CommitAsync();
-            
-                if (commitResult.Ok)
-                    _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
-                else
-                    _dialogService.ShowError(commitResult.Message!);
-            }
-        }
-
-        /// <inheritdoc />
-        public async Task ApplyPassFileLocalChangesAsync()
-        {
-            var list = PassFileManager.GetCurrentList();
-
-            if (await PassMetaApi.CheckConnectionAsync())
-            {
-                foreach (var passFile in list)
-                {
-                    if (passFile.LocalCreated)
-                    {
-                        await _TryAddPassFileAsync(passFile);
-                    }
-                    else if (passFile.LocalChanged)
-                    {
-                        if (passFile.IsInformationChanged())
-                        {
-                            var res = Result.FromResponse(await _SavePassFileInfoRemoteAsync(passFile));
-                            if (CheckAsUploading(passFile, res))
-                            {
-                                var actual = res.Data!;
-                                CheckAsDownloading(actual, PassFileManager.UpdateInfo(actual, true));
-                            }
-                        }
-
-                        if (passFile.IsVersionChanged())
-                        {
-                            if (CheckAsUploading(passFile, await _EnsureHasLocalEncryptedAsync(passFile)))
-                            {
-                                var res = Result.FromResponse(await _SavePassFileDataRemoteAsync(passFile));
-                                if (CheckAsUploading(passFile, res))
-                                {
-                                    var actual = res.Data!.WithEncryptedDataFrom(passFile);
-                                    CheckAsDownloading(actual, PassFileManager.UpdateData(actual, true));
-                                }
-                            }
-                        }
-                    }
-                    else if (passFile.LocalDeleted)
-                    {
-                        await _TryDeleteAsync(passFile);
-                    }
-                }
-                
-                _dialogService.ShowInfo(Resources.PASSERVICE__INFO_SYNCHRONIZED);
-            }
-
-            if (PassFileManager.AnyCurrentChanged)
-            {
-                var commitResult = await PassFileManager.CommitAsync();
-            
-                if (commitResult.Ok)
-                    _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
-                else
-                    _dialogService.ShowError(commitResult.Message!);
-            }
         }
 
         private async Task _TryAddPassFileAsync(PassFile passFile)

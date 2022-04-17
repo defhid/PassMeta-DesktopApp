@@ -925,6 +925,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge with remote version required!.
+        /// </summary>
+        public static string PASSERVICE__WARN_NEED_MERGE {
+            get {
+                return ResourceManager.GetString("PASSERVICE__WARN_NEED_MERGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input passphrase to export &apos;{0}&apos;.
         /// </summary>
         public static string PASSEXPORT__ASK_PASSPHRASE {
@@ -1537,7 +1546,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wrong passphrase for local version, try again.
+        ///   Looks up a localized string similar to Wrong passphrase for LOCAL version, try again.
         /// </summary>
         public static string PASSMERGE__ASK_PASSPHRASE_AGAIN {
             get {
@@ -1546,7 +1555,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input passphrase from remote version.
+        ///   Looks up a localized string similar to Input passphrase from other version.
         /// </summary>
         public static string PASSMERGE__ASK_PASSPHRASE_REMOTE {
             get {
@@ -1555,7 +1564,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wrong passphrase for remote version, try again.
+        ///   Looks up a localized string similar to Wrong passphrase for OTHER version, try again.
         /// </summary>
         public static string PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN {
             get {
@@ -1668,6 +1677,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string STORAGE__CONFIRM_ROLLBACK {
             get {
                 return ResourceManager.GetString("STORAGE__CONFIRM_ROLLBACK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit mode is enabled. Discard current section changes?.
+        /// </summary>
+        public static string STORAGE__CONFIRM_SECTION_RESET {
+            get {
+                return ResourceManager.GetString("STORAGE__CONFIRM_SECTION_RESET", resourceCulture);
             }
         }
         

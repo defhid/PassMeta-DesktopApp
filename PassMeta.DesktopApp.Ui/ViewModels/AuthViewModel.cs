@@ -29,21 +29,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             SignUpCommand = ReactiveCommand.CreateFromTask(_SignUpAsync);
         }
         
-        public override void Navigate()
+        public override void TryNavigate()
         {
             if (AppContext.Current.User is not null)
             {
-                NavigateTo<AccountViewModel>();
+                TryNavigateTo<AccountViewModel>();
             }
             else
             {
-                base.Navigate();
+                base.TryNavigate();
             }
         }
 
         public override Task RefreshAsync()
         {
-            Navigate();
+            TryNavigate();
             return Task.CompletedTask;
         }
         
@@ -54,7 +54,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             var data = new SignInPostData(Login ?? "", Password ?? "");
             var result = await AuthService.SignInAsync(data);
             if (result.Ok)
-                NavigateTo<AccountViewModel>();
+                TryNavigateTo<AccountViewModel>();
         }
         
         private async Task _SignUpAsync()
@@ -64,7 +64,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             var data = new SignUpPostData(Login ?? "", Password ?? "", "Unknown", "Unknown");
             var result = await AuthService.SignUpAsync(data);
             if (result.Ok)
-                NavigateTo<AccountViewModel>();
+                TryNavigateTo<AccountViewModel>();
         }
     }
 }

@@ -1,5 +1,6 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
 {
+    using Common.Models;
     using Common.Models.Dto;
     using Models;
     using ReactiveUI;
@@ -17,7 +18,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
             CloseCommand = ReactiveCommand.Create(Close);
         }
 
-        private void Close() => ViewElements.Window!.Close(null);
+        private void Close() => ViewElements.Window!.Close(Result.Success());
         
 #pragma warning disable 8618
         public PassFileMergeWinViewModel() {}

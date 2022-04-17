@@ -78,16 +78,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
                 .InvokeCommand(ReactiveCommand.CreateFromTask(InitLoadAsync));
         }
         
-        public override void Navigate()
+        public override void TryNavigate()
         {
             if (AppContext.Current.User is null)
             {
                 FakeNavigated();
-                NavigateTo<AuthRequiredViewModel>(typeof(JournalViewModel));
+                TryNavigateTo<AuthRequiredViewModel>(typeof(JournalViewModel));
             }
             else
             {
-                base.Navigate();
+                base.TryNavigate();
             }
         }
 

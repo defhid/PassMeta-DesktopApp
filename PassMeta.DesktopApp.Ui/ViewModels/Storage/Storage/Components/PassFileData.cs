@@ -122,7 +122,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         }
 
         public PassFileDataEdit Edit { get; }
-        
+
+        public event EventHandler<EventArgs>? PassFileCanBeChanged;
+
         private readonly IObservable<bool> _editModeObservable;
 
         private int _searching;
@@ -296,6 +298,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             {
                 _dialogService.ShowError(result.Message!);
             }
+
+            PassFileCanBeChanged?.Invoke(this, EventArgs.Empty);
         }
         
         #endregion
@@ -327,6 +331,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
                 _addingSectionMode = false;
             }
+
+            PassFileCanBeChanged?.Invoke(this, EventArgs.Empty);
 
             var items = _sectionItemsList.Select(btn => btn.ToItem()).ToList();
             var sectionName = Edit.SectionName?.Trim();

@@ -623,13 +623,13 @@ try another keywords...</value>
         <value>Input passphrase for local version</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
-        <value>Wrong passphrase for local version, try again</value>
+        <value>Wrong passphrase for LOCAL version, try again</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE" xml:space="preserve">
-        <value>Input passphrase from remote version</value>
+        <value>Input passphrase from other version</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN" xml:space="preserve">
-        <value>Wrong passphrase for remote version, try again</value>
+        <value>Wrong passphrase for OTHER version, try again</value>
     </data>
     <data name="JOURNAL__ALL_KINDS" xml:space="preserve">
         <value>All</value>
@@ -642,5 +642,11 @@ try another keywords...</value>
     </data>
     <data name="PASSERVICE__INFO_SYNCHRONIZED" xml:space="preserve">
         <value>Synchronized with the server</value>
+    </data>
+    <data name="PASSERVICE__WARN_NEED_MERGE" xml:space="preserve">
+        <value>Merge with remote version required!</value>
+    </data>
+    <data name="STORAGE__CONFIRM_SECTION_RESET" xml:space="preserve">
+        <value>Edit mode is enabled. Discard current section changes?</value>
     </data>
 </root>

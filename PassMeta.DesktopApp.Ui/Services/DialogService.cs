@@ -118,7 +118,7 @@ namespace PassMeta.DesktopApp.Ui.Services
                     _ShowNotification(new Notification(
                         title ?? Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                         message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
-                        NotificationType.Error,
+                        NotificationType.Warning,
                         TimeSpan.FromSeconds(8)));
                 }
                 else

@@ -118,6 +118,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             var lastItemPath = LastItemPath.Copy();
 
             SelectedData = new PassFileData(ViewElements, LastItemPath, PassFileBarExpander);
+            SelectedData.PassFileCanBeChanged += (_, _) => SelectedPassFileBtn?.RefreshState();
             
             SelectedData.WhenAnyValue(vm => vm.SelectedSectionIndex)
                 .Subscribe(index => PassFileBarExpander.TryExecuteAutoExpanding(index == -1));
@@ -145,24 +146,31 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 .InvokeCommand(ReactiveCommand.CreateFromTask(() => LoadPassFilesAsync(lastItemPath)));
         }
 
-        public override void Navigate()
+        public override void TryNavigate()
         {
             if (AppContext.Current.User is null)
             {
                 FakeNavigated();
-                NavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
+                TryNavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
             }
             else
             {
-                base.Navigate();
+                base.TryNavigate();
             }
+        }
+        
+        protected override async Task<bool> OnCloseAsync()
+        {
+            if (!SelectedData.Edit.Mode) return true;
+            var confirm = await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_SECTION_RESET);
+            return confirm.Ok;
         }
 
         public override async Task RefreshAsync()
         {
             if (AppContext.Current.User is null)
             {
-                NavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
+                TryNavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
             }
 
             if (PassFileManager.AnyCurrentChanged)

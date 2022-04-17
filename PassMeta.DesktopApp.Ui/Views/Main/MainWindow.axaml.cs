@@ -48,22 +48,22 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         public Preloader StartPreloader() => new Preloader(DataContext!).Start();
 
         private void AccountBtn_OnClick(object? sender, RoutedEventArgs e) 
-            => MenuBtnClick(sender, () => new AccountViewModel(DataContext!).Navigate());
+            => MenuBtnClick(sender, () => new AccountViewModel(DataContext!).TryNavigate());
 
         private void StorageBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new StorageViewModel(DataContext!).Navigate());
+            => MenuBtnClick(sender, () => new StorageViewModel(DataContext!).TryNavigate());
 
         private void GeneratorBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new GeneratorViewModel(DataContext!).Navigate());
+            => MenuBtnClick(sender, () => new GeneratorViewModel(DataContext!).TryNavigate());
         
         private void JournalBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new JournalViewModel(DataContext!).Navigate());
+            => MenuBtnClick(sender, () => new JournalViewModel(DataContext!).TryNavigate());
 
         private void LogsBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new LogsViewModel(DataContext!).Navigate());
+            => MenuBtnClick(sender, () => new LogsViewModel(DataContext!).TryNavigate());
 
         private void SettingsBtn_OnClick(object? sender, RoutedEventArgs e)
-            => MenuBtnClick(sender, () => new SettingsViewModel(DataContext!).Navigate());
+            => MenuBtnClick(sender, () => new SettingsViewModel(DataContext!).TryNavigate());
 
         private static void MenuBtnClick(object? sender, Action action)
         {
@@ -95,9 +95,9 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             if (!_loaded)
             {
                 if (AppContext.Current.User is null)
-                    new AuthViewModel(DataContext!).Navigate();
+                    new AuthViewModel(DataContext!).TryNavigate();
                 else
-                    new StorageViewModel(DataContext!).Navigate();
+                    new StorageViewModel(DataContext!).TryNavigate();
             }
 
             _loaded = true;
@@ -121,10 +121,10 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
         
         private void SubscribeOnPageEvents()
         {
-            PageViewModel.OnNavigated += (page) =>
+            PageViewModel.Navigated += (sender, _) =>
             {
                 var mainPaneButtons = DataContext!.MainPane.Buttons;
-                mainPaneButtons.CurrentActive = page switch
+                mainPaneButtons.CurrentActive = sender switch
                 {
                     AuthViewModel => mainPaneButtons.Account,
                     AccountViewModel => mainPaneButtons.Account,
@@ -136,7 +136,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
                     _ => mainPaneButtons.CurrentActive
                 };
                 DataContext.MainPane.IsOpened = false;
-                DataContext.RightBarButtons = page.RightBarButtons;
+                DataContext.RightBarButtons = (sender as PageViewModel)?.RightBarButtons;
             };
         }
     }

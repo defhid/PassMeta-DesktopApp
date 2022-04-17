@@ -28,9 +28,10 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         {
             if (passFile is null) return Brushes.LightGray;
 
-            if (passFile.Problem is null && !passFile.LocalCreated && !passFile.LocalChanged && !passFile.LocalDeleted)
+            if (passFile.Problem is null && 
+                !passFile.LocalCreated && !passFile.LocalChanged && !passFile.LocalDeleted)
             {
-                return Brushes.LightGreen;
+                return Brushes.WhiteSmoke;
             }
 
             return passFile.Problem?.Kind switch
@@ -40,7 +41,9 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
                 PassFileProblemKind.UploadingError => Brushes.OrangeRed,
                 PassFileProblemKind.RemoteDeletingError => Brushes.OrangeRed,
                 PassFileProblemKind.Other => Brushes.Red,
-                _ => passFile.LocalDeleted ? Brushes.LightGray : Brushes.Yellow
+                _ => passFile.LocalDeleted
+                    ? Brushes.LightGray
+                    : Brushes.Yellow
             };
         }
 

@@ -11,6 +11,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Common;
     using Common.Constants;
     using Common.Enums;
+    using Common.Interfaces;
     using Common.Interfaces.Services;
     using Common.Interfaces.Services.PassFile;
     using Common.Models.Entities;
@@ -306,7 +307,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             var filePath = await new PassFileLocalListWin(passFile).ShowDialog<string?>(ViewElements.Window);
             if (filePath is null) return;
             
-            var importResult = await _importService.ImportAsync(filePath);
+            var importResult = await _importService.ImportAsync(filePath, passFile.PassPhrase);
             if (importResult.Bad) return;
             
             if (passFile.LocalDeleted)
@@ -344,16 +345,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         {
             if (PassFile?.LocalDeleted is not false) return;
             
-            var merge = await _mergeService.LoadAndPrepareMergeAsync(PassFile!);
-            if (merge.Bad) return;
+            var mergeResult = await _mergeService.LoadAndPrepareMergeAsync(PassFile!);
+            if (mergeResult.Bad) return;
 
-            var data = await new PassFileMergeWin(merge.Data!).ShowDialog<List<PassFile.Section>>(MainWindow.Current);
-            if (data is null) return;
-            
+            var merge = mergeResult.Data!;
+
+            if (merge.Conflicts.Any())
+            {
+                var result = await new PassFileMergeWin(merge).ShowDialog<IResult>(MainWindow.Current);
+                if (result.Bad) return;
+            }
+
             var passfile = PassFile.Copy();
-            passfile.Data = data;
-            var updateResult = PassFileManager.UpdateData(PassFile);
-            
+            passfile.Data = merge.ResultSections;
+
+            var updateResult = PassFileManager.UpdateData(passfile);
             if (updateResult.Ok)
             {
                 PassFile = passfile;

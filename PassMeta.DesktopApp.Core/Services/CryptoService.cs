@@ -51,7 +51,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public string? Decrypt(string data, string keyPhrase)
+        public string? Decrypt(string data, string keyPhrase, bool silent = false)
         {
             byte[] dataBytes;
             
@@ -65,11 +65,11 @@ namespace PassMeta.DesktopApp.Core.Services
                 return null;
             }
             
-            return Decrypt(dataBytes, keyPhrase);
+            return Decrypt(dataBytes, keyPhrase, silent);
         }
 
         /// <inheritdoc />
-        public string? Decrypt(byte[] data, string keyPhrase)
+        public string? Decrypt(byte[] data, string keyPhrase, bool silent = false)
         {
             try
             {
@@ -95,7 +95,8 @@ namespace PassMeta.DesktopApp.Core.Services
             }
             catch (CryptographicException ex)
             {
-                _logger.Warning("Decryption failed: " + ex.Message);
+                if (!silent)
+                    _logger.Warning("Decryption failed: " + ex.Message);
                 return null;
             }
             catch (Exception ex)

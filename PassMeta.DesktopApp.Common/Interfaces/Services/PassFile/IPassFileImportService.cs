@@ -17,6 +17,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
         /// Result with passfile data and passphrase to import.
         /// If failure, does not contain <see cref="ResultModel{TData}.Message"/>.
         /// </returns>
-        Task<IResult<(List<PassFile.Section> Sections, string PassPhrase)>> ImportAsync(string sourceFilePath);
+        Task<IResult<(List<PassFile.Section> Sections, string PassPhrase)>> ImportAsync(string sourceFilePath, string? supposedPassPhrase = null);
     }
 }

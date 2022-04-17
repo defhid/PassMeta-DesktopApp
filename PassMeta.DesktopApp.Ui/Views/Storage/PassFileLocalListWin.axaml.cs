@@ -1,5 +1,7 @@
 namespace PassMeta.DesktopApp.Ui.Views.Storage
 {
+    using Avalonia;
+    using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
     using Common.Models.Entities;
     using Utils.Extensions;
@@ -22,6 +24,11 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
             };
 
             Opened += (_, _) => DataContext.Load();
+        }
+
+        private void DataGrid_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+        {
+            DataContext!.ViewElements.DataGrid = (DataGrid)sender!;
         }
     }
 }

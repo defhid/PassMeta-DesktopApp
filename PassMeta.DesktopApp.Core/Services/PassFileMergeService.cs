@@ -31,7 +31,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 }
 
                 localPassFile.DataEncrypted = result.Data!;
-                if (!await _DecryptAsync(localPassFile, Resources.PASSMERGE__ASK_PASSPHRASE, Resources.PASSMERGE__ASK_PASSPHRASE_AGAIN))
+                if (!await _DecryptAsync(localPassFile, 
+                        Resources.PASSMERGE__ASK_PASSPHRASE, Resources.PASSMERGE__ASK_PASSPHRASE_AGAIN))
                 {
                     return Result.Failure<PassFileMerge>();
                 }
@@ -42,7 +43,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure<PassFileMerge>();
 
             var remotePassFile = fetchResult.Data!;
-            if (!await _DecryptAsync(remotePassFile, Resources.PASSMERGE__ASK_PASSPHRASE_REMOTE, Resources.PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN))
+            if (!await _DecryptAsync(remotePassFile, 
+                    Resources.PASSMERGE__ASK_PASSPHRASE_REMOTE, Resources.PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN, localPassFile))
             {
                 return Result.Failure<PassFileMerge>();
             }
@@ -97,10 +99,26 @@ namespace PassMeta.DesktopApp.Core.Services
             return merge;
         }
         
-        private async Task<bool> _DecryptAsync(PassFile passFile, string askPhraseFirst, string askPhraseAgain)
+        private async Task<bool> _DecryptAsync(PassFile passFile, string askPhraseFirst, string askPhraseAgain, PassFile? localPassFile = null)
         {
             if (passFile.Data is not null) return true;
-            
+
+            if (passFile.PassPhrase is not null)
+            {
+                if (passFile.Decrypt(silent: true).Ok)
+                {
+                    return true;
+                }
+            }
+
+            if (localPassFile is not null)
+            {
+                if (passFile.Decrypt(localPassFile.PassPhrase, true).Ok)
+                {
+                    return true;
+                }
+            }
+
             var passPhrase = await _dialogService.AskPasswordAsync(askPhraseFirst);
 
             while (passPhrase.Ok && (passPhrase.Data == string.Empty || passFile.Decrypt(passPhrase.Data!).Bad))
@@ -108,7 +126,10 @@ namespace PassMeta.DesktopApp.Core.Services
                 passPhrase = await _dialogService.AskPasswordAsync(askPhraseAgain);
             }
 
-            return passFile.Data is not null;
+            if (passFile.Data is null) return false;
+
+            PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
+            return true;
         }
     }
 }

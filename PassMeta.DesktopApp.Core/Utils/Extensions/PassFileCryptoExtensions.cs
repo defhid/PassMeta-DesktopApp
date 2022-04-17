@@ -21,10 +21,13 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// <summary>
         /// Decrypts <see cref="PassFile.DataEncrypted"/> and returns result.
         /// </summary>
+        /// <param name="passFile">Passfile which data to decrypt.</param>
+        /// <param name="passPhrase">Phrase to use for decryption.</param>
+        /// <param name="silent">Not to write failure logs.</param>
         /// <remarks>
         /// <see cref="PassFile.PassPhrase"/> must be not null.
         /// </remarks>
-        public static IDetailedResult Decrypt(this PassFile passFile, string? passPhrase = null)
+        public static IDetailedResult Decrypt(this PassFile passFile, string? passPhrase = null, bool silent = false)
         {
             var originPassPhrase = passFile.PassPhrase;
             if (passPhrase is not null)
@@ -48,7 +51,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             
             var service = EnvironmentContainer.Resolve<ICryptoService>();
 
-            var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase);
+            var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase, silent);
             if (content is null)
             {
                 passFile.PassPhrase = originPassPhrase;

@@ -285,7 +285,7 @@
         <value>Создан:</value>
     </data>
     <data name="PASSFILE__LABEL_CHANGED_ON" xml:space="preserve">
-        <value>Изменён</value>
+        <value>Изменён:</value>
     </data>
     <data name="PASSFILE__LABEL_STATE" xml:space="preserve">
         <value>Статус:</value>
@@ -616,13 +616,13 @@
         <value>Введите кодовую фразу для локальной версии</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
-        <value>Неверная кодовая фраза для локальной версии, попробуйте ввести заново</value>
+        <value>Неверная кодовая фраза для ЛОКАЛЬНОЙ версии, попробуйте ввести заново</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE" xml:space="preserve">
-        <value>Введите кодовую фразу из новой версии</value>
+        <value>Введите кодовую фразу из другой версии</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN" xml:space="preserve">
-        <value>Неверная кодовая фраза для новой версии, попробуйте ввести заново</value>
+        <value>Неверная кодовая фраза для ДРУГОЙ версии, попробуйте ввести заново</value>
     </data>
     <data name="JOURNAL__ALL_KINDS" xml:space="preserve">
         <value>Все</value>
@@ -635,5 +635,11 @@
     </data>
     <data name="PASSERVICE__INFO_SYNCHRONIZED" xml:space="preserve">
         <value>Cинхронизировано с сервером</value>
+    </data>
+    <data name="PASSERVICE__WARN_NEED_MERGE" xml:space="preserve">
+        <value>Требуется ручное слияние с удалённой версией!</value>
+    </data>
+    <data name="STORAGE__CONFIRM_SECTION_RESET" xml:space="preserve">
+        <value>Вы редактируете группу. Хотите сбросить текущие изменения?</value>
     </data>
 </root>

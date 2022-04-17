@@ -39,7 +39,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task<IResult<(List<PassFile.Section>, string)>> ImportAsync(string sourceFilePath)
+        public async Task<IResult<(List<PassFile.Section>, string)>> ImportAsync(string sourceFilePath, string? supposedPassPhrase = null)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
                 if (ext == ExternalFormat.PassfileEncrypted.FullExtension)
                 {
-                    return await ImportPassfileEncryptedAsync(bytes, name);
+                    return await ImportPassfileEncryptedAsync(bytes, name, supposedPassPhrase);
                 }
 
                 if (ext == ExternalFormat.PassfileDecrypted.FullExtension)
@@ -70,12 +70,12 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
 
-        private async Task<IResult<(List<PassFile.Section>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName)
+        private async Task<IResult<(List<PassFile.Section>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName, string? supposedPassPhrase)
         {
             var i = 0;
             while (true)
             {
-                var passPhrase = await _AskPassPhraseAsync(fileName, i > 0);
+                var passPhrase = supposedPassPhrase ?? await _AskPassPhraseAsync(fileName, i > 0);
                 if (passPhrase is null)
                     return Result.Failure<(List<PassFile.Section>, string)>();
 

@@ -2,13 +2,14 @@
 {
     using System;
     using System.Linq;
+    using System.Reactive.Linq;
     using System.Threading.Tasks;
     using Avalonia.Controls;
     using ReactiveUI;
     
     public abstract class PageViewModel : ReactiveObject, IRoutableViewModel
     {
-        public static event Action<PageViewModel>? OnNavigated;
+        public static event EventHandler<EventArgs>? Navigated;
 
         public string? UrlPathSegment { get; }
         
@@ -22,18 +23,18 @@
             UrlPathSegment = GetType().Name;
         }
         
-        protected void NavigateTo<TViewModel>(params object?[]? args) 
+        protected void TryNavigateTo<TViewModel>(params object?[]? args) 
             where TViewModel : PageViewModel
         {
             args ??= Array.Empty<object>();
             var vm = (TViewModel)Activator.CreateInstance(typeof(TViewModel), new object[] {HostScreen}.Concat(args).ToArray())!;
-            vm.Navigate();
+            vm.TryNavigate();
         }
         
-        protected void NavigateTo(Type viewModelType)
+        protected void TryNavigateTo(Type viewModelType)
         {
             var vm = (PageViewModel)Activator.CreateInstance(viewModelType, HostScreen)!;
-            vm.Navigate();
+            vm.TryNavigate();
         }
 
         /// <summary>
@@ -42,15 +43,28 @@
         /// <remarks>Invokes with preloader.</remarks>
         public abstract Task RefreshAsync();
 
-        public virtual void Navigate()
+        /// <summary>
+        /// Allow page closing.
+        /// </summary>
+        protected virtual Task<bool> OnCloseAsync() => Task.FromResult(true);
+
+        public virtual void TryNavigate()
         {
-            HostScreen.Router.Navigate.Execute(this);
-            OnNavigated?.Invoke(this);
+            var navigateCommand = ReactiveCommand.CreateFromTask(async (Task<bool> allow) =>
+            {
+                if (!await allow) return;
+                await HostScreen.Router.Navigate.Execute(this);
+                Navigated?.Invoke(this, EventArgs.Empty);
+            });
+            
+            HostScreen.Router.CurrentViewModel.FirstOrDefaultAsync()
+                .Select(async vm => vm is not PageViewModel page || await page.OnCloseAsync())
+                .InvokeCommand(navigateCommand);
         }
 
         protected void FakeNavigated()
         {
-             OnNavigated?.Invoke(this);
+             Navigated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

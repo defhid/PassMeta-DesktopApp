@@ -15,13 +15,13 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// Decrypt data from encrypted string with keyphrase.
         /// </summary>
         /// <returns>Decrypted string or null if error occured.</returns>
-        string? Decrypt(string data, string keyPhrase);
+        string? Decrypt(string data, string keyPhrase, bool silent = false);
         
         /// <summary>
         /// Decrypt data from bytes with keyphrase.
         /// </summary>
         /// <returns>Decrypted string or null if error occured.</returns>
-        string? Decrypt(byte[] data, string keyPhrase);
+        string? Decrypt(byte[] data, string keyPhrase, bool silent = false);
 
         /// <summary>
         /// Generate random password by length, using digits and special symbols.

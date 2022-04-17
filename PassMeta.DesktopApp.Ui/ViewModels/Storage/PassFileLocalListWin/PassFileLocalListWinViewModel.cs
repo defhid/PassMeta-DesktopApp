@@ -58,9 +58,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
             foreach (var filePath in Directory.EnumerateFiles(AppConfig.PassFilesDirectory).OrderBy(x => x))
             {
                 var fileName = Path.GetFileName(filePath);
+                var isOld = fileName.EndsWith(".old");
                 descriptionParts.Clear();
 
-                if (fileName.EndsWith(".old"))
+                if (isOld)
                 {
                     if (!fileName.EndsWith(ExternalFormat.PassfileEncrypted.FullExtension + ".old"))
                     {
@@ -81,6 +82,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
 
                 if (passFileId == _currentPassFileId)
                 {
+                    if (!isOld) continue;
                     descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_CURRENT);
                 }
 
@@ -97,6 +99,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
                 if (passFileId == _currentPassFileId)
                 {
                     SelectedFile = FoundList.Last();
+                    ViewElements.DataGrid!.ScrollIntoView(SelectedFile, ViewElements.DataGrid.Columns.First());
                 }
             }
         }

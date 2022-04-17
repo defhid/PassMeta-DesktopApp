@@ -116,15 +116,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                     });
         }
 
-        public override void Navigate()
+        public override void TryNavigate()
         {
             if (AppContext.Current.User is null)
             {
-                NavigateTo<AuthViewModel>();
+                TryNavigateTo<AuthViewModel>();
             }
             else
             {
-                base.Navigate();
+                base.TryNavigate();
             }
         }
 
@@ -132,7 +132,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         {
             if (AppContext.Current.User is null)
             {
-                NavigateTo<AuthViewModel>();
+                TryNavigateTo<AuthViewModel>();
             }
             
             var result = await AccountService.GetUserDataAsync();
@@ -174,7 +174,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             using var preloader = MainWindow.Current!.StartPreloader();
             
             await AuthService.SignOutAsync();
-            NavigateTo<AuthViewModel>();
+            TryNavigateTo<AuthViewModel>();
         }
     }
 }
