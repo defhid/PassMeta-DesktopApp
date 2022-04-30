@@ -3,6 +3,7 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Core.Utils;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
@@ -107,26 +108,50 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public string? GeneratePassword(int length, bool includeDigits, bool includeSpecial)
+        public string GeneratePassword(int length, bool includeDigits, bool includeSpecial)
         {
+            const string userFriendlyLetters = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+            const string digits = "0123456789";
+            const string special = "*-_!@";
+
             try
             {
-                var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                chars += chars.ToLower();
+                var builder = Enumerable.Repeat(userFriendlyLetters, 2);
 
                 if (includeDigits)
-                    chars += "01234567890123456789";
+                    builder = builder.Concat(Enumerable.Repeat(digits, 5));
 
                 if (includeSpecial)
-                    chars += "*-_!@*-_!@";
+                    builder = builder.Concat(Enumerable.Repeat(special, 5));
 
-                return new string(Enumerable.Repeat(chars, length)
-                    .Select(s => s[Random.Next(s.Length)]).ToArray());
+                var chars = string.Concat(builder.OrderBy(_ => Random.Next()));
+
+                var stack = new Stack<char>(length);
+
+                var result = new string(Enumerable.Repeat(chars, length * 20)
+                    .Select(s => s[Random.Next(s.Length)])
+                    .SkipWhile(s => !userFriendlyLetters.Contains(s))
+                    .Where(s =>
+                    {
+                        if (stack.TryPeek(out var prev) && special.Contains(prev) && special.Contains(s))
+                        {
+                            return false;
+                        }
+
+                        stack.Push(s);
+                        return true;
+                    })
+                    .Take(length)
+                    .ToArray());
+
+                return result.Length < length
+                    ? GeneratePassword(length, includeDigits, includeSpecial) 
+                    : result;
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Password generation failed");
-                return null;
+                return ":(";
             }
         }
     }

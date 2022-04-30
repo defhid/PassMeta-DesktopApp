@@ -37,8 +37,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             set => this.RaiseAndSetIfChanged(ref _includeSpecial, value);
         }
 
-        private string? _result;
-        public string? Result
+        private string _result;
+        public string Result
         {
             get => _result;
             set => this.RaiseAndSetIfChanged(ref _result, value);
@@ -57,6 +57,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public GeneratorViewModel(IScreen hostScreen) : base(hostScreen)
         {
+            _result = _cryptoService.GeneratePassword(Length, IncludeDigits, IncludeSpecial);
+
             GenerateCommand = ReactiveCommand.Create(_Generate);
             CopyCommand = ReactiveCommand.Create(_CopyResultAsync);
             
@@ -66,7 +68,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public override Task RefreshAsync()
         {
-            Result = null;
+            Result = string.Empty;
             return Task.CompletedTask;
         }
         
@@ -77,7 +79,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         private async Task _CopyResultAsync()
         {
-            if (await _clipboardService.TrySetTextAsync(Result ?? string.Empty))
+            if (await _clipboardService.TrySetTextAsync(Result))
             {
                 _dialogService.ShowInfo(Resources.GENERATOR__RESULT_COPIED);
             }
