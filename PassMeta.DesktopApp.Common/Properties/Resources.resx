@@ -670,4 +670,10 @@ try another keywords...</value>
     <data name="SETTINGS__RIGHT_BAR_TOOLTIP__SAVE" xml:space="preserve">
         <value>Save</value>
     </data>
+    <data name="GENERATOR__INCLUDE_LOWERCASE" xml:space="preserve">
+        <value>Lowercase</value>
+    </data>
+    <data name="GENERATOR__INCLUDE_UPPERCASE" xml:space="preserve">
+        <value>Uppercase</value>
+    </data>
 </root>

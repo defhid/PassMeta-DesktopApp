@@ -27,6 +27,6 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// Generate random password by length, using digits and special symbols.
         /// </summary>
         /// <returns>Generated string.</returns>
-        string GeneratePassword(int length, bool includeDigits, bool includeSpecial);
+        string GeneratePassword(int length, bool digits, bool lowercase, bool uppercase, bool special);
     }
 }

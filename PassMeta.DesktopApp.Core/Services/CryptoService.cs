@@ -11,6 +11,8 @@ namespace PassMeta.DesktopApp.Core.Services
     /// <inheritdoc />
     public class CryptoService : ICryptoService
     {
+        private const string FailureGenerationResult = ":(";
+
         private static readonly Random Random = new();
 
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
@@ -108,21 +110,37 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public string GeneratePassword(int length, bool includeDigits, bool includeSpecial)
+        public string GeneratePassword(int length, bool digits, bool lowercase, bool uppercase, bool special)
         {
-            const string userFriendlyLetters = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
-            const string digits = "0123456789";
-            const string special = "*-_!@";
+            const string userFriendlyLowercaseSet = "abcdefghijkmnopqrstuvwxyz";
+            const string userFriendlyUppercaseSet = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            const string userFriendlySet = userFriendlyLowercaseSet + userFriendlyUppercaseSet;
+            const string digitSet = "0123456789";
+            const string specialSet = "*-_!@";
+            
+            var builder = Enumerable.Repeat(string.Empty, 0);
+
+            var letters = lowercase || uppercase;
+            var k = (float) Math.Max((lowercase ? 1 : 0) + (uppercase ? 1 : 0), 1) / 2;
+
+            if (!digits && !letters && !special)
+            {
+                return FailureGenerationResult;
+            }
 
             try
             {
-                var builder = Enumerable.Repeat(userFriendlyLetters, 2);
+                if (digits)
+                    builder = builder.Concat(Enumerable.Repeat(digitSet, (int) (5 * k)));
 
-                if (includeDigits)
-                    builder = builder.Concat(Enumerable.Repeat(digits, 5));
+                if (lowercase)
+                    builder = builder.Concat(Enumerable.Repeat(userFriendlyLowercaseSet, 2));
 
-                if (includeSpecial)
-                    builder = builder.Concat(Enumerable.Repeat(special, 5));
+                if (uppercase)
+                    builder = builder.Concat(Enumerable.Repeat(userFriendlyUppercaseSet, 2));
+
+                if (special)
+                    builder = builder.Concat(Enumerable.Repeat(specialSet, (int) (5 * k)));
 
                 var chars = string.Concat(builder.OrderBy(_ => Random.Next()));
 
@@ -130,28 +148,32 @@ namespace PassMeta.DesktopApp.Core.Services
 
                 var result = new string(Enumerable.Repeat(chars, length * 20)
                     .Select(s => s[Random.Next(s.Length)])
-                    .SkipWhile(s => !userFriendlyLetters.Contains(s))
-                    .Where(s =>
-                    {
-                        if (stack.TryPeek(out var prev) && special.Contains(prev) && special.Contains(s))
+                    .SkipWhile(letters
+                        ? s => !userFriendlySet.Contains(s)
+                        : _ => false)
+                    .Where(letters || digits
+                        ? s =>
                         {
-                            return false;
-                        }
+                            if (stack.TryPeek(out var prev) && specialSet.Contains(prev) && specialSet.Contains(s))
+                            {
+                                return false;
+                            }
 
-                        stack.Push(s);
-                        return true;
-                    })
+                            stack.Push(s);
+                            return true;
+                        }
+                        : _ => true)
                     .Take(length)
                     .ToArray());
 
                 return result.Length < length
-                    ? GeneratePassword(length, includeDigits, includeSpecial) 
+                    ? GeneratePassword(length, digits, lowercase, uppercase, special) 
                     : result;
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Password generation failed");
-                return ":(";
+                return FailureGenerationResult;
             }
         }
     }

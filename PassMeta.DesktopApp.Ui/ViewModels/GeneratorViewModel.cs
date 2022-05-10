@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using DesktopApp.Ui.ViewModels.Base;
     
     using System;
+    using System.Reactive.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
     using ReactiveUI;
@@ -16,40 +17,49 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         private readonly ICryptoService _cryptoService = EnvironmentContainer.Resolve<ICryptoService>();
         private readonly IClipboardService _clipboardService = EnvironmentContainer.Resolve<IClipboardService>();
         
-        private int _length = 12;
+        private static int _length = 12;
         public int Length
         {
             get => _length;
             set => this.RaiseAndSetIfChanged(ref _length, value);
         }
         
-        private bool _includeDigits = true;
+        private static bool _includeDigits = true;
         public bool IncludeDigits
         {
             get => _includeDigits;
             set => this.RaiseAndSetIfChanged(ref _includeDigits, value);
         }
         
-        private bool _includeSpecial = true;
+        private static bool _includeLowercase = true;
+        public bool IncludeLowercase
+        {
+            get => _includeLowercase;
+            set => this.RaiseAndSetIfChanged(ref _includeLowercase, value);
+        }
+        
+        private static bool _includeUppercase = true;
+        public bool IncludeUppercase
+        {
+            get => _includeUppercase;
+            set => this.RaiseAndSetIfChanged(ref _includeUppercase, value);
+        }
+        
+        private static bool _includeSpecial = true;
         public bool IncludeSpecial
         {
             get => _includeSpecial;
             set => this.RaiseAndSetIfChanged(ref _includeSpecial, value);
         }
 
-        private string _result;
+        private static string _result = string.Empty;
         public string Result
         {
             get => _result;
             set => this.RaiseAndSetIfChanged(ref _result, value);
         }
 
-        private bool _generated;
-        public bool Generated
-        {
-            get => _generated;
-            set => this.RaiseAndSetIfChanged(ref _generated, value);
-        }
+        public IObservable<bool> Generated { get; }
         
         public ICommand GenerateCommand { get; }
         
@@ -57,13 +67,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public GeneratorViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            _result = _cryptoService.GeneratePassword(Length, IncludeDigits, IncludeSpecial);
+            _result = _cryptoService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
 
             GenerateCommand = ReactiveCommand.Create(_Generate);
             CopyCommand = ReactiveCommand.Create(_CopyResultAsync);
             
-            this.WhenAnyValue(vm => vm.Result)
-                .Subscribe(res => Generated = !string.IsNullOrEmpty(res));
+            Generated = this.WhenAnyValue(vm => vm.Result)
+                .Select(res => res != string.Empty);
         }
 
         public override Task RefreshAsync()
@@ -74,7 +84,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private void _Generate()
         {
-            Result = _cryptoService.GeneratePassword(Length, IncludeDigits, IncludeSpecial);
+            Result = _cryptoService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
         }
 
         private async Task _CopyResultAsync()

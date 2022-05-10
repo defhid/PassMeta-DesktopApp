@@ -619,11 +619,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lowercase.
+        /// </summary>
+        public static string GENERATOR__INCLUDE_LOWERCASE {
+            get {
+                return ResourceManager.GetString("GENERATOR__INCLUDE_LOWERCASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Spec. symbols.
         /// </summary>
         public static string GENERATOR__INCLUDE_SPECIAL {
             get {
                 return ResourceManager.GetString("GENERATOR__INCLUDE_SPECIAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uppercase.
+        /// </summary>
+        public static string GENERATOR__INCLUDE_UPPERCASE {
+            get {
+                return ResourceManager.GetString("GENERATOR__INCLUDE_UPPERCASE", resourceCulture);
             }
         }
         

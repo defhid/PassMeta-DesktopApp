@@ -17,73 +17,105 @@
                    FontSize="30" 
                    Text="{x:Static com:Resources.GENERATOR__TITLE}"/>
         
-        <Grid ColumnDefinitions="Auto,Auto"
-              RowDefinitions="Auto,Auto,Auto"
-              Margin="30 125 0 0"
+        <Grid ColumnDefinitions="Auto,*"
               VerticalAlignment="Top"
-              HorizontalAlignment="Left">
-            <TextBlock Grid.Row="0" Grid.Column="0"
-                       Margin="0 5 30 0"
-                       FontSize="18"
-                       Text="{x:Static com:Resources.GENERATOR__PASSWORD_LENGTH}"/>
+              HorizontalAlignment="Left"
+              Margin="30 125 30 0">
+            <Grid Grid.Column="0"
+                  ColumnDefinitions="Auto,Auto"
+                  RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Left">
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Margin="0 5 30 0"
+                           FontSize="18"
+                           Text="{x:Static com:Resources.GENERATOR__PASSWORD_LENGTH}"/>
+                
+                <NumericUpDown Grid.Row="0" Grid.Column="1"
+                               Minimum="4"
+                               Maximum="100"
+                               Value="{Binding Length}"/>
+                
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Margin="0 25 30 0"
+                           FontSize="18"
+                           Text="{x:Static com:Resources.GENERATOR__INCLUDE_DIGITS}"/>
+                
+                <CheckBox Grid.Row="1" Grid.Column="1"
+                          Margin="0 18 30 0"
+                          IsChecked="{Binding IncludeDigits}"/>
+                
+                <TextBlock Grid.Row="2" Grid.Column="0"
+                           Margin="0 25 30 0"
+                           FontSize="18"
+                           Text="{x:Static com:Resources.GENERATOR__INCLUDE_LOWERCASE}"/>
+                
+                <CheckBox Grid.Row="2" Grid.Column="1"
+                          Margin="0 18 30 0"
+                          IsChecked="{Binding IncludeLowercase}"/>
+                
+                <TextBlock Grid.Row="3" Grid.Column="0"
+                           Margin="0 25 30 0"
+                           FontSize="18"
+                           Text="{x:Static com:Resources.GENERATOR__INCLUDE_UPPERCASE}"/>
+                
+                <CheckBox Grid.Row="3" Grid.Column="1"
+                          Margin="0 18 30 0"
+                          IsChecked="{Binding IncludeUppercase}"/>
+                
+                <TextBlock Grid.Row="4" Grid.Column="0"
+                           Margin="0 25 30 0"
+                           FontSize="18"
+                           Text="{x:Static com:Resources.GENERATOR__INCLUDE_SPECIAL}"/>
+                
+                <CheckBox Grid.Row="4" Grid.Column="1"
+                          Margin="0 18 30 0"
+                          IsChecked="{Binding IncludeSpecial}"/>
+            </Grid>
             
-            <NumericUpDown Grid.Row="0" Grid.Column="1"
-                           Minimum="4"
-                           Maximum="100"
-                           Value="{Binding Length}"/>
+            <Grid Grid.Column="1"
+                  RowDefinitions="Auto,Auto"
+                  VerticalAlignment="Center"
+                  Margin="20 40 0 0"
+                  MinWidth="150">
+                <ScrollViewer Grid.Row="0"
+                              HorizontalAlignment="Center"
+                              Margin="0 0 0 6"
+                              VerticalScrollBarVisibility="Hidden"
+                              HorizontalScrollBarVisibility="Auto"
+                              IsVisible="{Binding Generated^}">
+                    <TextBox HorizontalContentAlignment="Center"
+                             IsReadOnly="True"
+                             Focusable="False"
+                             BorderThickness="0"
+                             FontSize="18"
+                             Margin="0 0 0 14"
+                             Text="{Binding Result}"/>
+                </ScrollViewer>
             
-            <TextBlock Grid.Row="1" Grid.Column="0"
-                       Margin="0 25 30 0"
-                       FontSize="18"
-                       Text="{x:Static com:Resources.GENERATOR__INCLUDE_DIGITS}"/>
+                <Grid Grid.Row="1"
+                      ColumnDefinitions="Auto,Auto"
+                      Margin="5 0 0 0"
+                      HorizontalAlignment="Center">
+                    <Button Grid.Column="0"
+                            ToolTip.Tip="{x:Static com:Resources.GENERATOR__COPY_BTN}"
+                            Margin="0 0 15 0"
+                            Padding="8 8 8 8"
+                            FontSize="26"
+                            FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
+                            Content="&#xE8C8;"
+                            IsVisible="{Binding Generated^}"
+                            Command="{Binding CopyCommand}"/>
             
-            <CheckBox Grid.Row="1" Grid.Column="1"
-                      Margin="0 18 30 0"
-                      IsChecked="{Binding IncludeDigits}"/>
-            
-            <TextBlock Grid.Row="2" Grid.Column="0"
-                       Margin="0 25 30 0"
-                       FontSize="18"
-                       Text="{x:Static com:Resources.GENERATOR__INCLUDE_SPECIAL}"/>
-            
-            <CheckBox Grid.Row="2" Grid.Column="1"
-                      Margin="0 18 30 0"
-                      IsChecked="{Binding IncludeSpecial}"/>
-        </Grid>
-        
-        <Grid ColumnDefinitions="Auto,Auto,Auto"
-              VerticalAlignment="Top"
-              HorizontalAlignment="Center"
-              Margin="0 300 0 0">
-            <TextBox Grid.Column="0"
-                     HorizontalContentAlignment="Center"
-                     Width="300"
-                     Margin="0 5 30 0"
-                     IsReadOnly="True"
-                     Focusable="False"
-                     BorderThickness="0"
-                     FontSize="18"
-                     IsVisible="{Binding Generated}"
-                     Text="{Binding Result}"/>
-            
-            <Button Grid.Column="1"
-                    ToolTip.Tip="{x:Static com:Resources.GENERATOR__COPY_BTN}"
-                    Margin="0 0 15 0"
-                    Padding="8 8 8 8"
-                    FontSize="26"
-                    FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
-                    Content="&#xE8C8;"
-                    IsVisible="{Binding Generated}"
-                    Command="{Binding CopyCommand}"/>
-            
-            <Button Grid.Column="2"
-                    ToolTip.Tip="{x:Static com:Resources.GENERATOR__BTN}"
-                    Margin="0 0 15 0"
-                    Padding="8 8 8 8"
-                    FontSize="26"
-                    FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
-                    Content="&#xE8D7;"
-                    Command="{Binding GenerateCommand}"/>
+                    <Button Grid.Column="1"
+                            ToolTip.Tip="{x:Static com:Resources.GENERATOR__BTN}"
+                            Padding="8 8 8 8"
+                            FontSize="26"
+                            FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
+                            Content="&#xE8D7;"
+                            Command="{Binding GenerateCommand}"/>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
