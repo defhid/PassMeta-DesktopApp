@@ -1,5 +1,6 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
+    using DesktopApp.Common;
     using DesktopApp.Common.Constants;
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Core.Utils;
@@ -9,6 +10,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Avalonia.Controls;
     
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
     
@@ -19,13 +21,23 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
+        public override ContentControl[] RightBarButtons => new ContentControl[]
+        {
+            new Button
+            {
+                Content = "\uE74E",
+                Command = ReactiveCommand.CreateFromTask(_SaveAsync),
+                [ToolTip.TipProperty] = Resources.SETTINGS__RIGHT_BAR_TOOLTIP__SAVE
+            }
+        };
+
         public IReadOnlyList<AppCulture> Cultures => AppCulture.All;
 
         public string? ServerUrl { get; set; }
 
         public AppCulture? SelectedCulture { get; set; }
 
-        public ReactCommand SaveCommand => ReactiveCommand.CreateFromTask(_SaveAsync);
+        public bool HidePasswords { get; set; }
 
         public SettingsViewModel(IScreen hostScreen) : base(hostScreen)
         {
@@ -49,6 +61,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                 : AppConfig.Current.ServerUrl;
 
             SelectedCulture = Cultures.FirstOrDefault(cult => cult.Code == AppConfig.Current.CultureCode);
+
+            HidePasswords = AppConfig.Current.HidePasswords;
         }
 
         private async Task _SaveAsync()
@@ -65,9 +79,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 #endif
             }
             
-            var result = await AppConfig.CreateAndSetCurrentAsync(serverUrl, SelectedCulture);
+            var result = await AppConfig.CreateAndSetCurrentAsync(serverUrl, SelectedCulture, HidePasswords);
             if (result.Ok)
-                _dialogService.ShowInfo(Common.Resources.SETTINGS__SAVE_SUCCESS);
+                _dialogService.ShowInfo(Resources.SETTINGS__INFO_SAVE_SUCCESS);
             else
                 _dialogService.ShowError(result.Message!);
         }

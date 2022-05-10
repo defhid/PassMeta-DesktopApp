@@ -346,6 +346,7 @@
                                                              MaxHeight="30"
                                                              FontSize="15"
                                                              VerticalContentAlignment="Center"
+                                                             PasswordChar="{Binding PasswordChar^}"
                                                              Text="{Binding Password}"
                                                              IsReadOnly="{Binding IsReadOnly}"
                                                              Focusable="{Binding !IsReadOnly}"/>

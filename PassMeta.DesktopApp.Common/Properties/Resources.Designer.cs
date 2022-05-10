@@ -1645,11 +1645,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide passwords.
+        /// </summary>
+        public static string SETTINGS__HIDE_PASSWORDS {
+            get {
+                return ResourceManager.GetString("SETTINGS__HIDE_PASSWORDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to URL is incorrect!.
         /// </summary>
         public static string SETTINGS__INCORRECT_API {
             get {
                 return ResourceManager.GetString("SETTINGS__INCORRECT_API", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The settings have been saved successfully!.
+        /// </summary>
+        public static string SETTINGS__INFO_SAVE_SUCCESS {
+            get {
+                return ResourceManager.GetString("SETTINGS__INFO_SAVE_SUCCESS", resourceCulture);
             }
         }
         
@@ -1665,18 +1683,9 @@ namespace PassMeta.DesktopApp.Common {
         /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
-        public static string SETTINGS__SAVE_BTN {
+        public static string SETTINGS__RIGHT_BAR_TOOLTIP__SAVE {
             get {
-                return ResourceManager.GetString("SETTINGS__SAVE_BTN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The settings have been saved successfully!.
-        /// </summary>
-        public static string SETTINGS__SAVE_SUCCESS {
-            get {
-                return ResourceManager.GetString("SETTINGS__SAVE_SUCCESS", resourceCulture);
+                return ResourceManager.GetString("SETTINGS__RIGHT_BAR_TOOLTIP__SAVE", resourceCulture);
             }
         }
         
@@ -1979,11 +1988,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide password.
+        /// </summary>
+        public static string UI__HIDE_PASSWORD {
+            get {
+                return ResourceManager.GetString("UI__HIDE_PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Paste.
         /// </summary>
         public static string UI__PASTE {
             get {
                 return ResourceManager.GetString("UI__PASTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show password.
+        /// </summary>
+        public static string UI__SHOW_PASSWORD {
+            get {
+                return ResourceManager.GetString("UI__SHOW_PASSWORD", resourceCulture);
             }
         }
     }

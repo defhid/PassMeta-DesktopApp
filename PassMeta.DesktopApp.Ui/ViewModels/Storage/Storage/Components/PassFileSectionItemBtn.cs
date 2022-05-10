@@ -8,6 +8,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using Common.Interfaces.Services;
     using Common.Models.Entities;
     using Core;
+    using Core.Utils;
     using ReactiveUI;
     
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
@@ -26,7 +27,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         public IObservable<bool> IsCommentTextVisible { get; }
         public IObservable<bool> IsCommentInputVisible { get; }
-        
+        public IObservable<char?> PasswordChar { get; }
+
         public ReactCommand CopyWhatCommand { get; }
         public ReactCommand CopyPasswordCommand { get; }
         public ReactCommand DeleteCommand { get; }
@@ -50,6 +52,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             
             IsCommentInputVisible = this.WhenAnyValue(btn => btn.IsReadOnly)
                 .Select(isReadOnly => !isReadOnly);
+
+            PasswordChar = this.WhenAnyValue(btn => btn.IsReadOnly)
+                .Select(isReadOnly => isReadOnly && AppConfig.Current.HidePasswords ? '*' : (char?)null);
 
             CopyWhatCommand = ReactiveCommand.CreateFromTask(_CopyWhatAsync);
             CopyPasswordCommand = ReactiveCommand.CreateFromTask(_CopyPasswordAsync);

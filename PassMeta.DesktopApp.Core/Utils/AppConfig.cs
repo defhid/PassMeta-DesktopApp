@@ -40,6 +40,12 @@ namespace PassMeta.DesktopApp.Core.Utils
             get => _culture.Code;
             private set => AppCulture.TryParse(value, out _culture);
         }
+
+        /// <summary>
+        /// Hide user passwords.
+        /// </summary>
+        [JsonProperty("hide_pwd")]
+        public bool HidePasswords { get; private set; }
         
         /// <summary>
         /// Application language.
@@ -144,12 +150,16 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Create and set app configuration to <see cref="Current"/>.
         /// </summary>
         /// <returns>Success + created configuration.</returns>
-        public static async Task<IDetailedResult> CreateAndSetCurrentAsync(string? serverUrl, AppCulture? culture)
+        public static async Task<IDetailedResult> CreateAndSetCurrentAsync(
+            string? serverUrl,
+            AppCulture? culture,
+            bool hidePasswords)
         {
             var config = new AppConfig
             {
                 ServerUrl = serverUrl,
-                _culture = culture ?? AppCulture.Default
+                _culture = culture ?? AppCulture.Default,
+                HidePasswords = hidePasswords
             };
 
             var result = await _SaveToFileAsync(config);

@@ -116,9 +116,6 @@
     <data name="SETTINGS__TITLE" xml:space="preserve">
         <value>Настройки</value>
     </data>
-    <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
-        <value>Сохранить</value>
-    </data>
     <data name="LANG__EN" xml:space="preserve">
         <value>Английский</value>
     </data>
@@ -131,7 +128,7 @@
     <data name="SETTINGS__INCORRECT_API" xml:space="preserve">
         <value>Некорректный URL-адрес!</value>
     </data>
-    <data name="SETTINGS__SAVE_SUCCESS" xml:space="preserve">
+    <data name="SETTINGS__INFO_SAVE_SUCCESS" xml:space="preserve">
         <value>Настройки были успешно сохранены!</value>
     </data>
     <data name="ACCOUNT__TITLE" xml:space="preserve">
@@ -653,5 +650,17 @@
     </data>
     <data name="PASSMERGE__BTN_TOOLTIP_APPLY" xml:space="preserve">
         <value>Применить</value>
+    </data>
+    <data name="UI__HIDE_PASSWORD" xml:space="preserve">
+        <value>Скрыть пароль</value>
+    </data>
+    <data name="UI__SHOW_PASSWORD" xml:space="preserve">
+        <value>Показать пароль</value>
+    </data>
+    <data name="SETTINGS__HIDE_PASSWORDS" xml:space="preserve">
+        <value>Скрывать пароли</value>
+    </data>
+    <data name="SETTINGS__RIGHT_BAR_TOOLTIP__SAVE" xml:space="preserve">
+        <value>Сохранить</value>
     </data>
 </root>

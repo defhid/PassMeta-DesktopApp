@@ -123,9 +123,6 @@
     <data name="SETTINGS__TITLE" xml:space="preserve">
         <value>Settings</value>
     </data>
-    <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
-        <value>Save</value>
-    </data>
     <data name="LANG__RU" xml:space="preserve">
         <value>Russian</value>
     </data>
@@ -138,7 +135,7 @@
     <data name="SETTINGS__INCORRECT_API" xml:space="preserve">
         <value>URL is incorrect!</value>
     </data>
-    <data name="SETTINGS__SAVE_SUCCESS" xml:space="preserve">
+    <data name="SETTINGS__INFO_SAVE_SUCCESS" xml:space="preserve">
         <value>The settings have been saved successfully!</value>
     </data>
     <data name="ACCOUNT__TITLE" xml:space="preserve">
@@ -660,5 +657,17 @@ try another keywords...</value>
     </data>
     <data name="PASSMERGE__BTN_TOOLTIP_APPLY" xml:space="preserve">
         <value>Accept</value>
+    </data>
+    <data name="UI__SHOW_PASSWORD" xml:space="preserve">
+        <value>Show password</value>
+    </data>
+    <data name="UI__HIDE_PASSWORD" xml:space="preserve">
+        <value>Hide password</value>
+    </data>
+    <data name="SETTINGS__HIDE_PASSWORDS" xml:space="preserve">
+        <value>Hide passwords</value>
+    </data>
+    <data name="SETTINGS__RIGHT_BAR_TOOLTIP__SAVE" xml:space="preserve">
+        <value>Save</value>
     </data>
 </root>
