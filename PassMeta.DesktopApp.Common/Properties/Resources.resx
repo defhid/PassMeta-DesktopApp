@@ -676,4 +676,7 @@ try another keywords...</value>
     <data name="GENERATOR__INCLUDE_UPPERCASE" xml:space="preserve">
         <value>Uppercase</value>
     </data>
+    <data name="STORAGE__ITEM_TOOLTIP__GENERATE_PASSWORD" xml:space="preserve">
+        <value>Generate</value>
+    </data>
 </root>

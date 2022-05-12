@@ -669,4 +669,7 @@
     <data name="GENERATOR__INCLUDE_UPPERCASE" xml:space="preserve">
         <value>Прописные</value>
     </data>
+    <data name="STORAGE__ITEM_TOOLTIP__GENERATE_PASSWORD" xml:space="preserve">
+        <value>Сгенерировать</value>
+    </data>
 </root>

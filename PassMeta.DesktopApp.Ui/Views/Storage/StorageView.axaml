@@ -337,19 +337,97 @@
                                                                VerticalAlignment="Top"
                                                                Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__PASSWORD}"/>
                                                     
-                                                    <TextBox Grid.Row="1"
-                                                             Grid.Column="1"
-                                                             Margin="0 10 26 20"
-                                                             Padding="4"
-                                                             Height="30"
-                                                             MinHeight="30"
-                                                             MaxHeight="30"
-                                                             FontSize="15"
-                                                             VerticalContentAlignment="Center"
-                                                             PasswordChar="{Binding PasswordChar^}"
-                                                             Text="{Binding Password}"
-                                                             IsReadOnly="{Binding IsReadOnly}"
-                                                             Focusable="{Binding !IsReadOnly}"/>
+                                                    <Panel Grid.Row="1"
+                                                           Grid.Column="1"
+                                                           Margin="0 10 26 20">
+                                                        <Panel.Styles>
+                                                            <Style Selector="TextBox.generatorButton">
+                                                                <Setter Property="InnerRightContent">
+                                                                    <Template>
+                                                                        <Button Height="22"
+                                                                            Width="22"
+                                                                            Margin="3 0"
+                                                                            Padding="0"
+                                                                            Opacity="0.9"
+                                                                            Background="Transparent"
+                                                                            Content="&#xEA80;"
+                                                                            FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
+                                                                            FontSize="14"
+                                                                            VerticalAlignment="Center"
+                                                                            HorizontalAlignment="Center"
+                                                                            VerticalContentAlignment="Center"
+                                                                            HorizontalContentAlignment="Center"
+                                                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__GENERATE_PASSWORD}"
+                                                                            Command="{Binding OpenPopupGenerator}"/>
+                                                                    </Template>
+                                                                </Setter>
+                                                            </Style>
+                                                        </Panel.Styles>
+
+                                                        <TextBox x:Name="Pwd"
+                                                                 Padding="4"
+                                                                 Height="30"
+                                                                 MinHeight="30"
+                                                                 MaxHeight="30"
+                                                                 FontSize="15"
+                                                                 VerticalContentAlignment="Center"
+                                                                 PasswordChar="{Binding PasswordChar^}"
+                                                                 Text="{Binding Password}"
+                                                                 IsReadOnly="{Binding IsReadOnly}"
+                                                                 Focusable="{Binding !IsReadOnly}"
+                                                                 Classes.clearButton="{Binding !PopupGeneratorCanBeOpened^}"
+                                                                 Classes.generatorButton="{Binding PopupGeneratorCanBeOpened^}"/>
+                                                    
+                                                        <!-- TODO: less transparent -->
+                                                        <Popup PlacementTarget="{Binding ElementName=Pwd}" 
+                                                               IsOpen="{Binding IsPopupGeneratorOpened}"
+                                                               IsLightDismissEnabled="True"
+                                                               PlacementAnchor="BottomLeft"
+                                                               VerticalOffset="5">
+                                                            <Border Background="{Binding Background, ElementName=Pwd}"
+                                                                    CornerRadius="4"
+                                                                    BorderThickness="1">
+                                                                <Grid ColumnDefinitions="*,Auto">
+                                                                    <Grid Grid.Column="0"
+                                                                          RowDefinitions="Auto,Auto">
+                                                                        <StackPanel Grid.Row="0"
+                                                                            Orientation="Horizontal">
+                                                                            <CheckBox IsChecked="{Binding Generator.IncludeDigits}"
+                                                                                Content="0-9"
+                                                                                Margin="10 5 20 0"/>
+                                                                            <CheckBox IsChecked="{Binding Generator.IncludeLetters}"
+                                                                                Content="A-z"
+                                                                                Margin="10 5 20 0"/>
+                                                                            <CheckBox IsChecked="{Binding Generator.IncludeSpecial}"
+                                                                                Content="*"
+                                                                                Margin="10 5 10 0"/>
+                                                                        </StackPanel>
+                                                                
+                                                                        <Grid Grid.Row="1"
+                                                                              ColumnDefinitions="*,Auto"
+                                                                              Margin="10 -5 10 0">
+                                                                            <Slider Grid.Column="0" 
+                                                                                    Margin="0 0 10 0"
+                                                                                    Minimum="1"
+                                                                                    Maximum="50"
+                                                                                    Value="{Binding Generator.Length}"/>
+                                                                            
+                                                                            <TextBlock Grid.Column="1"
+                                                                                VerticalAlignment="Center"
+                                                                                Text="{Binding Generator.Length}"/>
+                                                                        </Grid>
+                                                                    </Grid>
+                                                                    
+                                                                    <Button Grid.Column="1"
+                                                                            Height="90"
+                                                                            Content="&#xE966;"
+                                                                            CornerRadius="0 4 4 0"
+                                                                            FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
+                                                                            Command="{Binding Generator.GenerateCommand}"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </Popup>
+                                                    </Panel>
                                                     
                                                     <Button Grid.Row="1"
                                                             Grid.Column="2"

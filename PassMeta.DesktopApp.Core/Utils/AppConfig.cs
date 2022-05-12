@@ -46,12 +46,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         [JsonProperty("hide_pwd")]
         public bool HidePasswords { get; private set; }
-        
+
         /// <summary>
-        /// Application language.
+        /// Default length for password generator.
         /// </summary>
-        [JsonIgnore]
-        public AppCulture Culture => _culture;
+        [JsonProperty("default_password_length")]
+        public int DefaultPasswordLength => 12;
 
         /// <summary>
         /// Current application config.

@@ -1807,6 +1807,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate.
+        /// </summary>
+        public static string STORAGE__ITEM_TOOLTIP__GENERATE_PASSWORD {
+            get {
+                return ResourceManager.GetString("STORAGE__ITEM_TOOLTIP__GENERATE_PASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy 1st.
         /// </summary>
         public static string STORAGE__ITEM_TOOLTIP__LOGIN_COPY {

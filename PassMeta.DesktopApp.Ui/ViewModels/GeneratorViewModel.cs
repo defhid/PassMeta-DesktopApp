@@ -10,46 +10,42 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System.Threading.Tasks;
     using System.Windows.Input;
     using ReactiveUI;
+    using Utils;
 
     public class GeneratorViewModel : PageViewModel
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
         private readonly ICryptoService _cryptoService = EnvironmentContainer.Resolve<ICryptoService>();
         private readonly IClipboardService _clipboardService = EnvironmentContainer.Resolve<IClipboardService>();
-        
-        private static int _length = 12;
+
         public int Length
         {
-            get => _length;
-            set => this.RaiseAndSetIfChanged(ref _length, value);
+            get => PresetsCache.Generator.Length;
+            set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.Length, value);
         }
-        
-        private static bool _includeDigits = true;
+
         public bool IncludeDigits
         {
-            get => _includeDigits;
-            set => this.RaiseAndSetIfChanged(ref _includeDigits, value);
+            get => PresetsCache.Generator.IncludeDigits;
+            set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeDigits, value);
         }
-        
-        private static bool _includeLowercase = true;
+
         public bool IncludeLowercase
         {
-            get => _includeLowercase;
-            set => this.RaiseAndSetIfChanged(ref _includeLowercase, value);
+            get =>  PresetsCache.Generator.IncludeLowercase;
+            set => this.RaiseAndSetIfChanged(ref  PresetsCache.Generator.IncludeLowercase, value);
         }
-        
-        private static bool _includeUppercase = true;
+
         public bool IncludeUppercase
         {
-            get => _includeUppercase;
-            set => this.RaiseAndSetIfChanged(ref _includeUppercase, value);
+            get => PresetsCache.Generator.IncludeUppercase;
+            set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeUppercase, value);
         }
-        
-        private static bool _includeSpecial = true;
+
         public bool IncludeSpecial
         {
-            get => _includeSpecial;
-            set => this.RaiseAndSetIfChanged(ref _includeSpecial, value);
+            get => PresetsCache.Generator.IncludeSpecial;
+            set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeSpecial, value);
         }
 
         private static string _result = string.Empty;

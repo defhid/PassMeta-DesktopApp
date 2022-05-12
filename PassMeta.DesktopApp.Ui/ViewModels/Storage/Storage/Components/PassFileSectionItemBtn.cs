@@ -21,19 +21,36 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         private readonly ObservableAsPropertyHelper<bool> _isReadOnly;
         public bool IsReadOnly => _isReadOnly.Value;
         
-        public string? What { get; set; }
-        public string? Password { get; set; }
         public string? Comment { get; set; }
+        public string? What { get; set; }
+
+        private string? _password;
+        public string? Password
+        {
+            get => _password;
+            set => this.RaiseAndSetIfChanged(ref _password, value);
+        }
 
         public IObservable<bool> IsCommentTextVisible { get; }
         public IObservable<bool> IsCommentInputVisible { get; }
         public IObservable<char?> PasswordChar { get; }
+        public IObservable<bool> PopupGeneratorCanBeOpened { get; }
+
+        private bool _isPopupGeneratorOpened;
+        public bool IsPopupGeneratorOpened
+        {
+            get => _isPopupGeneratorOpened;
+            set => this.RaiseAndSetIfChanged(ref _isPopupGeneratorOpened, value);
+        }
 
         public ReactCommand CopyWhatCommand { get; }
         public ReactCommand CopyPasswordCommand { get; }
         public ReactCommand DeleteCommand { get; }
         public ReactCommand UpCommand { get; }
         public ReactCommand DownCommand { get; }
+        public ReactCommand OpenPopupGenerator { get; }
+        
+        public PasswordGenerator Generator { get; }
 
         public PassFileSectionItemBtn(PassFile.Section.Item item,
             IObservable<bool> editModeObservable,
@@ -56,12 +73,25 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             PasswordChar = this.WhenAnyValue(btn => btn.IsReadOnly)
                 .Select(isReadOnly => isReadOnly && AppConfig.Current.HidePasswords ? '*' : (char?)null);
 
+            PopupGeneratorCanBeOpened = this.WhenAnyValue(
+                    btn => btn.IsReadOnly,
+                    btn => btn.Password)
+                .Select(x => !x.Item1 && string.IsNullOrEmpty(x.Item2));
+
             CopyWhatCommand = ReactiveCommand.CreateFromTask(_CopyWhatAsync);
             CopyPasswordCommand = ReactiveCommand.CreateFromTask(_CopyPasswordAsync);
             
             DeleteCommand = ReactiveCommand.Create(() => onDelete(this));
             UpCommand = ReactiveCommand.Create(() => onMove(this, -1));
             DownCommand = ReactiveCommand.Create(() => onMove(this, 1));
+
+            OpenPopupGenerator = ReactiveCommand.Create(() =>
+            {
+                IsPopupGeneratorOpened = false;
+                IsPopupGeneratorOpened = true;
+            });
+
+            Generator = new PasswordGenerator(pwd => Password = pwd);
         }
 
         public PassFile.Section.Item ToItem() => new()
