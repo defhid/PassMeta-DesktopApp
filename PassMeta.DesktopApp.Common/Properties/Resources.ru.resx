@@ -672,4 +672,7 @@
     <data name="STORAGE__ITEM_TOOLTIP__GENERATE_PASSWORD" xml:space="preserve">
         <value>Сгенерировать</value>
     </data>
+    <data name="SETTINGS__CONFIRM_SERVER_CHANGE" xml:space="preserve">
+        <value>Несохранённые изменния пакетов могут быть утеряны. Продолжить?</value>
+    </data>
 </root>

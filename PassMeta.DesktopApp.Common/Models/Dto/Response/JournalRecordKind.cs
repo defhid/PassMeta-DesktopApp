@@ -1,6 +1,5 @@
 namespace PassMeta.DesktopApp.Common.Models.Dto.Response
 {
-    using System.Collections.Generic;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -15,9 +14,12 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Response
         public int Id { get; init; }
 
         /// <summary>
-        /// Names package (depending on locale).
+        /// Kind name.
         /// </summary>
         [JsonProperty("name")]
-        public Dictionary<string, string> NamePack { get; init; } = null!;
+        public string Name { get; init; } = null!;
+
+        /// <inheritdoc />
+        public override string ToString() => Name;
     }
 }

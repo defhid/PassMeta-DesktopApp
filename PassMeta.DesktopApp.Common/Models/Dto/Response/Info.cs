@@ -1,6 +1,5 @@
 namespace PassMeta.DesktopApp.Common.Models.Dto.Response
 {
-    using System.Collections.Generic;
     using Entities;
     using Newtonsoft.Json;
 
@@ -14,17 +13,17 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Response
         /// </summary>
         [JsonProperty("user")]
         public User? User { get; init; }
-        
+
+        /// <summary>
+        /// Server identifier.
+        /// </summary>
+        [JsonProperty("app_id")]
+        public string? AppId { get; init; }
+
         /// <summary>
         /// Server version.
         /// </summary>
         [JsonProperty("app_version")]
         public string? AppVersion { get; init; }
-        
-        /// <summary>
-        /// <see cref="OkBadResponse"/> message translation package.
-        /// </summary>
-        [JsonProperty("messages_translate_pack")]
-        public Dictionary<string, Dictionary<string, string>>? OkBadMessagesTranslatePack { get; init; }
     }
 }

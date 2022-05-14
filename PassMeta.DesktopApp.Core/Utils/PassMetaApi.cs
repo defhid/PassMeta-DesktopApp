@@ -76,7 +76,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Updates <see cref="AppContext"/>
         /// if connection has been found, but <see cref="AppContext.ServerVersion"/> is null.
         /// </remarks>
-        public static async Task<bool> CheckConnectionAsync(bool showNoConnection = false)
+        public static async Task<bool> CheckConnectionAsync(bool showNoConnection = false, bool isFromAppContext = false)
         {
             if (AppConfig.Current.ServerUrl is null) return false;
 
@@ -101,7 +101,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 has = false;
             }
 
-            if (has && AppContext.Current.ServerVersion is null)
+            if (has && AppContext.Current.ServerVersion is null && !isFromAppContext)
             {
                 await AppContext.RefreshFromServerAsync(false);
             }
@@ -164,7 +164,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
         }
 
-        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, string? context, IMapper<string, string> badMapper, bool handleBad)
+        private static async Task<TResponse?> _ExecuteRequest<TResponse>(HttpWebRequest request, string? context, IMapper<string, string>? badMapper, bool handleBad)
             where TResponse : OkBadResponse
         {
             TResponse? responseData = null;
@@ -214,8 +214,9 @@ namespace PassMeta.DesktopApp.Core.Utils
                 }
                 else if (responseData is not null)
                 {
-                    responseData.ApplyMapping(badMapper);
-                    
+                    if (badMapper is not null)
+                        responseData.ApplyWhatMapping(badMapper);
+
                     Logger.Warning($"{responseBody} [{context}]");
                     
                     if (handleBad)
@@ -252,7 +253,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                     if (responseData is null)
                         throw new FormatException();
                     
-                    responseData.ApplyMapping(badMapper);
+                    if (badMapper is not null)
+                        responseData.ApplyWhatMapping(badMapper);
                     
                     if (handleBad && !responseData.Success)
                         OkBadService.ShowResponseFailure(responseData);
@@ -287,7 +289,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             private string? _context;
 
-            private IMapper<string, string> _badMapper;
+            private IMapper<string, string>? _badMapper;
 
             private bool _handleBad;
 
@@ -295,10 +297,10 @@ namespace PassMeta.DesktopApp.Core.Utils
             public Request(string method, string url, object? data)
             {
                 _data = data;
-                _url = '/' + url;
+                _url = '/' + url + (url.Contains('?') ? '&' : '?') + "lang=" + AppConfig.Current.CultureCode;
                 _method = method;
                 _context = null;
-                _badMapper = AppContext.Current.OkBadMessagesMapper;
+                _badMapper = null;
                 _handleBad = false;
             }
 
@@ -307,7 +309,10 @@ namespace PassMeta.DesktopApp.Core.Utils
             /// </summary>
             public Request WithBadMapping(IMapper<string, string> whatMapper)
             {
-                _badMapper += whatMapper;
+                if (_badMapper is null)
+                    _badMapper = whatMapper;
+                else
+                    _badMapper += whatMapper;
                 return this;
             }
             

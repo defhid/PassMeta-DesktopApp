@@ -1663,6 +1663,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Uncommited passfile changes can be lost. Continue?.
+        /// </summary>
+        public static string SETTINGS__CONFIRM_SERVER_CHANGE {
+            get {
+                return ResourceManager.GetString("SETTINGS__CONFIRM_SERVER_CHANGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide passwords.
         /// </summary>
         public static string SETTINGS__HIDE_PASSWORDS {

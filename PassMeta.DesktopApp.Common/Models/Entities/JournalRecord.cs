@@ -13,13 +13,13 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// </summary>
         [JsonProperty("id")]
         public int Id { get; init; }
-        
+
         /// <summary>
-        /// Record kind identifier.
+        /// Record kind.
         /// </summary>
-        [JsonProperty("kind_id")]
-        public int KindId { get; set; }
-        
+        [JsonProperty("kind")]
+        public string Kind { get; set; } = null!;
+
         /// <summary>
         /// Login of the user that performed the recorded request.
         /// </summary>

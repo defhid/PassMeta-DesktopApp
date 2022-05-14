@@ -7,12 +7,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
     using System.Threading.Tasks;
     using Base;
     using Common;
-    using Common.Interfaces.Mapping;
     using Common.Models.Dto.Response;
     using Common.Models.Entities;
-    using Common.Utils.Mapping;
     using Core.Utils;
-    using Core.Utils.Mapping;
     using Logs.Models;
     using Models;
     using ReactiveUI;
@@ -40,15 +37,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             set => this.RaiseAndSetIfChanged(ref _selectedPageIndex, value);
         }
 
-        private List<JournalRecordKindInfo> _kinds = new();
-        public List<JournalRecordKindInfo> Kinds
+        private List<JournalRecordKind> _kinds = new();
+        public List<JournalRecordKind> Kinds
         {
             get => _kinds; 
             private set => this.RaiseAndSetIfChanged(ref _kinds, value);
         }
 
-        private JournalRecordKindInfo? _selectedKind;
-        public JournalRecordKindInfo? SelectedKind
+        private JournalRecordKind? _selectedKind;
+        public JournalRecordKind? SelectedKind
         {
             get => _selectedKind;
             set => this.RaiseAndSetIfChanged(ref _selectedKind, value);
@@ -62,8 +59,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             get => _records;
             set => this.RaiseAndSetIfChanged(ref _records, value);
         }
-        
-        private static IMapper<int, string>? _kindMapper;
 
         public JournalViewModel(IScreen hostScreen) : base(hostScreen)
         {
@@ -117,12 +112,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             PageList = pageList;
             SelectedPageIndex = response.Data.Offset / _pageLimit;
 
-            Records = response.Data.List.Select(rec => new JournalRecordInfo(rec, _kindMapper!)).ToList();
+            Records = response.Data.List.Select(rec => new JournalRecordInfo(rec)).ToList();
         }
 
         private async Task InitLoadAsync()
         {
-            if (_kindMapper is null)
+            var defaultKind = new JournalRecordKind { Id = -1, Name = Resources.JOURNAL__ALL_KINDS};
+
+            if (!Kinds.Any())
             {
                 using var preloader = MainWindow.Current!.StartPreloader();
                 
@@ -130,17 +127,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
 
                 if (kindsResponse?.Success is not true) return;
 
-                _kindMapper = new SimpleMapper<int, string>(
-                    kindsResponse.Data!.Select(kind => new MapToTranslate<int>(kind.Id, kind.NamePack)));
+                Kinds = kindsResponse.Data!
+                    .OrderBy(info => info.Name)
+                    .Prepend(defaultKind)
+                    .ToList();
             }
-
-            var defaultKind = new JournalRecordKindInfo(-1, Resources.JOURNAL__ALL_KINDS);
-            
-            Kinds = _kindMapper.GetMappings()
-                .Select(map => new JournalRecordKindInfo(map.From, map.To))
-                .OrderBy(info => info.Name)
-                .Prepend(defaultKind)
-                .ToList();
 
             SelectedKind = defaultKind;
             SelectedPageIndex = 0;

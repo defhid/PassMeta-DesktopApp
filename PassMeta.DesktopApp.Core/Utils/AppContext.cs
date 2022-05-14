@@ -1,7 +1,6 @@
 namespace PassMeta.DesktopApp.Core.Utils
 {
     using Common.Interfaces.Services;
-    using Common.Interfaces.Mapping;
     using Common.Models.Dto.Response;
     using Common.Models.Entities;
     
@@ -11,8 +10,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using Common.Utils.Mapping;
-    using Mapping;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -20,8 +17,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     /// </summary>
     public class AppContext
     {
-        private CookieContainer _cookieContainer = new();
-
         /// <summary>
         /// Cookies from the server.
         /// </summary>
@@ -47,11 +42,17 @@ namespace PassMeta.DesktopApp.Core.Utils
         public int UserId => User?.Id ?? 0;
         
         /// <summary>
-        /// <see cref="Cookies"/> in form of <see cref="CookieContainer"/>.
+        /// <see cref="Cookies"/> in form of <see cref="System.Net.CookieContainer"/>.
         /// </summary>
         [JsonIgnore]
-        public CookieContainer CookieContainer => _cookieContainer;
+        public CookieContainer CookieContainer { get; private set; } = new();
 
+        /// <summary>
+        /// Server identifier.
+        /// </summary>
+        [JsonProperty("sid")]
+        public string? ServerId { get; private set; }
+        
         /// <summary>
         /// Server version. If not null, indicates correct <see cref="AppConfig.ServerUrl"/>
         /// and internet connection has been established at least once.
@@ -59,13 +60,6 @@ namespace PassMeta.DesktopApp.Core.Utils
         [JsonIgnore]
         public string? ServerVersion { get; private set; }
 
-        /// <summary>
-        /// Translate package for server response messages.
-        /// </summary>
-        [JsonIgnore]
-        public IMapper<string, string> OkBadMessagesMapper { get; private set; } 
-            = new SimpleMapper<string, string>(Enumerable.Empty<IMapping<string, string>>());
-        
         /// <summary>
         /// Current application context.
         /// </summary>
@@ -128,20 +122,17 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             else
             {
-                if (!checkConnection || await PassMetaApi.CheckConnectionAsync(true))
+                if (!checkConnection || await PassMetaApi.CheckConnectionAsync(true, true))
                 {
                     var response = await PassMetaApi.GetAsync<PassMetaInfo>("info", true);
                     if (response?.Success is true)
                     {
                         var info = response.Data!;
+
+                        Current.ServerId = info.AppId;
                         Current.ServerVersion = info.AppVersion;
                         Current.User = info.User;
-                        
-                        var pack = info.OkBadMessagesTranslatePack ??
-                                   new Dictionary<string, Dictionary<string, string>>(0);
-                        Current.OkBadMessagesMapper = new SimpleMapper<string, string>(
-                            pack.Select(pair => new MapToTranslate<string>(pair.Key, pair.Value)));
-                        
+
                         await _SaveToFileAsync(Current);
                     }
                 }
@@ -151,17 +142,22 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Set current <see cref="User"/>.
         /// </summary>
-        public static async Task SetUserAsync(User? user)
+        public static Task SetUserAsync(User? user)
         {
             Current.User = user;
 
-            if (user is null && Current.Cookies?.Any() is true)
+            if (user is not null)
+            {
+                return RefreshFromServerAsync();
+            }
+
+            if (Current.Cookies?.Any() is true)
             {
                 Current.Cookies.Clear();
                 _RefreshCookieContainer(Current);
             }
-            
-            await _SaveToFileAsync(Current);
+
+            return _SaveToFileAsync(Current);
         }
 
         /// <summary>
@@ -214,13 +210,13 @@ namespace PassMeta.DesktopApp.Core.Utils
 
         private static void _RefreshCookieContainer(AppContext context)
         {
-            context._cookieContainer = new CookieContainer();
+            context.CookieContainer = new CookieContainer();
             if (context.Cookies is null) return;
             
             foreach (var cookie in context.Cookies)
             {
                 // new cookie to attach to requests correctly
-                context._cookieContainer.Add(new Cookie(cookie.Name, cookie.Value, null, cookie.Domain));
+                context.CookieContainer.Add(new Cookie(cookie.Name, cookie.Value, null, cookie.Domain));
             }
         }
 

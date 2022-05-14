@@ -1,4 +1,3 @@
-#pragma warning disable 8618
 namespace PassMeta.DesktopApp.Common.Models
 {
     using System;
@@ -12,24 +11,17 @@ namespace PassMeta.DesktopApp.Common.Models
     /// </summary>
     public class OkBadResponse
     {
-        private string? _message;
+        /// <summary>
+        /// Response code.
+        /// </summary>
+        [JsonProperty("code")]
+        public int Code { get; init; }
 
         /// <summary>
         /// Response message.
         /// </summary>
         [JsonProperty("message")]
-        public string Message
-        {
-            get => _message!;
-            private set
-            {
-                if (_message is null)
-                {
-                    Success = value == "OK";
-                }
-                _message = value;
-            }
-        }
+        public string Message { get; init; } = null!;
         
         /// <summary>
         /// If not <see cref="Success"/>, short reason.
@@ -41,30 +33,29 @@ namespace PassMeta.DesktopApp.Common.Models
         /// Sub-responses. Sub-error information list.
         /// </summary>
         [JsonProperty("sub")]
-        public List<OkBadResponse>? Sub { get; private set; }
+        public List<OkBadResponse>? Sub { get; init; }
         
         /// <summary>
         /// Additional failure information.
         /// </summary>
         [JsonProperty("more")]
-        public OkBadMore? More { get; private set; }
+        public OkBadMore? More { get; init; }
 
         /// <summary>
         /// Is response success?
         /// </summary>
-        public bool Success { get; private set; }
+        public bool Success => Code == 0;
 
         /// <summary>
-        /// Replace response field value with mapped values.
+        /// Replace <see cref="What"/> field values with mapped values recursively.
         /// </summary>
-        public void ApplyMapping(IMapper<string, string> mapper)
+        public void ApplyWhatMapping(IMapper<string, string> mapper)
         {
-            Message = mapper.Map(Message, Message);
             What = mapper.Map(What, What);
             if (Sub is null) return;
             foreach (var sub in Sub)
             {
-                sub.ApplyMapping(mapper);
+                sub.ApplyWhatMapping(mapper);
             }
         }
     }

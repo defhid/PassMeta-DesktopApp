@@ -679,4 +679,7 @@ try another keywords...</value>
     <data name="STORAGE__ITEM_TOOLTIP__GENERATE_PASSWORD" xml:space="preserve">
         <value>Generate</value>
     </data>
+    <data name="SETTINGS__CONFIRM_SERVER_CHANGE" xml:space="preserve">
+        <value>Uncommited passfile changes can be lost. Continue?</value>
+    </data>
 </root>

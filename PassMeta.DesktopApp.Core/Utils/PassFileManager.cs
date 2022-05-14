@@ -82,20 +82,29 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         /// <remarks>Errors auto-logging.</remarks>
         /// <exception cref="Exception">Throws critical exceptions.</exception>
-        public static async Task InitializeAsync()
+        public static async Task ReloadAsync(bool throwIfException)
         {
-            if (!Directory.Exists(PassFilesPath))
+            if (!Directory.Exists(AppConfig.PassFilesDirectory))
             {
                 Logger.Info("Passfiles directory not found, launch autocorrection...");
-                _AutoCorrectPassFileDirectory(true);
+                _AutoCorrectPassFileDirectory(throwIfException, AppConfig.PassFilesDirectory, false);
             }
-
+            
             if (!File.Exists(PassFileListPath))
             {
                 Logger.Info("Passfile list not found, launch autocorrection...");
-                _AutoCorrectPassFileList(true);
+                _AutoCorrectPassFileList(throwIfException);
             }
-            
+
+            if (AppContext.Current.User is not null)
+            {
+                if (!Directory.Exists(UserPassFilesPath))
+                {
+                    Logger.Info("User passfiles directory not found, launch autocorrection...");
+                    _AutoCorrectPassFileDirectory(throwIfException, UserPassFilesPath, true);
+                }
+            }
+
             await _LoadListAsync();
 
             AnyChangedSource.OnNext(AnyChanged);
@@ -107,7 +116,10 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         public static List<PassFile> GetCurrentList() => _currentPassFiles
             .Select(pf => (pf.changed ?? pf.source)!)
-            .Where(pf => pf.UserId == AppContext.Current.UserId)
+            .Where(pf => pf.UserId == AppContext.Current.UserId && 
+                         (pf.ServerId is null || 
+                          AppContext.Current.ServerId is null || 
+                          pf.ServerId == AppContext.Current.ServerId))
             .Select(pf => pf.Copy())
             .ToList();
 
@@ -137,8 +149,8 @@ namespace PassMeta.DesktopApp.Core.Utils
             try
             {
                 var path = oldVersion
-                    ? _GetOldPassFilePath(passFileId) 
-                    : _GetPassFilePath(passFileId);
+                    ? _GetUserOldPassFilePath(passFileId) 
+                    : _GetUserPassFilePath(passFileId);
 
                 if (!File.Exists(path))
                     return Result.Failure<string>(Resources.PASSMGR__VERSION_NOT_FOUND_ERR);
@@ -209,7 +221,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                 VersionChangedOn = DateTime.Now,
                 Data = new List<PassFile.Section>(),
                 PassPhrase = passPhrase,
-                UserId = AppContext.Current.UserId
+                UserId = AppContext.Current.UserId,
+                ServerId = AppContext.Current.ServerId
             };
             
             _currentPassFiles.Add((null, passFile));
@@ -242,6 +255,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     passFile.DataEncrypted ??= local.DataEncrypted;
                     passFile.Origin = null;
                     _currentPassFiles.RemoveAt(found);
+                    _deletedPassFiles.Add(local);
                 }
             }
             
@@ -658,7 +672,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             try
             {
-                var path = _GetPassFilePath(passFile.Id);
+                var path = _GetUserPassFilePath(passFile.Id);
                 await File.WriteAllBytesAsync(path, PassFileConvention.Convert.EncryptedStringToBytes(passFile.DataEncrypted!));
             }
             catch (Exception ex)
@@ -688,17 +702,24 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             try
             {
-                var path = _GetPassFilePath(passFile.Id);
-                var oldPath = _GetOldPassFilePath(passFile.Id);
+                var path = _GetUserPassFilePath(passFile.Id);
+                var oldPath = _GetUserOldPassFilePath(passFile.Id);
                 
                 if (File.Exists(path))
                 {
-                    Move(path, oldPath);
+                    if (Path.GetFileName(path).StartsWith('-'))
+                    {
+                        File.Delete(path);
+                    }
+                    else
+                    {
+                        Move(path, oldPath);
+                    }
                 }
                 else if (passFile.Origin is not null && passFile.Origin.Id != passFile.Id)
                 {
-                    var originPath = _GetPassFilePath(passFile.Origin.Id);
-                    var originOldPath = _GetOldPassFilePath(passFile.Origin.Id);
+                    var originPath = _GetUserPassFilePath(passFile.Origin.Id);
+                    var originOldPath = _GetUserOldPassFilePath(passFile.Origin.Id);
                     
                     if (File.Exists(originOldPath))
                     {
@@ -768,21 +789,21 @@ namespace PassMeta.DesktopApp.Core.Utils
 
         #region AutoCorrection
 
-        private static void _AutoCorrectPassFileDirectory(bool throwIfException)
+        private static void _AutoCorrectPassFileDirectory(bool throwIfException, string directory, bool isUser)
         {
             try
             {
-                Directory.CreateDirectory(PassFilesPath);
+                Directory.CreateDirectory(directory);
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Passfiles directory autocorrection failed");
+                Logger.Error(ex, (isUser ? "User passfiles" : "Passfiles") + "directory autocorrection failed");
                 
                 if (throwIfException) throw;
                 return;
             }
             
-            Logger.Info("Passfiles directory autocorrection succeed");
+            Logger.Info((isUser ? "User passfiles" : "Passfiles") + "directory autocorrection succeed");
         }
 
         private static void _AutoCorrectPassFileList(bool throwIfException)
@@ -812,20 +833,20 @@ namespace PassMeta.DesktopApp.Core.Utils
         #region Paths
         
         /// <summary>
-        /// Full path to passfiles directory.
+        /// Full path to the current user passfiles directory.
         /// </summary>
-        public static readonly string PassFilesPath = AppConfig.PassFilesDirectory;
+        public static string UserPassFilesPath => Path.Combine(AppConfig.PassFilesDirectory, AppContext.Current.ServerId!, AppContext.Current.UserId.ToString());
 
         /// <summary>
         /// Full path to file that contains passfiles list.
         /// </summary>
-        public static readonly string PassFileListPath = Path.Combine(PassFilesPath, "__all__");
+        public static readonly string PassFileListPath = Path.Combine(AppConfig.PassFilesDirectory, "__all__");
 
-        private static string _GetPassFilePath(int passFileId)
-            => Path.Combine(PassFilesPath, passFileId + ".passfile");
+        private static string _GetUserPassFilePath(int passFileId)
+            => Path.Combine(UserPassFilesPath, passFileId + ".passfile");
 
-        private static string _GetOldPassFilePath(int passFileId)
-            => Path.Combine(PassFilesPath, passFileId + ".passfile.old");
+        private static string _GetUserOldPassFilePath(int passFileId)
+            => Path.Combine(UserPassFilesPath, passFileId + ".passfile.old");
         
         #endregion
     }

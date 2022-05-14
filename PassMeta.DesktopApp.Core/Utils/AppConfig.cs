@@ -65,7 +65,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Application version.
         /// </summary>
-        public const string Version = "0.9.0";
+        public static readonly string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString()[..^2] ?? "?";
 
         /// <summary>
         /// Application root directory.
@@ -172,9 +172,23 @@ namespace PassMeta.DesktopApp.Core.Utils
         private static async Task _SetCurrentAsync(AppConfig config)
         {
             var cultureChanged = Current.CultureCode != config.CultureCode;
+            var serverChanged = Current.ServerUrl != config.ServerUrl;
 
             Current = config;
             Resources.Culture = new CultureInfo(config.CultureCode);
+
+            if (serverChanged)
+            {
+                try
+                {
+                    await AppContext.RefreshFromServerAsync();
+                    await PassFileManager.ReloadAsync(false);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Processing of server-changing event failed");
+                }
+            }
 
             if (cultureChanged)
             {
@@ -187,8 +201,6 @@ namespace PassMeta.DesktopApp.Core.Utils
                     Logger.Error(ex, "Processing of culture-changing event failed");
                 }
             }
-
-            await PassMetaApi.CheckConnectionAsync(true);
         }
 
         private static async Task<IDetailedResult> _SaveToFileAsync(AppConfig config)

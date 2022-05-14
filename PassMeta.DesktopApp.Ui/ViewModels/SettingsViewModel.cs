@@ -39,6 +39,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public bool HidePasswords { get; set; }
 
+        public static string ServerInfo => AppContext.Current.ServerVersion is null
+            ? string.Empty
+            : $"v{AppContext.Current.ServerVersion}, #{AppContext.Current.ServerId ?? "?"}";
+
+        public static string UiInfo => $"v{AppConfig.Version}";
+
         public SettingsViewModel(IScreen hostScreen) : base(hostScreen)
         {
             FillFromAppConfig();
@@ -50,6 +56,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
             this.RaisePropertyChanged(nameof(ServerUrl));
             this.RaisePropertyChanged(nameof(SelectedCulture));
+            this.RaisePropertyChanged(nameof(HidePasswords));
+            this.RaisePropertyChanged(nameof(ServerInfo));
 
             return Task.CompletedTask;
         }
@@ -78,12 +86,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                 return;
 #endif
             }
-            
+
+            if (serverUrl != AppConfig.Current.ServerUrl && 
+                PassFileManager.AnyCurrentChanged && 
+                (await _dialogService.ConfirmAsync(Resources.SETTINGS__CONFIRM_SERVER_CHANGE)).Bad)
+            {
+                return;
+            }
+
             var result = await AppConfig.CreateAndSetCurrentAsync(serverUrl, SelectedCulture, HidePasswords);
             if (result.Ok)
                 _dialogService.ShowInfo(Resources.SETTINGS__INFO_SAVE_SUCCESS);
             else
                 _dialogService.ShowError(result.Message!);
+
+            this.RaisePropertyChanged(nameof(ServerInfo));
         }
     }
 }

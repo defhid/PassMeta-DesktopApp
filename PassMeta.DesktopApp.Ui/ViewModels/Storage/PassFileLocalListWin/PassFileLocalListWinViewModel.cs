@@ -55,7 +55,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
             var passFileList = PassFileManager.GetCurrentList();
             var descriptionParts = new Stack<string>();
 
-            foreach (var filePath in Directory.EnumerateFiles(AppConfig.PassFilesDirectory).OrderBy(x => x))
+            foreach (var filePath in Directory.EnumerateFiles(PassFileManager.UserPassFilesPath).OrderBy(x => x))
             {
                 var fileName = Path.GetFileName(filePath);
                 var isOld = fileName.EndsWith(".old");

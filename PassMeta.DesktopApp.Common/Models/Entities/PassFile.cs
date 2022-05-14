@@ -64,6 +64,12 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         private string? _DataEncrypted { set => DataEncrypted = value; }
 
         /// <summary>
+        /// Server identifier.
+        /// </summary>
+        [JsonProperty("__server_id")]
+        public string? ServerId { get; set; }
+
+        /// <summary>
         /// Origin passfile, unchanged from the last download from the server. 
         /// </summary>
         [JsonProperty("__origin")]
