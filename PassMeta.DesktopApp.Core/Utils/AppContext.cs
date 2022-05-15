@@ -119,6 +119,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             if (AppConfig.Current.ServerUrl is null)
             {
                 Current.ServerVersion = null;
+                PassMetaApi.OnlineSource.OnNext(false);
             }
             else
             {
@@ -142,22 +143,23 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Set current <see cref="User"/>.
         /// </summary>
-        public static Task SetUserAsync(User? user)
+        public static async Task SetUserAsync(User? user)
         {
             Current.User = user;
 
             if (user is not null)
             {
-                return RefreshFromServerAsync();
+                await RefreshFromServerAsync();
             }
-
-            if (Current.Cookies?.Any() is true)
+            else if (Current.Cookies?.Any() is true)
             {
                 Current.Cookies.Clear();
                 _RefreshCookieContainer(Current);
             }
 
-            return _SaveToFileAsync(Current);
+            await PassFileManager.ReloadAsync(false);
+
+            await _SaveToFileAsync(Current);
         }
 
         /// <summary>

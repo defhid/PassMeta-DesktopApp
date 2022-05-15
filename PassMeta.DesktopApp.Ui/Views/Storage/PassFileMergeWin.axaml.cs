@@ -1,9 +1,9 @@
 namespace PassMeta.DesktopApp.Ui.Views.Storage
 {
     using Avalonia.Markup.Xaml;
+    using Base;
     using Common.Models.Dto;
     using Utils.Extensions;
-    using ViewModels.Base;
     using ViewModels.Storage.PassFileMergeWin;
 
     public class PassFileMergeWin : WinView<PassFileMergeWinViewModel>

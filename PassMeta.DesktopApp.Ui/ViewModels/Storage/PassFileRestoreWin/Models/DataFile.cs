@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin.Models
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin.Models
 {
     public class DataFile
     {

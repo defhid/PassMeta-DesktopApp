@@ -47,6 +47,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                                         (pf.source is null || 
                                          pf.changed.IsInformationDifferentFrom(pf.source) || 
                                          pf.changed.IsVersionDifferentFrom(pf.source) ||
+                                         pf.changed.DataEncrypted != pf.source.DataEncrypted ||
                                          pf.source.Origin is null != pf.changed.Origin is null));
         
         /// <summary>
@@ -565,7 +566,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                     {
                         delete.Add(changed);
                     }
-                    else if (changed.VersionChangedOn != source?.VersionChangedOn)
+                    else if (changed.VersionChangedOn != source?.VersionChangedOn 
+                             || changed.DataEncrypted != source.DataEncrypted)
                     {
                         if (changed.DataEncrypted is null)
                         {
@@ -636,7 +638,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             if (source != null && changed != null)
             {
                 var infoDiff = changed.IsInformationDifferentFrom(source);
-                var dataDiff = changed.IsVersionDifferentFrom(source);
+                var dataDiff = changed.IsVersionDifferentFrom(source) || source.DataEncrypted != changed.DataEncrypted;
                 
                 if (!infoDiff)
                     changed.InfoChangedOn = source.InfoChangedOn;
@@ -797,13 +799,13 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, (isUser ? "User passfiles" : "Passfiles") + "directory autocorrection failed");
+                Logger.Error(ex, (isUser ? "User passfiles" : "Passfiles") + " directory autocorrection failed");
                 
                 if (throwIfException) throw;
                 return;
             }
             
-            Logger.Info((isUser ? "User passfiles" : "Passfiles") + "directory autocorrection succeed");
+            Logger.Info((isUser ? "User passfiles" : "Passfiles") + " directory autocorrection succeed");
         }
 
         private static void _AutoCorrectPassFileList(bool throwIfException)

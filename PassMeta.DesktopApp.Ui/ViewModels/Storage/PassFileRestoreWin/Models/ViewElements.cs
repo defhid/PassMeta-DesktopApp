@@ -1,7 +1,7 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin.Models
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin.Models
 {
     using Avalonia.Controls;
-    using Base;
+    using PassMeta.DesktopApp.Ui.ViewModels.Base;
 
     public class ViewElements : WinViewElements
     {

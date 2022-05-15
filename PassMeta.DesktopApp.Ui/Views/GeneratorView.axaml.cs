@@ -4,7 +4,7 @@ namespace PassMeta.DesktopApp.Ui.Views
     using DesktopApp.Ui.Views.Base;
     using Avalonia.Markup.Xaml;
     
-    public class GeneratorView : ViewPage<GeneratorViewModel>
+    public class GeneratorView : PageView<GeneratorViewModel>
     {
         public GeneratorView()
         {

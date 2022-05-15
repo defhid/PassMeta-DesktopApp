@@ -25,7 +25,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (!_Validate(data).Ok)
             {
-                _dialogService.ShowError(Common.Resources.AUTH__DATA_VALIDATION_ERR);
+                _dialogService.ShowError(Resources.AUTH__DATA_VALIDATION_ERR);
                 return Result.Failure<User>();
             }
             

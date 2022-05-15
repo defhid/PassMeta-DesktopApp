@@ -3,22 +3,22 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
+    using Base;
     using Common.Models.Entities;
     using Utils.Extensions;
-    using ViewModels.Base;
-    using ViewModels.Storage.PassFileLocalListWin;
+    using ViewModels.Storage.PassFileRestoreWin;
 
-    public class PassFileLocalListWin : WinView<PassFileLocalListWinViewModel>
+    public class PassFileRestoreWin : WinView<PassFileRestoreWinViewModel>
     {
-        public PassFileLocalListWin()
+        public PassFileRestoreWin()
         {
             AvaloniaXamlLoader.Load(this);
             this.CorrectMainWindowFocusWhileOpened();
         }
 
-        public PassFileLocalListWin(PassFile currentPassFile) : this()
+        public PassFileRestoreWin(PassFile currentPassFile) : this()
         {
-            DataContext = new PassFileLocalListWinViewModel(currentPassFile)
+            DataContext = new PassFileRestoreWinViewModel(currentPassFile)
             {
                 ViewElements = { Window = this }
             };

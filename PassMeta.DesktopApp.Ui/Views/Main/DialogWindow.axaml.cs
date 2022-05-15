@@ -5,8 +5,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Input;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
+    using Base;
     using Common.Enums;
-    using ViewModels.Base;
     using ViewModels.Main.DialogWindow;
 
     public class DialogWindow : WinView<object>

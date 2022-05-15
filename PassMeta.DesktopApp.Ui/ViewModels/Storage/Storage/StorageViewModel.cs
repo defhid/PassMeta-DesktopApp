@@ -211,13 +211,18 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
             if (lastItemPath.PassFileId is not null)
             {
-                PassFilesSelectedIndex = 
-                    _passFileList.FindIndex(btn => btn.PassFile!.Id == lastItemPath.PassFileId.Value);
-                
-                if (PassFilesSelectedIndex >= 0 && lastItemPath.PassFileSectionId is not null)
+                var index = _passFileList.FindIndex(btn => btn.PassFile!.Id == lastItemPath.PassFileId.Value);
+                if (index >= 0)
                 {
-                    SelectedData.SelectedSectionIndex =
-                        SelectedData.SectionsList!.FindIndex(btn => btn.Section.Id == lastItemPath.PassFileSectionId);
+                    if (_passFileList[index].PassFile?.PassPhrase is not null)
+                    {
+                        PassFilesSelectedIndex = index;
+                        if (lastItemPath.PassFileSectionId is not null)
+                        {
+                            SelectedData.SelectedSectionIndex =
+                                SelectedData.SectionsList!.FindIndex(btn => btn.Section.Id == lastItemPath.PassFileSectionId);
+                        }
+                    }
                 }
             }
 

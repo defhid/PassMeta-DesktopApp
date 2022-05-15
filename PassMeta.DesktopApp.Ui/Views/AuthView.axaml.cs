@@ -8,7 +8,7 @@ namespace PassMeta.DesktopApp.Ui.Views
     using Avalonia.Input;
     using Avalonia.Markup.Xaml;
     
-    public class AuthView : ViewPage<AuthViewModel>
+    public class AuthView : PageView<AuthViewModel>
     {
         public AuthView()
         {

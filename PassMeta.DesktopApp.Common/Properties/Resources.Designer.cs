@@ -619,6 +619,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Letters.
+        /// </summary>
+        public static string GENERATOR__INCLUDE_LETTERS {
+            get {
+                return ResourceManager.GetString("GENERATOR__INCLUDE_LETTERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lowercase.
         /// </summary>
         public static string GENERATOR__INCLUDE_LOWERCASE {
@@ -1069,15 +1078,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you really want to delete passfile {0}?.
-        /// </summary>
-        public static string PASSFILE__CONFIRM_DELETE {
-            get {
-                return ResourceManager.GetString("PASSFILE__CONFIRM_DELETE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Passfile decryption failed.
         /// </summary>
         public static string PASSFILE__DECRYPTION_ERROR {
@@ -1224,9 +1224,18 @@ namespace PassMeta.DesktopApp.Common {
         /// <summary>
         ///   Looks up a localized string similar to Passfile &apos;{0}&apos; successfully restored from &apos;{1}&apos;.
         /// </summary>
-        public static string PASSFILE__SUCCESS_RESTORE {
+        public static string PASSFILE__SUCCESS_RESTORE_FROM_FILE {
             get {
-                return ResourceManager.GetString("PASSFILE__SUCCESS_RESTORE", resourceCulture);
+                return ResourceManager.GetString("PASSFILE__SUCCESS_RESTORE_FROM_FILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passfile &apos;{0}&apos; successfully restored from the server.
+        /// </summary>
+        public static string PASSFILE__SUCCESS_RESTORE_FROM_SERVER {
+            get {
+                return ResourceManager.GetString("PASSFILE__SUCCESS_RESTORE_FROM_SERVER", resourceCulture);
             }
         }
         
@@ -1407,6 +1416,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string PASSFILELIST__BTN_CLOSE {
             get {
                 return ResourceManager.GetString("PASSFILELIST__BTN_CLOSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download from the server.
+        /// </summary>
+        public static string PASSFILELIST__BTN_DOWNLOAD {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__BTN_DOWNLOAD", resourceCulture);
             }
         }
         

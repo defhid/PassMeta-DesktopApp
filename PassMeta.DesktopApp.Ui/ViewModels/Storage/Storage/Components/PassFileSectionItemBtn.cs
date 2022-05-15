@@ -3,6 +3,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using System;
     using System.Linq;
     using System.Reactive.Linq;
+    using System.Reactive.Subjects;
     using System.Threading.Tasks;
     using Common;
     using Common.Interfaces.Services;
@@ -36,21 +37,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         public IObservable<char?> PasswordChar { get; }
         public IObservable<bool> PopupGeneratorCanBeOpened { get; }
 
-        private bool _isPopupGeneratorOpened;
-        public bool IsPopupGeneratorOpened
-        {
-            get => _isPopupGeneratorOpened;
-            set => this.RaiseAndSetIfChanged(ref _isPopupGeneratorOpened, value);
-        }
-
         public ReactCommand CopyWhatCommand { get; }
         public ReactCommand CopyPasswordCommand { get; }
         public ReactCommand DeleteCommand { get; }
         public ReactCommand UpCommand { get; }
         public ReactCommand DownCommand { get; }
         public ReactCommand OpenPopupGenerator { get; }
-        
-        public PasswordGenerator Generator { get; }
+
+        private readonly BehaviorSubject<bool> _isPopupGeneratorOpened = new(false);
+        public PopupGeneratorViewModel PopupGenerator { get; }
 
         public PassFileSectionItemBtn(PassFile.Section.Item item,
             IObservable<bool> editModeObservable,
@@ -87,11 +82,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
             OpenPopupGenerator = ReactiveCommand.Create(() =>
             {
-                IsPopupGeneratorOpened = false;
-                IsPopupGeneratorOpened = true;
+                _isPopupGeneratorOpened.OnNext(false);
+                _isPopupGeneratorOpened.OnNext(true);
             });
 
-            Generator = new PasswordGenerator(pwd => Password = pwd);
+            PopupGenerator = new PopupGeneratorViewModel(_isPopupGeneratorOpened, pwd => Password = pwd);
         }
 
         public PassFile.Section.Item ToItem() => new()

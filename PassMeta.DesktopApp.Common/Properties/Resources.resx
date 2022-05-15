@@ -207,9 +207,6 @@
     <data name="STORAGE__PASSFILE_TOOLTIP__ADD" xml:space="preserve">
         <value>Add passfile</value>
     </data>
-    <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
-        <value>Do you really want to delete passfile {0}?</value>
-    </data>
     <data name="PASSFILE__VALIDATION__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Wrong passphrase!</value>
     </data>
@@ -583,7 +580,7 @@ try another keywords...</value>
     <data name="PASSFILELIST__DESCRIPTION_UNKNOWN" xml:space="preserve">
         <value>Unknown</value>
     </data>
-    <data name="PASSFILE__SUCCESS_RESTORE" xml:space="preserve">
+    <data name="PASSFILE__SUCCESS_RESTORE_FROM_FILE" xml:space="preserve">
         <value>Passfile '{0}' successfully restored from '{1}'</value>
     </data>
     <data name="PASSFILE__SUCCESS_EXPORT" xml:space="preserve">
@@ -681,5 +678,14 @@ try another keywords...</value>
     </data>
     <data name="SETTINGS__CONFIRM_SERVER_CHANGE" xml:space="preserve">
         <value>Uncommited passfile changes can be lost. Continue?</value>
+    </data>
+    <data name="GENERATOR__INCLUDE_LETTERS" xml:space="preserve">
+        <value>Letters</value>
+    </data>
+    <data name="PASSFILELIST__BTN_DOWNLOAD" xml:space="preserve">
+        <value>Download from the server</value>
+    </data>
+    <data name="PASSFILE__SUCCESS_RESTORE_FROM_SERVER" xml:space="preserve">
+        <value>Passfile '{0}' successfully restored from the server</value>
     </data>
 </root>

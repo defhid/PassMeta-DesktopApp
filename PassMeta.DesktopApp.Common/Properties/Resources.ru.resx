@@ -200,9 +200,6 @@
     <data name="STORAGE__NO_SECTIONS" xml:space="preserve">
         <value>Пусто</value>
     </data>
-    <data name="PASSFILE__CONFIRM_DELETE" xml:space="preserve">
-        <value>Вы действительно хотите удалить пакет {0}?</value>
-    </data>
     <data name="PASSFILE__VALIDATION__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Неверная кодовая фраза</value>
     </data>
@@ -579,7 +576,7 @@
     <data name="PASSFILE__SUCCESS_EXPORT" xml:space="preserve">
         <value>Пакет '{0}' успешно экспортирован в '{1}'</value>
     </data>
-    <data name="PASSFILE__SUCCESS_RESTORE" xml:space="preserve">
+    <data name="PASSFILE__SUCCESS_RESTORE_FROM_FILE" xml:space="preserve">
         <value>Пакет '{0}' успешно восстановлен из '{1}'</value>
     </data>
     <data name="PASSIMPORT__ASK_PASSPHRASE_NEW" xml:space="preserve">
@@ -674,5 +671,14 @@
     </data>
     <data name="SETTINGS__CONFIRM_SERVER_CHANGE" xml:space="preserve">
         <value>Несохранённые изменния пакетов могут быть утеряны. Продолжить?</value>
+    </data>
+    <data name="GENERATOR__INCLUDE_LETTERS" xml:space="preserve">
+        <value>Буквы</value>
+    </data>
+    <data name="PASSFILELIST__BTN_DOWNLOAD" xml:space="preserve">
+        <value>Загрузить с сервера</value>
+    </data>
+    <data name="PASSFILE__SUCCESS_RESTORE_FROM_SERVER" xml:space="preserve">
+        <value>Пакет '{0}' успешно восстановлен с сервера</value>
     </data>
 </root>

@@ -3,13 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-             xmlns:storage="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage"
+             xmlns:storageVm="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage"
+             xmlns:storageV="clr-namespace:PassMeta.DesktopApp.Ui.Views.Storage.Storage"
              xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
-             x:Class="PassMeta.DesktopApp.Ui.Views.Storage.StorageView"
+             x:Class="PassMeta.DesktopApp.Ui.Views.Storage.Storage.StorageView"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             d:DataContext="{d:DesignInstance storage:StorageViewModel}">
+             d:DataContext="{d:DesignInstance storageVm:StorageViewModel}">
     <Grid Background="Transparent"
           PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
         <Grid.Styles>
@@ -341,15 +342,14 @@
                                                            Grid.Column="1"
                                                            Margin="0 10 26 20">
                                                         <Panel.Styles>
-                                                            <Style Selector="TextBox.generatorButton">
+                                                            <Style Selector="TextBox.generatorButton:focus">
                                                                 <Setter Property="InnerRightContent">
                                                                     <Template>
-                                                                        <Button Height="22"
+                                                                        <Button Classes="passwordBoxGeneratorButton"
+                                                                            Height="22"
                                                                             Width="22"
                                                                             Margin="3 0"
                                                                             Padding="0"
-                                                                            Opacity="0.9"
-                                                                            Background="Transparent"
                                                                             Content="&#xEA80;"
                                                                             FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
                                                                             FontSize="14"
@@ -357,15 +357,30 @@
                                                                             HorizontalAlignment="Center"
                                                                             VerticalContentAlignment="Center"
                                                                             HorizontalContentAlignment="Center"
+                                                                            Focusable="False"
                                                                             ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__GENERATE_PASSWORD}"
                                                                             Command="{Binding OpenPopupGenerator}"/>
                                                                     </Template>
                                                                 </Setter>
                                                             </Style>
+                                                            <Style Selector="Button.passwordBoxGeneratorButton /template/ ContentPresenter#PART_ContentPresenter">
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                                <Setter Property="Opacity" Value="0.75"/>
+                                                            </Style>
+                                                            <Style Selector="Button.passwordBoxGeneratorButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                                <Setter Property="Opacity" Value="0.85"/>
+                                                            </Style>
+                                                            <Style Selector="Button.passwordBoxGeneratorButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                                <Setter Property="Opacity" Value="1"/>
+                                                            </Style>
                                                         </Panel.Styles>
 
-                                                        <TextBox x:Name="Pwd"
-                                                                 Padding="4"
+                                                        <TextBox Padding="4"
                                                                  Height="30"
                                                                  MinHeight="30"
                                                                  MaxHeight="30"
@@ -378,55 +393,8 @@
                                                                  Classes.clearButton="{Binding !PopupGeneratorCanBeOpened^}"
                                                                  Classes.generatorButton="{Binding PopupGeneratorCanBeOpened^}"/>
                                                     
-                                                        <!-- TODO: less transparent -->
-                                                        <Popup PlacementTarget="{Binding ElementName=Pwd}" 
-                                                               IsOpen="{Binding IsPopupGeneratorOpened}"
-                                                               IsLightDismissEnabled="True"
-                                                               PlacementAnchor="BottomLeft"
-                                                               VerticalOffset="5">
-                                                            <Border Background="{Binding Background, ElementName=Pwd}"
-                                                                    CornerRadius="4"
-                                                                    BorderThickness="1">
-                                                                <Grid ColumnDefinitions="*,Auto">
-                                                                    <Grid Grid.Column="0"
-                                                                          RowDefinitions="Auto,Auto">
-                                                                        <StackPanel Grid.Row="0"
-                                                                            Orientation="Horizontal">
-                                                                            <CheckBox IsChecked="{Binding Generator.IncludeDigits}"
-                                                                                Content="0-9"
-                                                                                Margin="10 5 20 0"/>
-                                                                            <CheckBox IsChecked="{Binding Generator.IncludeLetters}"
-                                                                                Content="A-z"
-                                                                                Margin="10 5 20 0"/>
-                                                                            <CheckBox IsChecked="{Binding Generator.IncludeSpecial}"
-                                                                                Content="*"
-                                                                                Margin="10 5 10 0"/>
-                                                                        </StackPanel>
-                                                                
-                                                                        <Grid Grid.Row="1"
-                                                                              ColumnDefinitions="*,Auto"
-                                                                              Margin="10 -5 10 0">
-                                                                            <Slider Grid.Column="0" 
-                                                                                    Margin="0 0 10 0"
-                                                                                    Minimum="1"
-                                                                                    Maximum="50"
-                                                                                    Value="{Binding Generator.Length}"/>
-                                                                            
-                                                                            <TextBlock Grid.Column="1"
-                                                                                VerticalAlignment="Center"
-                                                                                Text="{Binding Generator.Length}"/>
-                                                                        </Grid>
-                                                                    </Grid>
-                                                                    
-                                                                    <Button Grid.Column="1"
-                                                                            Height="90"
-                                                                            Content="&#xE966;"
-                                                                            CornerRadius="0 4 4 0"
-                                                                            FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
-                                                                            Command="{Binding Generator.GenerateCommand}"/>
-                                                                </Grid>
-                                                            </Border>
-                                                        </Popup>
+                                                        <storageV:PopupGeneratorView 
+                                                            DataContext="{Binding PopupGenerator}"/>
                                                     </Panel>
                                                     
                                                     <Button Grid.Row="1"

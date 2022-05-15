@@ -1,10 +1,10 @@
 namespace PassMeta.DesktopApp.Ui.Views.Base
 {
-    using DesktopApp.Ui.ViewModels.Base;
     using Avalonia.ReactiveUI;
-    
-    public abstract class ViewPage<TViewModel> : ReactiveUserControl<TViewModel>
-        where TViewModel : PageViewModel
+    using ReactiveUI;
+
+    public abstract class PageView<TViewModel> : ReactiveUserControl<TViewModel>
+        where TViewModel : ReactiveObject
     {
         /// <inheritdoc cref="ReactiveUserControl{TViewModel}.DataContext"/>
         protected new TViewModel? DataContext

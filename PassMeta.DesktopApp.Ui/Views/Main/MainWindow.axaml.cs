@@ -18,11 +18,10 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using System.ComponentModel;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
-    
-    using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
+    using Base;
 
     public class MainWindow : WinView<MainWindowViewModel>
     {
@@ -40,9 +39,6 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             Closing += OnClosing;
 
             AvaloniaXamlLoader.Load(this);
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         public Preloader StartPreloader() => new Preloader(DataContext!).Start();

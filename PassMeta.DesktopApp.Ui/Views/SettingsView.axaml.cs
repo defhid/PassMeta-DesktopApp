@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Ui.Views
     
     using Avalonia.Markup.Xaml;
     
-    public class SettingsView : ViewPage<SettingsViewModel>
+    public class SettingsView : PageView<SettingsViewModel>
     {
         public SettingsView()
         {

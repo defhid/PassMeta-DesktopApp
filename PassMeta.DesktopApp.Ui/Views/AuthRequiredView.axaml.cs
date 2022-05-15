@@ -4,7 +4,7 @@ namespace PassMeta.DesktopApp.Ui.Views
     using DesktopApp.Ui.Views.Base;
     using Avalonia.Markup.Xaml;
     
-    public class AuthRequiredView : ViewPage<AuthRequiredViewModel>
+    public class AuthRequiredView : PageView<AuthRequiredViewModel>
     {
         public AuthRequiredView()
         {

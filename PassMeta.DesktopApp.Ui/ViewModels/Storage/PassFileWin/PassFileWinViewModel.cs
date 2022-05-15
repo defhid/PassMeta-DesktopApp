@@ -161,7 +161,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 
             DeleteBtn = new BtnState
             {
-                CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(DeleteAsync)),
+                CommandObservable = Observable.Return(ReactiveCommand.Create(Delete)),
                 IsVisibleObservable = passFileChanged.Select(pf => pf?.LocalDeleted is false)
             };
 
@@ -253,14 +253,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             }
         }
 
-        private async Task DeleteAsync()
+        private void Delete()
         {
             if (PassFile?.LocalDeleted is not false) return;
-
-            var confirm = await _dialogService.ConfirmAsync(
-                string.Format(Resources.PASSFILE__CONFIRM_DELETE, PassFile!.GetIdentityString()));
-
-            if (confirm.Bad) return;
 
             PassFile = PassFileManager.Delete(PassFile);
             PassFileChanged = true;
@@ -305,12 +300,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             var passFile = PassFile;
             if (passFile is null) return;
 
-            var filePath = await new PassFileLocalListWin(passFile).ShowDialog<string?>(ViewElements.Window);
-            if (filePath is null) return;
-            
-            var importResult = await _importService.ImportAsync(filePath, passFile.PassPhrase);
-            if (importResult.Bad) return;
-            
+            var selectResult = await new PassFileRestoreWin(passFile).ShowDialog<IResult?>(ViewElements.Window);
+            if (selectResult?.Ok is not true) return;
+
             if (passFile.LocalDeleted)
             {
                 var restoreResult = PassFileManager.Restore(passFile);
@@ -325,17 +317,34 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                 PassFileChanged = true;
             }
 
-            passFile.Data = importResult.Data.Sections;
-            passFile.PassPhrase = importResult.Data.PassPhrase;
-            
-            var updateResult = PassFileManager.UpdateData(passFile);
+            var pathResult = selectResult as IResult<string>;
+            var pfResult = selectResult as IResult<PassFile>;
+
+            if (pathResult is not null)
+            {
+                var importResult = await _importService.ImportAsync(pathResult.Data!, passFile.PassPhrase);
+                if (importResult.Bad) return;
+                
+                passFile.Data = importResult.Data.Sections;
+                passFile.PassPhrase = importResult.Data.PassPhrase;
+            }
+            else if (pfResult is not null)
+            {
+                passFile.DataEncrypted = pfResult.Data!.DataEncrypted;
+                passFile.PassPhrase = null;
+            }
+            else return;
+
+            var updateResult = PassFileManager.UpdateData(passFile, pfResult is not null);
             if (updateResult.Ok)
             {
                 PassFile = null;
                 PassFile = passFile;
                 PassFileChanged = true;
-                _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_RESTORE, PassFile.Name, Path.GetFileName(filePath)));
-            } 
+                _dialogService.ShowInfo(pathResult is null 
+                    ? string.Format(Resources.PASSFILE__SUCCESS_RESTORE_FROM_SERVER, PassFile.Name)
+                    : string.Format(Resources.PASSFILE__SUCCESS_RESTORE_FROM_FILE, PassFile.Name, Path.GetFileName(pathResult.Data)));
+            }
             else
             {
                 _dialogService.ShowError(updateResult.Message!);

@@ -1,5 +1,6 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
@@ -7,19 +8,22 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using Avalonia.Controls;
-    using Common;
-    using Common.Constants;
-    using Common.Models.Entities;
-    using Core.Utils;
-    using Models;
+    using PassMeta.DesktopApp.Common;
+    using PassMeta.DesktopApp.Common.Constants;
+    using PassMeta.DesktopApp.Common.Interfaces.Services.PassFile;
+    using PassMeta.DesktopApp.Common.Models;
+    using PassMeta.DesktopApp.Common.Models.Entities;
+    using PassMeta.DesktopApp.Core;
+    using PassMeta.DesktopApp.Core.Utils;
+    using PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin.Models;
+    using PassMeta.DesktopApp.Ui.Views.Main;
     using ReactiveUI;
-    using Views.Main;
-
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
 
-    public class PassFileLocalListWinViewModel : ReactiveObject
+    public class PassFileRestoreWinViewModel : ReactiveObject
     {
-        private readonly int _currentPassFileId;
+        private readonly int _passFileId;
+        private readonly bool _ignoreCurrentPath;
         
         public ObservableCollection<DataFile> FoundList { get; } = new();
 
@@ -32,18 +36,24 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
 
         public ReactCommand SelectCommand { get; }
         public ReactCommand ImportCommand { get; }
+        public ReactCommand DownloadCommand { get; }
         public ReactCommand CloseCommand { get; }
+
+        public static IObservable<bool> CanBeDownloaded => PassMetaApi.OnlineSource;
 
         public readonly ViewElements ViewElements = new();
 
-        public PassFileLocalListWinViewModel(PassFile currentPassFile)
+        public PassFileRestoreWinViewModel(PassFile currentPassFile)
         {
-            _currentPassFileId = currentPassFile.Id;
+            _passFileId = currentPassFile.Id;
+            _ignoreCurrentPath = !currentPassFile.LocalDeleted;
 
             SelectCommand = ReactiveCommand.Create(Select, 
                 this.WhenAnyValue(vm => vm.SelectedFile).Select(file => file is not null));
             
             ImportCommand = ReactiveCommand.CreateFromTask(ImportForeignAsync);
+            
+            DownloadCommand = ReactiveCommand.CreateFromTask(DownloadAsync);
             
             CloseCommand = ReactiveCommand.Create(Close);
         }
@@ -80,9 +90,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
                     continue;
                 }
 
-                if (passFileId == _currentPassFileId)
+                if (passFileId == _passFileId)
                 {
-                    if (!isOld) continue;
+                    if (!isOld && _ignoreCurrentPath) continue;
                     descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_CURRENT);
                 }
 
@@ -96,7 +106,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
                     Description = string.Join(", ", descriptionParts),
                 });
                 
-                if (passFileId == _currentPassFileId)
+                if (passFileId == _passFileId)
                 {
                     SelectedFile = FoundList.Last();
                     ViewElements.DataGrid!.ScrollIntoView(SelectedFile, ViewElements.DataGrid.Columns.First());
@@ -108,7 +118,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
         {
             if (SelectedFile is null) return;
 
-            ViewElements.Window!.Close(SelectedFile.FilePath);
+            ViewElements.Window!.Close(Result.Success(SelectedFile.FilePath));
         }
 
         private async Task ImportForeignAsync()
@@ -133,14 +143,22 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin
             var result = await fileDialog.ShowAsync(MainWindow.Current!);
             if (result?.Any() is true)
             {
-                ViewElements.Window!.Close(result.First());
+                ViewElements.Window!.Close(Result.Success(result.First()));
             }
         }
+
+        private async Task DownloadAsync()
+        {
+            var downloadResult = await EnvironmentContainer.Resolve<IPassFileService>().GetPassFileRemoteAsync(_passFileId);
+            if (downloadResult.Bad) return;
+
+            ViewElements.Window!.Close(Result.Success(downloadResult.Data!));
+        }
         
-        private void Close() => ViewElements.Window!.Close(null);
+        private void Close() => ViewElements.Window!.Close(Result.Failure<string?>());
         
 #pragma warning disable 8618
-        public PassFileLocalListWinViewModel() {}
+        public PassFileRestoreWinViewModel() {}
 #pragma warning restore 8618
     }
 }

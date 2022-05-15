@@ -3,8 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-        xmlns:win="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileLocalListWin"
-        x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileLocalListWin"
+        xmlns:passFileRestoreWin="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin"
+        x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileRestoreWin"
         mc:Ignorable="d"
         Width="700"
         Height="400"
@@ -14,7 +14,7 @@
         WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
-        <win:PassFileLocalListWinViewModel></win:PassFileLocalListWinViewModel>
+        <passFileRestoreWin:PassFileRestoreWinViewModel></passFileRestoreWin:PassFileRestoreWinViewModel>
     </Design.DataContext>
     
     <Grid Margin="7 7 7 10"
@@ -40,7 +40,7 @@
         </Grid>
         
         <Grid Grid.Row="1"
-              ColumnDefinitions="Auto,*,Auto,Auto"
+              ColumnDefinitions="Auto,*,Auto,Auto,Auto"
               VerticalAlignment="Bottom"
               Margin="3 10 3 0">
             <Button Grid.Column="0" 
@@ -52,7 +52,13 @@
                     Content="{x:Static com:Resources.PASSFILELIST__BTN_IMPORT}"
                     Command="{Binding ImportCommand}"/>
             
-            <Button Grid.Column="3"
+            <Button Grid.Column="3" 
+                    Margin="0 0 20 0"
+                    Content="{x:Static com:Resources.PASSFILELIST__BTN_DOWNLOAD}"
+                    Command="{Binding DownloadCommand}"
+                    IsVisible="{Binding CanBeDownloaded^}"/>
+            
+            <Button Grid.Column="4"
                     MinWidth="50"
                     HorizontalContentAlignment="Center"
                     Content="{x:Static com:Resources.PASSFILELIST__BTN_CLOSE}"

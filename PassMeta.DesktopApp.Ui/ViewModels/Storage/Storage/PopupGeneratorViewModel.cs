@@ -1,14 +1,14 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 {
     using System;
-    using Common.Interfaces.Services;
-    using Core;
+    using PassMeta.DesktopApp.Common.Interfaces.Services;
+    using PassMeta.DesktopApp.Core;
+    using PassMeta.DesktopApp.Ui.Utils;
     using ReactiveUI;
-    using Utils;
-    
+
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
 
-    public class PasswordGenerator : ReactiveObject
+    public class PopupGeneratorViewModel : ReactiveObject
     {
         private readonly ICryptoService _cryptoService = EnvironmentContainer.Resolve<ICryptoService>();
 
@@ -22,12 +22,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         public bool IncludeDigits { get; set; } = PresetsCache.Generator.IncludeDigits;
         public bool IncludeLetters { get; set; } = PresetsCache.Generator.IncludeLowercase || PresetsCache.Generator.IncludeUppercase;
         public bool IncludeSpecial { get; set; } = PresetsCache.Generator.IncludeSpecial;
+        
+        public IObservable<bool> IsOpen { get; }
 
-        public ReactCommand GenerateCommand { get; }
+        public ReactCommand ResultApplyCommand { get; }
 
-        public PasswordGenerator(Action<string> apply)
+        public PopupGeneratorViewModel(IObservable<bool> isOpen, Action<string> apply)
         {
-            GenerateCommand = ReactiveCommand.Create(() => 
+            IsOpen = isOpen;
+            
+            ResultApplyCommand = ReactiveCommand.Create(() => 
                 apply(_cryptoService.GeneratePassword(
                     Length, IncludeDigits, IncludeLetters, IncludeLetters, IncludeSpecial)));
         }

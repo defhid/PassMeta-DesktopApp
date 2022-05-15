@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Base
+namespace PassMeta.DesktopApp.Ui.Views.Base
 {
     using Avalonia;
     using Avalonia.Controls;

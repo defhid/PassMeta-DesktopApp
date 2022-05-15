@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Ui.Views
     using Avalonia.Markup.Xaml;
     using ViewModels.Logs;
 
-    public class LogsView : ViewPage<LogsViewModel>
+    public class LogsView : PageView<LogsViewModel>
     {
         public LogsView()
         {
