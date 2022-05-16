@@ -7,7 +7,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal.Models
     {
         private readonly JournalRecord _record;
         
-        public string CreatedOn => _record.TimeStamp.ToShortDateTimeString();
+        public string CreatedOn => _record.TimeStamp.ToLocalTime().ToShortDateTimeString();
         
         public string RecordKind => _record.Kind;
 

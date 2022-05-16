@@ -88,36 +88,6 @@ namespace PassMeta.DesktopApp.Common.Models
         /// </summary>
         [JsonProperty("info")]
         public JObject? Info { get; init; }
-        
-        /// <summary>
-        /// Allowed values.
-        /// </summary>
-        [JsonProperty("allowed")]
-        public JArray? Allowed { get; init; }
-        
-        /// <summary>
-        /// Disallowed values.
-        /// </summary>
-        [JsonProperty("disallowed")]
-        public JArray? Disallowed { get; init; }
-
-        /// <summary>
-        /// Required fields/values.
-        /// </summary>
-        [JsonProperty("required")]
-        public JArray? Required { get; init; }
-
-        /// <summary>
-        /// Minimum valid value.
-        /// </summary>
-        [JsonProperty("min_allowed")]
-        public object? MinAllowed { get; init; }
-        
-        /// <summary>
-        /// Maximum valid value.
-        /// </summary>
-        [JsonProperty("max_allowed")]
-        public object? MaxAllowed { get; init; }
 
         /// <summary>
         /// Build string with information from notnull fields.
@@ -130,16 +100,6 @@ namespace PassMeta.DesktopApp.Common.Models
                 builder.Add(Text);
             if (Info is not null) 
                 builder.Add($"{Resources.OKBAD_MORE__INFO}: {Info}");
-            if (Allowed is not null) 
-                builder.Add($"{Resources.OKBAD_MORE__ALLOWED}: {string.Join(", ", Allowed)}");
-            if (Disallowed is not null) 
-                builder.Add($"{Resources.OKBAD_MORE__DISALLOWED}: {string.Join(", ", Disallowed)}");
-            if (Required is not null) 
-                builder.Add($"{Resources.OKBAD_MORE__REQUIRED}: {string.Join(", ", Required)}");
-            if (MinAllowed is not null) 
-                builder.Add($"{Resources.OKBAD_MORE__MIN_ALLOWED}: {MinAllowed}");
-            if (MaxAllowed is not null) 
-                builder.Add($"{Resources.OKBAD_MORE__MAX_ALLOWED}: {MaxAllowed}");
 
             return string.Join(Environment.NewLine, builder);
         }

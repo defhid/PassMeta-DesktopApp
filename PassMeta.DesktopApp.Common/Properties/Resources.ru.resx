@@ -59,23 +59,8 @@
     <data name="API__INTERNAL_SERVER_ERR" xml:space="preserve">
         <value>Ошибка сервера!</value>
     </data>
-    <data name="OKBAD_MORE__ALLOWED" xml:space="preserve">
-        <value>Разрешено</value>
-    </data>
-    <data name="OKBAD_MORE__DISALLOWED" xml:space="preserve">
-        <value>Запрещено</value>
-    </data>
     <data name="OKBAD_MORE__INFO" xml:space="preserve">
         <value>Доп. информация</value>
-    </data>
-    <data name="OKBAD_MORE__MAX_ALLOWED" xml:space="preserve">
-        <value>Разрешено (макс.)</value>
-    </data>
-    <data name="OKBAD_MORE__MIN_ALLOWED" xml:space="preserve">
-        <value>Разрешено (мин.)</value>
-    </data>
-    <data name="OKBAD_MORE__REQUIRED" xml:space="preserve">
-        <value>Требуется</value>
     </data>
     <data name="DIALOG__BTN_CANCEL" xml:space="preserve">
         <value>Отмена</value>

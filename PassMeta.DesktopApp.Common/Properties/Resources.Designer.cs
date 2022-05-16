@@ -871,56 +871,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allowed.
-        /// </summary>
-        public static string OKBAD_MORE__ALLOWED {
-            get {
-                return ResourceManager.GetString("OKBAD_MORE__ALLOWED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Disallowed.
-        /// </summary>
-        public static string OKBAD_MORE__DISALLOWED {
-            get {
-                return ResourceManager.GetString("OKBAD_MORE__DISALLOWED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Additional info: .
         /// </summary>
         public static string OKBAD_MORE__INFO {
             get {
                 return ResourceManager.GetString("OKBAD_MORE__INFO", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Max allowed.
-        /// </summary>
-        public static string OKBAD_MORE__MAX_ALLOWED {
-            get {
-                return ResourceManager.GetString("OKBAD_MORE__MAX_ALLOWED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Min allowed.
-        /// </summary>
-        public static string OKBAD_MORE__MIN_ALLOWED {
-            get {
-                return ResourceManager.GetString("OKBAD_MORE__MIN_ALLOWED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Required.
-        /// </summary>
-        public static string OKBAD_MORE__REQUIRED {
-            get {
-                return ResourceManager.GetString("OKBAD_MORE__REQUIRED", resourceCulture);
             }
         }
         

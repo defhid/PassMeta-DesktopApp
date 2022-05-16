@@ -69,21 +69,6 @@
     <data name="OKBAD_MORE__INFO" xml:space="preserve">
         <value>Additional info: </value>
     </data>
-    <data name="OKBAD_MORE__ALLOWED" xml:space="preserve">
-        <value>Allowed</value>
-    </data>
-    <data name="OKBAD_MORE__DISALLOWED" xml:space="preserve">
-        <value>Disallowed</value>
-    </data>
-    <data name="OKBAD_MORE__REQUIRED" xml:space="preserve">
-        <value>Required</value>
-    </data>
-    <data name="OKBAD_MORE__MIN_ALLOWED" xml:space="preserve">
-        <value>Min allowed</value>
-    </data>
-    <data name="OKBAD_MORE__MAX_ALLOWED" xml:space="preserve">
-        <value>Max allowed</value>
-    </data>
     <data name="DIALOG__BTN_CANCEL" xml:space="preserve">
         <value>Cancel</value>
     </data>
