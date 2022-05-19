@@ -9,7 +9,7 @@
         Width="700"
         Height="400"
         CanResize="False"
-        Icon="/Assets/PassMeta.ico"
+        Icon="/Assets/AvaRes/PassMeta.ico"
         Title="{x:Static com:Resources.PASSFILELIST__TITLE}"
         WindowStartupLocation="CenterOwner">
     

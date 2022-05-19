@@ -1,24 +1,15 @@
 using AvaloniaGif.Decoding;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Animation;
-using System.Threading;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.Rendering;
-using Avalonia.Logging;
-using JetBrains.Annotations;
 
 namespace AvaloniaGif
 {
     public class GifInstance : IDisposable
     { 
         public Stream Stream { get; private set; }
-        public IterationCount IterationCount { get; private set; }
-        public bool AutoStart { get; private set; } = true;
         public Progress<int> Progress { get; private set; }
         
 #pragma warning disable 414
@@ -40,7 +31,7 @@ namespace AvaloniaGif
             if (sourceUri != null)
             {
                 _streamCanDispose = true;
-                this.Progress = new Progress<int>();
+                Progress = new Progress<int>();
 
                 if (sourceUri.OriginalString.Trim().StartsWith("resm"))
                 {
@@ -100,18 +91,6 @@ namespace AvaloniaGif
                 throw new ArgumentException("The stream is not seekable");
 
             _bgWorker?.SendCommand(BgWorkerCommand.Play);
-        }
-
-        public void IterationCountChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            var newVal = (IterationCount)e.NewValue;
-            IterationCount = newVal;
-        }
-
-        public void AutoStartChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            var newVal = (bool)e.NewValue;
-            this.AutoStart = newVal;
         }
 
         public void Dispose()

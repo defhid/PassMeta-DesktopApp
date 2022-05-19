@@ -98,13 +98,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             {
                 ContentObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
                     ? Resources.STORAGE__TITLE 
-                    : "\uE72b\uE72a"),
+                    : "\uE92D"),
                 FontFamilyObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
                     ? FontFamilies.Default 
                     : FontFamilies.SegoeMdl2),
                 FontSizeObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
                     ? 18d 
-                    : 14d)
+                    : 22d),
+                RotationAngleObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
+                    ? 0 
+                    : 45),
             };
 
             LayoutState = this.WhenAnyValue(vm => vm.PassFilesSelectedIndex,

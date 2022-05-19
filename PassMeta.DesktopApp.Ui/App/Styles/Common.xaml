@@ -5,4 +5,29 @@
         <Setter Property="ToolTip.ShowDelay" Value="1200"/>
     </Style>
 
+    <Style>
+        <Style.Resources>
+            <Color x:Key="SystemAccentColor">#FF3D9635</Color>
+            <Color x:Key="SystemAccentColorDark1">#FF3a8f33</Color>
+            <Color x:Key="SystemAccentColorDark2">#FF378830</Color>
+            <Color x:Key="SystemAccentColorDark3">#FF307529</Color>
+            <Color x:Key="SystemAccentColorLight1">#FF42a239</Color>
+            <Color x:Key="SystemAccentColorLight2">#FF4bb941</Color>
+            <Color x:Key="SystemAccentColorLight3">#FF70ca68</Color>
+            
+            <Color x:Key="SystemColorButtonFaceColor">#FFF0F0F0</Color>
+            <Color x:Key="SystemColorButtonTextColor">#FF000000</Color>
+            <Color x:Key="SystemColorGrayTextColor">#FF6D6D6D</Color>
+            <Color x:Key="SystemColorHighlightColor">#FF4bb941</Color>
+            <Color x:Key="SystemColorHighlightTextColor">#FFFFFFFF</Color>
+            <Color x:Key="SystemColorHotlightColor">#FF378830</Color>
+            <Color x:Key="SystemColorWindowColor">#FFFFFFFF</Color>
+            <Color x:Key="SystemColorWindowTextColor">#FF000000</Color>
+        </Style.Resources>
+    </Style>
+    
+    <Style Selector="ToggleButton:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource SystemAccentColorLight1}" />
+    </Style>
+
 </Styles>

@@ -2,6 +2,7 @@ namespace PassMeta.DesktopApp.Common.Constants
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
     /// <summary>
     /// Application culture info.
@@ -50,6 +51,11 @@ namespace PassMeta.DesktopApp.Common.Constants
             culture = Default;
             return false;
         }
+
+        /// <summary>
+        /// Cast to <see cref="CultureInfo"/> by <see cref="Code"/>.
+        /// </summary>
+        public static implicit operator CultureInfo(AppCulture culture) => new(culture._code);
 
         #region Variants
 

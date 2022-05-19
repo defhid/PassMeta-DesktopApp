@@ -53,50 +53,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Components
 
         #endregion
 
-        #region Padding
-
-        private readonly ObservableAsPropertyHelper<Thickness>? _padding;
-        public IObservable<Thickness> PaddingObservable
-        {
-            init => _padding = value.ToProperty(this, nameof(Padding));
-        }
-        public Thickness Padding => _padding!.Value;
-
-        #endregion
-
-        #region Margin
-
-        private readonly ObservableAsPropertyHelper<Thickness>? _margin;
-        public IObservable<Thickness> MarginObservable
-        {
-            init => _margin = value.ToProperty(this, nameof(Margin));
-        }
-        public Thickness Margin => _margin!.Value;
-
-        #endregion
-
-        #region Width
-
-        private readonly ObservableAsPropertyHelper<double>? _width;
-        public IObservable<double> WidthObservable
-        {
-            init => _width = value.ToProperty(this, nameof(Width));
-        }
-        public double Width => _width!.Value;
-
-        #endregion
-
-        #region Height
-
-        private readonly ObservableAsPropertyHelper<double>? _height;
-        public IObservable<double> HeightObservable
-        {
-            init => _height = value.ToProperty(this, nameof(Height));
-        }
-        public double Height => _height!.Value;
-
-        #endregion
-
         #region FintSize
 
         private readonly ObservableAsPropertyHelper<double>? _fontSize;
@@ -116,6 +72,17 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Components
             init => _fontFamily = value.ToProperty(this, nameof(FontFamily));
         }
         public FontFamily FontFamily => _fontFamily!.Value;
+
+        #endregion
+        
+        #region FintSize
+
+        private readonly ObservableAsPropertyHelper<int>? _rotationAngle;
+        public IObservable<int> RotationAngleObservable
+        {
+            init => _rotationAngle = value.ToProperty(this, nameof(RotationAngle));
+        }
+        public double RotationAngle => _rotationAngle!.Value;
 
         #endregion
     }

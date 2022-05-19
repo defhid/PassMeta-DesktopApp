@@ -15,11 +15,11 @@ namespace AvaloniaGif
         public static readonly StyledProperty<Uri> SourceUriProperty = AvaloniaProperty.Register<GifImage, Uri>("SourceUri");
         public static readonly StyledProperty<Stream> SourceStreamProperty = AvaloniaProperty.Register<GifImage, Stream>("SourceStream");
         public static readonly StyledProperty<IterationCount> IterationCountProperty = AvaloniaProperty.Register<GifImage, IterationCount>("IterationCount");
-        private GifInstance gifInstance;
+        private GifInstance _gifInstance;
         public static readonly StyledProperty<bool> AutoStartProperty = AvaloniaProperty.Register<GifImage, bool>("AutoStart");
         public static readonly StyledProperty<StretchDirection> StretchDirectionProperty = AvaloniaProperty.Register<GifImage, StretchDirection>("StretchDirection");
         public static readonly StyledProperty<Stretch> StretchProperty = AvaloniaProperty.Register<GifImage, Stretch>("Stretch");
-        private RenderTargetBitmap backingRTB;
+        private RenderTargetBitmap _backingRtb;
 
         static GifImage()
         {
@@ -91,21 +91,21 @@ namespace AvaloniaGif
 
         public override void Render(DrawingContext context)
         {
-            if (gifInstance == null)
+            if (_gifInstance == null)
                 return;
                 
-            if (gifInstance.GetBitmap() is WriteableBitmap source && backingRTB is not null)
+            if (_gifInstance.GetBitmap() is WriteableBitmap source && _backingRtb is not null)
             {
-                using (var ctx = backingRTB.CreateDrawingContext(null))
+                using (var ctx = _backingRtb.CreateDrawingContext(null))
                 {
                     var ts = new Rect(source.Size);
                     ctx.DrawBitmap(source.PlatformImpl, 1, ts,ts);
                 }
             }
-            if (backingRTB is not null && Bounds.Width > 0 && Bounds.Height > 0)
+            if (_backingRtb is not null && Bounds.Width > 0 && Bounds.Height > 0)
             {
                 var viewPort = new Rect(Bounds.Size);
-                var sourceSize = backingRTB.Size;
+                var sourceSize = _backingRtb.Size;
 
                 var scale = Stretch.CalculateScaling(Bounds.Size, sourceSize, StretchDirection);
                 var scaledSize = sourceSize * scale;
@@ -118,7 +118,7 @@ namespace AvaloniaGif
 
                 var interpolationMode = RenderOptions.GetBitmapInterpolationMode(this);
 
-                context.DrawImage(backingRTB, sourceRect, destRect, interpolationMode);
+                context.DrawImage(_backingRtb, sourceRect, destRect, interpolationMode);
             }
             
             Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
@@ -131,7 +131,7 @@ namespace AvaloniaGif
         /// <returns>The desired size of the control.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            var source = backingRTB;
+            var source = _backingRtb;
             var result = new Size();
 
             if (source != null)
@@ -145,7 +145,7 @@ namespace AvaloniaGif
         /// <inheritdoc/>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var source = backingRTB;
+            var source = _backingRtb;
 
             if (source != null)
             {
@@ -165,18 +165,18 @@ namespace AvaloniaGif
             if (image == null)
                 return;
 
-            image.gifInstance?.Dispose();
-            image.backingRTB?.Dispose();
-            image.backingRTB = null;
+            image._gifInstance?.Dispose();
+            image._backingRtb?.Dispose();
+            image._backingRtb = null;
             
             var value = e.NewValue;
             if (value is string s)
                 value = new Uri(s);
 
-            image.gifInstance = new GifInstance();
-            image.gifInstance.SetSource(value);
+            image._gifInstance = new GifInstance();
+            image._gifInstance.SetSource(value);
 
-            image.backingRTB = new RenderTargetBitmap(image.gifInstance.GifPixelSize, new Vector(96, 96));
+            image._backingRtb = new RenderTargetBitmap(image._gifInstance.GifPixelSize, new Vector(96, 96));
         }
     }
 }

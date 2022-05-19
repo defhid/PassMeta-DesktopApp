@@ -11,10 +11,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System.Linq;
     using System.Threading.Tasks;
     using Avalonia.Controls;
-    
+
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
     
     using ReactiveUI;
+    using Views.Etc;
     using Views.Main;
 
     public class SettingsViewModel : PageViewModel
@@ -43,11 +44,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             ? string.Empty
             : $"v{AppContext.Current.ServerVersion}, #{AppContext.Current.ServerId ?? "?"}";
 
-        public static string UiInfo => $"v{AppConfig.Version}";
+        public static string AppInfo => $"v{Core.Utils.AppInfo.Version}";
+        
+        public ReactCommand AppInfoCommand { get; }
 
         public SettingsViewModel(IScreen hostScreen) : base(hostScreen)
         {
             FillFromAppConfig();
+
+            AppInfoCommand = ReactiveCommand.CreateFromTask(
+                () => new ApplicationInfoWin().ShowDialog(MainWindow.Current));
         }
 
         public override Task RefreshAsync()

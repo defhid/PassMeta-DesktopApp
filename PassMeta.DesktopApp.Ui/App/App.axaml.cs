@@ -11,10 +11,10 @@ namespace PassMeta.DesktopApp.Ui.App
     using Avalonia.Controls.Notifications;
     using Avalonia.Layout;
     using Avalonia.Markup.Xaml;
-    
-    using System.Threading.Tasks;
+
     using System.Reflection;
     using System.Threading;
+    using System.Threading.Tasks;
     using Common.Interfaces.Services.PassFile;
     using Core;
     using ReactiveUI;
@@ -39,7 +39,7 @@ namespace PassMeta.DesktopApp.Ui.App
             base.OnFrameworkInitializationCompleted();
         }
 
-        public static void Restart()
+        private static void Restart()
         {
             var window = MakeWindow();
             window.Show();
@@ -56,8 +56,6 @@ namespace PassMeta.DesktopApp.Ui.App
             Locator.CurrentMutable.RegisterConstant<ILogService>(new LogService());
             
             Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
-
-            await StartUp.CheckSystemAndLoadApplicationConfigAsync();
 
             Locator.CurrentMutable.RegisterConstant<IOkBadService>(new OkBadService());
 
@@ -78,6 +76,8 @@ namespace PassMeta.DesktopApp.Ui.App
             Locator.CurrentMutable.RegisterConstant<IClipboardService>(new ClipboardService());
             
             Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
+
+            await StartUp.LoadConfigurationAsync();
 
             AppConfig.OnCultureChanged += Restart;
         }

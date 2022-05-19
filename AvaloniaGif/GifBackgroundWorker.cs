@@ -10,14 +10,13 @@ namespace AvaloniaGif
 {
     internal sealed class GifBackgroundWorker
     {
-        private static readonly Stopwatch _timer = Stopwatch.StartNew();
-        private GifDecoder _gifDecoder;
+        private static readonly Stopwatch Timer = Stopwatch.StartNew();
+        private readonly GifDecoder _gifDecoder;
 
-        private Task _bgThread;
         private BgWorkerState _state;
         private readonly object _lockObj;
         private readonly Queue<BgWorkerCommand> _cmdQueue;
-        private readonly List<ulong> _colorTableIDList;
+        private readonly List<ulong> _colorTableIdList;
         private volatile bool _shouldStop;
         private int _iterationCount;
 
@@ -59,8 +58,8 @@ namespace AvaloniaGif
 
         private void RefreshColorTableCache()
         {
-            foreach (var cacheID in _colorTableIDList)
-                GifDecoder.GlobalColorTableCache.TryGetValue(cacheID, out var _);
+            foreach (var cacheId in _colorTableIdList)
+                GifDecoder.GlobalColorTableCache.TryGetValue(cacheId, out _);
         }
 
         private void InternalSeek(int value, bool isManual)
@@ -120,17 +119,17 @@ namespace AvaloniaGif
 
             // Save the color table cache ID's to refresh them on cache while
             // the image is either stopped/paused.
-            _colorTableIDList = _gifDecoder.Frames
+            _colorTableIdList = _gifDecoder.Frames
                                           .Where(p => p.IsLocalColorTableUsed)
                                           .Select(p => p.LocalColorTableCacheID)
                                           .ToList();
 
             if (_gifDecoder.Header.HasGlobalColorTable)
-                _colorTableIDList.Add(_gifDecoder.Header.GlobalColorTableCacheID);
+                _colorTableIdList.Add(_gifDecoder.Header.GlobalColorTableCacheID);
 
             ResetPlayVars();
 
-            _bgThread = Task.Factory.StartNew(MainLoop, CancellationToken.None, TaskCreationOptions.LongRunning,
+            Task.Factory.StartNew(MainLoop, CancellationToken.None, TaskCreationOptions.LongRunning,
                 TaskScheduler.Current);
         }
 
@@ -237,12 +236,6 @@ namespace AvaloniaGif
             _gifDecoder.Dispose();
         }
 
-        private void ShowFirstFrame()
-        {
-            if (_shouldStop) return;
-            _gifDecoder.RenderFrame(0);
-        }
-
         private void WaitAndRenderNext()
         {
             if (!IterationCount.LoopForever & _iterationCount > IterationCount.Count)
@@ -257,11 +250,11 @@ namespace AvaloniaGif
 
             var targetDelay = _gifDecoder.Frames[_currentIndex].FrameDelay;
 
-            var t1 = _timer.Elapsed;
+            var t1 = Timer.Elapsed;
 
             _gifDecoder.RenderFrame(_currentIndex);
 
-            var t2 = _timer.Elapsed;
+            var t2 = Timer.Elapsed;
             var delta = t2 - t1;
 
             if (delta > targetDelay) return;

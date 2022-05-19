@@ -3,8 +3,9 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
-        <Version>1.0.1</Version>
     </PropertyGroup>
+
+    <Import Project="$(SolutionDir)\.props" />
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <DocumentationFile>bin\Debug\PassMeta.DesktopApp.Core.xml</DocumentationFile>

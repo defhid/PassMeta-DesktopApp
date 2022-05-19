@@ -12,4 +12,8 @@
         <StyleInclude Source="/App/Styles/ResourceDependingStyles.xaml"/>
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
     </Application.Styles>
+    
+    <Application.Resources>
+        <FontFamily x:Key="SegoeMdl2">/Assets/AvaRes/Fonts/WinSymbols2.ttf#Symbols</FontFamily>
+    </Application.Resources>
 </Application>

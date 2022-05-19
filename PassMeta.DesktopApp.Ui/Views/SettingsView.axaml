@@ -68,13 +68,15 @@
                           Content="{x:Static com:Resources.SETTINGS__HIDE_PASSWORDS}"/>
             </Grid>
             
-            <TextBlock Grid.Row="3"
+            <Button Grid.Row="3"
                        FontSize="12"
                        Opacity="0.7"
+                       Background="Transparent"
+                       BorderThickness="0"
                        VerticalAlignment="Bottom"
                        HorizontalAlignment="Right"
-                       TextAlignment="Right"
-                       Text="{Binding UiInfo}"/>
+                       Content="{Binding AppInfo}"
+                       Command="{Binding AppInfoCommand}"/>
         </Grid>
     </Grid>
 </UserControl>

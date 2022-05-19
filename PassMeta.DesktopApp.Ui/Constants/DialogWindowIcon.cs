@@ -22,14 +22,14 @@ namespace PassMeta.DesktopApp.Ui.Constants
 
         public static readonly DialogWindowIcon Hidden = new(null);
         
-        public static readonly DialogWindowIcon Info = new("Assets/DialogWindow/Info.png");
+        public static readonly DialogWindowIcon Info = new("Assets/AvaRes/DialogWindow/Info.png");
         
-        public static readonly DialogWindowIcon Error = new("Assets/DialogWindow/Error.png");
+        public static readonly DialogWindowIcon Error = new("Assets/AvaRes/DialogWindow/Error.png");
         
-        public static readonly DialogWindowIcon Failure = new("Assets/DialogWindow/Warning.png");
+        public static readonly DialogWindowIcon Failure = new("Assets/AvaRes/DialogWindow/Warning.png");
         
-        public static readonly DialogWindowIcon Confirm = new("Assets/DialogWindow/Confirm.png");
+        public static readonly DialogWindowIcon Confirm = new("Assets/AvaRes/DialogWindow/Confirm.png");
         
-        public static readonly DialogWindowIcon Success = new("Assets/DialogWindow/Success.png");
+        public static readonly DialogWindowIcon Success = new("Assets/AvaRes/DialogWindow/Success.png");
     }
 }

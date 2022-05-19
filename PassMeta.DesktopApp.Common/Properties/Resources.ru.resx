@@ -619,7 +619,7 @@
         <value>Требуется ручное слияние с удалённой версией!</value>
     </data>
     <data name="STORAGE__CONFIRM_SECTION_RESET" xml:space="preserve">
-        <value>Вы редактируете группу. Хотите сбросить текущие изменения?</value>
+        <value>Вы редактируете группу. Хотите сбросить её текущие изменения?</value>
     </data>
     <data name="PASSMERGE__ITEM_TOOLTIP__TRANSFER" xml:space="preserve">
         <value>Переместить в другую версию</value>
@@ -665,5 +665,14 @@
     </data>
     <data name="PASSFILE__SUCCESS_RESTORE_FROM_SERVER" xml:space="preserve">
         <value>Пакет '{0}' успешно восстановлен с сервера</value>
+    </data>
+    <data name="APP_INFO__VERSION" xml:space="preserve">
+        <value>Версия:</value>
+    </data>
+    <data name="APP_INFO__TITLE" xml:space="preserve">
+        <value>Информация о PassMeta DesktopApp</value>
+    </data>
+    <data name="APP_INFO__QUIT_BTN" xml:space="preserve">
+        <value>Скрыть</value>
     </data>
 </root>

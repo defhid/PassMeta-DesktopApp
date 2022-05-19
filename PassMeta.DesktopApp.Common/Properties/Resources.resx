@@ -673,4 +673,13 @@ try another keywords...</value>
     <data name="PASSFILE__SUCCESS_RESTORE_FROM_SERVER" xml:space="preserve">
         <value>Passfile '{0}' successfully restored from the server</value>
     </data>
+    <data name="APP_INFO__VERSION" xml:space="preserve">
+        <value>Version:</value>
+    </data>
+    <data name="APP_INFO__TITLE" xml:space="preserve">
+        <value>About PassMeta DesktopApp</value>
+    </data>
+    <data name="APP_INFO__QUIT_BTN" xml:space="preserve">
+        <value>Hide</value>
+    </data>
 </root>

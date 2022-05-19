@@ -8,6 +8,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassMeta.DesktopApp.Common"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaGif", "AvaloniaGif\AvaloniaGif.csproj", "{ABAB9A45-C6DB-434D-9743-0D64C474D5D9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc", "etc", "{C49DCAB8-C0C1-4CCE-B74A-69565DD26BE5}"
+	ProjectSection(SolutionItems) = preProject
+		.props = .props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

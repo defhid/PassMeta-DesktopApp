@@ -60,7 +60,7 @@ namespace AvaloniaGif.Decoding
         internal volatile bool _hasNewFrame;
 
         public GifHeader Header => _gifHeader;
-        public List<GifFrame> Frames = new List<GifFrame>();
+        public List<GifFrame> Frames = new();
 
         internal static ICache<ulong, GifColor[]> GlobalColorTableCache
             = Caches.KeyValue<ulong, GifColor[]>()

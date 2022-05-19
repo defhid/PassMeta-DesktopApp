@@ -12,7 +12,7 @@
         SizeToContent="Height"
         CanResize="False"
         x:Class="PassMeta.DesktopApp.Ui.Views.Storage.PassFileWin"
-        Icon="/Assets/PassMeta.ico"
+        Icon="/Assets/AvaRes/PassMeta.ico"
         Title="{Binding Title^}"
         WindowStartupLocation="CenterOwner">
     

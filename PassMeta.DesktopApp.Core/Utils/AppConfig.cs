@@ -4,7 +4,6 @@ namespace PassMeta.DesktopApp.Core.Utils
     using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     using System;
-    using System.Globalization;
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
@@ -54,6 +53,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         public int DefaultPasswordLength => 12;
 
         /// <summary>
+        /// Application language information.
+        /// </summary>
+        [JsonIgnore]
+        public AppCulture Culture => _culture;
+
+        /// <summary>
         /// Current application config.
         /// </summary>
         public static AppConfig Current { get; private set; } = new();
@@ -61,11 +66,6 @@ namespace PassMeta.DesktopApp.Core.Utils
         #region Consts
 
         private const int MinUrlLength = 11;
-
-        /// <summary>
-        /// Application version.
-        /// </summary>
-        public static readonly string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString()[..^2] ?? "?";
 
         /// <summary>
         /// Application root directory.
@@ -143,7 +143,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     DialogService.ShowError(result.Message!);
             }
 
-            await _SetCurrentAsync(config);
+            await _SetCurrentAsync(config, true);
         }
 
         /// <summary>
@@ -165,19 +165,19 @@ namespace PassMeta.DesktopApp.Core.Utils
             var result = await _SaveToFileAsync(config);
             if (result.Bad) return result;
 
-            await _SetCurrentAsync(config);
+            await _SetCurrentAsync(config, false);
             return Result.Success();
         }
 
-        private static async Task _SetCurrentAsync(AppConfig config)
+        private static async Task _SetCurrentAsync(AppConfig config, bool isInit)
         {
             var cultureChanged = Current.CultureCode != config.CultureCode;
             var serverChanged = Current.ServerUrl != config.ServerUrl;
 
             Current = config;
-            Resources.Culture = new CultureInfo(config.CultureCode);
+            Resources.Culture = config.Culture;
 
-            if (serverChanged)
+            if (serverChanged && !isInit)
             {
                 try
                 {

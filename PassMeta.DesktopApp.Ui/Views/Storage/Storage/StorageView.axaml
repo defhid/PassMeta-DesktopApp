@@ -17,7 +17,7 @@
             <Style Selector="Button.list_add">
                 <Setter Property="Content" Value="&#xE710;"/>
                 <Setter Property="FontFamily" Value="{x:Static const:FontFamilies.SegoeMdl2}"/>
-                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="FontSize" Value="18"/>
                 <Setter Property="Height" Value="30"/>
                 <Setter Property="CornerRadius" Value="4"/>
                 <Setter Property="Opacity" Value="0.5"/>
@@ -45,9 +45,14 @@
                                   HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center"
                                   IsChecked="{Binding PassFileBarExpander.IsOpened}"
-                                  Content="{Binding PassFilesBarBtn.Content}"
                                   FontSize="{Binding PassFilesBarBtn.FontSize}"
-                                  FontFamily="{Binding PassFilesBarBtn.FontFamily}"/>
+                                  FontFamily="{Binding PassFilesBarBtn.FontFamily}">
+                        <TextBlock Text="{Binding PassFilesBarBtn.Content}">
+                            <TextBlock.RenderTransform>
+                                <RotateTransform Angle="{Binding PassFilesBarBtn.RotationAngle}"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                    </ToggleButton>
 
                     <!-- PassFileList -->
                     <ListBox Grid.Row="1"
@@ -75,12 +80,11 @@
                                                 VerticalContentAlignment="Center"
                                                 HorizontalAlignment="Left"
                                                 Margin="13 0 1 0"
-                                                Padding="0 0 0 0"
-                                                Height="22" Width="22"
-                                                CornerRadius="50"
-                                                FontSize="16"
+                                                Padding="0 -1 0 0"
+                                                Height="20" Width="22"
+                                                FontSize="20"
                                                 FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
-                                                Content="&#xF78D;"
+                                                Content="&#xEC50;"
                                                 Foreground="{Binding StateColor}"
                                                 Opacity="{Binding Opacity^}"
                                                 IsVisible="{Binding IsChecked, ElementName=PassFilesBarBtn}"
@@ -246,7 +250,7 @@
                                                             <Setter Property="Height" Value="26"/>
                                                             <Setter Property="Width" Value="26"/>
                                                             <Setter Property="Padding" Value="0"/>
-                                                            <Setter Property="FontSize" Value="14"/>
+                                                            <Setter Property="FontSize" Value="16"/>
                                                             <Setter Property="FontFamily" Value="{x:Static const:FontFamilies.SegoeMdl2}"/>
                                                             <Setter Property="HorizontalAlignment" Value="Right"/>
                                                             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -293,7 +297,7 @@
                                                             <Setter Property="Height" Value="30"/>
                                                             <Setter Property="Width" Value="30"/>
                                                             <Setter Property="Padding" Value="0"/>
-                                                            <Setter Property="FontSize" Value="18"/>
+                                                            <Setter Property="FontSize" Value="20"/>
                                                             <Setter Property="FontFamily" Value="{x:Static const:FontFamilies.SegoeMdl2}"/>
                                                             <Setter Property="HorizontalAlignment" Value="Right"/>
                                                             <Setter Property="VerticalAlignment" Value="Top"/>

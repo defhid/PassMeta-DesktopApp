@@ -52,7 +52,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
                 : FontFamilies.Default);
             
             BtnFontSize = modeChanged.Select(isShort => isShort
-                ? 24 
+                ? 28 
                 : 20);
 
             Buttons = new ButtonCollection(modeChanged);
@@ -91,8 +91,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
                 Account = new MainPaneBtn(Resources.APP__MENU_BTN__ACCOUNT, "\uE77b", modeChanged);
                 Storage = new MainPaneBtn(Resources.APP__MENU_BTN__STORAGE, "\uE8F1", modeChanged);
                 Generator = new MainPaneBtn(Resources.APP__MENU_BTN__GENERATOR, "\uEA80", modeChanged);
-                Journal = new MainPaneBtn(Resources.APP__MENU_BTN__JOURNAL, "\uE81C", modeChanged);
-                Logs = new MainPaneBtn(Resources.APP__MENU_BTN__LOGS, "\uE9F9", modeChanged);
+                Journal = new MainPaneBtn(Resources.APP__MENU_BTN__JOURNAL, "\uE823", modeChanged);
+                Logs = new MainPaneBtn(Resources.APP__MENU_BTN__LOGS, "\uE9D9", modeChanged);
                 Settings = new MainPaneBtn(Resources.APP__MENU_BTN__SETTINGS, "\uE713", modeChanged);
                 
                 _all = new[] { Account, Storage, Generator, Journal, Logs, Settings };

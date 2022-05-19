@@ -1,14 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-    <ItemGroup>
-        <AvaloniaResource Include="Assets\**" />
-        <AvaloniaResource Include="App\Styles\Common.xaml" />
-        <AvaloniaResource Include="App\Styles\ResourceDependingStyles.xaml" />
-    </ItemGroup>
+
+    <Import Project="$(SolutionDir)\.props" />
+    
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="0.10.14" />
         <PackageReference Include="Avalonia.Desktop" Version="0.10.14" />
@@ -17,72 +16,79 @@
         <PackageReference Include="System.Reactive" Version="5.0.0" />
         <PackageReference Include="TextCopy" Version="6.1.0" />
     </ItemGroup>
+    
     <ItemGroup>
-      <Compile Update="Views\AccountView.axaml.cs">
-        <DependentUpon>AccountView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\GeneratorView.axaml.cs">
-        <DependentUpon>GeneratorView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\SettingsView.axaml.cs">
-        <DependentUpon>SettingsView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Main\MainWindow.axaml.cs">
-        <DependentUpon>MainWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\AuthView.axaml.cs">
-        <DependentUpon>SignInView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Storage\PassFileWin.axaml.cs">
-        <DependentUpon>DialogWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="App\App.axaml.cs">
-        <DependentUpon>App.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\LogsView.axaml.cs">
-        <DependentUpon>LogsView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Storage\PassFileRestoreWin.axaml.cs">
-        <DependentUpon>PassFileLocalList'Win.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\JournalView.axaml.cs">
-        <DependentUpon>JournalView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Storage\PassFileMergeWin.axaml.cs">
-        <DependentUpon>PassFileMergeWin.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Storage\Storage\StorageView.axaml.cs">
-        <DependentUpon>StorageView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Storage\Storage\PopupGeneratorView.axaml.cs">
-        <DependentUpon>PopupGeneratorView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+        <Compile Update="Views\AccountView.axaml.cs">
+            <DependentUpon>AccountView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\GeneratorView.axaml.cs">
+            <DependentUpon>GeneratorView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\SettingsView.axaml.cs">
+            <DependentUpon>SettingsView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Main\MainWindow.axaml.cs">
+            <DependentUpon>MainWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\AuthView.axaml.cs">
+            <DependentUpon>SignInView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Storage\PassFileWin.axaml.cs">
+            <DependentUpon>DialogWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="App\App.axaml.cs">
+            <DependentUpon>App.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\LogsView.axaml.cs">
+            <DependentUpon>LogsView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Storage\PassFileRestoreWin.axaml.cs">
+            <DependentUpon>PassFileLocalList'Win.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\JournalView.axaml.cs">
+            <DependentUpon>JournalView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Storage\PassFileMergeWin.axaml.cs">
+            <DependentUpon>PassFileMergeWin.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Storage\Storage\StorageView.axaml.cs">
+            <DependentUpon>StorageView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Storage\Storage\PopupGeneratorView.axaml.cs">
+            <DependentUpon>PopupGeneratorView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Etc\ApplicationInfoWin.axaml.cs">
+          <DependentUpon>PassFileMergeWin.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
+    
     <ItemGroup>
-      <ProjectReference Include="..\AvaloniaGif\AvaloniaGif.csproj" />
-      <ProjectReference Include="..\PassMeta.DesktopApp.Core\PassMeta.DesktopApp.Core.csproj" />
+        <ProjectReference Include="..\AvaloniaGif\AvaloniaGif.csproj" />
+        <ProjectReference Include="..\PassMeta.DesktopApp.Core\PassMeta.DesktopApp.Core.csproj" />
     </ItemGroup>
+    
     <ItemGroup>
-        <EmbeddedResource Include="Assets\Resm\Preloader.gif" />
+        <EmbeddedResource Include="Assets\Resm\**" />
     </ItemGroup>
+    
     <ItemGroup>
-      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Confirm.png" />
-      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Error.png" />
-      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Info.png" />
-      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Success.png" />
-      <UpToDateCheckInput Remove="Assets\Avares\DialogWindow\Warning.png" />
+        <AvaloniaResource Include="Assets\AvaRes\**" />
+        <AvaloniaResource Include="App\Styles\Common.xaml" />
+        <AvaloniaResource Include="App\Styles\ResourceDependingStyles.xaml" />
     </ItemGroup>
+
 </Project>

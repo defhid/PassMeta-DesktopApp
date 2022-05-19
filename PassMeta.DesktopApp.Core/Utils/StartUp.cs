@@ -8,17 +8,25 @@ namespace PassMeta.DesktopApp.Core.Utils
     /// </summary>
     public static class StartUp
     {
-        /// <summary>
-        /// Method to call at startup.
-        /// </summary>
-        public static async Task CheckSystemAndLoadApplicationConfigAsync()
+        /// <summary></summary>
+        public static async Task LoadConfigurationAsync()
         {
-            await AppContext.LoadAndSetCurrentAsync();
             await AppConfig.LoadAndSetCurrentAsync();
+        }
 
-            await PassFileManager.ReloadAsync(true);
+        /// <summary></summary>
+        public static async Task LoadContextAndCheckSystemAsync()
+        {
+            var backgroundTask = Task.Run(async () =>
+            {
+                await PassFileManager.ReloadAsync(true);
+                EnvironmentContainer.Resolve<ILogService>().OptimizeLogs();
+            });
 
-            EnvironmentContainer.Resolve<ILogService>().OptimizeLogs();
+            await AppContext.LoadAndSetCurrentAsync();
+            await AppContext.RefreshFromServerAsync();
+
+            await backgroundTask;
         }
     }
 }

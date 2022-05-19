@@ -21,20 +21,17 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Controls;
     using Avalonia.Interactivity;
     using Avalonia.Markup.Xaml;
+    using Avalonia.Threading;
     using Base;
 
     public class MainWindow : WinView<MainWindowViewModel>
     {
-        private bool _loaded;
-        
         public static MainWindow? Current { get; private set; }
 
         public static event Func<MainWindow, Task>? CurrentChanged;
 
         public MainWindow()
         {
-            SubscribeOnPageEvents();
-            
             Opened += OnOpened;
             Closing += OnClosing;
 
@@ -83,20 +80,22 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
         private async void OnOpened(object? sender, EventArgs e)
         {
+            PageViewModel.Navigated += HandleNavigate;
+            
+            var firstLoad = Current is null;
             Current = this;
             
             if (CurrentChanged != null)
                 await CurrentChanged(this);
 
-            if (!_loaded)
+            if (firstLoad)
             {
-                if (AppContext.Current.User is null)
-                    new AuthViewModel(DataContext!).TryNavigate();
-                else
-                    new StorageViewModel(DataContext!).TryNavigate();
+                await Dispatcher.UIThread.InvokeAsync(StartUp.LoadContextAndCheckSystemAsync, DispatcherPriority.Background);
             }
 
-            _loaded = true;
+            InitNavigate();
+            
+            DataContext!.PreloaderEnabled = false;
         }
         
         private async void OnClosing(object? sender, CancelEventArgs e)
@@ -104,36 +103,45 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
             if (ReferenceEquals(Current, this) && PassFileManager.AnyCurrentChanged)
             {
                 e.Cancel = true;
-                var dialogService = EnvironmentContainer.Resolve<IDialogService>()!;
+                var dialogService = EnvironmentContainer.Resolve<IDialogService>();
+
                 var confirm = await dialogService.ConfirmAsync(Common.Resources.APP__CONFIRM_ROLLBACK_ON_QUIT);
-                if (confirm.Ok)
-                {
-                    var win = Current;
-                    Current = null;
-                    win.Close();
-                }
+                if (!confirm.Ok) return;
+
+                var win = Current;
+                Current = null;
+                win.Close();
+            }
+            else
+            {
+                PageViewModel.Navigated -= HandleNavigate;
             }
         }
-        
-        private void SubscribeOnPageEvents()
+
+        private void InitNavigate()
         {
-            PageViewModel.Navigated += (sender, _) =>
+            if (AppContext.Current.User is null)
+                new AuthViewModel(DataContext!).TryNavigate();
+            else
+                new StorageViewModel(DataContext!).TryNavigate();
+        }
+
+        private void HandleNavigate(object? sender, EventArgs e)
+        {
+            var mainPaneButtons = DataContext!.MainPane.Buttons;
+            mainPaneButtons.CurrentActive = sender switch
             {
-                var mainPaneButtons = DataContext!.MainPane.Buttons;
-                mainPaneButtons.CurrentActive = sender switch
-                {
-                    AuthViewModel => mainPaneButtons.Account,
-                    AccountViewModel => mainPaneButtons.Account,
-                    StorageViewModel => mainPaneButtons.Storage,
-                    GeneratorViewModel => mainPaneButtons.Generator,
-                    JournalViewModel => mainPaneButtons.Journal,
-                    LogsViewModel => mainPaneButtons.Logs,
-                    SettingsViewModel => mainPaneButtons.Settings,
-                    _ => mainPaneButtons.CurrentActive
-                };
-                DataContext.MainPane.IsOpened = false;
-                DataContext.RightBarButtons = (sender as PageViewModel)?.RightBarButtons;
+                AuthViewModel => mainPaneButtons.Account,
+                AccountViewModel => mainPaneButtons.Account,
+                StorageViewModel => mainPaneButtons.Storage,
+                GeneratorViewModel => mainPaneButtons.Generator,
+                JournalViewModel => mainPaneButtons.Journal,
+                LogsViewModel => mainPaneButtons.Logs,
+                SettingsViewModel => mainPaneButtons.Settings,
+                _ => mainPaneButtons.CurrentActive
             };
+            DataContext.MainPane.IsOpened = false;
+            DataContext.RightBarButtons = (sender as PageViewModel)?.RightBarButtons;
         }
     }
 }

@@ -20,7 +20,7 @@
             set => this.RaiseAndSetIfChanged(ref _rightBarButtons, value);
         }
         
-        private bool _preloaderEnabled;
+        private bool _preloaderEnabled = true;
         public bool PreloaderEnabled
         {
             get => _preloaderEnabled;

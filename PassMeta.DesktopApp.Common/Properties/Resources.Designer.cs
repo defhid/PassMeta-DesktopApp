@@ -322,6 +322,33 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide.
+        /// </summary>
+        public static string APP_INFO__QUIT_BTN {
+            get {
+                return ResourceManager.GetString("APP_INFO__QUIT_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About PassMeta DesktopApp.
+        /// </summary>
+        public static string APP_INFO__TITLE {
+            get {
+                return ResourceManager.GetString("APP_INFO__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version:.
+        /// </summary>
+        public static string APP_INFO__VERSION {
+            get {
+                return ResourceManager.GetString("APP_INFO__VERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Data validation error!.
         /// </summary>
         public static string AUTH__DATA_VALIDATION_ERR {

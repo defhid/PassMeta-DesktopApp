@@ -11,7 +11,7 @@
         d:DesignWidth="800"
         d:DesignHeight="500"
         x:Class="PassMeta.DesktopApp.Ui.Views.Main.MainWindow"
-        Icon="/Assets/PassMeta.ico"
+        Icon="/Assets/AvaRes/PassMeta.ico"
         Title="PassMeta"
         MinWidth="800"
         MinHeight="500"
@@ -25,12 +25,6 @@
     
     <Grid>
         <Grid.Styles>
-            <Style Selector="ToggleButton:checked /template/ ContentPresenter">
-                <Setter Property="Background" Value="#3D9635"/>
-            </Style>
-            <Style Selector="ToggleButton:checked:pointerover /template/ ContentPresenter">
-                <Setter Property="Background" Value="#35802F"/>
-            </Style>
             <Style Selector="avaloniaGif|GifImage">
                 <Setter Property="SourceUri" Value="{x:Static const:ManifestResourcePaths.GifPreloader}"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -69,8 +63,8 @@
                                                       Padding="0"
                                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                       HorizontalContentAlignment="Left"
-                                                      Margin="8 0 0 0"
-                                                      TextBlock.Foreground="#52C049"
+                                                      Margin="6 0 0 0"
+                                                      TextBlock.Foreground="{StaticResource SystemAccentColorLight2}"
                                                       TextBlock.FontWeight="Bold"/>
                                 </ControlTemplate>
                             </Setter>
@@ -84,7 +78,6 @@
                                   Width="{Binding MainPane.BtnWidth^}"
                                   Height="40"
                                   FontSize="24"
-                                  FontWeight="Bold"
                                   HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center"
                                   FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
@@ -154,22 +147,11 @@
                         </ItemsControl.Styles>
 
                         <ItemsControl.Styles>
-                            <Style Selector="Button">
+                            <Style Selector="Button,ToggleButton">
                                 <Setter Property="Width" Value="40"/>
                                 <Setter Property="Height" Value="40"/>
                                 <Setter Property="FontFamily" Value="{x:Static const:FontFamilies.SegoeMdl2}"/>
-                                <Setter Property="FontSize" Value="22"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="Margin" Value="4 4 4 1"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                            </Style>
-                            
-                            <Style Selector="ToggleButton">
-                                <Setter Property="Width" Value="40"/>
-                                <Setter Property="Height" Value="40"/>
-                                <Setter Property="FontFamily" Value="{x:Static const:FontFamilies.SegoeMdl2}"/>
-                                <Setter Property="FontSize" Value="22"/>
+                                <Setter Property="FontSize" Value="26"/>
                                 <Setter Property="Padding" Value="0"/>
                                 <Setter Property="Margin" Value="4 4 4 1"/>
                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -197,7 +179,7 @@
                             Padding="0"
                             Width="40"
                             Height="40"
-                            FontSize="22"
+                            FontSize="26"
                             Content="&#xE72C;"
                             FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
                             HorizontalContentAlignment="Center"
