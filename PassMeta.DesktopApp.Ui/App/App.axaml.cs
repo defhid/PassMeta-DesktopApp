@@ -15,8 +15,10 @@ namespace PassMeta.DesktopApp.Ui.App
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using Common.Enums;
     using Common.Interfaces.Services.PassFile;
     using Core;
+    using Interfaces.UiServices;
     using ReactiveUI;
     using Services;
     using Splat;
@@ -53,6 +55,16 @@ namespace PassMeta.DesktopApp.Ui.App
         {
             EnvironmentContainer.Initialize(Locator.Current);
 
+            RegisterBaseServices();
+            RegisterUiServices();
+
+            await StartUp.LoadConfigurationAsync();
+
+            AppConfig.OnCultureChanged += Restart;
+        }
+
+        private static void RegisterBaseServices()
+        {
             Locator.CurrentMutable.RegisterConstant<ILogService>(new LogService());
             
             Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
@@ -65,21 +77,28 @@ namespace PassMeta.DesktopApp.Ui.App
             
             Locator.CurrentMutable.RegisterConstant<ICryptoService>(new CryptoService());
             
-            Locator.CurrentMutable.RegisterConstant<IPassFileService>(new PassFileService());
+            Locator.CurrentMutable.RegisterConstant<IPassFileRemoteService>(new PassFileRemoteService());
             
-            Locator.CurrentMutable.RegisterConstant<IPassFileImportService>(new PassFileImportService());
+            Locator.CurrentMutable.RegisterConstant<IPassFileSyncService>(new PassFileSyncService());
             
-            Locator.CurrentMutable.RegisterConstant<IPassFileExportService>(new PassFileExportService());
+            Locator.CurrentMutable.RegisterConstant<IPassFileImportService>(new PassFilePwdImportService(), PassFileType.Pwd.ToString());
+
+            Locator.CurrentMutable.RegisterConstant<IPassFileExportService>(new PassFilePwdExportService(), PassFileType.Pwd.ToString());
             
-            Locator.CurrentMutable.RegisterConstant<IPassFileMergeService>(new PassFileMergeService());
+            Locator.CurrentMutable.RegisterConstant<IPwdMergePreparingService>(new PwdMergePreparingService());
             
             Locator.CurrentMutable.RegisterConstant<IClipboardService>(new ClipboardService());
+        }
+
+        private static void RegisterUiServices()
+        {
+            Locator.CurrentMutable.RegisterConstant<IPassFileExportUiService>(new PassFileExportUiService());
+            
+            Locator.CurrentMutable.RegisterConstant<IPassFileMergeUiService>(new PassFileMergeUiService());
+            
+            Locator.CurrentMutable.RegisterConstant<IPassFileRestoreUiService>(new PassFileRestoreUiService());
             
             Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
-
-            await StartUp.LoadConfigurationAsync();
-
-            AppConfig.OnCultureChanged += Restart;
         }
 
         private static MainWindow MakeWindow()

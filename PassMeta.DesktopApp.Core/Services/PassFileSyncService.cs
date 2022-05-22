@@ -7,7 +7,6 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Interfaces.Services.PassFile;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Common.Utils.Mapping;
     using DesktopApp.Common.Utils.Extensions;
 
     using DesktopApp.Core.Utils;
@@ -19,34 +18,18 @@ namespace PassMeta.DesktopApp.Core.Services
     using Common.Models.Entities.Extra;
 
     /// <inheritdoc />
-    public class PassFileService : IPassFileService
+    public class PassFileSyncService : IPassFileSyncService
     {
-        private static readonly SimpleMapper<string, string> WhatToStringMapper = new MapToResource<string>[]
-        {
-            new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
-            new("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
-            new("color", () => Resources.DICT_STORAGE__PASSFILE_COLOR),
-            new("created_on", () => Resources.DICT_STORAGE__PASSFILE_CREATED_ON),
-            new("smth", () => Resources.DICT_STORAGE__PASSFILE_SMTH),
-            new("check_password", () => Resources.DICT_STORAGE__CHECK_PASSWORD)
-        };
-        
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
-
-        /// <inheritdoc />
-        public async Task<IResult<PassFile>> GetPassFileRemoteAsync(int passFileId)
-        {
-            var response = await PassMetaApi.GetAsync<PassFile>($"passfiles/{passFileId}", true);
-            return Result.FromResponse(response);
-        }
+        private readonly IPassFileRemoteService _remoteService = EnvironmentContainer.Resolve<IPassFileRemoteService>();
 
         /// <inheritdoc />
         public async Task RefreshLocalPassFilesAsync(PassFileType passFileType)
         {
             if (!PassMetaApi.Online) return;
 
-            var remoteList = await _GetPassFileListRemoteAsync();
+            var remoteList = await _remoteService.GetListAsync(passFileType);
             if (remoteList is null) return;
             
             var localList = PassFileManager.GetCurrentList(passFileType);
@@ -81,7 +64,7 @@ namespace PassMeta.DesktopApp.Core.Services
             
             if (await PassMetaApi.CheckConnectionAsync())
             {
-                var remoteList = await _GetPassFileListRemoteAsync();
+                var remoteList = await _remoteService.GetListAsync(passFileType);
                 if (remoteList is not null)
                 {
                     var localList = PassFileManager.GetCurrentList(passFileType);
@@ -151,7 +134,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
                     if (local.InfoChangedOn > remote.InfoChangedOn)
                     {
-                        var res = Result.FromResponse(await _SavePassFileInfoRemoteAsync(local));
+                        var res = Result.FromResponse(await _remoteService.SaveInfoAsync(local));
                         if (CheckAsUploading(local, res))
                         {
                             actual = res.Data!;
@@ -180,7 +163,7 @@ namespace PassMeta.DesktopApp.Core.Services
                         {
                             if (CheckAsUploading(actual, await _EnsureHasLocalEncryptedAsync(actual)))
                             {
-                                var res = Result.FromResponse(await _SavePassFileDataRemoteAsync(actual));
+                                var res = Result.FromResponse(await _remoteService.SaveDataAsync(actual));
                                 if (CheckAsUploading(actual, res))
                                 {
                                     PassFileManager.TryResetProblem(actual.Id);
@@ -229,7 +212,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (CheckAsUploading(passFile, await _EnsureHasLocalEncryptedAsync(passFile)))
             {
-                var response = await _AddPassFileRemoteAsync(passFile);
+                var response = await _remoteService.AddAsync(passFile);
                 if (response?.Success is true)
                 {
                     _logger.Info($"{passFile} created on the server");
@@ -249,7 +232,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             if (answer.Bad) return;
 
-            var response = await _DeletePassFileRemoteAsync(passFile, answer.Data!);
+            var response = await _remoteService.DeleteAsync(passFile, answer.Data!);
             if (response?.Success is true)
             {
                 _logger.Info($"{passFile} deleted from the server");
@@ -264,7 +247,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
         private async Task<bool> _TryLoadRemoteEncryptedAsync(PassFile passFile)
         {
-            var result = Result.FromResponse(await _GetPassFileDataRemoteAsync(passFile.Id));
+            var result = Result.FromResponse(await _remoteService.GetDataAsync(passFile.Id));
 
             if (!CheckAsDownloading(passFile, result)) return false;
             
@@ -327,82 +310,6 @@ namespace PassMeta.DesktopApp.Core.Services
                 _dialogService.ShowError(result.Message!, passFile.GetTitle());
 
             return result;
-        }
-
-        #endregion
-
-        #region Api Requests
-
-        private static async Task<List<PassFile>?> _GetPassFileListRemoteAsync()
-        {
-            var response = await PassMetaApi.GetAsync<List<PassFile>>("passfiles/list", true);
-            return response?.Data;
-        }
-
-        private static Task<OkBadResponse<string>?> _GetPassFileDataRemoteAsync(int passFileId, int? version = null)
-        {
-            var url = version is null
-                ? $"passfiles/{passFileId}/smth"
-                : $"passfiles/{passFileId}/smth?version={version}";
-            
-            return PassMetaApi.GetAsync<string>(url, true);
-        }
-
-        private static Task<OkBadResponse<PassFile>?> _SavePassFileInfoRemoteAsync(PassFile passFile)
-        {
-            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/info", new
-            {
-                name = passFile.Name,
-                color = passFile.Color
-            });
-
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<PassFile>();
-        }
-        
-        private static Task<OkBadResponse<PassFile>?> _SavePassFileDataRemoteAsync(PassFile passFile)
-        {
-            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/smth", new
-            {
-                smth = passFile.DataEncrypted!
-            });
-
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<PassFile>();
-        }
-
-        private static Task<OkBadResponse<PassFile>?> _AddPassFileRemoteAsync(PassFile passFile)
-        {
-            var request = PassMetaApi.Post("passfiles/new", new
-            {
-                name = passFile.Name,
-                color = passFile.Color,
-                type_id = passFile.TypeId,
-                created_on = passFile.CreatedOn,
-                smth = passFile.DataEncrypted!
-            });
-
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<PassFile>();
-        }
-
-        private static Task<OkBadResponse?> _DeletePassFileRemoteAsync(PassFile passFile, string accountPassword)
-        {
-            var request = PassMetaApi.Delete($"passfiles/{passFile.Id}", new
-            {
-                check_password = accountPassword
-            });
-                
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync();
         }
 
         #endregion

@@ -1,9 +1,13 @@
 namespace PassMeta.DesktopApp.Core.Utils.Extensions
 {
+    using System;
+    using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using Common;
+    using Common.Enums;
     using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
 
     /// <summary>
     /// Extension methods for <see cref="PassFile"/>.
@@ -85,6 +89,50 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         }
         
         /// <summary>
+        /// Set decrypted data field from other passfile according to <see cref="PassFile.Type"/>.
+        /// </summary>
+        /// <returns>Refreshed passfile.</returns>
+        public static PassFile WithDecryptedDataFrom(this PassFile passFile, PassFile fromPassFile)
+        {
+            Debug.Assert(passFile.Type == fromPassFile.Type);
+            
+            switch (passFile.Type)
+            {
+                case PassFileType.Pwd:
+                    passFile.PwdData = fromPassFile.PwdData?.Select(section => section.Copy()).ToList();
+                    break;
+                case PassFileType.Txt:
+                    passFile.TxtData = fromPassFile.TxtData?.Select(section => section.Copy()).ToList();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
+            }
+
+            return passFile;
+        }
+        
+        /// <summary>
+        /// Set decrypted data field to null according to <see cref="PassFile.Type"/>.
+        /// </summary>
+        /// <returns>Refreshed passfile.</returns>
+        public static PassFile WithoutDecryptedData(this PassFile passFile)
+        {
+            switch (passFile.Type)
+            {
+                case PassFileType.Pwd:
+                    passFile.PwdData = null;
+                    break;
+                case PassFileType.Txt:
+                    passFile.TxtData = null;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
+            }
+
+            return passFile;
+        }
+
+        /// <summary>
         /// Set information fields from other <paramref name="passFile"/>.
         /// </summary>
         public static void RefreshInfoFieldsFrom(this PassFile passFile, PassFile otherPassFile)
@@ -103,7 +151,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         {
             if (refreshDecryptedData)
             {
-                passFile.DataPwd = otherPassFile.DataPwd?.Select(section => section.Copy()).ToList();
+                passFile.WithDecryptedDataFrom(otherPassFile);
             }
             passFile.DataEncrypted = otherPassFile.DataEncrypted;
             passFile.PassPhrase = otherPassFile.PassPhrase;
@@ -117,7 +165,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// Does <paramref name="left"/> section have any difference
         /// with <paramref name="right"/>?
         /// </summary>
-        public static bool DiffersFrom(this PassFile.PwdSection left, PassFile.PwdSection right)
+        public static bool DiffersFrom(this PwdSection left, PwdSection right)
         {
             return left.Name != right.Name || 
                    left.Items.Count != right.Items.Count ||
@@ -130,7 +178,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// with <paramref name="right"/>?
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool DiffersFrom(this PassFile.PwdSection.PwdItem left, PassFile.PwdSection.PwdItem right)
+        public static bool DiffersFrom(this PwdItem left, PwdItem right)
         {
             return left.Password != right.Password || 
                    left.Comment != right.Comment ||

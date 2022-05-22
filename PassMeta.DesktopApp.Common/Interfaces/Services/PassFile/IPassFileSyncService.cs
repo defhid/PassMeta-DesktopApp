@@ -2,18 +2,12 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
 {
     using System.Threading.Tasks;
     using Enums;
-    using Models.Entities;
 
     /// <summary>
     /// Service for working with passfiles.
     /// </summary>
-    public interface IPassFileService
+    public interface IPassFileSyncService
     {
-        /// <summary>
-        /// Load passfile with encrypted data from the server.
-        /// </summary>
-        Task<IResult<PassFile>> GetPassFileRemoteAsync(int passFileId);
-        
         /// <summary>
         /// Refresh passfiles from remote and get result list from local storage.
         /// </summary>

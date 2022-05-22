@@ -8,13 +8,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
 
     public class ConflictBtn : ReactiveObject
     {
-        public readonly PassFileMerge.Conflict Conflict;
+        public readonly PwdMerge.Conflict Conflict;
 
         public string Name => (Conflict.Local?.Name ?? Conflict.Remote?.Name)!;
 
         public ReactCommand DeleteCommand { get; }
 
-        public ConflictBtn(PassFileMerge.Conflict conflict, Action<ConflictBtn> onDelete)
+        public ConflictBtn(PwdMerge.Conflict conflict, Action<ConflictBtn> onDelete)
         {
             Conflict = conflict;
             DeleteCommand = ReactiveCommand.Create(() => onDelete(this));

@@ -4,11 +4,13 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
     using System.Collections.Generic;
     using System.Diagnostics;
     using Entities;
+    using Entities.Extra;
+    using Enums;
 
     /// <summary>
-    /// Passfile merge DTO.
+    /// Passfile of <see cref="PassFileType.Pwd"/> type merge DTO.
     /// </summary>
-    public class PassFileMerge
+    public class PwdMerge
     {
         /// <summary>
         /// Local and remote passfile versions.
@@ -23,7 +25,7 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
         /// <summary>
         /// Result passfile sections.
         /// </summary>
-        public readonly List<PassFile.PwdSection> ResultSections = new();
+        public readonly List<PwdSection> ResultSections = new();
 
         /// <summary>
         /// Conflicts between sections from remote and local versions.
@@ -31,7 +33,7 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
         public readonly List<Conflict> Conflicts = new();
 
         /// <summary></summary>
-        public PassFileMerge(PassFile localPassFile, PassFile remotePassFile)
+        public PwdMerge(PassFile localPassFile, PassFile remotePassFile)
         {
             Versions = (localPassFile.Version, remotePassFile.Version, localPassFile.Origin!.Version);
             VersionsChangedOn = (localPassFile.VersionChangedOn, remotePassFile.VersionChangedOn, localPassFile.Origin!.VersionChangedOn);
@@ -43,13 +45,13 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
         public class Conflict
         {
             /// Local section.
-            public readonly PassFile.PwdSection? Local;
+            public readonly PwdSection? Local;
 
             /// Remote section.
-            public readonly PassFile.PwdSection? Remote;
+            public readonly PwdSection? Remote;
 
             /// <summary></summary>
-            public Conflict(PassFile.PwdSection? local, PassFile.PwdSection? remote)
+            public Conflict(PwdSection? local, PwdSection? remote)
             {
                 Debug.Assert(local is not null || remote is not null);
                 Local = local;

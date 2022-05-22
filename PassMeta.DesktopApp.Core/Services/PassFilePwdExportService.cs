@@ -1,10 +1,13 @@
 namespace PassMeta.DesktopApp.Core.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Threading.Tasks;
     using Common;
     using Common.Constants;
+    using Common.Enums;
     using Common.Interfaces;
     using Common.Interfaces.Services;
     using Common.Interfaces.Services.PassFile;
@@ -14,7 +17,8 @@ namespace PassMeta.DesktopApp.Core.Services
     using Utils.Extensions;
 
     /// <inheritdoc />
-    public class PassFileExportService : IPassFileExportService
+    /// <remarks><see cref="PassFileType.Pwd"/> supports only.</remarks>
+    public class PassFilePwdExportService : IPassFileExportService
     {
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
@@ -34,24 +38,33 @@ namespace PassMeta.DesktopApp.Core.Services
 
         private void LogError(string log, Exception? ex = null)
         {
-            log = nameof(PassFileImportService) + ": " + log;
+            log = nameof(PassFilePwdExportService) + ": " + log;
             if (ex is null) _logger.Error(log);
             else _logger.Error(ex, log);
         }
-        
+
+        /// <inheritdoc />
+        public IEnumerable<ExternalFormat> SupportedFormats { get; } = new[]
+        {
+            ExternalFormat.PwdPassfileEncrypted,
+            ExternalFormat.PwdPassfileDecrypted,
+        };
+
         /// <inheritdoc />
         public async Task<IResult> ExportAsync(PassFile passFile, string resultFilePath)
         {
+            Debug.Assert(passFile.Type == PassFileType.Pwd);
+
             try
             {
                 var ext = Path.GetExtension(resultFilePath).ToLower();
 
-                if (ext == ExternalFormat.PassfileEncrypted.FullExtension)
+                if (ext == ExternalFormat.PwdPassfileEncrypted.FullExtension)
                 {
                     return await ExportPassfileEncryptedAsync(passFile, resultFilePath);
                 }
 
-                if (ext == ExternalFormat.PassfileDecrypted.FullExtension)
+                if (ext == ExternalFormat.PwdPassfileDecrypted.FullExtension)
                 {
                     return await ExportPassfileDecryptedAsync(passFile, resultFilePath);
                 }
@@ -83,7 +96,7 @@ namespace PassMeta.DesktopApp.Core.Services
         
         private async Task<IResult> ExportPassfileDecryptedAsync(PassFile passFile, string path)
         {
-            if (passFile.DataPwd is null)
+            if (passFile.PwdData is null)
             {
                 var result = await PassFileManager.GetEncryptedDataAsync(passFile.Type, passFile.Id);
                 if (result.Bad)
@@ -100,7 +113,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             try
             {
-                var data = PassFileConvention.Convert.FromRaw(passFile.DataPwd!, true);
+                var data = PassFileConvention.Convert.FromRaw(passFile.PwdData!, true);
                 await File.WriteAllTextAsync(path, data, PassFileConvention.JsonEncoding);
                 return ExporterSuccess(passFile, path);
             }
@@ -121,7 +134,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name));
             }
 
-            if (passFile.DataPwd is null) return false;
+            if (passFile.PwdData is null) return false;
 
             PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
             return true;

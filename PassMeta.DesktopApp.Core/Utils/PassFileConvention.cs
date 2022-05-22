@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Diagnostics.CodeAnalysis;
     using System.Security.Cryptography;
     using System.Text;
-    using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -40,13 +40,13 @@ namespace PassMeta.DesktopApp.Core.Utils
             /// <summary>
             /// Convert decrypted json data to raw sections list.
             /// </summary>
-            public static List<PassFile.PwdSection> ToRaw(string decryptedJson)
-                => JsonConvert.DeserializeObject<List<PassFile.PwdSection>>(decryptedJson, JsonSettings) ?? new List<PassFile.PwdSection>();
+            public static List<PwdSection> ToRaw(string decryptedJson)
+                => JsonConvert.DeserializeObject<List<PwdSection>>(decryptedJson, JsonSettings) ?? new List<PwdSection>();
 
             /// <summary>
             /// Convert raw sections list to decrypted json data.
             /// </summary>
-            public static string FromRaw(List<PassFile.PwdSection> sections, bool indented = false)
+            public static string FromRaw(List<PwdSection> sections, bool indented = false)
                 => JsonConvert.SerializeObject(sections, indented ? JsonIndentedSettings : JsonSettings);
 
             private static readonly JsonSerializerSettings JsonSettings = new()

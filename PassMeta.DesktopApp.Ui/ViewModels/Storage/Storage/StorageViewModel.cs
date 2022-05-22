@@ -88,7 +88,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         public readonly ViewElements ViewElements = new();
         
-        private readonly IPassFileService _passFileService = EnvironmentContainer.Resolve<IPassFileService>();
+        private readonly IPassFileSyncService _pfSyncService = EnvironmentContainer.Resolve<IPassFileSyncService>();
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
@@ -207,7 +207,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
             if (!_loaded)
             {
-                await _passFileService.RefreshLocalPassFilesAsync(PassFileType.Pwd);
+                await _pfSyncService.RefreshLocalPassFilesAsync(PassFileType.Pwd);
                 _loaded = true;
             }
 
@@ -250,7 +250,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         private async Task DecryptIfRequiredAndSetSectionsAsync(int _)
         {
             var passFile = SelectedPassFile;
-            if (passFile is null || passFile.DataPwd is not null)
+            if (passFile is null || passFile.PwdData is not null)
             {
                 SelectedData.PassFile = passFile;
                 return;
@@ -275,7 +275,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         {
             using (MainWindow.Current!.StartPreloader())
             {
-                await _passFileService.ApplyPassFileLocalChangesAsync(PassFileType.Pwd);
+                await _pfSyncService.ApplyPassFileLocalChangesAsync(PassFileType.Pwd);
             }
 
             await LoadPassFilesAsync(LastItemPath.Copy());

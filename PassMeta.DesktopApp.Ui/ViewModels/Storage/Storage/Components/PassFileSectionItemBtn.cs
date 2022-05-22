@@ -7,7 +7,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using System.Threading.Tasks;
     using Common;
     using Common.Interfaces.Services;
-    using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using Core;
     using Core.Utils;
     using ReactiveUI;
@@ -47,7 +47,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         private readonly BehaviorSubject<bool> _isPopupGeneratorOpened = new(false);
         public PopupGeneratorViewModel PopupGenerator { get; }
 
-        public PassFileSectionItemBtn(PassFile.PwdSection.PwdItem item,
+        public PassFileSectionItemBtn(PwdItem item,
             IObservable<bool> editModeObservable,
             Action<PassFileSectionItemBtn> onDelete,
             Action<PassFileSectionItemBtn, int> onMove)
@@ -89,7 +89,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             PopupGenerator = new PopupGeneratorViewModel(_isPopupGeneratorOpened, pwd => Password = pwd);
         }
 
-        public PassFile.PwdSection.PwdItem ToItem() => new()
+        public PwdItem ToItem() => new()
         {
             What = _NormalizeWhat().Split('\n'),
             Password = Password ?? string.Empty,

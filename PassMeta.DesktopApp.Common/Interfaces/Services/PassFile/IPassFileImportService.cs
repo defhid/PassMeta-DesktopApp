@@ -2,7 +2,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Models;
+    using Constants;
     using Models.Entities;
 
     /// <summary>
@@ -11,12 +11,13 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
     public interface IPassFileImportService
     {
         /// <summary>
-        /// Import from file by its path (<paramref name="sourceFilePath"/>).
+        /// Supported export formats.
         /// </summary>
-        /// <returns>
-        /// Result with passfile data and passphrase to import.
-        /// If failure, does not contain <see cref="ResultModel{TData}.Message"/>.
-        /// </returns>
-        Task<IResult<(List<PassFile.PwdSection> Sections, string PassPhrase)>> ImportAsync(string sourceFilePath, string? supposedPassPhrase = null);
+        IEnumerable<ExternalFormat> SupportedFormats { get; }
+
+        /// <summary>
+        /// Import data to passfile from file by specified path (<paramref name="sourceFilePath"/>).
+        /// </summary>
+        Task<IResult> ImportAsync(PassFile toPassFile, string sourceFilePath, string? supposedPassPhrase = null);
     }
 }

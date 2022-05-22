@@ -126,7 +126,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             if (!oldVersion && actual is not null)
             {
-                if (actual.DataPwd != null)
+                if (actual.PwdData != null)
                 {
                     var res = actual.Encrypt();
                     Debug.Assert(res.Ok);
@@ -163,29 +163,32 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Load <see cref="PassFile.DataEncrypted"/> (if not loaded), decrypt it, set to actual passfile and return copy.
         /// </summary>
         /// <remarks><see cref="PassFile.PassPhrase"/> must be set.</remarks>
-        public static async Task<IDetailedResult<List<PassFile.PwdSection>>> TryLoadIfRequiredAndDecryptAsync(PassFileType passFileType, int passFileId)
+        public static async Task<IDetailedResult> TryLoadIfRequiredAndDecryptAsync(PassFile passFile)
         {
             var found = _currentPassFiles.FindIndex(pf =>
-                pf.source?.Id == passFileId || 
-                pf.changed?.Id == passFileId);
+                pf.source?.Id == passFile.Id || 
+                pf.changed?.Id == passFile.Id);
             
             if (found < 0)
-                return ManagerError($"Can't find passfile Id={passFileId} to decrypt data!").WithNullData<List<PassFile.PwdSection>>();
+                return ManagerError($"Can't find passfile Id={passFile.Id} to decrypt data!").WithNullData<List<PwdSection>>();
             
             var (source, changed) = _currentPassFiles[found];
             var actual = (changed ?? source)!;
 
             if (actual.DataEncrypted is null)
             {
-                var res = await GetEncryptedDataAsync(passFileType, passFileId);
+                var res = await GetEncryptedDataAsync(passFile.Type, passFile.Id);
                 if (res.Bad)
-                    return res.WithNullData<List<PassFile.PwdSection>>();
+                    return res.WithNullData<List<PwdSection>>();
             }
 
             var result = actual.Decrypt();
-            return result.Ok 
-                ? Result.Success(actual.DataPwd!.Select(section => section.Copy()).ToList()) 
-                : result.WithNullData<List<PassFile.PwdSection>>();
+            if (result.Ok)
+            {
+                passFile.WithDecryptedDataFrom(actual);
+            }
+
+            return result;
         }
         
         /// <summary>
@@ -210,7 +213,8 @@ namespace PassMeta.DesktopApp.Core.Utils
                 InfoChangedOn = DateTime.Now,
                 Version = 1,
                 VersionChangedOn = DateTime.Now,
-                DataPwd = new List<PassFile.PwdSection>(),
+                PwdData = new List<PwdSection>(),
+                TxtData = new List<TxtSection>(),
                 PassPhrase = passPhrase,
                 UserId = AppContext.Current.UserId,
                 ServerId = AppContext.Current.ServerId
@@ -352,7 +356,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Update passfile data.
         /// </summary>
         /// <param name="passFile">
-        /// Passfile with <see cref="PassFile.DataEncrypted"/> or <see cref="PassFile.DataPwd"/> and <see cref="PassFile.PassPhrase"/>,
+        /// Passfile with <see cref="PassFile.DataEncrypted"/> or <see cref="PassFile.PwdData"/> and <see cref="PassFile.PassPhrase"/>,
         /// depending on <paramref name="fromRemote"/>. Will be refreshed if success.
         /// </param>
         /// <param name="fromRemote">
@@ -375,7 +379,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     return ManagerError($"Can't update {passFile} encrypted data to null!");
                 
                 changed.DataEncrypted = passFile.DataEncrypted;
-                changed.DataPwd = null;
+                changed.WithoutDecryptedData();
                 changed.PassPhrase = passFile.PassPhrase;
                 changed.Version = passFile.Version;
                 changed.VersionChangedOn = passFile.VersionChangedOn;
@@ -385,14 +389,14 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             else
             {
-                if (passFile.DataPwd is null)
+                if (passFile.PwdData is null)
                     return ManagerError($"Can't update {passFile} data to null!");
                 
                 if (passFile.PassPhrase is null)
                     return ManagerError($"Can't update {passFile} data without passphrase!");
                 
                 changed.DataEncrypted = null;
-                changed.DataPwd = passFile.DataPwd.Select(section => section.Copy()).ToList();
+                changed.WithDecryptedDataFrom(passFile);
                 changed.PassPhrase = passFile.PassPhrase;
                 changed.Version = source is null ? changed.Version : source.Version + 1;
                 changed.VersionChangedOn = DateTime.Now;
@@ -409,19 +413,21 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Update passfile data without redundant copying.
         /// </summary>
         /// <param name="passFile">
-        /// Passfile with <see cref="PassFile.DataPwd"/> and <see cref="PassFile.PassPhrase"/>.
+        /// Passfile with <see cref="PassFile.PwdData"/> and <see cref="PassFile.PassPhrase"/>.
         /// Will be refreshed (including data) if success.
         /// </param>
         /// <param name="update">
         /// Action to perform on <paramref name="passFile"/> data.
         /// </param>
         /// <remarks>Ensure that <paramref name="update"/> algorithm only works with copies of new data!</remarks>
-        public static IDetailedResult UpdateDataSelectively(PassFile passFile, Action<List<PassFile.PwdSection>> update)
+        public static IDetailedResult UpdatePwdDataSelectively(PassFile passFile, Action<List<PwdSection>> update)
         {
+            Debug.Assert(passFile.Type == PassFileType.Pwd);
+
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
                 pf.changed?.Id == passFile.Id);
-            
+
             if (found < 0)
                 return ManagerError($"Can't find {passFile} to update data selectively!");
             
@@ -429,16 +435,16 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             changed.DataEncrypted = null;
 
-            if (changed.DataPwd is null)
+            if (changed.PwdData is null)
             {
-                changed.DataPwd = passFile.DataPwd!.Select(section => section.Copy()).ToList();
+                changed.WithDecryptedDataFrom(passFile);
                 changed.PassPhrase = passFile.PassPhrase;
             }
             
             try
             {
-                update(changed.DataPwd);
-                update(passFile.DataPwd!);
+                update(changed.PwdData!);
+                update(passFile.PwdData!);
             }
             catch (Exception ex)
             {
@@ -846,10 +852,10 @@ namespace PassMeta.DesktopApp.Core.Utils
             => Path.Combine(AppConfig.PassFilesDirectory, AppContext.Current.ServerId!, AppContext.Current.UserId.ToString(), fileType.ToString());
 
         private static string _GetUserPassFilePath(PassFileType fileType, int fileId)
-            => Path.Combine(GetUserPassFilesPath(fileType), fileId + ".passfile");
+            => Path.Combine(GetUserPassFilesPath(fileType), fileId + fileType.ToFileExtension());
 
         private static string _GetUserOldPassFilePath(PassFileType fileType, int fileId)
-            => Path.Combine(GetUserPassFilesPath(fileType), fileId + ".passfile.old");
+            => Path.Combine(GetUserPassFilesPath(fileType), fileId + fileType.ToFileExtension() + ".old");
         
         #endregion
     }

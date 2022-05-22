@@ -95,7 +95,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         public string? DataEncrypted;
 
         /// <summary>
-        /// Passfile passphrase to decrypt <see cref="DataEncrypted"/> and encrypt <see cref="DataPwd"/>.
+        /// Passfile passphrase to decrypt <see cref="DataEncrypted"/> and encrypt <see cref="PwdData"/>.
         /// </summary>
         [JsonIgnore]
         public string? PassPhrase;
@@ -104,7 +104,13 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// <see cref="PassFileType.Pwd"/> passfile decrypted data.
         /// </summary>
         [JsonIgnore]
-        public List<PwdSection>? DataPwd;
+        public List<PwdSection>? PwdData;
+
+        /// <summary>
+        /// <see cref="PassFileType.Txt"/> passfile decrypted data.
+        /// </summary>
+        [JsonIgnore]
+        public List<TxtSection>? TxtData;  // TODO
 
         /// <summary>
         /// Passfile local problem.
@@ -169,103 +175,9 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         {
             var clone = (PassFile)MemberwiseClone();
             clone.Origin = Origin?.Copy(false);
-            clone.DataPwd = copyData ? clone.DataPwd?.Select(section => section.Copy()).ToList() : null;
+            clone.PwdData = copyData ? clone.PwdData?.Select(section => section.Copy()).ToList() : null;
+            clone.TxtData = copyData ? clone.TxtData?.Select(section => section.Copy()).ToList() : null;
             return clone;
-        }
-
-        /// <summary>
-        /// Passfile <see cref="PassFile.DataPwd"/> section.
-        /// </summary>
-        public class PwdSection
-        {
-            private string? _search;
-            
-            /// <summary>
-            /// Section identifier (GUID).
-            /// </summary>
-            [JsonProperty("id")]
-            public string Id { get; set; }
-
-            /// <summary>
-            /// Section name.
-            /// </summary>
-            [JsonProperty("nm")]
-            public string Name { get; set; }
-
-            /// <summary>
-            /// Section items.
-            /// </summary>
-            [JsonProperty("it")]
-            public List<PwdItem> Items { get; set; }
-
-            /// <summary>
-            /// Prepared value for search.
-            /// </summary>
-            [JsonIgnore]
-            public string Search => _search ??= Name.Trim().ToLower();
-
-            /// <summary></summary>
-            public PwdSection()
-            {
-                Id ??= Guid.NewGuid().ToString();
-                Name ??= "?";
-                Items ??= new List<PwdItem>();
-            }
-
-            /// <summary>
-            /// Deep copy of this section.
-            /// </summary>
-            public PwdSection Copy() => new()
-            {
-                Id = Id,
-                Name = Name,
-                Items = Items.Select(i => i.Copy()).ToList()
-            };
-
-            /// <summary>
-            /// Passfile <see cref="PassFile.DataPwd"/> <see cref="PwdSection"/> item.
-            /// </summary>
-            public class PwdItem
-            {
-                private string? _search;
-                
-                /// <summary>
-                /// Logins: email, phone, etc.
-                /// </summary>
-                [JsonProperty("wh")]
-                public string[] What { get; set; }
-
-                /// <summary>
-                /// One password.
-                /// </summary>
-                [JsonProperty("pw")]
-                public string Password { get; set; }
-
-                /// <summary>
-                /// Some comment.
-                /// </summary>
-                [JsonProperty("cm")]
-                public string Comment { get; set; }
-                
-                /// <summary>
-                /// Prepared value for search.
-                /// </summary>
-                [JsonIgnore]
-                public string Search => _search ??= Comment.Trim().ToLower();
-
-                /// <summary></summary>
-                public PwdItem()
-                {
-                    What ??= Array.Empty<string>();
-                    Password ??= string.Empty;
-                    Comment ??= string.Empty;
-                }
-
-                /// <summary>
-                /// Memberwise clone.
-                /// </summary>
-                public PwdItem Copy() => (PwdItem)MemberwiseClone();
-            }
         }
     }
 }

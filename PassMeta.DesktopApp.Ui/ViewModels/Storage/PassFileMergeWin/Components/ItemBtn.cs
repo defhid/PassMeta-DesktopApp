@@ -2,7 +2,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
 {
     using System;
     using System.Linq;
-    using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using ReactiveUI;
     
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
@@ -18,7 +18,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
         public ReactCommand DownCommand { get; }
         public ReactCommand TransferCommand { get; }
 
-        public ItemBtn(PassFile.PwdSection.PwdItem item,
+        public ItemBtn(PwdItem item,
             Action<ItemBtn> onDelete,
             Action<ItemBtn, int> onMove,
             Action<ItemBtn> onTransfer)
@@ -33,7 +33,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
             TransferCommand = ReactiveCommand.Create(() => onTransfer(this));
         }
 
-        public PassFile.PwdSection.PwdItem ToItem() => new()
+        public PwdItem ToItem() => new()
         {
             What = _NormalizeWhat().Split('\n'),
             Password = Password ?? string.Empty,

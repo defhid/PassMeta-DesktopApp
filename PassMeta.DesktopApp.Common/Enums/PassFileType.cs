@@ -5,11 +5,11 @@ namespace PassMeta.DesktopApp.Common.Enums
     /// </summary>
     public enum PassFileType : short
     {
-        /// Password set
+        /// Password notes
         ///
         Pwd = 1,
         
-        /// TODO: Text notes support
+        /// Text notes
         ///
         Txt = 2,
     }

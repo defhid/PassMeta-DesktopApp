@@ -3,10 +3,12 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
     using System;
     using System.Collections.Generic;
     using Common;
+    using Common.Enums;
     using Common.Interfaces;
     using Common.Interfaces.Services;
     using Common.Models;
     using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -60,7 +62,14 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
 
             try
             {
-                passFile.DataPwd = JsonConvert.DeserializeObject<List<PassFile.PwdSection>>(content) ?? new List<PassFile.PwdSection>();
+                switch (passFile.Type)
+                {
+                    case PassFileType.Pwd:
+                        passFile.PwdData = JsonConvert.DeserializeObject<List<PwdSection>>(content) ?? new List<PwdSection>();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
+                }
             }
             catch (Exception ex)
             {
@@ -73,7 +82,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         }
         
         /// <summary>
-        /// Encrypts <see cref="PassFile.DataPwd"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
+        /// Encrypts <see cref="PassFile.PwdData"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
         /// </summary>
         /// <remarks>
         /// <see cref="PassFile.PassPhrase"/> must be not null.
@@ -86,7 +95,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 return EncryptionError;
             }
 
-            if (passFile.DataPwd is null)
+            if (passFile.PwdData is null)
             {
                 Logger.Error("Using Encrypt method without decrypted data!");
                 return EncryptionError;
@@ -95,7 +104,14 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             string data;
             try
             {
-                data = JsonConvert.SerializeObject(passFile.DataPwd);
+                switch (passFile.Type)
+                {
+                    case PassFileType.Pwd:
+                        data = JsonConvert.SerializeObject(passFile.PwdData);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
+                }
             }
             catch (Exception ex)
             {

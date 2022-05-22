@@ -6,7 +6,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
     using System.Reactive.Linq;
     using Common.Models;
     using Common.Models.Dto;
-    using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using Common.Utils.Extensions;
     using Components;
     using Models;
@@ -46,9 +46,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
 
         public readonly ViewElements ViewElements = new();
 
-        private readonly PassFileMerge _merge;
+        private readonly PwdMerge _merge;
 
-        public PassFileMergeWinViewModel(PassFileMerge merge)
+        public PassFileMergeWinViewModel(PwdMerge merge)
         {
             _merge = merge;
             ConflictButtons = new ObservableCollection<ConflictBtn>(merge.Conflicts.Select(_MakeConflictBtn));
@@ -78,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
             var conflictBtn = SelectedConflictBtn!;
             var conflict = conflictBtn.Conflict;
             
-            _merge.ResultSections.Add(new PassFile.PwdSection
+            _merge.ResultSections.Add(new PwdSection
             {
                 Id = (conflict.Local?.Id ?? conflict.Remote?.Id)!,
                 Name = (conflict.Local?.Name ?? conflict.Remote?.Name)!,
@@ -103,7 +103,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
 
         #region Buttons factory
 
-        private ConflictBtn _MakeConflictBtn(PassFileMerge.Conflict conflict)
+        private ConflictBtn _MakeConflictBtn(PwdMerge.Conflict conflict)
             => new(conflict, btn =>
             {
                 _merge.Conflicts.Remove(btn.Conflict);
@@ -114,7 +114,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
                 }
             });
 
-        private ItemBtn _MakeItemBtn(PassFile.PwdSection.PwdItem item)
+        private ItemBtn _MakeItemBtn(PwdItem item)
             => new(item, (btn) =>
             {
                 LocalItems.Remove(btn);

@@ -2,31 +2,24 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
-    using Avalonia.Controls;
     using Avalonia.Media;
     using Common;
-    using Common.Constants;
     using Common.Enums;
-    using Common.Interfaces;
     using Common.Interfaces.Services;
-    using Common.Interfaces.Services.PassFile;
     using Common.Models.Entities;
-    using Common.Models.Entities.Extra;
     using Common.Utils.Extensions;
     using Components;
     using Constants;
     using Core;
     using Core.Utils;
     using Core.Utils.Extensions;
+    using Interfaces.UiServices;
     using Models;
     using ReactiveUI;
     using Utils.Extensions;
-    using Views.Main;
-    using Views.Storage;
 
     public class PassFileWinViewModel : ReactiveObject
     {
@@ -84,9 +77,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         public readonly ViewElements ViewElements = new();
 
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
-        private readonly IPassFileImportService _importService = EnvironmentContainer.Resolve<IPassFileImportService>();
-        private readonly IPassFileExportService _exportService = EnvironmentContainer.Resolve<IPassFileExportService>();
-        private readonly IPassFileMergeService _mergeService = EnvironmentContainer.Resolve<IPassFileMergeService>();
 
         public PassFileWinViewModel(PassFile passFile)
         {
@@ -263,36 +253,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             if (PassFile is null) Close();
         }
 
-        private async Task ExportAsync()
+        private Task ExportAsync()
         {
-            if (PassFile?.LocalDeleted is not false) return;
-            
-            var fileDialog = new SaveFileDialog
+            if (PassFile?.LocalDeleted is not false)
             {
-                InitialFileName = PassFile.Name + ExternalFormat.PassfileEncrypted.FullExtension,
-                DefaultExtension = ExternalFormat.PassfileEncrypted.FullExtension,
-                Filters = new List<FileDialogFilter>
-                {
-                    new()
-                    {
-                        Name = ExternalFormat.PassfileEncrypted.Name,
-                        Extensions = new List<string> { ExternalFormat.PassfileEncrypted.PureExtension }
-                    },
-                    new()
-                    {
-                        Name = ExternalFormat.PassfileDecrypted.Name,
-                        Extensions = new List<string> { ExternalFormat.PassfileDecrypted.PureExtension }
-                    }
-                }
-            };
-            
-            var filePath = await fileDialog.ShowAsync(MainWindow.Current!);
-            if (string.IsNullOrEmpty(filePath)) return;
+                return Task.CompletedTask;
+            }
 
-            var result = await _exportService.ExportAsync(PassFile, filePath);
-            if (result.Bad) return;
+            var exportService = EnvironmentContainer.Resolve<IPassFileExportUiService>();
 
-            _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_EXPORT, PassFile.Name, filePath));
+            return exportService.SelectAndExportAsync(PassFile, ViewElements.Window!);
         }
 
         private async Task RestoreAsync()
@@ -300,91 +270,29 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             var passFile = PassFile;
             if (passFile is null) return;
 
-            var selectResult = await new PassFileRestoreWin(passFile).ShowDialog<IResult?>(ViewElements.Window);
-            if (selectResult?.Ok is not true) return;
+            var restoreService = EnvironmentContainer.Resolve<IPassFileRestoreUiService>();
 
-            if (passFile.LocalDeleted)
-            {
-                var restoreResult = PassFileManager.Restore(passFile);
-                if (restoreResult.Bad)
-                {
-                    _dialogService.ShowError(restoreResult.Message!);
-                    return;
-                }
-
-                PassFile = null;
-                PassFile = passFile;
-                PassFileChanged = true;
-            }
-
-            var pathResult = selectResult as IResult<string>;
-            var pfResult = selectResult as IResult<PassFile>;
-
-            if (pathResult is not null)
-            {
-                var importResult = await _importService.ImportAsync(pathResult.Data!, passFile.PassPhrase);
-                if (importResult.Bad) return;
-                
-                passFile.DataPwd = importResult.Data.Sections;
-                passFile.PassPhrase = importResult.Data.PassPhrase;
-            }
-            else if (pfResult is not null)
-            {
-                passFile.DataEncrypted = pfResult.Data!.DataEncrypted;
-                passFile.PassPhrase = null;
-            }
-            else return;
-
-            var updateResult = PassFileManager.UpdateData(passFile, pfResult is not null);
-            if (updateResult.Ok)
-            {
-                PassFile = null;
-                PassFile = passFile;
-                PassFileChanged = true;
-                _dialogService.ShowInfo(pathResult is null 
-                    ? string.Format(Resources.PASSFILE__SUCCESS_RESTORE_FROM_SERVER, PassFile.Name)
-                    : string.Format(Resources.PASSFILE__SUCCESS_RESTORE_FROM_FILE, PassFile.Name, Path.GetFileName(pathResult.Data)));
-            }
-            else
-            {
-                _dialogService.ShowError(updateResult.Message!);
-            }
+            var result = await restoreService.SelectAndRestoreAsync(passFile, ViewElements.Window!);
+            if (result.Bad) return;
+            
+            PassFile = null;
+            PassFile = passFile;
+            PassFileChanged = true;
         }
         
         private async Task MergeAsync()
         {
-            if (PassFile?.LocalDeleted is not false) return;
+            var passFile = PassFile;
+            if (passFile?.LocalDeleted is not false) return;
             
-            var mergeResult = await _mergeService.LoadAndPrepareMergeAsync(PassFile!);
-            if (mergeResult.Bad) return;
+            var mergeService = EnvironmentContainer.Resolve<IPassFileMergeUiService>();
 
-            var merge = mergeResult.Data!;
+            var result = await mergeService.LoadRemoteAndMergeAsync(passFile, ViewElements.Window!);
+            if (result.Bad) return;
 
-            if (merge.Conflicts.Any())
-            {
-                var result = await new PassFileMergeWin(merge).ShowDialog<IResult?>(ViewElements.Window);
-                if (result?.Ok is not true) return;
-            }
-
-            var passfile = PassFile.Copy();
-            passfile.DataPwd = merge.ResultSections;
-            passfile.Marks |= PassFileMark.Merged;
-
-            var updateResult = PassFileManager.UpdateData(passfile);
-            if (updateResult.Ok)
-            {
-                passfile.Problem = null;
-                PassFileManager.TryResetProblem(passfile.Id);
-
-                PassFile = passfile;
-                PassFileChanged = true;
-                
-                _dialogService.ShowInfo(Resources.PASSFILE__INFO_MERGED);
-            }
-            else
-            {
-                _dialogService.ShowError(updateResult.Message!);
-            }
+            PassFile = null;
+            PassFile = passFile;
+            PassFileChanged = true;
         }
 
 #pragma warning disable 8618

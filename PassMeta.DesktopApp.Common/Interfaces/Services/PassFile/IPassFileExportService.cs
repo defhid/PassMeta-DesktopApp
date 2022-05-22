@@ -1,7 +1,8 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Models;
+    using Constants;
     using Models.Entities;
 
     /// <summary>
@@ -9,6 +10,11 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
     /// </summary>
     public interface IPassFileExportService
     {
+        /// <summary>
+        /// Supported export formats.
+        /// </summary>
+        IEnumerable<ExternalFormat> SupportedFormats { get; }
+
         /// <summary>
         /// Export passfile to <paramref name="resultFilePath"/>.
         /// </summary>

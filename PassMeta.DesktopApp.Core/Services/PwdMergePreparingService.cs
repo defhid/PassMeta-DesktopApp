@@ -10,19 +10,20 @@ namespace PassMeta.DesktopApp.Core.Services
     using Common.Models;
     using Common.Models.Dto;
     using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using Utils;
     using Utils.Extensions;
 
     /// <inheritdoc />
-    public class PassFileMergeService : IPassFileMergeService
+    public class PwdMergePreparingService : IPwdMergePreparingService
     {
-        private readonly IPassFileService _passFileService= EnvironmentContainer.Resolve<IPassFileService>();
+        private readonly IPassFileRemoteService _remoteService = EnvironmentContainer.Resolve<IPassFileRemoteService>();
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
 
         /// <inheritdoc />
-        public async Task<IResult<PassFileMerge>> LoadAndPrepareMergeAsync(PassFile localPassFile)
+        public async Task<IResult<PwdMerge>> LoadAndPrepareMergeAsync(PassFile localPassFile)
         {
-            if (localPassFile.DataPwd is null)
+            if (localPassFile.PwdData is null)
             {
                 var result = await PassFileManager.GetEncryptedDataAsync(localPassFile.Type, localPassFile.Id);
                 if (result.Bad)
@@ -34,19 +35,19 @@ namespace PassMeta.DesktopApp.Core.Services
                 if (!await _DecryptAsync(localPassFile, 
                         Resources.PASSMERGE__ASK_PASSPHRASE, Resources.PASSMERGE__ASK_PASSPHRASE_AGAIN))
                 {
-                    return Result.Failure<PassFileMerge>();
+                    return Result.Failure<PwdMerge>();
                 }
             }
 
-            var fetchResult = await _passFileService.GetPassFileRemoteAsync(localPassFile.Id);
+            var fetchResult = await _remoteService.GetAsync(localPassFile.Id);
             if (fetchResult.Bad)
-                return Result.Failure<PassFileMerge>();
+                return Result.Failure<PwdMerge>();
 
             var remotePassFile = fetchResult.Data!;
             if (!await _DecryptAsync(remotePassFile, 
                     Resources.PASSMERGE__ASK_PASSPHRASE_REMOTE, Resources.PASSMERGE__ASK_PASSPHRASE_REMOTE_AGAIN, localPassFile))
             {
-                return Result.Failure<PassFileMerge>();
+                return Result.Failure<PwdMerge>();
             }
 
             var merge = _PrepareMerge(localPassFile, remotePassFile);
@@ -54,12 +55,12 @@ namespace PassMeta.DesktopApp.Core.Services
             return Result.Success(merge);
         }
 
-        private static PassFileMerge _PrepareMerge(PassFile localPassFile, PassFile remotePassFile)
+        private static PwdMerge _PrepareMerge(PassFile localPassFile, PassFile remotePassFile)
         {
             void FillMerge(
-                IList<PassFile.PwdSection> localSections,
-                ICollection<PassFile.PwdSection> remoteSections,
-                PassFileMerge merge,
+                IList<PwdSection> localSections,
+                ICollection<PwdSection> remoteSections,
+                PwdMerge merge,
                 bool reverse)
             {
                 for (var i = localSections.Count - 1; i >= 0; --i)
@@ -69,14 +70,14 @@ namespace PassMeta.DesktopApp.Core.Services
 
                     if (remote is null)
                     {
-                        merge.Conflicts.Add(new PassFileMerge.Conflict(reverse ? null : local, reverse ? local : null));
+                        merge.Conflicts.Add(new PwdMerge.Conflict(reverse ? null : local, reverse ? local : null));
                     }
                     else if (remote.Items.Count != local.Items.Count ||
                              remote.Items.Exists(it1 => 
                                  local.Items.All(it2 => it2.DiffersFrom(it1))))
                     {
                         remoteSections.Remove(remote);
-                        merge.Conflicts.Add(new PassFileMerge.Conflict(reverse ? remote : local, reverse ? local : remote));
+                        merge.Conflicts.Add(new PwdMerge.Conflict(reverse ? remote : local, reverse ? local : remote));
                     }
                     else
                     {
@@ -88,10 +89,10 @@ namespace PassMeta.DesktopApp.Core.Services
                 localSections.Clear();
             }
 
-            var merge = new PassFileMerge(localPassFile, remotePassFile);
+            var merge = new PwdMerge(localPassFile, remotePassFile);
 
-            var localList = localPassFile.DataPwd!.Select(section => section.Copy()).ToList();
-            var remoteList = remotePassFile.DataPwd!.Select(section => section.Copy()).ToList();
+            var localList = localPassFile.PwdData!.Select(section => section.Copy()).ToList();
+            var remoteList = remotePassFile.PwdData!.Select(section => section.Copy()).ToList();
             
             FillMerge(localList, remoteList, merge, false);
             FillMerge(remoteList, localList, merge, true);
@@ -101,7 +102,7 @@ namespace PassMeta.DesktopApp.Core.Services
         
         private async Task<bool> _DecryptAsync(PassFile passFile, string askPhraseFirst, string askPhraseAgain, PassFile? localPassFile = null)
         {
-            if (passFile.DataPwd is not null) return true;
+            if (passFile.PwdData is not null) return true;
 
             if (passFile.PassPhrase is not null)
             {
@@ -126,7 +127,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 passPhrase = await _dialogService.AskPasswordAsync(askPhraseAgain);
             }
 
-            if (passFile.DataPwd is null) return false;
+            if (passFile.PwdData is null) return false;
 
             PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
             return true;

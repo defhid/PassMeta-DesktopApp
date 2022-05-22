@@ -121,18 +121,14 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
                 PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
             }
 
-            var result = await PassFileManager.TryLoadIfRequiredAndDecryptAsync(passFile.Type, passFile.Id);
-            if (result.Bad)
-            {
-                passFile.PassPhrase = null;
-                PassFileManager.TrySetPassPhrase(passFile.Id, null);
-                
-                dialogService.ShowFailure(result.Message!);
-                return Result.Failure();
-            }
+            var result = await PassFileManager.TryLoadIfRequiredAndDecryptAsync(passFile);
+            if (result.Ok) return result;
 
-            passFile.DataPwd = result.Data!;
-            return Result.Success();
+            passFile.PassPhrase = null;
+            PassFileManager.TrySetPassPhrase(passFile.Id, null);
+                
+            dialogService.ShowFailure(result.Message!);
+            return Result.Failure();
         }
     }
 }

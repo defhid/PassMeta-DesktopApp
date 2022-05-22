@@ -14,7 +14,7 @@ namespace PassMeta.DesktopApp.Core
         /// Resolve service.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TService Resolve<TService>(string? contract = null) => (TService)_resolver.GetService(typeof(TService))!;
+        public static TService Resolve<TService>(string? contract = null) => (TService)_resolver.GetService(typeof(TService), contract)!;
 
         /// <summary>
         /// Initialize environment container.

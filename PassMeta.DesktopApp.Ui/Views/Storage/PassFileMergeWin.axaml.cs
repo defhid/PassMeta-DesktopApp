@@ -14,7 +14,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
             this.CorrectMainWindowFocusWhileOpened();
         }
 
-        public PassFileMergeWin(PassFileMerge merge) : this()
+        public PassFileMergeWin(PwdMerge merge) : this()
         {
             DataContext = new PassFileMergeWinViewModel(merge)
             {

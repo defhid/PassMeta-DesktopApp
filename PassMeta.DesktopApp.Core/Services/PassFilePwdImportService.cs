@@ -2,20 +2,24 @@ namespace PassMeta.DesktopApp.Core.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Threading.Tasks;
     using Common;
     using Common.Constants;
+    using Common.Enums;
     using Common.Interfaces;
     using Common.Interfaces.Services;
     using Common.Interfaces.Services.PassFile;
     using Common.Models;
     using Common.Models.Entities;
+    using Common.Models.Entities.Extra;
     using Newtonsoft.Json;
     using Utils;
 
     /// <inheritdoc />
-    public class PassFileImportService : IPassFileImportService
+    /// <remarks><see cref="PassFileType.Pwd"/> supports only.</remarks>
+    public class PassFilePwdImportService : IPassFileImportService
     {
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
@@ -24,23 +28,32 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <summary>
         /// Log error, show failure message and return failure result.
         /// </summary>
-        private IResult<(List<PassFile.PwdSection>, string)> ImporterError(string log, Exception? ex = null)
+        private IResult<(List<PwdSection>, string)> ImporterError(string log, Exception? ex = null)
         {
             LogError(log, ex);
             _dialogService.ShowFailure(Resources.PASSIMPORT__ERR, more: ex?.Message ?? log);
-            return Result.Failure<(List<PassFile.PwdSection>, string)>();
+            return Result.Failure<(List<PwdSection>, string)>();
         }
 
         private void LogError(string log, Exception? ex = null)
         {
-            log = nameof(PassFileImportService) + ": " + log;
+            log = nameof(PassFilePwdImportService) + ": " + log;
             if (ex is null) _logger.Error(log);
             else _logger.Error(ex, log);
         }
 
         /// <inheritdoc />
-        public async Task<IResult<(List<PassFile.PwdSection>, string)>> ImportAsync(string sourceFilePath, string? supposedPassPhrase = null)
+        public IEnumerable<ExternalFormat> SupportedFormats { get; } = new[]
         {
+            ExternalFormat.PwdPassfileEncrypted,
+            ExternalFormat.PwdPassfileDecrypted,
+        };
+
+        /// <inheritdoc />
+        public async Task<IResult> ImportAsync(PassFile toPassFile, string sourceFilePath, string? supposedPassPhrase = null)
+        {
+            Debug.Assert(toPassFile.Type == PassFileType.Pwd);
+
             try
             {
                 var bytes = await File.ReadAllBytesAsync(sourceFilePath);
@@ -52,17 +65,28 @@ namespace PassMeta.DesktopApp.Core.Services
                     ext = Path.GetExtension(sourceFilePath[..^4]).ToLower();
                 }
 
-                if (ext == ExternalFormat.PassfileEncrypted.FullExtension)
+                IResult<(List<PwdSection>, string)> result;
+
+                if (ext == ExternalFormat.PwdPassfileEncrypted.FullExtension)
                 {
-                    return await ImportPassfileEncryptedAsync(bytes, name, supposedPassPhrase);
+                    result = await ImportPassfileEncryptedAsync(bytes, name, supposedPassPhrase);
+                }
+                else if (ext == ExternalFormat.PwdPassfileDecrypted.FullExtension)
+                {
+                    result = await ImportPassfileDecryptedAsync(bytes, name);
+                }
+                else
+                {
+                    return ImporterError(Resources.PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR);
                 }
 
-                if (ext == ExternalFormat.PassfileDecrypted.FullExtension)
+                if (result.Ok)
                 {
-                    return await ImportPassfileDecryptedAsync(bytes, name);
+                    toPassFile.PwdData = result.Data.Item1;
+                    toPassFile.PassPhrase = result.Data.Item2;
                 }
 
-                return ImporterError(Resources.PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR);
+                return result;
             }
             catch (Exception ex)
             {
@@ -70,14 +94,14 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
 
-        private async Task<IResult<(List<PassFile.PwdSection>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName, string? supposedPassPhrase)
+        private async Task<IResult<(List<PwdSection>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName, string? supposedPassPhrase)
         {
             var i = 0;
             while (true)
             {
                 var passPhrase = supposedPassPhrase ?? await _AskPassPhraseAsync(fileName, i > 0);
                 if (passPhrase is null)
-                    return Result.Failure<(List<PassFile.PwdSection>, string)>();
+                    return Result.Failure<(List<PwdSection>, string)>();
 
                 ++i;
                 var passFileData = _cryptoService.Decrypt(fileBytes, passPhrase);
@@ -85,8 +109,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 
                 try
                 {
-                    var sections = JsonConvert.DeserializeObject<List<PassFile.PwdSection>>(passFileData) 
-                                   ?? new List<PassFile.PwdSection>();
+                    var sections = JsonConvert.DeserializeObject<List<PwdSection>>(passFileData) 
+                                   ?? new List<PwdSection>();
                     return Result.Success((sections, passPhrase));
                 }
                 catch (Exception ex)
@@ -96,7 +120,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
         
-        private async Task<IResult<(List<PassFile.PwdSection>, string)>> ImportPassfileDecryptedAsync(byte[] fileBytes, string fileName)
+        private async Task<IResult<(List<PwdSection>, string)>> ImportPassfileDecryptedAsync(byte[] fileBytes, string fileName)
         {
             string passFileData;
             try
@@ -108,7 +132,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return ImporterError($"Converting bytes (encoding: {PassFileConvention.JsonEncoding.EncodingName})", ex);
             }
 
-            List<PassFile.PwdSection> sections;
+            List<PwdSection> sections;
             try
             {
                 sections = PassFileConvention.Convert.ToRaw(passFileData);
@@ -120,7 +144,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             var passPhrase = await _AskPassPhraseAsync(fileName, askNew: true);
             if (passPhrase is null)
-                return Result.Failure<(List<PassFile.PwdSection>, string)>();
+                return Result.Failure<(List<PwdSection>, string)>();
             
             return Result.Success((sections, passPhrase));
         }

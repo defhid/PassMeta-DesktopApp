@@ -9,6 +9,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
     using System.Threading.Tasks;
     using Avalonia.Controls;
     using Common.Enums;
+    using Common.Utils.Extensions;
     using PassMeta.DesktopApp.Common;
     using PassMeta.DesktopApp.Common.Constants;
     using PassMeta.DesktopApp.Common.Interfaces.Services.PassFile;
@@ -65,6 +66,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
         {
             FoundList.Clear();
 
+            var passfileExt = _passFileType.ToFileExtension();
             var passFileList = PassFileManager.GetCurrentList(_passFileType);
             var descriptionParts = new Stack<string>();
 
@@ -76,14 +78,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 
                 if (isOld)
                 {
-                    if (!fileName.EndsWith(ExternalFormat.PassfileEncrypted.FullExtension + ".old"))
+                    if (!fileName.EndsWith(ExternalFormat.PwdPassfileEncrypted.FullExtension + ".old"))
                     {
                         continue;
                     }
 
                     descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_OLD_VERSION);
                 }
-                else if (!fileName.EndsWith(ExternalFormat.PassfileEncrypted.FullExtension))
+                else if (!fileName.EndsWith(passfileExt))
                 {
                     continue;
                 }
@@ -126,6 +128,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 
         private async Task ImportForeignAsync()
         {
+            var importService = EnvironmentContainer.Resolve<IPassFileImportService>(_passFileType.ToString());
+            
             var fileDialog = new OpenFileDialog
             {
                 AllowMultiple = false,
@@ -134,11 +138,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
                     new()
                     {
                         Name = Resources.PASSFILELIST__FILTER_PASSFILES,
-                        Extensions = new List<string>
-                        {
-                            ExternalFormat.PassfileEncrypted.PureExtension, 
-                            ExternalFormat.PassfileDecrypted.PureExtension
-                        }
+                        Extensions = importService.SupportedFormats.Select(format => format.PureExtension).ToList()
                     }
                 }
             };
@@ -152,7 +152,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 
         private async Task DownloadAsync()
         {
-            var downloadResult = await EnvironmentContainer.Resolve<IPassFileService>().GetPassFileRemoteAsync(_passFileId);
+            var downloadResult = await EnvironmentContainer.Resolve<IPassFileRemoteService>().GetAsync(_passFileId);
             if (downloadResult.Bad) return;
 
             ViewElements.Window!.Close(Result.Success(downloadResult.Data!));
