@@ -42,20 +42,20 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task RefreshLocalPassFilesAsync()
+        public async Task RefreshLocalPassFilesAsync(PassFileType passFileType)
         {
             if (!PassMetaApi.Online) return;
 
             var remoteList = await _GetPassFileListRemoteAsync();
             if (remoteList is null) return;
             
-            var localList = PassFileManager.GetCurrentList();
+            var localList = PassFileManager.GetCurrentList(passFileType);
 
             await _SynchronizeAsync(localList, remoteList);
 
             if (PassFileManager.AnyCurrentChanged)
             {
-                var commitResult = await PassFileManager.CommitAsync();
+                var commitResult = await PassFileManager.CommitAsync(passFileType);
             
                 if (commitResult.Ok)
                     _dialogService.ShowInfo(Resources.PASSERVICE__INFO_COMMITED);
@@ -65,14 +65,14 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task ApplyPassFileLocalChangesAsync()
+        public async Task ApplyPassFileLocalChangesAsync(PassFileType passFileType)
         {
             var committed = false;
             var synced = false;
             
             if (PassFileManager.AnyCurrentChanged)
             {
-                var commitResult = await PassFileManager.CommitAsync();
+                var commitResult = await PassFileManager.CommitAsync(passFileType);
                 committed |= commitResult.Ok;
 
                 if (commitResult.Bad)
@@ -84,7 +84,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 var remoteList = await _GetPassFileListRemoteAsync();
                 if (remoteList is not null)
                 {
-                    var localList = PassFileManager.GetCurrentList();
+                    var localList = PassFileManager.GetCurrentList(passFileType);
                     await _SynchronizeAsync(localList, remoteList);
                     synced = true;
                 }
@@ -92,7 +92,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             if (synced && PassFileManager.AnyCurrentChanged)
             {
-                var commitResult = await PassFileManager.CommitAsync();
+                var commitResult = await PassFileManager.CommitAsync(passFileType);
                 committed |= commitResult.Ok;
 
                 if (commitResult.Bad)
@@ -276,7 +276,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (passFile.DataEncrypted is null)
             {
-                var result = await PassFileManager.GetEncryptedDataAsync(passFile.Id);
+                var result = await PassFileManager.GetEncryptedDataAsync(passFile.Type, passFile.Id);
                 
                 var res = EnsureOk(passFile, result);
                 if (res.Bad) return res;
@@ -381,6 +381,7 @@ namespace PassMeta.DesktopApp.Core.Services
             {
                 name = passFile.Name,
                 color = passFile.Color,
+                type_id = passFile.TypeId,
                 created_on = passFile.CreatedOn,
                 smth = passFile.DataEncrypted!
             });

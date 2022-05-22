@@ -10,7 +10,7 @@
         MinWidth="500"
         MinHeight="150"
         MaxWidth="750"
-        MaxHeight="300"
+        MaxHeight="400"
         SizeToContent="Height"
         CanResize="False"
         x:Class="PassMeta.DesktopApp.Ui.Views.Main.DialogWindow"
@@ -51,7 +51,8 @@
                            Text="{Binding Details}"
                            IsVisible="{Binding DetailsVisible}"
                            Opacity="0.7"
-                           FontSize="14"/>
+                           FontSize="14"
+                           MaxHeight="200"/>
             </StackPanel>
         </Grid>
         

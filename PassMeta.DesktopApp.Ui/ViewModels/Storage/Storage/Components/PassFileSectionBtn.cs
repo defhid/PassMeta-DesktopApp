@@ -5,11 +5,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
     public class PassFileSectionBtn : ReactiveObject
     {
-        public readonly PassFile.Section Section;
+        public readonly PassFile.PwdSection Section;
 
         public string Name { get; set; }
 
-        public PassFileSectionBtn(PassFile.Section section)
+        public PassFileSectionBtn(PassFile.PwdSection section)
         {
             Section = section;
             Name = Section.Name;

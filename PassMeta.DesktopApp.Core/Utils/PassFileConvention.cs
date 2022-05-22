@@ -40,13 +40,13 @@ namespace PassMeta.DesktopApp.Core.Utils
             /// <summary>
             /// Convert decrypted json data to raw sections list.
             /// </summary>
-            public static List<PassFile.Section> ToRaw(string decryptedJson)
-                => JsonConvert.DeserializeObject<List<PassFile.Section>>(decryptedJson, JsonSettings) ?? new List<PassFile.Section>();
+            public static List<PassFile.PwdSection> ToRaw(string decryptedJson)
+                => JsonConvert.DeserializeObject<List<PassFile.PwdSection>>(decryptedJson, JsonSettings) ?? new List<PassFile.PwdSection>();
 
             /// <summary>
             /// Convert raw sections list to decrypted json data.
             /// </summary>
-            public static string FromRaw(List<PassFile.Section> sections, bool indented = false)
+            public static string FromRaw(List<PassFile.PwdSection> sections, bool indented = false)
                 => JsonConvert.SerializeObject(sections, indented ? JsonIndentedSettings : JsonSettings);
 
             private static readonly JsonSerializerSettings JsonSettings = new()

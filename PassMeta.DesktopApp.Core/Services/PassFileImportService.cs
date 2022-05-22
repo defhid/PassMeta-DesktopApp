@@ -24,11 +24,11 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <summary>
         /// Log error, show failure message and return failure result.
         /// </summary>
-        private IResult<(List<PassFile.Section>, string)> ImporterError(string log, Exception? ex = null)
+        private IResult<(List<PassFile.PwdSection>, string)> ImporterError(string log, Exception? ex = null)
         {
             LogError(log, ex);
             _dialogService.ShowFailure(Resources.PASSIMPORT__ERR, more: ex?.Message ?? log);
-            return Result.Failure<(List<PassFile.Section>, string)>();
+            return Result.Failure<(List<PassFile.PwdSection>, string)>();
         }
 
         private void LogError(string log, Exception? ex = null)
@@ -39,7 +39,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task<IResult<(List<PassFile.Section>, string)>> ImportAsync(string sourceFilePath, string? supposedPassPhrase = null)
+        public async Task<IResult<(List<PassFile.PwdSection>, string)>> ImportAsync(string sourceFilePath, string? supposedPassPhrase = null)
         {
             try
             {
@@ -70,14 +70,14 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
 
-        private async Task<IResult<(List<PassFile.Section>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName, string? supposedPassPhrase)
+        private async Task<IResult<(List<PassFile.PwdSection>, string)>> ImportPassfileEncryptedAsync(byte[] fileBytes, string fileName, string? supposedPassPhrase)
         {
             var i = 0;
             while (true)
             {
                 var passPhrase = supposedPassPhrase ?? await _AskPassPhraseAsync(fileName, i > 0);
                 if (passPhrase is null)
-                    return Result.Failure<(List<PassFile.Section>, string)>();
+                    return Result.Failure<(List<PassFile.PwdSection>, string)>();
 
                 ++i;
                 var passFileData = _cryptoService.Decrypt(fileBytes, passPhrase);
@@ -85,8 +85,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 
                 try
                 {
-                    var sections = JsonConvert.DeserializeObject<List<PassFile.Section>>(passFileData) 
-                                   ?? new List<PassFile.Section>();
+                    var sections = JsonConvert.DeserializeObject<List<PassFile.PwdSection>>(passFileData) 
+                                   ?? new List<PassFile.PwdSection>();
                     return Result.Success((sections, passPhrase));
                 }
                 catch (Exception ex)
@@ -96,7 +96,7 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
         
-        private async Task<IResult<(List<PassFile.Section>, string)>> ImportPassfileDecryptedAsync(byte[] fileBytes, string fileName)
+        private async Task<IResult<(List<PassFile.PwdSection>, string)>> ImportPassfileDecryptedAsync(byte[] fileBytes, string fileName)
         {
             string passFileData;
             try
@@ -108,7 +108,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 return ImporterError($"Converting bytes (encoding: {PassFileConvention.JsonEncoding.EncodingName})", ex);
             }
 
-            List<PassFile.Section> sections;
+            List<PassFile.PwdSection> sections;
             try
             {
                 sections = PassFileConvention.Convert.ToRaw(passFileData);
@@ -120,7 +120,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             var passPhrase = await _AskPassPhraseAsync(fileName, askNew: true);
             if (passPhrase is null)
-                return Result.Failure<(List<PassFile.Section>, string)>();
+                return Result.Failure<(List<PassFile.PwdSection>, string)>();
             
             return Result.Success((sections, passPhrase));
         }

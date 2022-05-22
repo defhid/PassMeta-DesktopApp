@@ -8,6 +8,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using Avalonia.Controls;
+    using Common.Enums;
     using PassMeta.DesktopApp.Common;
     using PassMeta.DesktopApp.Common.Constants;
     using PassMeta.DesktopApp.Common.Interfaces.Services.PassFile;
@@ -23,6 +24,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
     public class PassFileRestoreWinViewModel : ReactiveObject
     {
         private readonly int _passFileId;
+        private readonly PassFileType _passFileType;
         private readonly bool _ignoreCurrentPath;
         
         public ObservableCollection<DataFile> FoundList { get; } = new();
@@ -46,6 +48,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
         public PassFileRestoreWinViewModel(PassFile currentPassFile)
         {
             _passFileId = currentPassFile.Id;
+            _passFileType = currentPassFile.Type;
             _ignoreCurrentPath = !currentPassFile.LocalDeleted;
 
             SelectCommand = ReactiveCommand.Create(Select, 
@@ -62,10 +65,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
         {
             FoundList.Clear();
 
-            var passFileList = PassFileManager.GetCurrentList();
+            var passFileList = PassFileManager.GetCurrentList(_passFileType);
             var descriptionParts = new Stack<string>();
 
-            foreach (var filePath in Directory.EnumerateFiles(PassFileManager.UserPassFilesPath).OrderBy(x => x))
+            foreach (var filePath in Directory.EnumerateFiles(PassFileManager.GetUserPassFilesPath(_passFileType)).OrderBy(x => x))
             {
                 var fileName = Path.GetFileName(filePath);
                 var isOld = fileName.EndsWith(".old");

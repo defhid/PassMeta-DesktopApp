@@ -45,13 +45,8 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public async Task SignOutAsync()
         {
-            var answer = await _dialogService.ConfirmAsync(Common.Resources.ACCOUNT__SIGN_OUT_CONFIRM);
+            var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__SIGN_OUT_CONFIRM);
             if (answer.Bad) return;
-            
-            await PassMetaApi.Post("auth/sign-out")
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync();
 
             await AppContext.SetUserAsync(null);
         }
@@ -61,7 +56,7 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (!_Validate(data).Ok)
             {
-                _dialogService.ShowError(Common.Resources.AUTH__DATA_VALIDATION_ERR);
+                _dialogService.ShowError(Resources.AUTH__DATA_VALIDATION_ERR);
                 return Result.Failure<User>();
             }
             

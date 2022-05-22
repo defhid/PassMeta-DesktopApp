@@ -23,7 +23,7 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
         /// <summary>
         /// Result passfile sections.
         /// </summary>
-        public readonly List<PassFile.Section> ResultSections = new();
+        public readonly List<PassFile.PwdSection> ResultSections = new();
 
         /// <summary>
         /// Conflicts between sections from remote and local versions.
@@ -43,13 +43,13 @@ namespace PassMeta.DesktopApp.Common.Models.Dto
         public class Conflict
         {
             /// Local section.
-            public readonly PassFile.Section? Local;
+            public readonly PassFile.PwdSection? Local;
 
             /// Remote section.
-            public readonly PassFile.Section? Remote;
+            public readonly PassFile.PwdSection? Remote;
 
             /// <summary></summary>
-            public Conflict(PassFile.Section? local, PassFile.Section? remote)
+            public Conflict(PassFile.PwdSection? local, PassFile.PwdSection? remote)
             {
                 Debug.Assert(local is not null || remote is not null);
                 Local = local;

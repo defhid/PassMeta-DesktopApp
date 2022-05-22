@@ -78,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
             var conflictBtn = SelectedConflictBtn!;
             var conflict = conflictBtn.Conflict;
             
-            _merge.ResultSections.Add(new PassFile.Section
+            _merge.ResultSections.Add(new PassFile.PwdSection
             {
                 Id = (conflict.Local?.Id ?? conflict.Remote?.Id)!,
                 Name = (conflict.Local?.Name ?? conflict.Remote?.Name)!,
@@ -106,11 +106,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
         private ConflictBtn _MakeConflictBtn(PassFileMerge.Conflict conflict)
             => new(conflict, btn =>
             {
-                ConflictButtons.Remove(btn);
                 _merge.Conflicts.Remove(btn.Conflict);
+                ConflictButtons.Remove(btn);
+                if (!ConflictButtons.Any())
+                {
+                    Close();
+                }
             });
 
-        private ItemBtn _MakeItemBtn(PassFile.Section.Item item)
+        private ItemBtn _MakeItemBtn(PassFile.PwdSection.PwdItem item)
             => new(item, (btn) =>
             {
                 LocalItems.Remove(btn);

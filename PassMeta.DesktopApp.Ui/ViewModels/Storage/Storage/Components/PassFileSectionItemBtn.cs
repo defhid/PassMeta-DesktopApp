@@ -47,7 +47,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         private readonly BehaviorSubject<bool> _isPopupGeneratorOpened = new(false);
         public PopupGeneratorViewModel PopupGenerator { get; }
 
-        public PassFileSectionItemBtn(PassFile.Section.Item item,
+        public PassFileSectionItemBtn(PassFile.PwdSection.PwdItem item,
             IObservable<bool> editModeObservable,
             Action<PassFileSectionItemBtn> onDelete,
             Action<PassFileSectionItemBtn, int> onMove)
@@ -89,7 +89,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             PopupGenerator = new PopupGeneratorViewModel(_isPopupGeneratorOpened, pwd => Password = pwd);
         }
 
-        public PassFile.Section.Item ToItem() => new()
+        public PassFile.PwdSection.PwdItem ToItem() => new()
         {
             What = _NormalizeWhat().Split('\n'),
             Password = Password ?? string.Empty,

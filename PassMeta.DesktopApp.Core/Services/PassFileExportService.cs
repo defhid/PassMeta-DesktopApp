@@ -66,7 +66,7 @@ namespace PassMeta.DesktopApp.Core.Services
         
         private async Task<IResult> ExportPassfileEncryptedAsync(PassFile passFile, string path)
         {
-            var result = await PassFileManager.GetEncryptedDataAsync(passFile.Id);
+            var result = await PassFileManager.GetEncryptedDataAsync(passFile.Type, passFile.Id);
             if (result.Bad)
                 return ExporterError(result.Message ?? "Getting encrypted data");
             
@@ -83,9 +83,9 @@ namespace PassMeta.DesktopApp.Core.Services
         
         private async Task<IResult> ExportPassfileDecryptedAsync(PassFile passFile, string path)
         {
-            if (passFile.Data is null)
+            if (passFile.DataPwd is null)
             {
-                var result = await PassFileManager.GetEncryptedDataAsync(passFile.Id);
+                var result = await PassFileManager.GetEncryptedDataAsync(passFile.Type, passFile.Id);
                 if (result.Bad)
                 {
                     return ExporterError(result.Message ?? "Getting encrypted data");
@@ -100,7 +100,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             try
             {
-                var data = PassFileConvention.Convert.FromRaw(passFile.Data!, true);
+                var data = PassFileConvention.Convert.FromRaw(passFile.DataPwd!, true);
                 await File.WriteAllTextAsync(path, data, PassFileConvention.JsonEncoding);
                 return ExporterSuccess(passFile, path);
             }
@@ -121,7 +121,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name));
             }
 
-            if (passFile.Data is null) return false;
+            if (passFile.DataPwd is null) return false;
 
             PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
             return true;

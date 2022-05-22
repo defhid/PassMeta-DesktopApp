@@ -14,6 +14,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Linq;
     using System.Reactive.Subjects;
     using System.Threading.Tasks;
+    using Common.Enums;
     using Common.Interfaces;
     using Common.Utils.Extensions;
     using Newtonsoft.Json;
@@ -34,27 +35,11 @@ namespace PassMeta.DesktopApp.Core.Utils
         public static readonly BehaviorSubject<bool> AnyCurrentChangedSource = new(false);
 
         /// <summary>
-        /// Represents <see cref="AnyChanged"/>.
-        /// </summary>
-        public static readonly BehaviorSubject<bool> AnyChangedSource = new(false);
-        
-        /// <summary>
         /// Has any uncommited changed/deleted passfile?
         /// </summary>
         public static bool AnyCurrentChanged =>
             _deletedPassFiles.Any() || 
-            _currentPassFiles.Any(pf => pf.changed is not null && 
-                                        (pf.source is null || 
-                                         pf.changed.IsInformationDifferentFrom(pf.source) || 
-                                         pf.changed.IsVersionDifferentFrom(pf.source) ||
-                                         pf.changed.DataEncrypted != pf.source.DataEncrypted ||
-                                         pf.source.Origin is null != pf.changed.Origin is null));
-        
-        /// <summary>
-        /// Has any commited changed/deleted passfile?
-        /// </summary>
-        public static bool AnyChanged =>
-            _currentPassFiles.Any(pf => pf.source?.Origin is not null);
+            _currentPassFiles.Any(pf => pf.changed is not null);
 
         /// <summary>
         /// Source reflects data from the local storage.
@@ -83,12 +68,12 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         /// <remarks>Errors auto-logging.</remarks>
         /// <exception cref="Exception">Throws critical exceptions.</exception>
-        public static async Task ReloadAsync(bool throwIfException)
+        public static Task ReloadAsync(bool throwIfException)
         {
             if (!Directory.Exists(AppConfig.PassFilesDirectory))
             {
                 Logger.Info("Passfiles directory not found, launch autocorrection...");
-                _AutoCorrectPassFileDirectory(throwIfException, AppConfig.PassFilesDirectory, false);
+                _AutoCorrectPassFileDirectory(throwIfException, false, AppConfig.PassFilesDirectory);
             }
             
             if (!File.Exists(PassFileListPath))
@@ -99,45 +84,49 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             if (AppContext.Current.User is not null)
             {
-                if (!Directory.Exists(UserPassFilesPath))
+                var directories = Enum.GetValues<PassFileType>()
+                    .Select(GetUserPassFilesPath)
+                    .Where(path => !Directory.Exists(path))
+                    .ToArray();
+                
+                if (directories.Any())
                 {
-                    Logger.Info("User passfiles directory not found, launch autocorrection...");
-                    _AutoCorrectPassFileDirectory(throwIfException, UserPassFilesPath, true);
+                    Logger.Info("User passfile directories not found, launch autocorrection...");
+                    _AutoCorrectPassFileDirectory(throwIfException, true, directories);
                 }
             }
 
-            await _LoadListAsync();
-
-            AnyChangedSource.OnNext(AnyChanged);
+            return _LoadListAsync();
         }
 
         /// <summary>
         /// Get current passfile list filtered by current user id.
         /// Reflects uncommitted state, changed passfiles are a priority.
         /// </summary>
-        public static List<PassFile> GetCurrentList() => _currentPassFiles
+        public static List<PassFile> GetCurrentList(PassFileType ofType) => _currentPassFiles
             .Select(pf => (pf.changed ?? pf.source)!)
             .Where(pf => pf.UserId == AppContext.Current.UserId && 
                          (pf.ServerId is null || 
                           AppContext.Current.ServerId is null || 
-                          pf.ServerId == AppContext.Current.ServerId))
+                          pf.ServerId == AppContext.Current.ServerId)
+                         && pf.TypeId == (int) ofType)
             .Select(pf => pf.Copy())
             .ToList();
 
         /// <summary>
         /// Load <see cref="PassFile.DataEncrypted"/> for passfile with id = <paramref name="passFileId"/>.
         /// </summary>
-        public static async Task<IDetailedResult<string>> GetEncryptedDataAsync(int passFileId, bool oldVersion = false)
+        public static async Task<IDetailedResult<string>> GetEncryptedDataAsync(PassFileType passFileType, int passFileId, bool oldVersion = false)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFileId || 
                 pf.changed?.Id == passFileId);
-            
+
             var actual = found < 0 ? null : (_currentPassFiles[found].changed ?? _currentPassFiles[found].source)!;
-            
+
             if (!oldVersion && actual is not null)
             {
-                if (actual.Data != null)
+                if (actual.DataPwd != null)
                 {
                     var res = actual.Encrypt();
                     Debug.Assert(res.Ok);
@@ -146,12 +135,12 @@ namespace PassMeta.DesktopApp.Core.Utils
                         : res.WithNullData<string>();
                 }
             }
-            
+
             try
             {
                 var path = oldVersion
-                    ? _GetUserOldPassFilePath(passFileId) 
-                    : _GetUserPassFilePath(passFileId);
+                    ? _GetUserOldPassFilePath(passFileType, passFileId) 
+                    : _GetUserPassFilePath(passFileType, passFileId);
 
                 if (!File.Exists(path))
                     return Result.Failure<string>(Resources.PASSMGR__VERSION_NOT_FOUND_ERR);
@@ -174,36 +163,36 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Load <see cref="PassFile.DataEncrypted"/> (if not loaded), decrypt it, set to actual passfile and return copy.
         /// </summary>
         /// <remarks><see cref="PassFile.PassPhrase"/> must be set.</remarks>
-        public static async Task<IDetailedResult<List<PassFile.Section>>> TryLoadIfRequiredAndDecryptAsync(int passFileId)
+        public static async Task<IDetailedResult<List<PassFile.PwdSection>>> TryLoadIfRequiredAndDecryptAsync(PassFileType passFileType, int passFileId)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFileId || 
                 pf.changed?.Id == passFileId);
             
             if (found < 0)
-                return ManagerError($"Can't find passfile Id={passFileId} to decrypt data!").WithNullData<List<PassFile.Section>>();
+                return ManagerError($"Can't find passfile Id={passFileId} to decrypt data!").WithNullData<List<PassFile.PwdSection>>();
             
             var (source, changed) = _currentPassFiles[found];
             var actual = (changed ?? source)!;
 
             if (actual.DataEncrypted is null)
             {
-                var res = await GetEncryptedDataAsync(passFileId);
+                var res = await GetEncryptedDataAsync(passFileType, passFileId);
                 if (res.Bad)
-                    return res.WithNullData<List<PassFile.Section>>();
+                    return res.WithNullData<List<PassFile.PwdSection>>();
             }
 
             var result = actual.Decrypt();
             return result.Ok 
-                ? Result.Success(actual.Data!.Select(section => section.Copy()).ToList()) 
-                : result.WithNullData<List<PassFile.Section>>();
+                ? Result.Success(actual.DataPwd!.Select(section => section.Copy()).ToList()) 
+                : result.WithNullData<List<PassFile.PwdSection>>();
         }
         
         /// <summary>
         /// Create new <see cref="PassFile"/>, set its local <see cref="PassFile.Id"/>, add to the current list.
         /// </summary>
         /// <returns>Created passfile.</returns>
-        public static PassFile CreateNew(string passPhrase)
+        public static PassFile CreateNew(PassFileType ofType, string passPhrase)
         {
             var ids = _currentPassFiles.Select(pf => Math.Min(pf.source?.Id ?? 0, pf.changed?.Id ?? 0)).ToList();
             int passFileId;
@@ -215,12 +204,13 @@ namespace PassMeta.DesktopApp.Core.Utils
             var passFile = new PassFile
             {
                 Id = passFileId,
+                TypeId = (int) ofType,
                 Name = Resources.PASSMGR__DEFAULT_NEW_PASSFILE_NAME,
                 CreatedOn = DateTime.Now,
                 InfoChangedOn = DateTime.Now,
                 Version = 1,
                 VersionChangedOn = DateTime.Now,
-                Data = new List<PassFile.Section>(),
+                DataPwd = new List<PassFile.PwdSection>(),
                 PassPhrase = passPhrase,
                 UserId = AppContext.Current.UserId,
                 ServerId = AppContext.Current.ServerId
@@ -362,7 +352,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Update passfile data.
         /// </summary>
         /// <param name="passFile">
-        /// Passfile with <see cref="PassFile.DataEncrypted"/> or <see cref="PassFile.Data"/> and <see cref="PassFile.PassPhrase"/>,
+        /// Passfile with <see cref="PassFile.DataEncrypted"/> or <see cref="PassFile.DataPwd"/> and <see cref="PassFile.PassPhrase"/>,
         /// depending on <paramref name="fromRemote"/>. Will be refreshed if success.
         /// </param>
         /// <param name="fromRemote">
@@ -385,7 +375,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     return ManagerError($"Can't update {passFile} encrypted data to null!");
                 
                 changed.DataEncrypted = passFile.DataEncrypted;
-                changed.Data = null;
+                changed.DataPwd = null;
                 changed.PassPhrase = passFile.PassPhrase;
                 changed.Version = passFile.Version;
                 changed.VersionChangedOn = passFile.VersionChangedOn;
@@ -395,14 +385,14 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             else
             {
-                if (passFile.Data is null)
+                if (passFile.DataPwd is null)
                     return ManagerError($"Can't update {passFile} data to null!");
                 
                 if (passFile.PassPhrase is null)
                     return ManagerError($"Can't update {passFile} data without passphrase!");
                 
                 changed.DataEncrypted = null;
-                changed.Data = passFile.Data.Select(section => section.Copy()).ToList();
+                changed.DataPwd = passFile.DataPwd.Select(section => section.Copy()).ToList();
                 changed.PassPhrase = passFile.PassPhrase;
                 changed.Version = source is null ? changed.Version : source.Version + 1;
                 changed.VersionChangedOn = DateTime.Now;
@@ -419,14 +409,14 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Update passfile data without redundant copying.
         /// </summary>
         /// <param name="passFile">
-        /// Passfile with <see cref="PassFile.Data"/> and <see cref="PassFile.PassPhrase"/>.
+        /// Passfile with <see cref="PassFile.DataPwd"/> and <see cref="PassFile.PassPhrase"/>.
         /// Will be refreshed (including data) if success.
         /// </param>
         /// <param name="update">
         /// Action to perform on <paramref name="passFile"/> data.
         /// </param>
         /// <remarks>Ensure that <paramref name="update"/> algorithm only works with copies of new data!</remarks>
-        public static IDetailedResult UpdateDataSelectively(PassFile passFile, Action<List<PassFile.Section>> update)
+        public static IDetailedResult UpdateDataSelectively(PassFile passFile, Action<List<PassFile.PwdSection>> update)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFile.Id || 
@@ -439,16 +429,16 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             changed.DataEncrypted = null;
 
-            if (changed.Data is null)
+            if (changed.DataPwd is null)
             {
-                changed.Data = passFile.Data!.Select(section => section.Copy()).ToList();
+                changed.DataPwd = passFile.DataPwd!.Select(section => section.Copy()).ToList();
                 changed.PassPhrase = passFile.PassPhrase;
             }
             
             try
             {
-                update(changed.Data);
-                update(passFile.Data!);
+                update(changed.DataPwd);
+                update(passFile.DataPwd!);
             }
             catch (Exception ex)
             {
@@ -545,9 +535,9 @@ namespace PassMeta.DesktopApp.Core.Utils
         }
 
         /// <summary>
-        /// Save all passfile changes to the file system.
+        /// Save all passfile of specified type changes to the file system.
         /// </summary>
-        public static async Task<IDetailedResult> CommitAsync()
+        public static async Task<IDetailedResult> CommitAsync(PassFileType ofType)
         {
             var hasWarnings = false;
             var listChange = false;
@@ -561,6 +551,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 foreach (var (source, changed) in _currentPassFiles)
                 {
                     if (changed is null) continue;
+                    if (changed.Type != ofType) continue;
 
                     if (changed.LocalDeleted)
                     {
@@ -601,11 +592,25 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 if (listChange)
                 {
-                    var list = _currentPassFiles.Select(pf => (pf.changed ?? pf.source)!).ToList();
-                    var result = await _SaveListAsync(list);
+                    var list = _currentPassFiles
+                        .Select(pf => pf.source is not null 
+                            ? pf.source.Type == ofType
+                                ? (pf.changed ?? pf.source)
+                                : pf.source
+                            : pf.changed!.Type == ofType 
+                                ? pf.changed 
+                                : null)
+                        .Where(pf => pf is not null)
+                        .ToList();
+ 
+                    var result = await _SaveListAsync(list!);
                     if (result.Bad) return result;
 
-                    _currentPassFiles = list.Select(source => ((PassFile?)source, (PassFile?)null)).ToList();
+                    _currentPassFiles = _currentPassFiles
+                        .Select(pf => (pf.changed ?? pf.source)!.Type == ofType 
+                            ? (pf.changed ?? pf.source, (PassFile?)null)
+                            : pf)
+                        .ToList();
                 }
             }
             catch (Exception ex)
@@ -614,7 +619,6 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
 
             AnyCurrentChangedSource.OnNext(AnyCurrentChanged);
-            AnyChangedSource.OnNext(AnyChanged);
 
             return Result.Success(hasWarnings ? Resources.PASSMGR__COMMIT_WARNING : null);
         }
@@ -674,7 +678,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         {
             try
             {
-                var path = _GetUserPassFilePath(passFile.Id);
+                var path = _GetUserPassFilePath(passFile.Type, passFile.Id);
                 await File.WriteAllBytesAsync(path, PassFileConvention.Convert.EncryptedStringToBytes(passFile.DataEncrypted!));
             }
             catch (Exception ex)
@@ -704,24 +708,17 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             try
             {
-                var path = _GetUserPassFilePath(passFile.Id);
-                var oldPath = _GetUserOldPassFilePath(passFile.Id);
+                var path = _GetUserPassFilePath(passFile.Type, passFile.Id);
+                var oldPath = _GetUserOldPassFilePath(passFile.Type, passFile.Id);
                 
                 if (File.Exists(path))
                 {
-                    if (Path.GetFileName(path).StartsWith('-'))
-                    {
-                        File.Delete(path);
-                    }
-                    else
-                    {
-                        Move(path, oldPath);
-                    }
+                    Move(path, oldPath);
                 }
                 else if (passFile.Origin is not null && passFile.Origin.Id != passFile.Id)
                 {
-                    var originPath = _GetUserPassFilePath(passFile.Origin.Id);
-                    var originOldPath = _GetUserOldPassFilePath(passFile.Origin.Id);
+                    var originPath = _GetUserPassFilePath(passFile.Type, passFile.Origin.Id);
+                    var originOldPath = _GetUserOldPassFilePath(passFile.Type, passFile.Origin.Id);
                     
                     if (File.Exists(originOldPath))
                     {
@@ -791,11 +788,14 @@ namespace PassMeta.DesktopApp.Core.Utils
 
         #region AutoCorrection
 
-        private static void _AutoCorrectPassFileDirectory(bool throwIfException, string directory, bool isUser)
+        private static void _AutoCorrectPassFileDirectory(bool throwIfException, bool isUser, params string[] directories)
         {
             try
             {
-                Directory.CreateDirectory(directory);
+                foreach (var directory in directories)
+                {
+                    Directory.CreateDirectory(directory);
+                }
             }
             catch (Exception ex)
             {
@@ -833,22 +833,23 @@ namespace PassMeta.DesktopApp.Core.Utils
         #endregion
         
         #region Paths
-        
-        /// <summary>
-        /// Full path to the current user passfiles directory.
-        /// </summary>
-        public static string UserPassFilesPath => Path.Combine(AppConfig.PassFilesDirectory, AppContext.Current.ServerId!, AppContext.Current.UserId.ToString());
 
         /// <summary>
         /// Full path to file that contains passfiles list.
         /// </summary>
         public static readonly string PassFileListPath = Path.Combine(AppConfig.PassFilesDirectory, "__all__");
+        
+        /// <summary>
+        /// Get full path to the current user passfiles directory.
+        /// </summary>
+        public static string GetUserPassFilesPath(PassFileType fileType)
+            => Path.Combine(AppConfig.PassFilesDirectory, AppContext.Current.ServerId!, AppContext.Current.UserId.ToString(), fileType.ToString());
 
-        private static string _GetUserPassFilePath(int passFileId)
-            => Path.Combine(UserPassFilesPath, passFileId + ".passfile");
+        private static string _GetUserPassFilePath(PassFileType fileType, int fileId)
+            => Path.Combine(GetUserPassFilesPath(fileType), fileId + ".passfile");
 
-        private static string _GetUserOldPassFilePath(int passFileId)
-            => Path.Combine(UserPassFilesPath, passFileId + ".passfile.old");
+        private static string _GetUserOldPassFilePath(PassFileType fileType, int fileId)
+            => Path.Combine(GetUserPassFilesPath(fileType), fileId + ".passfile.old");
         
         #endregion
     }

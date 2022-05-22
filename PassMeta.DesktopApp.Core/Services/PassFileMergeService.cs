@@ -22,9 +22,9 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public async Task<IResult<PassFileMerge>> LoadAndPrepareMergeAsync(PassFile localPassFile)
         {
-            if (localPassFile.Data is null)
+            if (localPassFile.DataPwd is null)
             {
-                var result = await PassFileManager.GetEncryptedDataAsync(localPassFile.Id);
+                var result = await PassFileManager.GetEncryptedDataAsync(localPassFile.Type, localPassFile.Id);
                 if (result.Bad)
                 {
                     _dialogService.ShowFailure(result.Message!);
@@ -57,8 +57,8 @@ namespace PassMeta.DesktopApp.Core.Services
         private static PassFileMerge _PrepareMerge(PassFile localPassFile, PassFile remotePassFile)
         {
             void FillMerge(
-                IList<PassFile.Section> localSections,
-                ICollection<PassFile.Section> remoteSections,
+                IList<PassFile.PwdSection> localSections,
+                ICollection<PassFile.PwdSection> remoteSections,
                 PassFileMerge merge,
                 bool reverse)
             {
@@ -90,8 +90,8 @@ namespace PassMeta.DesktopApp.Core.Services
 
             var merge = new PassFileMerge(localPassFile, remotePassFile);
 
-            var localList = localPassFile.Data!.Select(section => section.Copy()).ToList();
-            var remoteList = remotePassFile.Data!.Select(section => section.Copy()).ToList();
+            var localList = localPassFile.DataPwd!.Select(section => section.Copy()).ToList();
+            var remoteList = remotePassFile.DataPwd!.Select(section => section.Copy()).ToList();
             
             FillMerge(localList, remoteList, merge, false);
             FillMerge(remoteList, localList, merge, true);
@@ -101,7 +101,7 @@ namespace PassMeta.DesktopApp.Core.Services
         
         private async Task<bool> _DecryptAsync(PassFile passFile, string askPhraseFirst, string askPhraseAgain, PassFile? localPassFile = null)
         {
-            if (passFile.Data is not null) return true;
+            if (passFile.DataPwd is not null) return true;
 
             if (passFile.PassPhrase is not null)
             {
@@ -126,7 +126,7 @@ namespace PassMeta.DesktopApp.Core.Services
                 passPhrase = await _dialogService.AskPasswordAsync(askPhraseAgain);
             }
 
-            if (passFile.Data is null) return false;
+            if (passFile.DataPwd is null) return false;
 
             PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
             return true;

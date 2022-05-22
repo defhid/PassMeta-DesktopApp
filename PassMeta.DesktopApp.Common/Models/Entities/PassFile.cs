@@ -3,6 +3,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Enums;
     using Extra;
     using Newtonsoft.Json;
 
@@ -15,13 +16,19 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// Passfile identifier.
         /// </summary>
         [JsonProperty("id")]
-        public int Id { get; set; }
-        
+        public int Id { get; init; }
+
+        /// <summary>
+        /// Passfile type identifier.
+        /// </summary>
+        [JsonProperty("type_id")]
+        public int TypeId { get; init; }
+
         /// <summary>
         /// Owner user identifier.
         /// </summary>
         [JsonProperty("user_id")]
-        public int UserId { get; set; }
+        public int UserId { get; init; }
 
         /// <summary>
         /// Passfile name.
@@ -88,16 +95,16 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         public string? DataEncrypted;
 
         /// <summary>
-        /// Passfile passphrase to decrypt <see cref="DataEncrypted"/> and encrypt <see cref="Data"/>.
+        /// Passfile passphrase to decrypt <see cref="DataEncrypted"/> and encrypt <see cref="DataPwd"/>.
         /// </summary>
         [JsonIgnore]
         public string? PassPhrase;
 
         /// <summary>
-        /// Passfile decrypted data.
+        /// <see cref="PassFileType.Pwd"/> passfile decrypted data.
         /// </summary>
         [JsonIgnore]
-        public List<Section>? Data;
+        public List<PwdSection>? DataPwd;
 
         /// <summary>
         /// Passfile local problem.
@@ -111,6 +118,12 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// <remarks>Relates to data fields.</remarks>
         [JsonIgnore]
         public PassFileMark Marks;
+
+        /// <summary>
+        /// Passfile type.
+        /// </summary>
+        [JsonIgnore]
+        public PassFileType Type => (PassFileType)TypeId;
 
         #region State (one or nothing)
 
@@ -156,14 +169,14 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         {
             var clone = (PassFile)MemberwiseClone();
             clone.Origin = Origin?.Copy(false);
-            clone.Data = copyData ? clone.Data?.Select(section => section.Copy()).ToList() : null;
+            clone.DataPwd = copyData ? clone.DataPwd?.Select(section => section.Copy()).ToList() : null;
             return clone;
         }
 
         /// <summary>
-        /// Passfile <see cref="PassFile.Data"/> section.
+        /// Passfile <see cref="PassFile.DataPwd"/> section.
         /// </summary>
-        public class Section
+        public class PwdSection
         {
             private string? _search;
             
@@ -183,7 +196,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             /// Section items.
             /// </summary>
             [JsonProperty("it")]
-            public List<Item> Items { get; set; }
+            public List<PwdItem> Items { get; set; }
 
             /// <summary>
             /// Prepared value for search.
@@ -192,17 +205,17 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             public string Search => _search ??= Name.Trim().ToLower();
 
             /// <summary></summary>
-            public Section()
+            public PwdSection()
             {
                 Id ??= Guid.NewGuid().ToString();
                 Name ??= "?";
-                Items ??= new List<Item>();
+                Items ??= new List<PwdItem>();
             }
 
             /// <summary>
             /// Deep copy of this section.
             /// </summary>
-            public Section Copy() => new()
+            public PwdSection Copy() => new()
             {
                 Id = Id,
                 Name = Name,
@@ -210,9 +223,9 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             };
 
             /// <summary>
-            /// Passfile <see cref="PassFile.Data"/> <see cref="Section"/> item.
+            /// Passfile <see cref="PassFile.DataPwd"/> <see cref="PwdSection"/> item.
             /// </summary>
-            public class Item
+            public class PwdItem
             {
                 private string? _search;
                 
@@ -241,7 +254,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
                 public string Search => _search ??= Comment.Trim().ToLower();
 
                 /// <summary></summary>
-                public Item()
+                public PwdItem()
                 {
                     What ??= Array.Empty<string>();
                     Password ??= string.Empty;
@@ -251,7 +264,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
                 /// <summary>
                 /// Memberwise clone.
                 /// </summary>
-                public Item Copy() => (Item)MemberwiseClone();
+                public PwdItem Copy() => (PwdItem)MemberwiseClone();
             }
         }
     }

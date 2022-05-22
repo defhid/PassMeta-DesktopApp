@@ -103,7 +103,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         {
             if (refreshDecryptedData)
             {
-                passFile.Data = otherPassFile.Data?.Select(section => section.Copy()).ToList();
+                passFile.DataPwd = otherPassFile.DataPwd?.Select(section => section.Copy()).ToList();
             }
             passFile.DataEncrypted = otherPassFile.DataEncrypted;
             passFile.PassPhrase = otherPassFile.PassPhrase;
@@ -117,7 +117,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// Does <paramref name="left"/> section have any difference
         /// with <paramref name="right"/>?
         /// </summary>
-        public static bool DiffersFrom(this PassFile.Section left, PassFile.Section right)
+        public static bool DiffersFrom(this PassFile.PwdSection left, PassFile.PwdSection right)
         {
             return left.Name != right.Name || 
                    left.Items.Count != right.Items.Count ||
@@ -130,7 +130,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         /// with <paramref name="right"/>?
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool DiffersFrom(this PassFile.Section.Item left, PassFile.Section.Item right)
+        public static bool DiffersFrom(this PassFile.PwdSection.PwdItem left, PassFile.PwdSection.PwdItem right)
         {
             return left.Password != right.Password || 
                    left.Comment != right.Comment ||

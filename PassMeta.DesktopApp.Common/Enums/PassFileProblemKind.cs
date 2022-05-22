@@ -1,7 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Enums
 {
     /// <summary>
-    /// Kind of passfile problem.
+    /// Kinds of passfile problem.
     /// </summary>
     public enum PassFileProblemKind
     {

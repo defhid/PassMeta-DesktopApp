@@ -325,7 +325,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                 var importResult = await _importService.ImportAsync(pathResult.Data!, passFile.PassPhrase);
                 if (importResult.Bad) return;
                 
-                passFile.Data = importResult.Data.Sections;
+                passFile.DataPwd = importResult.Data.Sections;
                 passFile.PassPhrase = importResult.Data.PassPhrase;
             }
             else if (pfResult is not null)
@@ -367,7 +367,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             }
 
             var passfile = PassFile.Copy();
-            passfile.Data = merge.ResultSections;
+            passfile.DataPwd = merge.ResultSections;
             passfile.Marks |= PassFileMark.Merged;
 
             var updateResult = PassFileManager.UpdateData(passfile);

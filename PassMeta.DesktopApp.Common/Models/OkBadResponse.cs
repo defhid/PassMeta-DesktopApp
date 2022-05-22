@@ -87,7 +87,7 @@ namespace PassMeta.DesktopApp.Common.Models
         /// Json-information.
         /// </summary>
         [JsonProperty("info")]
-        public JObject? Info { get; init; }
+        public JContainer? Info { get; init; }
 
         /// <summary>
         /// Build string with information from notnull fields.

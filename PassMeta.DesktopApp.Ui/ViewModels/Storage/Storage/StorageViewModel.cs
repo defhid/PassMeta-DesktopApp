@@ -9,6 +9,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Avalonia.Controls;
     using Base;
     using Common;
+    using Common.Enums;
     using Common.Interfaces.Services;
     using Common.Interfaces.Services.PassFile;
     using Common.Models.Entities;
@@ -206,7 +207,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
             if (!_loaded)
             {
-                await _passFileService.RefreshLocalPassFilesAsync();
+                await _passFileService.RefreshLocalPassFilesAsync(PassFileType.Pwd);
                 _loaded = true;
             }
 
@@ -234,7 +235,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         private void UpdatePassFileList()
         {
-            var list = PassFileManager.GetCurrentList();
+            var list = PassFileManager.GetCurrentList(PassFileType.Pwd);
             list.Sort(new PassFileComparer());
 
             var localCreated = list.Where(pf => pf.LocalCreated);
@@ -249,7 +250,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         private async Task DecryptIfRequiredAndSetSectionsAsync(int _)
         {
             var passFile = SelectedPassFile;
-            if (passFile is null || passFile.Data is not null)
+            if (passFile is null || passFile.DataPwd is not null)
             {
                 SelectedData.PassFile = passFile;
                 return;
@@ -274,7 +275,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         {
             using (MainWindow.Current!.StartPreloader())
             {
-                await _passFileService.ApplyPassFileLocalChangesAsync();
+                await _passFileService.ApplyPassFileLocalChangesAsync(PassFileType.Pwd);
             }
 
             await LoadPassFilesAsync(LastItemPath.Copy());
@@ -287,7 +288,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             var askPassPhrase = await _dialogService.AskPasswordAsync(Resources.STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE);
             if (askPassPhrase.Bad || askPassPhrase.Data == string.Empty) return;
             
-            var passFile = PassFileManager.CreateNew(askPassPhrase.Data!);
+            var passFile = PassFileManager.CreateNew(PassFileType.Pwd, askPassPhrase.Data!);
             var passFileBtn = _MakePassFileBtn(passFile);
             
             PassFileList.Insert(0, passFileBtn);

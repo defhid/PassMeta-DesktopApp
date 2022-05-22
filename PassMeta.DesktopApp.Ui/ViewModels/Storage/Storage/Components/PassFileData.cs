@@ -111,7 +111,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         public PassFileSectionBtn? SelectedSectionBtn =>
             _selectedSectionIndex < 0 ? null : _sectionsList[_selectedSectionIndex];
 
-        public PassFile.Section? SelectedSection =>
+        public PassFile.PwdSection? SelectedSection =>
             _selectedSectionIndex < 0 ? null : _sectionsList[_selectedSectionIndex].Section;
         
         private string? _searchText;
@@ -200,10 +200,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         #region Buttons factory
 
-        private PassFileSectionBtn _MakePassFileSectionBtn(PassFile.Section section) 
+        private PassFileSectionBtn _MakePassFileSectionBtn(PassFile.PwdSection section) 
             => new(section);
         
-        private PassFileSectionItemBtn _MakePassFileSectionItemBtn(PassFile.Section.Item item) 
+        private PassFileSectionItemBtn _MakePassFileSectionItemBtn(PassFile.PwdSection.PwdItem item) 
             => new(item, _editModeObservable, ItemDelete, ItemMove);
 
         #endregion
@@ -218,7 +218,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 SearchText = null;
             }
             
-            var list = PassFile?.Data;
+            var list = PassFile?.DataPwd;
             if (list is not null)
             {
                 list.Sort(new PassFileSectionComparer());
@@ -256,7 +256,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         public void SectionAdd()
         {
-            var section = new PassFile.Section { Name = Resources.STORAGE__SECTION_NEW_NAME };
+            var section = new PassFile.PwdSection { Name = Resources.STORAGE__SECTION_NEW_NAME };
 
             using (_passFileBarExpander.DisableAutoExpandingScoped())
             {
@@ -342,7 +342,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 sectionName = section.Name;
             }
 
-            if (!section.DiffersFrom(new PassFile.Section { Name = sectionName, Items = items }))
+            if (!section.DiffersFrom(new PassFile.PwdSection { Name = sectionName, Items = items }))
             {
                 Edit.Mode = false;
                 return;
@@ -393,7 +393,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
         
         public void ItemAdd()
         {
-            var itemBtn = _MakePassFileSectionItemBtn(new PassFile.Section.Item());
+            var itemBtn = _MakePassFileSectionItemBtn(new PassFile.PwdSection.PwdItem());
             _sectionItemsList.Add(itemBtn);
             _viewElements.ItemScrollViewer!.ScrollToEnd();
         }

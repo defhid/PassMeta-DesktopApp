@@ -60,7 +60,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
 
             try
             {
-                passFile.Data = JsonConvert.DeserializeObject<List<PassFile.Section>>(content) ?? new List<PassFile.Section>();
+                passFile.DataPwd = JsonConvert.DeserializeObject<List<PassFile.PwdSection>>(content) ?? new List<PassFile.PwdSection>();
             }
             catch (Exception ex)
             {
@@ -73,7 +73,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
         }
         
         /// <summary>
-        /// Encrypts <see cref="PassFile.Data"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
+        /// Encrypts <see cref="PassFile.DataPwd"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
         /// </summary>
         /// <remarks>
         /// <see cref="PassFile.PassPhrase"/> must be not null.
@@ -86,7 +86,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 return EncryptionError;
             }
 
-            if (passFile.Data is null)
+            if (passFile.DataPwd is null)
             {
                 Logger.Error("Using Encrypt method without decrypted data!");
                 return EncryptionError;
@@ -95,7 +95,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             string data;
             try
             {
-                data = JsonConvert.SerializeObject(passFile.Data);
+                data = JsonConvert.SerializeObject(passFile.DataPwd);
             }
             catch (Exception ex)
             {

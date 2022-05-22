@@ -1,6 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
 {
     using System.Threading.Tasks;
+    using Enums;
     using Models.Entities;
 
     /// <summary>
@@ -18,13 +19,13 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
         /// </summary>
         /// <remarks>Automatic errors showing.</remarks>
         /// <returns>Actual current passfile list.</returns>
-        Task RefreshLocalPassFilesAsync();
+        Task RefreshLocalPassFilesAsync(PassFileType passFileType);
 
         /// <summary>
         /// Apply changes from local manager and commit locally.
         /// </summary>
         /// <remarks>Automatic errors showing.</remarks>
         /// <returns>Actual current passfile list.</returns>
-        Task ApplyPassFileLocalChangesAsync();
+        Task ApplyPassFileLocalChangesAsync(PassFileType passFileType);
     }
 }

@@ -17,14 +17,11 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary></summary>
         public static async Task LoadContextAndCheckSystemAsync()
         {
-            var backgroundTask = Task.Run(async () =>
-            {
-                await PassFileManager.ReloadAsync(true);
-                EnvironmentContainer.Resolve<ILogService>().OptimizeLogs();
-            });
+            var backgroundTask = Task.Run(EnvironmentContainer.Resolve<ILogService>().OptimizeLogs);
 
             await AppContext.LoadAndSetCurrentAsync();
             await AppContext.RefreshFromServerAsync();
+            await PassFileManager.ReloadAsync(true);
 
             await backgroundTask;
         }
