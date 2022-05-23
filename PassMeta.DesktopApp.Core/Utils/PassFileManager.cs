@@ -84,15 +84,10 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             if (AppContext.Current.User is not null)
             {
-                var directories = Enum.GetValues<PassFileType>()
-                    .Select(GetUserPassFilesPath)
-                    .Where(path => !Directory.Exists(path))
-                    .ToArray();
-                
-                if (directories.Any())
+                if (!Directory.Exists(UserPassFilesPath))
                 {
-                    Logger.Info("User passfile directories not found, launch autocorrection...");
-                    _AutoCorrectPassFileDirectory(throwIfException, true, directories);
+                    Logger.Info("User passfiles directory not found, launch autocorrection...");
+                    _AutoCorrectPassFileDirectory(throwIfException, true, UserPassFilesPath);
                 }
             }
 
@@ -794,14 +789,11 @@ namespace PassMeta.DesktopApp.Core.Utils
 
         #region AutoCorrection
 
-        private static void _AutoCorrectPassFileDirectory(bool throwIfException, bool isUser, params string[] directories)
+        private static void _AutoCorrectPassFileDirectory(bool throwIfException, bool isUser, string directory)
         {
             try
             {
-                foreach (var directory in directories)
-                {
-                    Directory.CreateDirectory(directory);
-                }
+                Directory.CreateDirectory(directory);
             }
             catch (Exception ex)
             {
@@ -848,14 +840,14 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Get full path to the current user passfiles directory.
         /// </summary>
-        public static string GetUserPassFilesPath(PassFileType fileType)
-            => Path.Combine(AppConfig.PassFilesDirectory, AppContext.Current.ServerId!, AppContext.Current.UserId.ToString(), fileType.ToString());
+        public static string UserPassFilesPath
+            => Path.Combine(AppConfig.PassFilesDirectory, AppContext.Current.ServerId!, AppContext.Current.UserId.ToString());
 
         private static string _GetUserPassFilePath(PassFileType fileType, int fileId)
-            => Path.Combine(GetUserPassFilesPath(fileType), fileId + fileType.ToFileExtension());
+            => Path.Combine(UserPassFilesPath, fileId + fileType.ToFileExtension());
 
         private static string _GetUserOldPassFilePath(PassFileType fileType, int fileId)
-            => Path.Combine(GetUserPassFilesPath(fileType), fileId + fileType.ToFileExtension() + ".old");
+            => Path.Combine(UserPassFilesPath, fileId + fileType.ToFileExtension() + ".old");
         
         #endregion
     }

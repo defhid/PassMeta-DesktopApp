@@ -11,7 +11,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
     using Common.Enums;
     using Common.Utils.Extensions;
     using PassMeta.DesktopApp.Common;
-    using PassMeta.DesktopApp.Common.Constants;
     using PassMeta.DesktopApp.Common.Interfaces.Services.PassFile;
     using PassMeta.DesktopApp.Common.Models;
     using PassMeta.DesktopApp.Common.Models.Entities;
@@ -70,7 +69,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
             var passFileList = PassFileManager.GetCurrentList(_passFileType);
             var descriptionParts = new Stack<string>();
 
-            foreach (var filePath in Directory.EnumerateFiles(PassFileManager.GetUserPassFilesPath(_passFileType)).OrderBy(x => x))
+            foreach (var filePath in Directory.EnumerateFiles(PassFileManager.UserPassFilesPath).OrderBy(x => x))
             {
                 var fileName = Path.GetFileName(filePath);
                 var isOld = fileName.EndsWith(".old");
@@ -78,7 +77,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 
                 if (isOld)
                 {
-                    if (!fileName.EndsWith(ExternalFormat.PwdPassfileEncrypted.FullExtension + ".old"))
+                    if (!fileName.EndsWith(passfileExt + ".old"))
                     {
                         continue;
                     }
