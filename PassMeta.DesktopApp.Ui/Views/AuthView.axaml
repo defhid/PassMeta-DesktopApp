@@ -4,12 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
              xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+             xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
              x:Class="PassMeta.DesktopApp.Ui.Views.AuthView"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
              d:DataContext="{d:DesignInstance vm:AuthViewModel}">
-    <Grid>
+    <Grid Background="Transparent"
+          PointerPressed="{x:Static const:EventHandlers.FocusElementOnPointerPressed}">
         <TextBlock VerticalAlignment="Top" 
                    HorizontalAlignment="Center" 
                    Margin="0 40 0 0"
