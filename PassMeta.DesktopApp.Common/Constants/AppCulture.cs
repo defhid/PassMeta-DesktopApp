@@ -62,7 +62,7 @@ namespace PassMeta.DesktopApp.Common.Constants
         /// Russian.
         public static readonly AppCulture Ru = new("ru", () => Resources.LANG__RU);
         
-        /// English
+        /// English.
         public static readonly AppCulture En = new("en", () => Resources.LANG__EN);
 
         /// <summary>

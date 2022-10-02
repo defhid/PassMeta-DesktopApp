@@ -10,7 +10,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Avalonia.Controls;
 
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
     
@@ -21,16 +20,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     public class SettingsViewModel : PageViewModel
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
-
-        public override ContentControl[] RightBarButtons => new ContentControl[]
-        {
-            new Button
-            {
-                Content = "\uE74E",
-                Command = ReactiveCommand.CreateFromTask(_SaveAsync),
-                [ToolTip.TipProperty] = Resources.SETTINGS__RIGHT_BAR_TOOLTIP__SAVE
-            }
-        };
 
         public IReadOnlyList<AppCulture> Cultures => AppCulture.All;
 
@@ -47,6 +36,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         public static string AppInfo => $"v{Core.Utils.AppInfo.Version}";
         
         public ReactCommand AppInfoCommand { get; }
+        
+        public ReactCommand SaveCommand { get; }
 
         public SettingsViewModel(IScreen hostScreen) : base(hostScreen)
         {
@@ -54,6 +45,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
             AppInfoCommand = ReactiveCommand.CreateFromTask(
                 () => new ApplicationInfoWin().ShowDialog(MainWindow.Current));
+
+            SaveCommand = ReactiveCommand.CreateFromTask(_SaveAsync);
         }
 
         public override Task RefreshAsync()

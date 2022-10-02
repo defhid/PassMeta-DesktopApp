@@ -11,7 +11,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities.Extra
         /// No marks
         None = 0,
         
-        /// Passfile was merged
+        /// Passfile is merged
         Merged = 1,
     }
 }

@@ -649,9 +649,6 @@ try another keywords...</value>
     <data name="SETTINGS__HIDE_PASSWORDS" xml:space="preserve">
         <value>Hide passwords</value>
     </data>
-    <data name="SETTINGS__RIGHT_BAR_TOOLTIP__SAVE" xml:space="preserve">
-        <value>Save</value>
-    </data>
     <data name="GENERATOR__INCLUDE_LOWERCASE" xml:space="preserve">
         <value>Lowercase</value>
     </data>
@@ -681,5 +678,8 @@ try another keywords...</value>
     </data>
     <data name="APP_INFO__QUIT_BTN" xml:space="preserve">
         <value>Hide</value>
+    </data>
+    <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
+        <value>Save</value>
     </data>
 </root>
