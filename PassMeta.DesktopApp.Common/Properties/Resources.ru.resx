@@ -119,11 +119,8 @@
     <data name="ACCOUNT__TITLE" xml:space="preserve">
         <value>Аккаунт</value>
     </data>
-    <data name="ACCOUNT__FIRST_NAME_LABEL" xml:space="preserve">
+    <data name="ACCOUNT__FULL_NAME_LABEL" xml:space="preserve">
         <value>Имя</value>
-    </data>
-    <data name="ACCOUNT__LAST_NAME_LABEL" xml:space="preserve">
-        <value>Фамилия</value>
     </data>
     <data name="ACCOUNT__LOGIN_LABEL" xml:space="preserve">
         <value>Логин</value>
@@ -136,9 +133,6 @@
     </data>
     <data name="ACCOUNT__SAVE_BTN" xml:space="preserve">
         <value>Сохранить</value>
-    </data>
-    <data name="ACCOUNT__PASSWORD_CONFIRM_MISSED_WARN" xml:space="preserve">
-        <value>Для сохранения данных необходимо заполнить текущий пароль!</value>
     </data>
     <data name="ACCOUNT__SAVE_SUCCESS" xml:space="preserve">
         <value>Данные были успешно сохранены!</value>
@@ -589,7 +583,7 @@
         <value>Пользователь</value>
     </data>
     <data name="JOURNAL__HEADER_MORE" xml:space="preserve">
-        <value>Доп. информация</value>
+        <value>Дополнительно</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE" xml:space="preserve">
         <value>Введите кодовую фразу для локальной версии</value>
@@ -674,5 +668,20 @@
     </data>
     <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
         <value>Сохранить</value>
+    </data>
+    <data name="JOURNAL__TOOLTIP_MONTH" xml:space="preserve">
+        <value>Период</value>
+    </data>
+    <data name="ACCOUNT__RESET_SESSIONS_CONFIRM" xml:space="preserve">
+        <value>Вы уверены, что хотите сбросить все сеансы, кроме текущего?</value>
+    </data>
+    <data name="ACCOUNT__TOOLTIP_SIGN_OUT" xml:space="preserve">
+        <value>Выйти</value>
+    </data>
+    <data name="ACCOUNT__TOOLTIP_RESET_SESSIONS" xml:space="preserve">
+        <value>Сбросить все сеансы</value>
+    </data>
+    <data name="ACCOUNT__RESET_SESSIONS_SUCCESS" xml:space="preserve">
+        <value>Сеансы были успешно сброшены!</value>
     </data>
 </root>

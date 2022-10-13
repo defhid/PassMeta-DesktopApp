@@ -18,6 +18,11 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services
         /// Logging out.
         /// </summary>
         Task SignOutAsync();
+                
+        /// <summary>
+        /// Reset all sessions.
+        /// </summary>
+        Task ResetAllExceptMeAsync();
 
         /// <summary>
         /// Registration.

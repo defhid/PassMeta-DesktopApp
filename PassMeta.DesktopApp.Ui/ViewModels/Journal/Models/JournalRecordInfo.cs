@@ -10,10 +10,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal.Models
         public string CreatedOn => _record.TimeStamp.ToLocalTime().ToShortDateTimeString();
         
         public string RecordKind => _record.Kind;
+        
+        public string UserIp => _record.UserIp;
 
         public string UserLogin => _record.UserLogin ?? "?";
 
-        public string More => _record.More ?? string.Empty;
+        public string More => _record.More;  // TODO: add optional passfile info
 
         public JournalRecordInfo(JournalRecord journalRecord)
         {

@@ -8,8 +8,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
     public class User
     {
         private string? _login;
-        private string? _firstName;
-        private string? _lastName;
+        private string? _fullName;
         
         /// <summary>
         /// User identifier.
@@ -27,23 +26,13 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         }
 
         /// <summary>
-        /// User first name.
+        /// User full name.
         /// </summary>
-        [JsonProperty("first_name")]
-        public string FirstName
+        [JsonProperty("full_name")]
+        public string FullName
         {
-            get => _firstName ??= string.Empty;
-            set => _firstName = value;
-        }
-
-        /// <summary>
-        /// User last name.
-        /// </summary>
-        [JsonProperty("last_name")]
-        public string LastName
-        {
-            get => _lastName ??= string.Empty;
-            set => _lastName = value;
+            get => _fullName ??= string.Empty;
+            set => _fullName = value;
         }
     }
 }

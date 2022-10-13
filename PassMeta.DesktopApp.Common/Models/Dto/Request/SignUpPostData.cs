@@ -8,23 +8,16 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Request
     public class SignUpPostData : SignInPostData
     {
         /// <summary>
-        /// User first name.
+        /// User full name.
         /// </summary>
-        [JsonProperty("first_name")]
-        public string FirstName { get; set; }
-        
-        /// <summary>
-        /// User last name.
-        /// </summary>
-        [JsonProperty("last_name")]
-        public string LastName { get; set; }
-        
+        [JsonProperty("full_name")]
+        public string FullName { get; set; }
+
         /// <summary></summary>
-        public SignUpPostData(string login, string password, string firstName, string lastName) 
+        public SignUpPostData(string login, string password, string fullName) 
             : base(login, password)
         {
-            FirstName = firstName;
-            LastName = lastName;
+            FullName = fullName;
         }
     }
 }

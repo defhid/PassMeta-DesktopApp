@@ -52,6 +52,22 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
+        public async Task ResetAllExceptMeAsync()
+        {
+            var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__RESET_SESSIONS_CONFIRM);
+            if (answer.Bad) return;
+
+            var response = await PassMetaApi.Post("auth/reset/all-except-me")
+                .WithBadHandling()
+                .ExecuteAsync();
+
+            if (response?.Success is true)
+            {
+                _dialogService.ShowInfo(Resources.ACCOUNT__RESET_SESSIONS_SUCCESS);
+            }
+        }
+
+        /// <inheritdoc />
         public async Task<IResult<User>> SignUpAsync(SignUpPostData data)
         {
             if (!_Validate(data).Ok)
@@ -75,8 +91,6 @@ namespace PassMeta.DesktopApp.Core.Services
         private static IResult<TData> _Validate<TData>(TData data)
             where TData : SignInPostData
         {
-            data.Login = data.Login.Trim();
-            
             if (data.Login.Length < 1 || data.Password.Length < 1)
             {
                 return Result.Failure<TData>();
@@ -84,10 +98,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
             if (data is SignUpPostData signUpData)
             {
-                signUpData.FirstName = signUpData.FirstName.Trim();
-                signUpData.LastName = signUpData.LastName.Trim();
-                
-                if (signUpData.FirstName.Length < 1 || signUpData.LastName.Length < 1)
+                if (signUpData.FullName.Length < 1)
                 {
                     return Result.Failure<TData>();
                 }

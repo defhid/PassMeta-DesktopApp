@@ -172,15 +172,15 @@ namespace PassMeta.DesktopApp.Core.Utils
             
             lock (Current.Cookies)
             {
-                foreach (Cookie fresh in freshCookies)
+                foreach (var fresh in freshCookies.Reverse())
                 {
-                    var currentIndex = Current.Cookies.FindIndex(c => c.Equals(fresh));
+                    var currentIndex = Current.Cookies.FindIndex(c => c.Name == fresh.Name);
                     if (currentIndex < 0)
                     {
                         Current.Cookies.Add(fresh);
                         changed = true;
                     }
-                    else if (Current.Cookies[currentIndex].Expires != fresh.Expires)
+                    else
                     {
                         Current.Cookies[currentIndex] = fresh;
                         changed = true;
@@ -189,17 +189,6 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 if (changed)
                 {
-                    if (Current.Cookies.Count > freshCookies.Count)
-                    {
-                        for (var i = Current.Cookies.Count - 1; i >= 0; --i)
-                        {
-                            if (!freshCookies.Any(c => c.Equals(Current.Cookies[i])))
-                            {
-                                Current.Cookies.RemoveAt(i);
-                            }
-                        }
-                    }
-                    
                     _RefreshCookieContainer(Current);
                 }
             }

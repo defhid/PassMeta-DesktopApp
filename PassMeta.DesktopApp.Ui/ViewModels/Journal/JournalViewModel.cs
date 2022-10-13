@@ -36,6 +36,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             get => _selectedPageIndex;
             set => this.RaiseAndSetIfChanged(ref _selectedPageIndex, value);
         }
+        
+        private DateTimeOffset _selectedMonth = DateTime.Today;
+        public DateTimeOffset SelectedMonth
+        {
+            get => _selectedMonth;
+            set => this.RaiseAndSetIfChanged(ref _selectedMonth, value);
+        }
 
         private List<JournalRecordKind> _kinds = new();
         public List<JournalRecordKind> Kinds
@@ -63,10 +70,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
         public JournalViewModel(IScreen hostScreen) : base(hostScreen)
         {
             LogInfo.RefreshStatics();
+
+            const int skipInitChanges = 3;
             
-            this.WhenAnyValue(vm => vm.SelectedPageIndex, vm => vm.SelectedKind)
+            this.WhenAnyValue(
+                    vm => vm.SelectedPageIndex, 
+                    vm => vm.SelectedMonth,
+                    vm => vm.SelectedKind)
                 .Select(x => x.Item1)
-                .Skip(4)
+                .Skip(skipInitChanges)
                 .InvokeCommand(ReactiveCommand.CreateFromTask<int>(LoadRecordsAsync));
 
             this.WhenNavigatedToObservable()
@@ -95,10 +107,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             if (pageIndex < 0) return;
 
             var kind = SelectedKind?.Id > 0 ? ("&kind=" + SelectedKind.Id) : string.Empty;
-            var limit = "limit=" + _pageLimit;
             var offset = "offset=" + pageIndex * _pageLimit;
+            var limit = "limit=" + _pageLimit;
+            var month = "month=" + _selectedMonth.Date.ToString("O");
 
-            var response = await PassMetaApi.GetAsync<PageResult<JournalRecord>>($"history?{limit}&{offset}{kind}", true);
+            var response = await PassMetaApi.GetAsync<PageResult<JournalRecord>>($"history?{month}&{limit}&{offset}{kind}", true);
             if (response?.Success is not true) return;
 
             _pageLimit = response.Data!.Limit;
@@ -134,9 +147,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             }
 
             SelectedKind = defaultKind;
-            SelectedPageIndex = 0;
 
-            await LoadRecordsAsync(0);
+            await LoadRecordsAsync(SelectedPageIndex);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
         /// <summary>
         /// Load passfile encrypted data.
         /// </summary>
-        Task<OkBadResponse<string>?> GetDataAsync(int passFileId, int? version = null);
+        Task<OkBadResponse<string>?> GetDataAsync(int passFileId, int version);
 
         /// <summary>
         /// Load user's passfile list of specified type without encrypted data.

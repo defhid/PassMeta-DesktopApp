@@ -11,24 +11,33 @@
              d:DataContext="{d:DesignInstance jour:JournalViewModel}">
     <Grid RowDefinitions="52,*">
         <Grid Grid.Row="0"
-              ColumnDefinitions="Auto,Auto"
+              ColumnDefinitions="Auto,Auto,Auto"
               Margin="5">
             <ComboBox Grid.Column="0"
                       HorizontalAlignment="Left"
+                      Margin="0 2 0 0"
                       Items="{Binding PageList}"
                       SelectedIndex="{Binding SelectedPageIndex}"
                       ToolTip.Tip="{x:Static com:Resources.JOURNAL__TOOLTIP_PAGE_NUM}"/>
-            
-            <ComboBox Grid.Column="1"
+
+            <DatePicker Grid.Column="1"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Margin="20 0 0 0"
+                        DayVisible="False"
+                        SelectedDate="{Binding SelectedMonth}"
+                        ToolTip.Tip="{x:Static com:Resources.JOURNAL__TOOLTIP_MONTH}"/>
+
+            <ComboBox Grid.Column="2"
                       HorizontalAlignment="Left"
-                      Margin="30 0 0 0"
+                      Margin="20 2 0 0"
                       MinWidth="150"
                       Items="{Binding Kinds}"
                       SelectedItem="{Binding SelectedKind}"
                       ToolTip.Tip="{x:Static com:Resources.JOURNAL__TOOLTIP_KIND}"/>
         </Grid>
         <Grid Grid.Row="1"
-              Margin="5">
+              Margin="5 0 5 5">
             <DataGrid IsReadOnly="True"
                       AutoGenerateColumns="False"
                       CanUserResizeColumns="True"
@@ -37,14 +46,18 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_TIMESTAMP}" 
                                         Binding="{Binding CreatedOn}"
-                                        Width="1*"/>
+                                        Width="2*"/>
                     
                     <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_KIND}" 
                                         Binding="{Binding RecordKind}"
-                                        Width="3*"/>
+                                        Width="4*"/>
                     
                     <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_LOGIN}" 
                                         Binding="{Binding UserLogin}"
+                                        Width="1.5*"/>
+                    
+                    <DataGridTextColumn Header="IP"
+                                        Binding="{Binding UserIp}"
                                         Width="1*"/>
                     
                     <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_MORE}"

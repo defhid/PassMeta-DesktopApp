@@ -35,18 +35,14 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public async Task<List<PassFile>?> GetListAsync(PassFileType ofType)
         {
-            var response = await PassMetaApi.GetAsync<List<PassFile>>($"passfiles/list?type_id={(int)ofType}", true);
+            var response = await PassMetaApi.GetAsync<List<PassFile>>($"passfiles?type_id={(int)ofType}", true);
             return response?.Data;
         }
 
         /// <inheritdoc />
-        public Task<OkBadResponse<string>?> GetDataAsync(int passFileId, int? version = null)
+        public Task<OkBadResponse<string>?> GetDataAsync(int passFileId, int version)
         {
-            var url = version is null
-                ? $"passfiles/{passFileId}/smth"
-                : $"passfiles/{passFileId}/smth?version={version}";
-            
-            return PassMetaApi.GetAsync<string>(url, true);
+            return PassMetaApi.GetAsync<string>($"passfiles/{passFileId}/versions/{version}", true);
         }
 
         /// <inheritdoc />
@@ -67,7 +63,7 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public Task<OkBadResponse<PassFile>?> SaveDataAsync(PassFile passFile)
         {
-            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/smth", new
+            var request = PassMetaApi.Post($"passfiles/{passFile.Id}/versions/new", new
             {
                 smth = passFile.DataEncrypted!
             });

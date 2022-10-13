@@ -12,7 +12,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     using System.Windows.Input;
     
     using Avalonia.Controls;
-    using Avalonia.Media;
+    using Common;
     using Core;
     using ReactiveUI;
 
@@ -27,24 +27,27 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             {
                 Opacity = 0.8,
                 Content = "\uF3B1",
-                Command = SignOutCommand
+                Command = SignOutCommand,
+                [ToolTip.TipProperty] = Resources.ACCOUNT__TOOLTIP_SIGN_OUT,
+                [ToolTip.PlacementProperty] = PlacementMode.Left
+            },
+            new Button
+            {
+                Opacity = 0.8,
+                Content = "\uE77A",
+                Command = ResetSessionsCommand,
+                [ToolTip.TipProperty] = Resources.ACCOUNT__TOOLTIP_RESET_SESSIONS,
+                [ToolTip.PlacementProperty] = PlacementMode.Left
             }
         };
 
-        private string? _firstName;
-        public string? FirstName
+        private string? _fullName;
+        public string? FullName
         {
-            get => _firstName;
-            set => this.RaiseAndSetIfChanged(ref _firstName, value);
+            get => _fullName;
+            set => this.RaiseAndSetIfChanged(ref _fullName, value);
         }
 
-        private string? _lastName;
-        public string? LastName
-        {
-            get => _lastName;
-            set => this.RaiseAndSetIfChanged(ref _lastName, value);
-        }
-        
         private string? _login;
         public string? Login
         {
@@ -65,13 +68,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             get => _passwordConfirm;
             set => this.RaiseAndSetIfChanged(ref _passwordConfirm, value);
         }
-        
-        private IBrush? _passwordConfirmLabelForeground;
-        public IBrush? PasswordConfirmLabelForeground
-        {
-            get => _passwordConfirmLabelForeground;
-            set => this.RaiseAndSetIfChanged(ref _passwordConfirmLabelForeground, value);
-        }
 
         private bool _isPasswordConfirmVisible;
         public bool IsPasswordConfirmVisible
@@ -89,6 +85,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public ICommand SignOutCommand => ReactiveCommand.CreateFromTask(_SignOutAsync);
 
+        public ICommand ResetSessionsCommand => ReactiveCommand.CreateFromTask(_ResetSessionsAsync);
+
         public ICommand SaveCommand => ReactiveCommand.CreateFromTask(_SaveAsync);
         
         public AccountViewModel(IScreen hostScreen) : base(hostScreen)
@@ -97,22 +95,19 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             
             _Refresh();
             this.WhenAnyValue(
-                    vm => vm.FirstName,
-                    vm => vm.LastName,
+                    vm => vm.FullName,
                     vm => vm.Login,
                     vm => vm.Password,
                     vm => vm.PasswordConfirm)
                 .Subscribe(data =>
                     {
                         var user = AppContext.Current.User;
-                        var changed = data.Item1 != user.FirstName || 
-                                          data.Item2 != user.LastName ||
-                                          data.Item3 != user.Login ||
-                                          !string.IsNullOrEmpty(data.Item4);
-                        
-                        IsPasswordConfirmVisible = changed;
-                        PasswordConfirmLabelForeground = changed ? Brushes.LightSkyBlue : Brushes.Transparent;
-                        IsBtnSaveVisible = changed && !string.IsNullOrEmpty(data.Item5);
+
+                        var passwordConfirmNeed = data.Item2 != user.Login || !string.IsNullOrEmpty(data.Item3);
+                        var changed = passwordConfirmNeed || data.Item1 != user.FullName;
+
+                        IsPasswordConfirmVisible = passwordConfirmNeed;
+                        IsBtnSaveVisible = changed && (!passwordConfirmNeed || !string.IsNullOrEmpty(data.Item4));
                     });
         }
 
@@ -144,8 +139,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         private void _Refresh()
         {
-            FirstName = AppContext.Current.User!.FirstName;
-            LastName = AppContext.Current.User!.LastName;
+            FullName = AppContext.Current.User!.FullName;
             Login = AppContext.Current.User!.Login;
             Password = "";
             PasswordConfirm = "";
@@ -157,9 +151,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             
             var data = new UserPatchData
             {
-                FirstName = FirstName ?? "",
-                LastName = LastName ?? "",
-                Login = string.IsNullOrEmpty(Login?.Trim()) ? null : Login.Trim(),
+                FullName = FullName?.Trim() ?? "",
+                Login = Login?.Trim() ?? "",
                 Password = string.IsNullOrEmpty(Password) ? null : Password,
                 PasswordConfirm = PasswordConfirm ?? "",
             };
@@ -175,6 +168,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             
             await AuthService.SignOutAsync();
             TryNavigateTo<AuthViewModel>();
+        }
+        
+        private static async Task _ResetSessionsAsync()
+        {
+            using var preloader = MainWindow.Current!.StartPreloader();
+
+            await AuthService.ResetAllExceptMeAsync();
         }
     }
 }

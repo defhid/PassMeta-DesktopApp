@@ -62,18 +62,9 @@ namespace PassMeta.DesktopApp.Common {
         /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
-        public static string ACCOUNT__FIRST_NAME_LABEL {
+        public static string ACCOUNT__FULL_NAME_LABEL {
             get {
-                return ResourceManager.GetString("ACCOUNT__FIRST_NAME_LABEL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Surname.
-        /// </summary>
-        public static string ACCOUNT__LAST_NAME_LABEL {
-            get {
-                return ResourceManager.GetString("ACCOUNT__LAST_NAME_LABEL", resourceCulture);
+                return ResourceManager.GetString("ACCOUNT__FULL_NAME_LABEL", resourceCulture);
             }
         }
         
@@ -96,20 +87,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current password is missed!.
-        /// </summary>
-        public static string ACCOUNT__PASSWORD_CONFIRM_MISSED_WARN {
-            get {
-                return ResourceManager.GetString("ACCOUNT__PASSWORD_CONFIRM_MISSED_WARN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string ACCOUNT__PASSWORD_LABEL {
             get {
                 return ResourceManager.GetString("ACCOUNT__PASSWORD_LABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to reset all sessions except the current one?.
+        /// </summary>
+        public static string ACCOUNT__RESET_SESSIONS_CONFIRM {
+            get {
+                return ResourceManager.GetString("ACCOUNT__RESET_SESSIONS_CONFIRM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sessions have been successfully reset!.
+        /// </summary>
+        public static string ACCOUNT__RESET_SESSIONS_SUCCESS {
+            get {
+                return ResourceManager.GetString("ACCOUNT__RESET_SESSIONS_SUCCESS", resourceCulture);
             }
         }
         
@@ -123,7 +123,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The data has been save successfully!.
+        ///   Looks up a localized string similar to The data has been successfully save!.
         /// </summary>
         public static string ACCOUNT__SAVE_SUCCESS {
             get {
@@ -146,6 +146,24 @@ namespace PassMeta.DesktopApp.Common {
         public static string ACCOUNT__TITLE {
             get {
                 return ResourceManager.GetString("ACCOUNT__TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset all sessions.
+        /// </summary>
+        public static string ACCOUNT__TOOLTIP_RESET_SESSIONS {
+            get {
+                return ResourceManager.GetString("ACCOUNT__TOOLTIP_RESET_SESSIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign out.
+        /// </summary>
+        public static string ACCOUNT__TOOLTIP_SIGN_OUT {
+            get {
+                return ResourceManager.GetString("ACCOUNT__TOOLTIP_SIGN_OUT", resourceCulture);
             }
         }
         
@@ -735,7 +753,7 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to More info.
+        ///   Looks up a localized string similar to More.
         /// </summary>
         public static string JOURNAL__HEADER_MORE {
             get {
@@ -758,6 +776,15 @@ namespace PassMeta.DesktopApp.Common {
         public static string JOURNAL__TOOLTIP_KIND {
             get {
                 return ResourceManager.GetString("JOURNAL__TOOLTIP_KIND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Period.
+        /// </summary>
+        public static string JOURNAL__TOOLTIP_MONTH {
+            get {
+                return ResourceManager.GetString("JOURNAL__TOOLTIP_MONTH", resourceCulture);
             }
         }
         

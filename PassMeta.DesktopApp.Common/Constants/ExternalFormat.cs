@@ -46,13 +46,13 @@ namespace PassMeta.DesktopApp.Common.Constants
             new(() => Resources.PASSFILE__EXPORT_PASSFILE_OPEN, "pfpwd-json");
 
         /// <summary>
-        /// Encrypted <see cref="PassFileType.Pwd"/> passfile format.
+        /// Encrypted <see cref="PassFileType.Txt"/> passfile format.
         /// </summary>
         public static readonly ExternalFormat TxtPassfileEncrypted =
             new(() => Resources.PASSFILE__EXPORT_PASSFILE, "pftxt");
 
         /// <summary>
-        /// Open JSON <see cref="PassFileType.Pwd"/> passfile format.
+        /// Open JSON <see cref="PassFileType.Txt"/> passfile format.
         /// </summary>
         public static readonly ExternalFormat TxtPassfileDecrypted =
             new(() => Resources.PASSFILE__EXPORT_PASSFILE_OPEN, "pftxt-json");

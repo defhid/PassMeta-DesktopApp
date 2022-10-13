@@ -26,15 +26,9 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Request
         public string? PasswordConfirm { get; set; }
         
         /// <summary>
-        /// User new first name.
+        /// User new full name.
         /// </summary>
-        [JsonProperty("first_name")]
-        public string? FirstName { get; set; }
-        
-        /// <summary>
-        /// User new last name.
-        /// </summary>
-        [JsonProperty("last_name")]
-        public string? LastName { get; set; }
+        [JsonProperty("full_name")]
+        public string? FullName { get; set; }
     }
 }

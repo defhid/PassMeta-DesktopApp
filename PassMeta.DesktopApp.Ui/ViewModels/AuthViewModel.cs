@@ -51,7 +51,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         {
             using var preloader = MainWindow.Current!.StartPreloader();
             
-            var data = new SignInPostData(Login ?? "", Password ?? "");
+            var data = new SignInPostData(Login?.Trim() ?? "", Password ?? "");
             var result = await AuthService.SignInAsync(data);
             if (result.Ok)
                 TryNavigateTo<AccountViewModel>();
@@ -61,7 +61,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         {
             using var preloader = MainWindow.Current!.StartPreloader();
             
-            var data = new SignUpPostData(Login ?? "", Password ?? "", "Unknown", "Unknown");
+            var data = new SignUpPostData(Login?.Trim() ?? "", Password ?? "", "Unknown");
             var result = await AuthService.SignUpAsync(data);
             if (result.Ok)
                 TryNavigateTo<AccountViewModel>();

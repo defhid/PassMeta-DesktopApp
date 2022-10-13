@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Core.Utils
     
     using System;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Reactive.Subjects;
     using System.Text;
@@ -191,7 +192,10 @@ namespace PassMeta.DesktopApp.Core.Utils
                     _ => response.StatusCode.ToString()
                 };
 
-                AppContext.RefreshCookies(response.Cookies);
+                if (response.Headers.GetValues("Set-Cookie")?.Any() is not null)
+                {
+                    AppContext.RefreshCookies(response.Cookies);
+                }
             }
             catch (WebException ex)
             {

@@ -101,7 +101,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
                 if (local is null)
                 {
-                    if (await _TryLoadRemoteEncryptedAsync(remote))
+                    if (await _TryLoadRemoteEncryptedAsync(remote, remote.Version))
                     {
                         CheckAsDownloading(remote, PassFileManager.AddFromRemote(remote));
                     }
@@ -115,7 +115,7 @@ namespace PassMeta.DesktopApp.Core.Services
                         local.VersionChangedOn < remote.VersionChangedOn)
                     {
                         if (CheckAsDownloading(remote, PassFileManager.UpdateInfo(remote))
-                            && await _TryLoadRemoteEncryptedAsync(remote))
+                            && await _TryLoadRemoteEncryptedAsync(remote, remote.Version))
                         {
                             CheckAsDownloading(remote, PassFileManager.UpdateData(remote));
                         }
@@ -176,7 +176,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     }
                     else if (local.Version != remote.Version)
                     {
-                        if (await _TryLoadRemoteEncryptedAsync(actual))
+                        if (await _TryLoadRemoteEncryptedAsync(actual, remote.Version))
                         {
                             CheckAsDownloading(actual, PassFileManager.UpdateData(actual, true));
                         }
@@ -192,7 +192,7 @@ namespace PassMeta.DesktopApp.Core.Services
 
                 if (remote.Version != local.Version)
                 {
-                    if (await _TryLoadRemoteEncryptedAsync(remote))
+                    if (await _TryLoadRemoteEncryptedAsync(remote, remote.Version))
                     {
                         CheckAsDownloading(remote, PassFileManager.UpdateData(remote, true));
                     }
@@ -245,9 +245,9 @@ namespace PassMeta.DesktopApp.Core.Services
             }
         }
 
-        private async Task<bool> _TryLoadRemoteEncryptedAsync(PassFile passFile)
+        private async Task<bool> _TryLoadRemoteEncryptedAsync(PassFile passFile, int version)
         {
-            var result = Result.FromResponse(await _remoteService.GetDataAsync(passFile.Id));
+            var result = Result.FromResponse(await _remoteService.GetDataAsync(passFile.Id, version));
 
             if (!CheckAsDownloading(passFile, result)) return false;
             

@@ -38,10 +38,14 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public async Task<IResult> UpdateUserDataAsync(UserPatchData data)
         {
-            if (data.PasswordConfirm is null || data.PasswordConfirm.Length == 0)
+            if (data.FullName == AppContext.Current.User!.FullName)
             {
-                _dialogService.ShowFailure(Resources.ACCOUNT__PASSWORD_CONFIRM_MISSED_WARN);
-                return Result.Failure();
+                data.FullName = null;
+            }
+
+            if (data.Login == AppContext.Current.User!.Login)
+            {
+                data.Login = null;
             }
 
             var response = await PassMetaApi.Patch("users/me", data)

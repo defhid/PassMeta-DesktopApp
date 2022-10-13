@@ -132,11 +132,8 @@
     <data name="ACCOUNT__PASSWORD_LABEL" xml:space="preserve">
         <value>Password</value>
     </data>
-    <data name="ACCOUNT__FIRST_NAME_LABEL" xml:space="preserve">
+    <data name="ACCOUNT__FULL_NAME_LABEL" xml:space="preserve">
         <value>Name</value>
-    </data>
-    <data name="ACCOUNT__LAST_NAME_LABEL" xml:space="preserve">
-        <value>Surname</value>
     </data>
     <data name="ACCOUNT__PASSWORD_CONFIRM_LABEL" xml:space="preserve">
         <value>Current password</value>
@@ -144,11 +141,8 @@
     <data name="ACCOUNT__SAVE_BTN" xml:space="preserve">
         <value>Save</value>
     </data>
-    <data name="ACCOUNT__PASSWORD_CONFIRM_MISSED_WARN" xml:space="preserve">
-        <value>Current password is missed!</value>
-    </data>
     <data name="ACCOUNT__SAVE_SUCCESS" xml:space="preserve">
-        <value>The data has been save successfully!</value>
+        <value>The data has been successfully save!</value>
     </data>
     <data name="ACCOUNT__SIGN_OUT_CONFIRM" xml:space="preserve">
         <value>Are you sure you want to sign out?</value>
@@ -596,7 +590,7 @@ try another keywords...</value>
         <value>User</value>
     </data>
     <data name="JOURNAL__HEADER_MORE" xml:space="preserve">
-        <value>More info</value>
+        <value>More</value>
     </data>
     <data name="PASSMERGE__ASK_PASSPHRASE" xml:space="preserve">
         <value>Input passphrase for local version</value>
@@ -681,5 +675,20 @@ try another keywords...</value>
     </data>
     <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
         <value>Save</value>
+    </data>
+    <data name="JOURNAL__TOOLTIP_MONTH" xml:space="preserve">
+        <value>Period</value>
+    </data>
+    <data name="ACCOUNT__RESET_SESSIONS_CONFIRM" xml:space="preserve">
+        <value>Are you sure you want to reset all sessions except the current one?</value>
+    </data>
+    <data name="ACCOUNT__TOOLTIP_SIGN_OUT" xml:space="preserve">
+        <value>Sign out</value>
+    </data>
+    <data name="ACCOUNT__TOOLTIP_RESET_SESSIONS" xml:space="preserve">
+        <value>Reset all sessions</value>
+    </data>
+    <data name="ACCOUNT__RESET_SESSIONS_SUCCESS" xml:space="preserve">
+        <value>Sessions have been successfully reset!</value>
     </data>
 </root>
