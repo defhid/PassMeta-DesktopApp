@@ -1,11 +1,12 @@
 ﻿namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow
 {
+    using System;
     using Avalonia.Controls;
     using Components;
     using Interfaces;
     using ReactiveUI;
 
-    public class MainWindowViewModel : ReactiveObject, IScreen, IPreloaderSupport
+    public sealed class MainWindowViewModel : ReactiveObject, IScreen, IPreloaderSupport, IDisposable
     {
         public RoutingState Router { get; } = new();
 
@@ -25,6 +26,11 @@
         {
             get => _preloaderEnabled;
             set => this.RaiseAndSetIfChanged(ref _preloaderEnabled, value);
+        }
+
+        public void Dispose()
+        {
+            MainPane.Dispose();
         }
     }
 }

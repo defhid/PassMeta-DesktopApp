@@ -6,9 +6,9 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using System.Threading.Tasks;
     using Avalonia.Media;
     using Common;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
     using Common.Enums;
-    using Common.Interfaces;
-    using Common.Interfaces.Services;
     using Common.Models;
     using Common.Models.Entities;
     using Common.Utils.Extensions;

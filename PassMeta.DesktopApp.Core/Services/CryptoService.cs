@@ -1,12 +1,12 @@
 namespace PassMeta.DesktopApp.Core.Services
 {
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Core.Utils;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
+    using Common.Abstractions.Services;
 
     /// <inheritdoc />
     public class CryptoService : ICryptoService

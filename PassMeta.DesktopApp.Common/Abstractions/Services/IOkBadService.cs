@@ -1,6 +1,6 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services
+namespace PassMeta.DesktopApp.Common.Abstractions.Services
 {
-    using DesktopApp.Common.Models;
+    using PassMeta.DesktopApp.Common.Models;
 
     /// <summary>
     /// Service that provides human-readable content from <see cref="OkBadResponse"/>.

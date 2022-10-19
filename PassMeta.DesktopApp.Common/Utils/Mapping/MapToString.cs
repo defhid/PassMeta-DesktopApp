@@ -1,7 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Utils.Mapping
 {
     using System.Diagnostics;
-    using Interfaces.Mapping;
+    using Abstractions.Mapping;
 
     /// <summary>
     /// Mapping to constant string value.

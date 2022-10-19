@@ -45,15 +45,17 @@
                       Items="{Binding Records}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_TIMESTAMP}" 
-                                        Binding="{Binding CreatedOn}"
-                                        Width="2*"/>
+                                        Binding="{Binding WrittenOn}"
+                                        Width="2*"
+                                        MinWidth="100"
+                                        MaxWidth="180"/>
                     
                     <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_KIND}" 
                                         Binding="{Binding RecordKind}"
-                                        Width="4*"/>
+                                        Width="3*"/>
                     
                     <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_LOGIN}" 
-                                        Binding="{Binding UserLogin}"
+                                        Binding="{Binding User}"
                                         Width="1.5*"/>
                     
                     <DataGridTextColumn Header="IP"
@@ -62,7 +64,7 @@
                     
                     <DataGridTextColumn Header="{x:Static com:Resources.JOURNAL__HEADER_MORE}"
                                         Binding="{Binding More}"
-                                        Width="1*"/>
+                                        Width="1.5*"/>
                 </DataGrid.Columns>     
             </DataGrid>
         </Grid>

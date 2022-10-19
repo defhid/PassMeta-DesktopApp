@@ -1,7 +1,7 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 {
     using System;
-    using PassMeta.DesktopApp.Common.Interfaces.Services;
+    using Common.Abstractions.Services;
     using PassMeta.DesktopApp.Core;
     using PassMeta.DesktopApp.Ui.Utils;
     using ReactiveUI;

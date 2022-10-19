@@ -1,11 +1,10 @@
 namespace PassMeta.DesktopApp.Core.Services
 {
     using DesktopApp.Common.Models;
-    using DesktopApp.Common.Interfaces.Services;
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Common.Abstractions.Services;
     using Common.Utils.Extensions;
 
     /// <inheritdoc />

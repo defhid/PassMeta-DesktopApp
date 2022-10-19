@@ -4,7 +4,7 @@ namespace PassMeta.DesktopApp.Ui.Constants
     using System.Linq;
     using Avalonia.Media;
     using Common;
-    using Common.Interfaces.Mapping;
+    using Common.Abstractions.Mapping;
     using Common.Utils.Mapping;
 
     public class PassFileColor

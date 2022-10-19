@@ -3,7 +3,7 @@ namespace PassMeta.DesktopApp.Ui.Services
     using System;
     using System.Threading.Tasks;
     using Common;
-    using Common.Interfaces.Services;
+    using Common.Abstractions.Services;
     using Core;
 
     public class ClipboardService : IClipboardService

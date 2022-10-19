@@ -1,6 +1,5 @@
 namespace PassMeta.DesktopApp.Ui.App
 {
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Core.Services;
     using DesktopApp.Core.Utils;
     using DesktopApp.Ui.ViewModels.Main.MainWindow;
@@ -15,8 +14,9 @@ namespace PassMeta.DesktopApp.Ui.App
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using Common.Abstractions.Services;
+    using Common.Abstractions.Services.PassFile;
     using Common.Enums;
-    using Common.Interfaces.Services.PassFile;
     using Core;
     using Interfaces.UiServices;
     using ReactiveUI;
@@ -27,7 +27,7 @@ namespace PassMeta.DesktopApp.Ui.App
     {
         public override void Initialize()
         {
-            Task.Run(BeforeLaunch).GetAwaiter().GetResult();
+            Task.Run(BeforeLaunchAsync).GetAwaiter().GetResult();
             AvaloniaXamlLoader.Load(this);
         }
 
@@ -41,7 +41,7 @@ namespace PassMeta.DesktopApp.Ui.App
             base.OnFrameworkInitializationCompleted();
         }
 
-        private static void Restart()
+        public static void Restart()
         {
             var window = MakeWindow();
             window.Show();
@@ -51,7 +51,7 @@ namespace PassMeta.DesktopApp.Ui.App
             desktop.MainWindow = window;
         }
 
-        private static async Task BeforeLaunch()
+        private static async Task BeforeLaunchAsync()
         {
             EnvironmentContainer.Initialize(Locator.Current);
 
@@ -60,7 +60,10 @@ namespace PassMeta.DesktopApp.Ui.App
 
             await StartUp.LoadConfigurationAsync();
 
-            AppConfig.OnCultureChanged += Restart;
+            _ = AppConfig.CurrentObservable.Subscribe(new AppConfigObserver());
+            _ = AppContext.CurrentObservable.Subscribe(new AppContextObserver());
+
+            _ = Task.Run(StartUp.CheckSystemAsync);
         }
 
         private static void RegisterBaseServices()
@@ -105,8 +108,12 @@ namespace PassMeta.DesktopApp.Ui.App
         {
             Thread.CurrentThread.CurrentCulture = Common.Resources.Culture;
             Thread.CurrentThread.CurrentUICulture = Common.Resources.Culture;
-            
-            var win = new MainWindow { DataContext = new MainWindowViewModel() };
+
+            var dataContext = new MainWindowViewModel();
+
+            var win = new MainWindow { DataContext = dataContext };
+
+            win.Closed += (_, _) => dataContext.Dispose();
             
             Locator.CurrentMutable.UnregisterCurrent<INotificationManager>();
             Locator.CurrentMutable.RegisterConstant<INotificationManager>(new WindowNotificationManager(win)

@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Models.Entities
+namespace PassMeta.DesktopApp.Common.Models.Dto.Response
 {
     using System;
     using Newtonsoft.Json;
@@ -19,6 +19,12 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// </summary>
         [JsonProperty("kind")]
         public string Kind { get; set; } = null!;
+        
+        /// <summary>
+        /// Id of the user that performed the recorded request.
+        /// </summary>
+        [JsonProperty("user_id")]
+        public long? UserId { get; init; }
 
         /// <summary>
         /// Ip of the user that performed the recorded request.
@@ -36,13 +42,13 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// Affected passfile id.
         /// </summary>
         [JsonProperty("affected_passfile_id")]
-        public long? PassFileId { get; init; }
+        public long? AffectedPassFileId { get; init; }
 
         /// <summary>
         /// Affected passfile name.
         /// </summary>
         [JsonProperty("affected_passfile_name")]
-        public string? PassFileName { get; init; }
+        public string? AffectedPassFileName { get; init; }
 
         /// <summary>
         /// Additional information.
@@ -53,7 +59,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// <summary>
         /// Record date and time.
         /// </summary>
-        [JsonProperty("timestamp")]
-        public DateTime TimeStamp { get; init; }
+        [JsonProperty("written_on")]
+        public DateTime WrittenOn { get; init; }
     }
 }

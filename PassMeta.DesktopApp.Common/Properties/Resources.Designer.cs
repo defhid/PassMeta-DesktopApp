@@ -1698,6 +1698,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Developer mode.
+        /// </summary>
+        public static string SETTINGS__DEV_MODE {
+            get {
+                return ResourceManager.GetString("SETTINGS__DEV_MODE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide passwords.
         /// </summary>
         public static string SETTINGS__HIDE_PASSWORDS {

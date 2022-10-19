@@ -15,7 +15,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
     using ReactiveUI;
     using Views.Main;
 
-    using AppContext = Core.Utils.AppContext;
+    using AppContext = Core.AppContext;
 
     public class JournalViewModel : PageViewModel
     {

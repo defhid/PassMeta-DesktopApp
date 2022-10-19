@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Interfaces
+namespace PassMeta.DesktopApp.Common.Abstractions
 {
     /// <summary>
     /// Simple result.

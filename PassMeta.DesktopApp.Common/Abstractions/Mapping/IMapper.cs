@@ -1,8 +1,8 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Mapping
+namespace PassMeta.DesktopApp.Common.Abstractions.Mapping
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using Utils.Mapping;
+    using PassMeta.DesktopApp.Common.Utils.Mapping;
 
     /// <summary>
     /// Simple mapper.

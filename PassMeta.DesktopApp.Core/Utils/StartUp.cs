@@ -1,7 +1,7 @@
 namespace PassMeta.DesktopApp.Core.Utils
 {
     using System.Threading.Tasks;
-    using Common.Interfaces.Services;
+    using Common.Abstractions.Services;
 
     /// <summary>
     /// Checking, loading and optimizing at startup.
@@ -15,15 +15,16 @@ namespace PassMeta.DesktopApp.Core.Utils
         }
 
         /// <summary></summary>
-        public static async Task LoadContextAndCheckSystemAsync()
+        public static async Task LoadContextAsync()
         {
-            var backgroundTask = Task.Run(EnvironmentContainer.Resolve<ILogService>().OptimizeLogs);
-
             await AppContext.LoadAndSetCurrentAsync();
-            await AppContext.RefreshFromServerAsync();
-            await PassFileManager.ReloadAsync(true);
+            await AppContext.RefreshCurrentFromServerAsync();
+        }
 
-            await backgroundTask;
+        /// <summary></summary>
+        public static async Task CheckSystemAsync()
+        {
+            await Task.Run(EnvironmentContainer.Resolve<ILogService>().OptimizeLogs);
         }
     }
 }

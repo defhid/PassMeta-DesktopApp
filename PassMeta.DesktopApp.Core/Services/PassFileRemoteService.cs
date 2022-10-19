@@ -3,10 +3,11 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Common;
+    using Common.Abstractions;
+    using Common.Abstractions.Services.PassFile;
     using Common.Enums;
-    using Common.Interfaces;
-    using Common.Interfaces.Services.PassFile;
     using Common.Models;
+    using Common.Models.Dto.Request;
     using Common.Models.Entities;
     using Common.Utils.Mapping;
     using Utils;
@@ -48,10 +49,10 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public Task<OkBadResponse<PassFile>?> SaveInfoAsync(PassFile passFile)
         {
-            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/info", new
+            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/info", new PassFileInfoPatchData
             {
-                name = passFile.Name,
-                color = passFile.Color
+                Name = passFile.Name,
+                Color = passFile.Color
             });
 
             return request.WithContext(passFile.GetTitle())
@@ -63,9 +64,9 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public Task<OkBadResponse<PassFile>?> SaveDataAsync(PassFile passFile)
         {
-            var request = PassMetaApi.Post($"passfiles/{passFile.Id}/versions/new", new
+            var request = PassMetaApi.Post($"passfiles/{passFile.Id}/versions/new", new PassFileVersionPostData
             {
-                smth = passFile.DataEncrypted!
+                DataEncrypted = passFile.DataEncrypted!
             });
 
             return request.WithContext(passFile.GetTitle())
@@ -77,13 +78,13 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public Task<OkBadResponse<PassFile>?> AddAsync(PassFile passFile)
         {
-            var request = PassMetaApi.Post("passfiles/new", new
+            var request = PassMetaApi.Post("passfiles/new", new PassFilePostData
             {
-                name = passFile.Name,
-                color = passFile.Color,
-                type_id = passFile.TypeId,
-                created_on = passFile.CreatedOn,
-                smth = passFile.DataEncrypted!
+                Name = passFile.Name,
+                Color = passFile.Color,
+                TypeId = passFile.TypeId,
+                CreatedOn = passFile.CreatedOn,
+                Smth = passFile.DataEncrypted!
             });
 
             return request.WithContext(passFile.GetTitle())
@@ -95,9 +96,9 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public Task<OkBadResponse?> DeleteAsync(PassFile passFile, string accountPassword)
         {
-            var request = PassMetaApi.Delete($"passfiles/{passFile.Id}", new
+            var request = PassMetaApi.Delete($"passfiles/{passFile.Id}", new PassFileDeleteData
             {
-                check_password = accountPassword
+                CheckPassword = accountPassword
             });
                 
             return request.WithContext(passFile.GetTitle())

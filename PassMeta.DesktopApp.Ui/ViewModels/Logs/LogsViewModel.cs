@@ -7,7 +7,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
     using System.Threading.Tasks;
     using Base;
     using Common;
-    using Common.Interfaces.Services;
+    using Common.Abstractions.Services;
     using Core;
     using Models;
     using ReactiveUI;

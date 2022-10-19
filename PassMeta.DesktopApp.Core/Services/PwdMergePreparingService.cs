@@ -4,9 +4,9 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Linq;
     using System.Threading.Tasks;
     using Common;
-    using Common.Interfaces;
-    using Common.Interfaces.Services;
-    using Common.Interfaces.Services.PassFile;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
+    using Common.Abstractions.Services.PassFile;
     using Common.Models;
     using Common.Models.Dto;
     using Common.Models.Entities;

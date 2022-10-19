@@ -1,9 +1,9 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
+namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFile
 {
     using System.Threading.Tasks;
-    using Enums;
-    using Models.Dto;
-    using Models.Entities;
+    using PassMeta.DesktopApp.Common.Enums;
+    using PassMeta.DesktopApp.Common.Models.Dto;
+    using PassMeta.DesktopApp.Common.Models.Entities;
 
     /// <summary>
     /// Service for preparing <see cref="PassFileType.Pwd"/> passfiles for merging.

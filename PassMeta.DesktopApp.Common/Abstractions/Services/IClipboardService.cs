@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services
+namespace PassMeta.DesktopApp.Common.Abstractions.Services
 {
     using System.Threading.Tasks;
 

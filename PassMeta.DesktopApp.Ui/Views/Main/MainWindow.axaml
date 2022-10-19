@@ -107,6 +107,7 @@
                     <Button Click="LogsBtn_OnClick"
                             Classes.active="{Binding MainPane.Buttons.Logs.IsActive}"
                             Content="{Binding MainPane.Buttons.Logs.Content^}"
+                            IsVisible="{Binding MainPane.Buttons.Logs.IsVisible}"
                             VerticalAlignment="Bottom"
                             Margin="4 4 4 50"
                             Opacity="0.65"/>

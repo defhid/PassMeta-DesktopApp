@@ -4,11 +4,11 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Models.Dto.Request;
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Core.Utils;
 
     using System.Threading.Tasks;
-    using Common.Interfaces;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
     using Common.Utils.Mapping;
 
     /// <inheritdoc />
@@ -60,8 +60,8 @@ namespace PassMeta.DesktopApp.Core.Services
             
             _dialogService.ShowInfo(Resources.ACCOUNT__SAVE_SUCCESS);
                 
-            var user = response.Data!;
-            await AppContext.SetUserAsync(user);
+            AppContext.Current.User = response.Data!;
+            await AppContext.FlushCurrentAsync();
 
             return Result.Success();
         }

@@ -8,10 +8,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using Avalonia.Controls;
+    using Common.Abstractions.Services.PassFile;
     using Common.Enums;
     using Common.Utils.Extensions;
     using PassMeta.DesktopApp.Common;
-    using PassMeta.DesktopApp.Common.Interfaces.Services.PassFile;
     using PassMeta.DesktopApp.Common.Models;
     using PassMeta.DesktopApp.Common.Models.Entities;
     using PassMeta.DesktopApp.Core;
@@ -41,7 +41,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
         public ReactCommand DownloadCommand { get; }
         public ReactCommand CloseCommand { get; }
 
-        public static IObservable<bool> CanBeDownloaded => PassMetaApi.OnlineSource;
+        public static IObservable<bool> CanBeDownloaded => PassMetaApi.OnlineObservable;
 
         public readonly ViewElements ViewElements = new();
 

@@ -3,9 +3,9 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
     using System;
     using System.Collections.Generic;
     using Common;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
     using Common.Enums;
-    using Common.Interfaces;
-    using Common.Interfaces.Services;
     using Common.Models;
     using Common.Models.Entities;
     using Common.Models.Entities.Extra;

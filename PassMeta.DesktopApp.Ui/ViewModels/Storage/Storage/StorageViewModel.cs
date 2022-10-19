@@ -9,9 +9,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Avalonia.Controls;
     using Base;
     using Common;
+    using Common.Abstractions.Services;
+    using Common.Abstractions.Services.PassFile;
     using Common.Enums;
-    using Common.Interfaces.Services;
-    using Common.Interfaces.Services.PassFile;
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Components;
@@ -25,7 +25,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using ViewModels.Components;
     using Views.Main;
     
-    using AppContext = Core.Utils.AppContext;
+    using AppContext = Core.AppContext;
 
     public class StorageViewModel : PageViewModel
     {

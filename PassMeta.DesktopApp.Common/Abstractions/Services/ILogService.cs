@@ -1,8 +1,8 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services
+namespace PassMeta.DesktopApp.Common.Abstractions.Services
 {
     using System;
     using System.Collections.Generic;
-    using Models.Entities;
+    using PassMeta.DesktopApp.Common.Models.Entities;
 
     /// <summary>
     /// Service for logging user messages and app errors.

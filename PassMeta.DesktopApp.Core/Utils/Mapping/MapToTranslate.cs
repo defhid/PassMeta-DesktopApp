@@ -1,7 +1,7 @@
 namespace PassMeta.DesktopApp.Core.Utils.Mapping
 {
     using System.Collections.Generic;
-    using Common.Interfaces.Mapping;
+    using Common.Abstractions.Mapping;
 
     /// <summary>
     /// Mapping to values from dictionary-like object,

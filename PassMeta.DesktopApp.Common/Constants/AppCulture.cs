@@ -34,6 +34,22 @@ namespace PassMeta.DesktopApp.Common.Constants
         public override string ToString() => _nameGetter();
 
         /// <summary>
+        /// Get culture from <see cref="All"/> by <paramref name="code"/>.
+        /// </summary>
+        public static AppCulture Parse(string code)
+        {
+            code = code.Trim().ToLower();
+            
+            foreach (var cult in All)
+            {
+                if (cult._code != code) continue;
+                return cult;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(code), code, @"Unknown code");
+        }
+
+        /// <summary>
         /// Try to get culture from <see cref="All"/> by <paramref name="code"/>.
         /// If failed, <paramref name="culture"/> will be <see cref="Default"/>.
         /// </summary>

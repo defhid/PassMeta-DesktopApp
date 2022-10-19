@@ -7,8 +7,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using System.Threading.Tasks;
     using Avalonia.Media;
     using Common;
+    using Common.Abstractions.Services;
     using Common.Enums;
-    using Common.Interfaces.Services;
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Components;
@@ -105,12 +105,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                         ? Resources.PASSFILE__TITLE_DELETED
                         : Resources.PASSFILE__TITLE, pf.GetIdentityString()));
 
-            CreatedOn = passFileChanged.Select(pf => pf?.CreatedOn.ToShortDateTimeString());
+            CreatedOn = passFileChanged.Select(pf => pf?.CreatedOn.ToLocalTime().ToShortDateTimeString());
 
             ChangedOn = passFileChanged.Select(pf => string.Join(" / ", 
                 new[] {pf?.InfoChangedOn, pf?.VersionChangedOn}
                     .Where(dt => dt is not null)
-                    .Select(dt => dt!.Value.ToShortDateTimeString())));
+                    .Select(dt => dt!.Value.ToLocalTime().ToShortDateTimeString())));
 
             StateColor = passFileChanged.Select(pf => pf.GetStateColor());
 

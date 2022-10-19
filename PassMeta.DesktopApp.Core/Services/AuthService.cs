@@ -4,11 +4,11 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Models.Dto.Request;
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Utils.Mapping;
     using DesktopApp.Core.Utils;
     using System.Threading.Tasks;
-    using Common.Interfaces;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
 
     /// <inheritdoc />
     public class AuthService : IAuthService
@@ -36,8 +36,9 @@ namespace PassMeta.DesktopApp.Core.Services
             
             if (response?.Success is not true)
                 return Result.Failure<User>();
-            
-            await AppContext.SetUserAsync(response.Data!);
+
+            AppContext.Current.User = response.Data!;
+            await AppContext.FlushCurrentAsync();
             
             return Result.Success(response.Data!);
         }
@@ -48,7 +49,8 @@ namespace PassMeta.DesktopApp.Core.Services
             var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__SIGN_OUT_CONFIRM);
             if (answer.Bad) return;
 
-            await AppContext.SetUserAsync(null);
+            AppContext.Current.User = null;
+            await AppContext.FlushCurrentAsync();
         }
 
         /// <inheritdoc />
@@ -68,7 +70,7 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public async Task<IResult<User>> SignUpAsync(SignUpPostData data)
+        public async Task<IResult> SignUpAsync(SignUpPostData data)
         {
             if (!_Validate(data).Ok)
             {
@@ -83,9 +85,11 @@ namespace PassMeta.DesktopApp.Core.Services
             
             if (response?.Success is not true) 
                 return Result.Failure<User>();
-                
-            await AppContext.SetUserAsync(response.Data);
-            return Result.Success(response.Data!);
+
+            AppContext.Current.User = response.Data!;
+            await AppContext.FlushCurrentAsync();
+
+            return Result.Success();
         }
         
         private static IResult<TData> _Validate<TData>(TData data)

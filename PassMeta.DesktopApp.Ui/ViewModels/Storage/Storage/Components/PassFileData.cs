@@ -9,7 +9,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using Avalonia;
     using Avalonia.Controls;
     using Common;
-    using Common.Interfaces.Services;
+    using Common.Abstractions.Services;
     using Common.Models.Entities;
     using Common.Utils.Extensions;
     using Core;

@@ -2,7 +2,7 @@ namespace PassMeta.DesktopApp.Common.Utils.Extensions
 {
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
-    using Interfaces;
+    using Abstractions;
     using Models;
 
     /// <summary>

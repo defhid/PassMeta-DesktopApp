@@ -2,7 +2,7 @@ namespace PassMeta.DesktopApp.Ui.Interfaces.UiServices
 {
     using System.Threading.Tasks;
     using Avalonia.Controls;
-    using PassMeta.DesktopApp.Common.Interfaces;
+    using Common.Abstractions;
     using PassMeta.DesktopApp.Common.Models.Entities;
 
     /// <summary>

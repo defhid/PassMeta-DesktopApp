@@ -3,7 +3,7 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Interfaces.Mapping;
+    using Abstractions.Mapping;
 
     /// <summary>
     /// Default implemantation of <see cref="ICombinedMapper{TValueFrom,TValueTo}"/>.

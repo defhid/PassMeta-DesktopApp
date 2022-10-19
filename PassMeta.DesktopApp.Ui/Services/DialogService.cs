@@ -2,7 +2,6 @@ namespace PassMeta.DesktopApp.Ui.Services
 {
     using DesktopApp.Common;
     using DesktopApp.Common.Enums;
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     using DesktopApp.Ui.Views.Main;
     
@@ -12,7 +11,8 @@ namespace PassMeta.DesktopApp.Ui.Services
     
     using Avalonia.Controls;
     using Avalonia.Controls.Notifications;
-    using Common.Interfaces;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
     using Constants;
     using Core;
     using Utils.Extensions;
@@ -22,8 +22,7 @@ namespace PassMeta.DesktopApp.Ui.Services
     /// <inheritdoc />
     public class DialogService : IDialogService
     {
-        // ReSharper disable once ReturnTypeCanBeNotNullable
-        private static INotificationManager? NotificationManager => EnvironmentContainer.Resolve<INotificationManager>();
+        private static INotificationManager? NotificationManager => EnvironmentContainer.Resolve<INotificationManager?>();
         private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
         
         private static readonly List<Action> Deferred = new();

@@ -8,9 +8,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
     using Avalonia.Media;
     using Common;
     using Constants;
+    using Core;
     using ReactiveUI;
 
-    public class MainPane : ReactiveObject
+    public sealed class MainPane : ReactiveObject, IDisposable
     {
         private bool _isOpened;
         public bool IsOpened
@@ -58,10 +59,16 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
             Buttons = new ButtonCollection(modeChanged);
         }
 
-        public class ButtonCollection
+        public void Dispose()
+        {
+            Buttons.Dispose();
+        }
+
+        public sealed class ButtonCollection : IDisposable
         {
             private readonly MainPaneBtn[] _all;
-            
+            private readonly IDisposable[] _disposables;
+
             public MainPaneBtn? CurrentActive 
             { 
                 get => _all.FirstOrDefault(btn => btn.IsActive);
@@ -92,10 +99,26 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
                 Storage = new MainPaneBtn(Resources.APP__MENU_BTN__STORAGE, "\uE8F1", modeChanged);
                 Generator = new MainPaneBtn(Resources.APP__MENU_BTN__GENERATOR, "\uEA80", modeChanged);
                 Journal = new MainPaneBtn(Resources.APP__MENU_BTN__JOURNAL, "\uE823", modeChanged);
-                Logs = new MainPaneBtn(Resources.APP__MENU_BTN__LOGS, "\uE9D9", modeChanged);
+                Logs = new MainPaneBtn(Resources.APP__MENU_BTN__LOGS, "\uE9D9", modeChanged) { IsVisible = false };
                 Settings = new MainPaneBtn(Resources.APP__MENU_BTN__SETTINGS, "\uE713", modeChanged);
                 
                 _all = new[] { Account, Storage, Generator, Journal, Logs, Settings };
+
+                _disposables = new[]
+                {
+                    AppConfig.CurrentObservable.Subscribe(x =>
+                    {
+                        Logs.IsVisible = x.DevMode;
+                    })
+                };
+            }
+
+            public void Dispose()
+            {
+                foreach (var disposable in _disposables)
+                {
+                    disposable.Dispose();
+                }
             }
         }
     }

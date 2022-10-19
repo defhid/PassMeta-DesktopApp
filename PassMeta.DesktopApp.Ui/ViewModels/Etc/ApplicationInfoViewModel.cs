@@ -1,5 +1,6 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Etc
 {
+    using Core;
     using DesktopApp.Core.Utils;
     using ReactiveUI;
         

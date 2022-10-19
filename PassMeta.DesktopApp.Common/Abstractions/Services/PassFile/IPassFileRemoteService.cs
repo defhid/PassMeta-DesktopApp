@@ -1,10 +1,10 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
+namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFile
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Enums;
-    using Models;
-    using Models.Entities;
+    using PassMeta.DesktopApp.Common.Enums;
+    using PassMeta.DesktopApp.Common.Models;
+    using PassMeta.DesktopApp.Common.Models.Entities;
 
     /// <summary>
     /// Service for working with remote passfiles.

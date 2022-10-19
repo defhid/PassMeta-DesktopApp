@@ -1,5 +1,7 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Journal.Models
 {
+    using System.Linq;
+    using Common.Models.Dto.Response;
     using Common.Models.Entities;
     using Common.Utils.Extensions;
 
@@ -7,15 +9,19 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal.Models
     {
         private readonly JournalRecord _record;
         
-        public string CreatedOn => _record.TimeStamp.ToLocalTime().ToShortDateTimeString();
+        public string WrittenOn => _record.WrittenOn.ToLocalTime().ToShortDateTimeString();
         
         public string RecordKind => _record.Kind;
         
+        public string User => _record.UserLogin ?? (_record.UserId.HasValue ? $"#{_record.UserId}" : "?");
+        
         public string UserIp => _record.UserIp;
 
-        public string UserLogin => _record.UserLogin ?? "?";
-
-        public string More => _record.More;  // TODO: add optional passfile info
+        public string More => string.Join("; ", new []
+        {
+            _record.More,
+            _record.AffectedPassFileId.HasValue ? $"Passfile #{_record.AffectedPassFileId} '{_record.AffectedPassFileName}'" : null
+        }.Where(x => !string.IsNullOrEmpty(x)));
 
         public JournalRecordInfo(JournalRecord journalRecord)
         {

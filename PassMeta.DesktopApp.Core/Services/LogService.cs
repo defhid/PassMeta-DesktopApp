@@ -6,9 +6,8 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.IO;
     using System.Linq;
     using System.Text;
-    using Common.Interfaces.Services;
+    using Common.Abstractions.Services;
     using Common.Models.Entities;
-    using Utils;
 
     /// <inheritdoc />
     public class LogService : ILogService

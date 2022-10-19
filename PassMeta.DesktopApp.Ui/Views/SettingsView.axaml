@@ -63,9 +63,16 @@
             </Grid>
             
             <Grid Grid.Row="2"
+                  RowDefinitions="Auto,Auto"
                   Margin="0 0 0 20">
-                <CheckBox IsChecked="{Binding HidePasswords}"
+                <CheckBox Grid.Row="0"
+                          IsChecked="{Binding HidePasswords}"
                           Content="{x:Static com:Resources.SETTINGS__HIDE_PASSWORDS}"/>
+
+                <CheckBox Grid.Row="1"
+                          IsChecked="{Binding DevMode}"
+                          Opacity="{Binding DevModeOpacity}"
+                          Content="{x:Static com:Resources.SETTINGS__DEV_MODE}"/>
             </Grid>
             
             <Button Grid.Row="3"

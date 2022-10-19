@@ -2,13 +2,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using Core;
     using DesktopApp.Common;
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Ui.ViewModels.Base;
     
     using System;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
+    using Common.Abstractions.Services;
     using ReactiveUI;
     using Utils;
 

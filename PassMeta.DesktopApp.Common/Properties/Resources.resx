@@ -691,4 +691,7 @@ try another keywords...</value>
     <data name="ACCOUNT__RESET_SESSIONS_SUCCESS" xml:space="preserve">
         <value>Sessions have been successfully reset!</value>
     </data>
+    <data name="SETTINGS__DEV_MODE" xml:space="preserve">
+        <value>Developer mode</value>
+    </data>
 </root>

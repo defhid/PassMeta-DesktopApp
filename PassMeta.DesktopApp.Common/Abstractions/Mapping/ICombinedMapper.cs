@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Mapping
+namespace PassMeta.DesktopApp.Common.Abstractions.Mapping
 {
     using System.Collections.Generic;
 

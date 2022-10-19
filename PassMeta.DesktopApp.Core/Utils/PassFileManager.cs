@@ -1,7 +1,6 @@
 namespace PassMeta.DesktopApp.Core.Utils
 {
     using Common;
-    using Common.Interfaces.Services;
     using Common.Models;
     using Common.Models.Entities;
     using Common.Models.Entities.Extra;
@@ -14,10 +13,12 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Linq;
     using System.Reactive.Subjects;
     using System.Threading.Tasks;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
     using Common.Enums;
-    using Common.Interfaces;
     using Common.Utils.Extensions;
     using Newtonsoft.Json;
+    using AppContext = Core.AppContext;
 
     /// <summary>
     /// Passfiles manager.
@@ -100,7 +101,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         public static List<PassFile> GetCurrentList(PassFileType ofType) => _currentPassFiles
             .Select(pf => (pf.changed ?? pf.source)!)
-            .Where(pf => pf.UserId == AppContext.Current.UserId && 
+            .Where(pf => pf.UserId == AppContext.Current.User!.Id && 
                          (pf.ServerId is null || 
                           AppContext.Current.ServerId is null || 
                           pf.ServerId == AppContext.Current.ServerId)
@@ -204,14 +205,14 @@ namespace PassMeta.DesktopApp.Core.Utils
                 Id = passFileId,
                 TypeId = (int) ofType,
                 Name = Resources.PASSMGR__DEFAULT_NEW_PASSFILE_NAME,
-                CreatedOn = DateTime.Now,
-                InfoChangedOn = DateTime.Now,
+                CreatedOn = DateTime.UtcNow,
+                InfoChangedOn = DateTime.UtcNow,
                 Version = 1,
-                VersionChangedOn = DateTime.Now,
+                VersionChangedOn = DateTime.UtcNow,
                 PwdData = new List<PwdSection>(),
                 TxtData = new List<TxtSection>(),
                 PassPhrase = passPhrase,
-                UserId = AppContext.Current.UserId,
+                UserId = AppContext.Current.User!.Id,
                 ServerId = AppContext.Current.ServerId
             };
             
@@ -332,7 +333,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             changed.Name = passFile.Name;
             changed.Color = passFile.Color;
-            changed.InfoChangedOn = fromRemote ? passFile.InfoChangedOn : DateTime.Now;
+            changed.InfoChangedOn = fromRemote ? passFile.InfoChangedOn : DateTime.UtcNow;
 
             if (fromRemote)
             {
@@ -394,7 +395,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 changed.WithDecryptedDataFrom(passFile);
                 changed.PassPhrase = passFile.PassPhrase;
                 changed.Version = source is null ? changed.Version : source.Version + 1;
-                changed.VersionChangedOn = DateTime.Now;
+                changed.VersionChangedOn = DateTime.UtcNow;
                 changed.Marks |= passFile.Marks;
             }
 
@@ -447,7 +448,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             
             changed.Version = source is null ? changed.Version : source.Version + 1;
-            changed.VersionChangedOn = DateTime.Now;
+            changed.VersionChangedOn = DateTime.UtcNow;
 
             var actual = _OptimizeAndSetChanged(found, source, changed);
             
@@ -481,7 +482,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 return null;
             }
 
-            changed.LocalDeletedOn = DateTime.Now;
+            changed.LocalDeletedOn = DateTime.UtcNow;
 
             var actual = _OptimizeAndSetChanged(found, source, changed);
             return actual.Copy();
@@ -696,7 +697,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 if (File.Exists(to))
                 {
-                    var tmpPath = to + "_tmp" + DateTime.Now.Ticks;
+                    var tmpPath = to + "_tmp" + DateTime.UtcNow.Ticks;
                     File.Move(to, tmpPath);
                     File.Move(from, to);
                     File.Delete(tmpPath);
@@ -752,7 +753,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                 return ManagerError("Passfile list writing error", ex);
             }
             
-            await AppContext.SaveCurrentAsync();  // save local passfiles counter
+            await AppContext.FlushCurrentAsync();  // save local passfiles counter
             
             return Result.Success();
         }
@@ -812,7 +813,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             {
                 if (File.Exists(PassFileListPath))
                 {
-                    File.Move(PassFileListPath, $"{PassFileListPath}invalid{DateTime.Now:dd_MM_yyyy__mm_ss}");
+                    File.Move(PassFileListPath, $"{PassFileListPath}invalid{DateTime.UtcNow:dd_MM_yyyy__mm_ss}");
                 }
                 
                 File.WriteAllText(PassFileListPath, EmptyListJson, PassFileConvention.JsonEncoding);
@@ -841,7 +842,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Get full path to the current user passfiles directory.
         /// </summary>
         public static string UserPassFilesPath
-            => Path.Combine(AppConfig.PassFilesDirectory, AppContext.Current.ServerId!, AppContext.Current.UserId.ToString());
+            => Path.Combine(AppConfig.PassFilesDirectory, AppContext.Current.ServerId!, AppContext.Current.User!.Id.ToString());
 
         private static string _GetUserPassFilePath(PassFileType fileType, int fileId)
             => Path.Combine(UserPassFilesPath, fileId + fileType.ToFileExtension());

@@ -7,9 +7,7 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Request
     /// </summary>
     public class SignUpPostData : SignInPostData
     {
-        /// <summary>
-        /// User full name.
-        /// </summary>
+        ///
         [JsonProperty("full_name")]
         public string FullName { get; set; }
 

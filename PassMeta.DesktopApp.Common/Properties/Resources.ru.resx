@@ -684,4 +684,7 @@
     <data name="ACCOUNT__RESET_SESSIONS_SUCCESS" xml:space="preserve">
         <value>Сеансы были успешно сброшены!</value>
     </data>
+    <data name="SETTINGS__DEV_MODE" xml:space="preserve">
+        <value>Режим разработчика</value>
+    </data>
 </root>

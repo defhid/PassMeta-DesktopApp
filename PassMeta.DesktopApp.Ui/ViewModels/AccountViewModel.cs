@@ -1,11 +1,10 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models.Dto.Request;
     using DesktopApp.Ui.ViewModels.Base;
     using DesktopApp.Ui.Views.Main;
     
-    using AppContext = Core.Utils.AppContext;
+    using AppContext = Core.AppContext;
     
     using System;
     using System.Threading.Tasks;
@@ -13,6 +12,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     
     using Avalonia.Controls;
     using Common;
+    using Common.Abstractions.Services;
     using Core;
     using ReactiveUI;
 
@@ -132,15 +132,18 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             
             var result = await AccountService.GetUserDataAsync();
             if (result.Ok)
-                await AppContext.SetUserAsync(result.Data);
+            {
+                AppContext.Current.User = result.Data;
+                await AppContext.FlushCurrentAsync();
+            }
 
             _Refresh();
         }
 
         private void _Refresh()
         {
-            FullName = AppContext.Current.User!.FullName;
-            Login = AppContext.Current.User!.Login;
+            FullName = AppContext.Current.User?.FullName;
+            Login = AppContext.Current.User?.Login;
             Password = "";
             PasswordConfirm = "";
         }

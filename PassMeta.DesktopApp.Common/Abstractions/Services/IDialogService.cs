@@ -1,7 +1,7 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services
+namespace PassMeta.DesktopApp.Common.Abstractions.Services
 {
-    using DesktopApp.Common.Enums;
     using System.Threading.Tasks;
+    using PassMeta.DesktopApp.Common.Enums;
 
     /// <summary>
     /// Service for communication with app user.

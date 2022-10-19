@@ -2,9 +2,6 @@ namespace PassMeta.DesktopApp.Core.Services
 {
     using DesktopApp.Common;
     using DesktopApp.Common.Enums;
-    using DesktopApp.Common.Interfaces;
-    using DesktopApp.Common.Interfaces.Services;
-    using DesktopApp.Common.Interfaces.Services.PassFile;
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Utils.Extensions;
@@ -15,6 +12,9 @@ namespace PassMeta.DesktopApp.Core.Services
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
+    using Common.Abstractions.Services.PassFile;
     using Common.Models.Entities.Extra;
 
     /// <inheritdoc />

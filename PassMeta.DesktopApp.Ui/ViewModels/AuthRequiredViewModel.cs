@@ -2,7 +2,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using DesktopApp.Ui.ViewModels.Base;
     
-    using AppContext = Core.Utils.AppContext;
+    using AppContext = Core.AppContext;
     
     using System;
     using System.Threading.Tasks;

@@ -2,7 +2,7 @@ namespace PassMeta.DesktopApp.Common.Models
 {
     using System;
     using System.Collections.Generic;
-    using Interfaces.Mapping;
+    using Abstractions.Mapping;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     

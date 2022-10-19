@@ -5,10 +5,10 @@ namespace PassMeta.DesktopApp.Ui.Services
     using System.Threading.Tasks;
     using Avalonia.Controls;
     using Common;
+    using Common.Abstractions;
+    using Common.Abstractions.Services;
+    using Common.Abstractions.Services.PassFile;
     using Common.Enums;
-    using Common.Interfaces;
-    using Common.Interfaces.Services;
-    using Common.Interfaces.Services.PassFile;
     using Common.Models;
     using Common.Models.Entities;
     using Common.Models.Entities.Extra;

@@ -6,7 +6,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using System.Reactive.Subjects;
     using System.Threading.Tasks;
     using Common;
-    using Common.Interfaces.Services;
+    using Common.Abstractions.Services;
     using Common.Models.Entities.Extra;
     using Core;
     using Core.Utils;

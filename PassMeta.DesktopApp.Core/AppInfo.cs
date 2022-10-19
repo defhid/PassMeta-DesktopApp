@@ -1,8 +1,8 @@
-namespace PassMeta.DesktopApp.Core.Utils
+namespace PassMeta.DesktopApp.Core
 {
     using System;
     using System.Reflection;
-    using Common.Constants;
+    using PassMeta.DesktopApp.Common.Constants;
 
     /// <summary>
     /// Information about this application.

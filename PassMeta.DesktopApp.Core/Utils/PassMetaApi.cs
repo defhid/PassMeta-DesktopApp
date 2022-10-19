@@ -1,7 +1,6 @@
 namespace PassMeta.DesktopApp.Core.Utils
 {
     using DesktopApp.Common;
-    using DesktopApp.Common.Interfaces.Services;
     using DesktopApp.Common.Models;
     
     using System;
@@ -10,12 +9,15 @@ namespace PassMeta.DesktopApp.Core.Utils
     using System.Net;
     using System.Reactive.Subjects;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
-    using Common.Interfaces.Mapping;
+    using Common.Abstractions.Mapping;
+    using Common.Abstractions.Services;
     using Common.Utils.Extensions;
     using Extensions;
     using Newtonsoft.Json;
-    
+    using AppContext = Core.AppContext;
+
     /// <summary>
     /// Utility for making requests to PassMeta server.
     /// </summary>
@@ -24,17 +26,20 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Corresponds to the last call of <see cref="CheckConnectionAsync"/>.
         /// </summary>
-        public static bool Online { get; private set; }
+        public static bool Online => OnlineSubject.Value;
 
         /// <summary>
         /// Represents <see cref="Online"/>.
         /// </summary>
-        public static readonly BehaviorSubject<bool> OnlineSource = new(false);
+        public static IObservable<bool> OnlineObservable => OnlineSubject;
+
+        private static readonly BehaviorSubject<bool> OnlineSubject = new(false);
+
+        private static readonly SemaphoreSlim CookiesRefreshSemaphore = new(1, 1);
 
         static PassMetaApi()
         {
             ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
-            OnlineSource.Subscribe(online => Online = online);
         }
 
         #region Services
@@ -74,8 +79,8 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// Does application have a connection to PassMeta server?
         /// </summary>
         /// <remarks>
-        /// Updates <see cref="AppContext"/>
-        /// if connection has been found, but <see cref="AppContext.ServerVersion"/> is null.
+        /// Updates <see cref="Core.AppContext"/>
+        /// if connection has been found, but <see cref="Core.AppContext.ServerVersion"/> is null.
         /// </remarks>
         public static async Task<bool> CheckConnectionAsync(bool showNoConnection = false, bool isFromAppContext = false)
         {
@@ -104,10 +109,10 @@ namespace PassMeta.DesktopApp.Core.Utils
 
             if (has && AppContext.Current.ServerVersion is null && !isFromAppContext)
             {
-                await AppContext.RefreshFromServerAsync(false);
+                await AppContext.RefreshCurrentFromServerAsync(false);
             }
 
-            if (has != Online) OnlineSource.OnNext(has);
+            if (has != Online) OnlineSubject.OnNext(has);
 
             return Online;
         }
@@ -194,7 +199,19 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 if (response.Headers.GetValues("Set-Cookie")?.Any() is not null)
                 {
-                    AppContext.RefreshCookies(response.Cookies);
+                    await CookiesRefreshSemaphore.WaitAsync();
+                    try
+                    {
+                        var changed = CookiesHelper.RefreshCookies(AppContext.Current.Cookies, response.Cookies);
+                        if (changed)
+                        {
+                            await AppContext.FlushCurrentAsync();
+                        }
+                    }
+                    finally
+                    {
+                        CookiesRefreshSemaphore.Release();
+                    }
                 }
             }
             catch (WebException ex)
@@ -214,7 +231,7 @@ namespace PassMeta.DesktopApp.Core.Utils
 
                 if (ex.Status is WebExceptionStatus.ConnectFailure)
                 {
-                    if (Online) OnlineSource.OnNext(false);
+                    if (Online) OnlineSubject.OnNext(false);
                 }
                 else if (responseData is not null)
                 {

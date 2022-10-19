@@ -2,8 +2,6 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 {
     using DesktopApp.Core;
     using DesktopApp.Core.Utils;
-    using DesktopApp.Common.Interfaces.Services;
-    
     using DesktopApp.Ui.Utils;
     using DesktopApp.Ui.ViewModels;
     using DesktopApp.Ui.ViewModels.Base;
@@ -12,7 +10,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using DesktopApp.Ui.ViewModels.Journal;
     using DesktopApp.Ui.ViewModels.Logs;
     
-    using AppContext = Core.Utils.AppContext;
+    using AppContext = Core.AppContext;
     
     using System;
     using System.ComponentModel;
@@ -23,6 +21,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
     using Avalonia.Markup.Xaml;
     using Avalonia.Threading;
     using Base;
+    using Common.Abstractions.Services;
 
     public class MainWindow : WinView<MainWindowViewModel>
     {
@@ -90,7 +89,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Main
 
             if (firstLoad)
             {
-                await Dispatcher.UIThread.InvokeAsync(StartUp.LoadContextAndCheckSystemAsync, DispatcherPriority.Background);
+                await Dispatcher.UIThread.InvokeAsync(StartUp.LoadContextAsync, DispatcherPriority.Background);
             }
 
             InitNavigate();

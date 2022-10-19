@@ -1,8 +1,8 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services
+namespace PassMeta.DesktopApp.Common.Abstractions.Services
 {
-    using DesktopApp.Common.Models.Entities;
     using System.Threading.Tasks;
-    using Models.Dto.Request;
+    using PassMeta.DesktopApp.Common.Models.Dto.Request;
+    using PassMeta.DesktopApp.Common.Models.Entities;
 
     /// <summary>
     /// Service for working with user account data.

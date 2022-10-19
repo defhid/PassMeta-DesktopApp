@@ -1,7 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Models
 {
     using System.Runtime.CompilerServices;
-    using Interfaces;
+    using Abstractions;
     using Utils.Extensions;
 
     /// <summary>

@@ -7,15 +7,11 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Request
     /// </summary>
     public class SignInPostData
     {
-        /// <summary>
-        /// User login.
-        /// </summary>
+        ///
         [JsonProperty("login")]
         public string Login { get; set; }
         
-        /// <summary>
-        /// User password.
-        /// </summary>
+        ///
         [JsonProperty("password")]
         public string Password { get; set; }
 

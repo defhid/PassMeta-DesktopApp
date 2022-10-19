@@ -1,9 +1,9 @@
-namespace PassMeta.DesktopApp.Common.Interfaces.Services.PassFile
+namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFile
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Constants;
-    using Models.Entities;
+    using PassMeta.DesktopApp.Common.Constants;
+    using PassMeta.DesktopApp.Common.Models.Entities;
 
     /// <summary>
     /// Service for importing passfiles.
