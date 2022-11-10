@@ -36,21 +36,21 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
             {
                 passFile.PassPhrase = passPhrase;
             }
-            
+
             if (string.IsNullOrEmpty(passFile.PassPhrase))
             {
                 passFile.PassPhrase = originPassPhrase;
                 Logger.Error("Using Decrypt method without key phrase!");
                 return DecryptionError;
             }
-            
-            if (string.IsNullOrEmpty(passFile.DataEncrypted))
+
+            if (passFile.DataEncrypted is null)
             {
                 passFile.PassPhrase = originPassPhrase;
                 Logger.Error("Using Decrypt method without encrypted data!");
                 return DecryptionError;
             }
-            
+
             var service = EnvironmentContainer.Resolve<ICryptoService>();
 
             var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase, silent);
@@ -65,7 +65,8 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 switch (passFile.Type)
                 {
                     case PassFileType.Pwd:
-                        passFile.PwdData = JsonConvert.DeserializeObject<List<PwdSection>>(content) ?? new List<PwdSection>();
+                        var json = PassFileConvention.JsonEncoding.GetString(content);
+                        passFile.PwdData = JsonConvert.DeserializeObject<List<PwdSection>>(json) ?? new List<PwdSection>();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
@@ -77,10 +78,10 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 Logger.Error(ex, "Passfile deserializing");
                 return DecryptionError;
             }
-            
+
             return Result.Success();
         }
-        
+
         /// <summary>
         /// Encrypts <see cref="PassFile.PwdData"/> and sets result to <see cref="PassFile.DataEncrypted"/>.
         /// </summary>
@@ -101,13 +102,13 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 return EncryptionError;
             }
 
-            string data;
+            string json;
             try
             {
                 switch (passFile.Type)
                 {
                     case PassFileType.Pwd:
-                        data = JsonConvert.SerializeObject(passFile.PwdData);
+                        json = JsonConvert.SerializeObject(passFile.PwdData);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
@@ -118,9 +119,11 @@ namespace PassMeta.DesktopApp.Core.Utils.Extensions
                 Logger.Error(ex, "Passfile deserializing");
                 return EncryptionError;
             }
-            
+
             var service = EnvironmentContainer.Resolve<ICryptoService>();
-            
+
+            var data = PassFileConvention.JsonEncoding.GetBytes(json);
+
             passFile.DataEncrypted = service.Encrypt(data, passFile.PassPhrase);
             if (passFile.DataEncrypted is null)
             {

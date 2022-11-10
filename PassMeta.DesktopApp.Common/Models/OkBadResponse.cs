@@ -20,7 +20,7 @@ namespace PassMeta.DesktopApp.Common.Models
         /// <summary>
         /// Response message.
         /// </summary>
-        [JsonProperty("message")]
+        [JsonProperty("msg")]
         public string Message { get; init; } = null!;
         
         /// <summary>

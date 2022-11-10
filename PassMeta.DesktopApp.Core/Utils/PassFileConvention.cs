@@ -2,7 +2,6 @@ namespace PassMeta.DesktopApp.Core.Utils
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Security.Cryptography;
     using System.Text;
     using Common.Models.Entities.Extra;
@@ -23,20 +22,6 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// </summary>
         public static class Convert
         {
-            /// <summary>
-            /// Convert encrypted passfile data from bytes to string.
-            /// </summary>
-            [return: NotNullIfNotNull("dataBytes")]
-            public static string? EncryptedBytesToString(byte[]? dataBytes) 
-                => dataBytes is null ? null : System.Convert.ToBase64String(dataBytes);
-        
-            /// <summary>
-            /// Convert encrypted passfile data from string to bytes.
-            /// </summary>
-            [return: NotNullIfNotNull("dataString")]
-            public static byte[]? EncryptedStringToBytes(string? dataString) 
-                => dataString is null ? null : System.Convert.FromBase64String(dataString);
-
             /// <summary>
             /// Convert decrypted json data to raw sections list.
             /// </summary>

@@ -4,11 +4,11 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Models;
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Models.Dto.Request;
-    using DesktopApp.Core.Utils;
 
     using System.Threading.Tasks;
     using Common.Abstractions;
     using Common.Abstractions.Services;
+    using Common.Abstractions.Utils;
     using Common.Utils.Mapping;
 
     /// <inheritdoc />
@@ -26,12 +26,23 @@ namespace PassMeta.DesktopApp.Core.Services
             new("password_confirm", () => Resources.DICT_ACCOUNT__PASSWORD_CONFIRM)
         };
 
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly IPassMetaClient _passMetaClient;
+        private readonly IDialogService _dialogService;
+
+        /// <summary></summary>
+        public AccountService(IPassMetaClient passMetaClient, IDialogService dialogService)
+        {
+            _passMetaClient = passMetaClient;
+            _dialogService = dialogService;
+        }
 
         /// <inheritdoc />
         public async Task<IResult<User>> GetUserDataAsync()
         {
-            var response = await PassMetaApi.GetAsync<User>("users/me", true);
+            var response = await _passMetaClient.Get(PassMetaApi.User.GetMe())
+                .WithBadHandling()
+                .ExecuteAsync<User>();
+
             return Result.FromResponse(response);
         }
 
@@ -48,11 +59,12 @@ namespace PassMeta.DesktopApp.Core.Services
                 data.Login = null;
             }
 
-            var response = await PassMetaApi.Patch("users/me", data)
+            var response = await _passMetaClient.Patch(PassMetaApi.User.PatchMe())
+                .WithJsonBody(data)
                 .WithBadMapping(WhatToStringMapper)
                 .WithBadHandling()
                 .ExecuteAsync<User>();
-            
+
             if (response?.Success is not true)
             {
                 return Result.Failure();

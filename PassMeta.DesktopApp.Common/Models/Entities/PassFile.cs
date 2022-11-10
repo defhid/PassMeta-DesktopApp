@@ -66,10 +66,6 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         [JsonProperty("version_changed_on")]
         public DateTime VersionChangedOn { get; set; }
 
-        [JsonProperty("smth")]
-        // ReSharper disable once InconsistentNaming
-        private string? _DataEncrypted { set => DataEncrypted = value; }
-
         /// <summary>
         /// Server identifier.
         /// </summary>
@@ -92,7 +88,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
         /// Passfile encrypted data string.
         /// </summary>
         [JsonIgnore]
-        public string? DataEncrypted;
+        public byte[]? DataEncrypted;
 
         /// <summary>
         /// Passfile passphrase to decrypt <see cref="DataEncrypted"/> and encrypt <see cref="PwdData"/>.

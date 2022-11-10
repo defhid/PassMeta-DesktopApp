@@ -109,8 +109,9 @@ namespace PassMeta.DesktopApp.Core.Services
                 
                 try
                 {
-                    var sections = JsonConvert.DeserializeObject<List<PwdSection>>(passFileData) 
-                                   ?? new List<PwdSection>();
+                    var json = PassFileConvention.JsonEncoding.GetString(passFileData);
+                    
+                    var sections = JsonConvert.DeserializeObject<List<PwdSection>>(json) ?? new List<PwdSection>();
                     return Result.Success((sections, passPhrase));
                 }
                 catch (Exception ex)

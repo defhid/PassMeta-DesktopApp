@@ -85,7 +85,7 @@ namespace PassMeta.DesktopApp.Core.Services
             
             try
             {
-                await File.WriteAllBytesAsync(path, PassFileConvention.Convert.EncryptedStringToBytes(result.Data!));
+                await File.WriteAllBytesAsync(path, result.Data!);
                 return ExporterSuccess(passFile, path);
             }
             catch (Exception ex)

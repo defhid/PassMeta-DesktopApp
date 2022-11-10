@@ -19,7 +19,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFile
         /// <summary>
         /// Load passfile encrypted data.
         /// </summary>
-        Task<OkBadResponse<string>?> GetDataAsync(int passFileId, int version);
+        Task<IResult<byte[]>> GetDataAsync(int passFileId, int version);
 
         /// <summary>
         /// Load user's passfile list of specified type without encrypted data.
@@ -39,7 +39,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFile
         /// <summary>
         /// Add a new passfile.
         /// </summary>
-        Task<OkBadResponse<PassFile>?> AddAsync(PassFile passFile);
+        Task<IResult<PassFile>> AddAsync(PassFile passFile);
 
         /// <summary>
         /// Delete passfile.

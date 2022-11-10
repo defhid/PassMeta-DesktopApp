@@ -112,7 +112,7 @@ namespace PassMeta.DesktopApp.Core.Utils
         /// <summary>
         /// Load <see cref="PassFile.DataEncrypted"/> for passfile with id = <paramref name="passFileId"/>.
         /// </summary>
-        public static async Task<IDetailedResult<string>> GetEncryptedDataAsync(PassFileType passFileType, int passFileId, bool oldVersion = false)
+        public static async Task<IDetailedResult<byte[]>> GetEncryptedDataAsync(PassFileType passFileType, int passFileId, bool oldVersion = false)
         {
             var found = _currentPassFiles.FindIndex(pf =>
                 pf.source?.Id == passFileId || 
@@ -128,7 +128,7 @@ namespace PassMeta.DesktopApp.Core.Utils
                     Debug.Assert(res.Ok);
                     return res.Ok 
                         ? Result.Success(actual.DataEncrypted!) 
-                        : res.WithNullData<string>();
+                        : res.WithNullData<byte[]>();
                 }
             }
 
@@ -139,9 +139,9 @@ namespace PassMeta.DesktopApp.Core.Utils
                     : _GetUserPassFilePath(passFileType, passFileId);
 
                 if (!File.Exists(path))
-                    return Result.Failure<string>(Resources.PASSMGR__VERSION_NOT_FOUND_ERR);
+                    return Result.Failure<byte[]>(Resources.PASSMGR__VERSION_NOT_FOUND_ERR);
                 
-                var dataEncrypted = PassFileConvention.Convert.EncryptedBytesToString(await File.ReadAllBytesAsync(path));
+                var dataEncrypted = await File.ReadAllBytesAsync(path);
                 if (!oldVersion && actual is not null)
                 {
                     actual.DataEncrypted = dataEncrypted;
@@ -151,7 +151,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             }
             catch (Exception ex)
             {
-                return ManagerError("Passfile reading failed", ex).WithNullData<string>();
+                return ManagerError("Passfile reading failed", ex).WithNullData<byte[]>();
             }
         }
 
@@ -681,7 +681,7 @@ namespace PassMeta.DesktopApp.Core.Utils
             try
             {
                 var path = _GetUserPassFilePath(passFile.Type, passFile.Id);
-                await File.WriteAllBytesAsync(path, PassFileConvention.Convert.EncryptedStringToBytes(passFile.DataEncrypted!));
+                await File.WriteAllBytesAsync(path, passFile.DataEncrypted!);
             }
             catch (Exception ex)
             {

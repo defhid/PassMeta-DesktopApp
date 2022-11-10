@@ -5,17 +5,19 @@ namespace PassMeta.DesktopApp.Core.Services
     using Common;
     using Common.Abstractions;
     using Common.Abstractions.Services.PassFile;
+    using Common.Abstractions.Utils;
     using Common.Enums;
     using Common.Models;
     using Common.Models.Dto.Request;
     using Common.Models.Entities;
     using Common.Utils.Mapping;
-    using Utils;
     using Utils.Extensions;
 
     /// <inheritdoc />
     public class PassFileRemoteService : IPassFileRemoteService
     {
+        private readonly IPassMetaClient _passMetaClient;
+
         private static readonly SimpleMapper<string, string> WhatToStringMapper = new MapToResource<string>[]
         {
             new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
@@ -26,85 +28,111 @@ namespace PassMeta.DesktopApp.Core.Services
             new("check_password", () => Resources.DICT_STORAGE__CHECK_PASSWORD)
         };
 
+        /// <summary></summary>
+        public PassFileRemoteService(IPassMetaClient passMetaClient)
+        {
+            _passMetaClient = passMetaClient;
+        }
+
         /// <inheritdoc />
         public async Task<IResult<PassFile>> GetAsync(int passFileId)
         {
-            var response = await PassMetaApi.GetAsync<PassFile>($"passfiles/{passFileId}", true);
+            var response = await _passMetaClient.Get(PassMetaApi.PassFile.Get(passFileId))
+                .WithBadHandling()
+                .ExecuteAsync<PassFile>();
             return Result.FromResponse(response);
         }
         
         /// <inheritdoc />
         public async Task<List<PassFile>?> GetListAsync(PassFileType ofType)
         {
-            var response = await PassMetaApi.GetAsync<List<PassFile>>($"passfiles?type_id={(int)ofType}", true);
+            var response = await _passMetaClient.Get(PassMetaApi.PassFile.GetList(ofType))
+                .WithBadHandling()
+                .ExecuteAsync<List<PassFile>>();
             return response?.Data;
         }
 
         /// <inheritdoc />
-        public Task<OkBadResponse<string>?> GetDataAsync(int passFileId, int version)
+        public async Task<IResult<byte[]>> GetDataAsync(int passFileId, int version)
         {
-            return PassMetaApi.GetAsync<string>($"passfiles/{passFileId}/versions/{version}", true);
+            return await _passMetaClient.Get(PassMetaApi.PassFile.GetVersion(passFileId, version))
+                .WithBadHandling()
+                .ExecuteRawAsync();
         }
 
         /// <inheritdoc />
-        public Task<OkBadResponse<PassFile>?> SaveInfoAsync(PassFile passFile)
+        public async Task<OkBadResponse<PassFile>?> SaveInfoAsync(PassFile passFile)
         {
-            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/info", new PassFileInfoPatchData
-            {
-                Name = passFile.Name,
-                Color = passFile.Color
-            });
+            var request = _passMetaClient.Patch(PassMetaApi.PassFile.Get(passFile.Id))
+                .WithJsonBody(new PassFileInfoPatchData
+                {
+                    Name = passFile.Name,
+                    Color = passFile.Color
+                })
+                .WithContext(passFile.GetTitle())
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling();
 
-            return request.WithContext(passFile.GetTitle())
+            return await request.ExecuteAsync<PassFile>();
+        }
+
+        /// <inheritdoc />
+        public async Task<OkBadResponse<PassFile>?> SaveDataAsync(PassFile passFile)
+        {
+            var request = _passMetaClient.Post(PassMetaApi.PassFile.PostVersion(passFile.Id))
+                .WithFormBody(new
+                {
+                    smth = passFile.DataEncrypted,
+                })
+                .WithContext(passFile.GetTitle())
+                .WithBadMapping(WhatToStringMapper)
+                .WithBadHandling();
+
+            return await request.ExecuteAsync<PassFile>();
+        }
+
+        /// <inheritdoc />
+        public async Task<IResult<PassFile>> AddAsync(PassFile passFile)
+        {
+            var infoResponse = await _passMetaClient.Post(PassMetaApi.PassFile.Post())
+                .WithJsonBody(new PassFilePostData
+                {
+                    Name = passFile.Name,
+                    Color = passFile.Color,
+                    TypeId = passFile.TypeId,
+                    CreatedOn = passFile.CreatedOn,
+                })
+                .WithContext(passFile.GetTitle())
                 .WithBadMapping(WhatToStringMapper)
                 .WithBadHandling()
                 .ExecuteAsync<PassFile>();
-        }
-        
-        /// <inheritdoc />
-        public Task<OkBadResponse<PassFile>?> SaveDataAsync(PassFile passFile)
-        {
-            var request = PassMetaApi.Post($"passfiles/{passFile.Id}/versions/new", new PassFileVersionPostData
-            {
-                DataEncrypted = passFile.DataEncrypted!
-            });
 
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<PassFile>();
+            if (infoResponse?.Success is not true)
+            {
+                return Result.Failure<PassFile>();
+            }
+
+            var actualPassFile = infoResponse.Data!;
+            actualPassFile.DataEncrypted = passFile.DataEncrypted;
+
+            await SaveDataAsync(actualPassFile);
+
+            return Result.Success(actualPassFile);
         }
 
         /// <inheritdoc />
-        public Task<OkBadResponse<PassFile>?> AddAsync(PassFile passFile)
+        public async Task<OkBadResponse?> DeleteAsync(PassFile passFile, string accountPassword)
         {
-            var request = PassMetaApi.Post("passfiles/new", new PassFilePostData
-            {
-                Name = passFile.Name,
-                Color = passFile.Color,
-                TypeId = passFile.TypeId,
-                CreatedOn = passFile.CreatedOn,
-                Smth = passFile.DataEncrypted!
-            });
-
-            return request.WithContext(passFile.GetTitle())
+            var request = _passMetaClient.Delete(PassMetaApi.PassFile.Delete(passFile.Id))
+                .WithJsonBody(new PassFileDeleteData
+                {
+                    CheckPassword = accountPassword
+                })
+                .WithContext(passFile.GetTitle())
                 .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<PassFile>();
-        }
+                .WithBadHandling();
 
-        /// <inheritdoc />
-        public Task<OkBadResponse?> DeleteAsync(PassFile passFile, string accountPassword)
-        {
-            var request = PassMetaApi.Delete($"passfiles/{passFile.Id}", new PassFileDeleteData
-            {
-                CheckPassword = accountPassword
-            });
-                
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync();
+            return await request.ExecuteAsync();
         }
     }
 }

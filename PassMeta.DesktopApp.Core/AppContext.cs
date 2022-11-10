@@ -8,6 +8,7 @@ namespace PassMeta.DesktopApp.Core
     using System.Reactive.Subjects;
     using System.Threading.Tasks;
     using Common.Abstractions;
+    using Common.Abstractions.Utils;
     using Newtonsoft.Json;
     using PassMeta.DesktopApp.Common.Abstractions.Services;
     using PassMeta.DesktopApp.Common.Models.Dto.Response;
@@ -117,7 +118,7 @@ namespace PassMeta.DesktopApp.Core
         /// <summary>
         /// Refresh context from the server.
         /// </summary>
-        public static async Task RefreshCurrentFromServerAsync(bool checkConnection = true)
+        public static async Task RefreshCurrentFromServerAsync(IPassMetaClient passMetaClient, bool checkConnection = true)
         {
             var current = (AppContext)Current;
             
@@ -127,9 +128,9 @@ namespace PassMeta.DesktopApp.Core
             }
             else
             {
-                if (!checkConnection || await PassMetaApi.CheckConnectionAsync(true, true))
+                if (!checkConnection || await passMetaClient.CheckConnectionAsync(true, true))
                 {
-                    var response = await PassMetaApi.GetAsync<PassMetaInfo>("info", true);
+                    var response = await passMetaClient.Get("info").WithBadHandling().ExecuteAsync<PassMetaInfo>();
                     if (response?.Success is true)
                     {
                         var info = response.Data!;

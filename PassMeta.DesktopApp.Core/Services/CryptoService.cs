@@ -18,33 +18,31 @@ namespace PassMeta.DesktopApp.Core.Services
         private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
 
         /// <inheritdoc />
-        public string? Encrypt(string data, string keyPhrase)
+        public byte[]? Encrypt(byte[] data, string keyPhrase)
         {
             try
             {
-                var encryption = PassFileConvention.JsonEncoding.GetBytes(data);
+                var encryption = data;
+
+                using var aes = Aes.Create();
+                aes.IV = PassFileConvention.Encryption.Salt;
                 
-                using (var aes = Aes.Create())
+                for (var i = 0; i < PassFileConvention.Encryption.CryptoK; ++i)
                 {
-                    aes.IV = PassFileConvention.Encryption.Salt;
-                
-                    for (var i = 0; i < PassFileConvention.Encryption.CryptoK; ++i)
+                    aes.Key = PassFileConvention.Encryption.MakeKey(i, keyPhrase);
+
+                    using var encryptor = aes.CreateEncryptor();
+                    using var ms = new MemoryStream();
+                    using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                     {
-                        aes.Key = PassFileConvention.Encryption.MakeKey(i, keyPhrase);
-
-                        using var encryptor = aes.CreateEncryptor();
-                        using var ms = new MemoryStream();
-                        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-                        {
-                            cs.Write(encryption, 0, encryption.Length);
-                            cs.Flush();
-                        }
-
-                        encryption = ms.ToArray();
+                        cs.Write(encryption, 0, encryption.Length);
+                        cs.Flush();
                     }
+
+                    encryption = ms.ToArray();
                 }
 
-                return PassFileConvention.Convert.EncryptedBytesToString(encryption);
+                return encryption;
             }
             catch (Exception ex)
             {
@@ -54,47 +52,27 @@ namespace PassMeta.DesktopApp.Core.Services
         }
 
         /// <inheritdoc />
-        public string? Decrypt(string data, string keyPhrase, bool silent = false)
+        public byte[]? Decrypt(byte[] data, string keyPhrase, bool silent = false)
         {
-            byte[] dataBytes;
-            
             try
             {
-                dataBytes = PassFileConvention.Convert.EncryptedStringToBytes(data);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Decryption failed");
-                return null;
-            }
-            
-            return Decrypt(dataBytes, keyPhrase, silent);
-        }
+                using var aes = Aes.Create();
+                aes.IV = PassFileConvention.Encryption.Salt;
 
-        /// <inheritdoc />
-        public string? Decrypt(byte[] data, string keyPhrase, bool silent = false)
-        {
-            try
-            {
-                using (var aes = Aes.Create())
+                for (var i = PassFileConvention.Encryption.CryptoK - 1; i >= 0; --i)
                 {
-                    aes.IV = PassFileConvention.Encryption.Salt;
+                    aes.Key = PassFileConvention.Encryption.MakeKey(i, keyPhrase);
 
-                    for (var i = PassFileConvention.Encryption.CryptoK - 1; i >= 0; --i)
-                    {
-                        aes.Key = PassFileConvention.Encryption.MakeKey(i, keyPhrase);
+                    using var decryptor = aes.CreateDecryptor();
+                    using var ms = new MemoryStream(data);
+                    using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+                    using var msResult = new MemoryStream();
 
-                        using var decryptor = aes.CreateDecryptor();
-                        using var ms = new MemoryStream(data);
-                        using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
-                        using var msResult = new MemoryStream();
-
-                        cs.CopyTo(msResult);
-                        data = msResult.ToArray();
-                    }
+                    cs.CopyTo(msResult);
+                    data = msResult.ToArray();
                 }
 
-                return PassFileConvention.JsonEncoding.GetString(data);
+                return data;
             }
             catch (CryptographicException ex)
             {

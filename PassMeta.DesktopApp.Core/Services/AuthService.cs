@@ -5,10 +5,10 @@ namespace PassMeta.DesktopApp.Core.Services
     using DesktopApp.Common.Models.Entities;
     using DesktopApp.Common.Models.Dto.Request;
     using DesktopApp.Common.Utils.Mapping;
-    using DesktopApp.Core.Utils;
     using System.Threading.Tasks;
     using Common.Abstractions;
     using Common.Abstractions.Services;
+    using Common.Abstractions.Utils;
 
     /// <inheritdoc />
     public class AuthService : IAuthService
@@ -18,7 +18,15 @@ namespace PassMeta.DesktopApp.Core.Services
             new("user", () => Resources.DICT_AUTH__USER),
         };
         
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly IPassMetaClient _passMetaClient;
+        private readonly IDialogService _dialogService;
+
+        /// <summary></summary>
+        public AuthService(IDialogService dialogService, IPassMetaClient passMetaClient)
+        {
+            _dialogService = dialogService;
+            _passMetaClient = passMetaClient;
+        }
 
         /// <inheritdoc />
         public async Task<IResult<User>> SignInAsync(SignInPostData data)
@@ -29,7 +37,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure<User>();
             }
             
-            var response = await PassMetaApi.Post("auth/sign-in", data)
+            var response = await _passMetaClient.Post("auth/sign-in")
+                .WithJsonBody(data)
                 .WithBadMapping(WhatToStringMapper)
                 .WithBadHandling()
                 .ExecuteAsync<User>();
@@ -59,7 +68,7 @@ namespace PassMeta.DesktopApp.Core.Services
             var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__RESET_SESSIONS_CONFIRM);
             if (answer.Bad) return;
 
-            var response = await PassMetaApi.Post("auth/reset/all-except-me")
+            var response = await _passMetaClient.Post("auth/reset/all-except-me")
                 .WithBadHandling()
                 .ExecuteAsync();
 
@@ -78,7 +87,8 @@ namespace PassMeta.DesktopApp.Core.Services
                 return Result.Failure<User>();
             }
             
-            var response = await PassMetaApi.Post("users/new", data)
+            var response = await _passMetaClient.Post("users/new")
+                .WithJsonBody(data)
                 .WithBadMapping(WhatToStringMapper)
                 .WithBadHandling()
                 .ExecuteAsync<User>();

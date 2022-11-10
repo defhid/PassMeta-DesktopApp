@@ -27,7 +27,7 @@ namespace PassMeta.DesktopApp.Core.Services
         /// <inheritdoc />
         public async Task RefreshLocalPassFilesAsync(PassFileType passFileType)
         {
-            if (!PassMetaApi.Online) return;
+            if (!PassMetaClient.Online) return;
 
             var remoteList = await _remoteService.GetListAsync(passFileType);
             if (remoteList is null) return;
@@ -62,7 +62,7 @@ namespace PassMeta.DesktopApp.Core.Services
                     _dialogService.ShowError(commitResult.Message!);
             }
             
-            if (await PassMetaApi.CheckConnectionAsync())
+            if (await PassMetaClient.CheckConnectionAsync())
             {
                 var remoteList = await _remoteService.GetListAsync(passFileType);
                 if (remoteList is not null)
@@ -212,12 +212,12 @@ namespace PassMeta.DesktopApp.Core.Services
         {
             if (CheckAsUploading(passFile, await _EnsureHasLocalEncryptedAsync(passFile)))
             {
-                var response = await _remoteService.AddAsync(passFile);
-                if (response?.Success is true)
+                var result = await _remoteService.AddAsync(passFile);
+                if (result.Ok)
                 {
                     _logger.Info($"{passFile} created on the server");
 
-                    var actual = response.Data!.WithEncryptedDataFrom(passFile);
+                    var actual = result.Data!.WithEncryptedDataFrom(passFile);
 
                     CheckAsDownloading(actual, PassFileManager.AddFromRemote(actual, passFile.Id));
                 }

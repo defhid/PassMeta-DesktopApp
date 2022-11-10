@@ -16,12 +16,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
 
         public AppMode()
         {
-            _text = PassMetaApi.OnlineObservable.Select(online => online 
+            _text = PassMetaClient.OnlineObservable.Select(online => online 
                     ? Resources.APP__ONLINE_MODE
                     : Resources.APP__OFFLINE_MODE)
                 .ToProperty(this, nameof(Text));
 
-            _foreground = PassMetaApi.OnlineObservable.Select(online => online 
+            _foreground = PassMetaClient.OnlineObservable.Select(online => online 
                     ? Brushes.Green 
                     : Brushes.SlateGray)
                 .ToProperty(this, nameof(Foreground));
