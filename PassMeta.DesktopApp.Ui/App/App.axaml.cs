@@ -1,130 +1,106 @@
-namespace PassMeta.DesktopApp.Ui.App
+using System.Net;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Notifications;
+using Avalonia.Layout;
+using Avalonia.Markup.Xaml;
+
+using Splat;
+using System.Threading.Tasks;
+
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Ui.App.Observers;
+using PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow;
+using PassMeta.DesktopApp.Ui.Views.Main;
+
+namespace PassMeta.DesktopApp.Ui.App;
+
+public class App : Application
 {
-    using DesktopApp.Core.Services;
-    using DesktopApp.Core.Utils;
-    using DesktopApp.Ui.ViewModels.Main.MainWindow;
-    using DesktopApp.Ui.Views.Main;
-    
-    using Avalonia;
-    using Avalonia.Controls.ApplicationLifetimes;
-    using Avalonia.Controls.Notifications;
-    using Avalonia.Layout;
-    using Avalonia.Markup.Xaml;
-
-    using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Common.Abstractions.Services;
-    using Common.Abstractions.Services.PassFile;
-    using Common.Enums;
-    using Core;
-    using Interfaces.UiServices;
-    using ReactiveUI;
-    using Services;
-    using Splat;
-
-    public class App : Application
+    private static MainWindow? _mainWindow;
+    public static MainWindow? MainWindow
     {
-        public override void Initialize()
+        get => _mainWindow;
+        private set
         {
-            Task.Run(BeforeLaunchAsync).GetAwaiter().GetResult();
-            AvaloniaXamlLoader.Load(this);
-        }
-
-        public override void OnFrameworkInitializationCompleted()
-        {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow = MakeWindow();
-            }
-
-            base.OnFrameworkInitializationCompleted();
-        }
-
-        public static void Restart()
-        {
-            var window = MakeWindow();
-            window.Show();
-            
             var desktop = (IClassicDesktopStyleApplicationLifetime)Current!.ApplicationLifetime!;
-            desktop.MainWindow.Close(true);
-            desktop.MainWindow = window;
+            desktop.MainWindow = value;
+            _mainWindow = value;
         }
+    }
 
-        private static async Task BeforeLaunchAsync()
+    public override void Initialize()
+    {
+        Task.Run(BeforeLaunchAsync).GetAwaiter().GetResult();
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        MainWindow = MakeWindow();
+        EnvironmentContainer.Resolve<IDialogService>().Flush();
+    }
+
+    public static void ReopenMainWindow()
+    {
+        var window = MakeWindow();
+        window.Show();
+
+        MainWindow?.Close(true);
+        MainWindow = window;
+
+        EnvironmentContainer.Resolve<IDialogService>().Flush();
+    }
+
+    private static async Task BeforeLaunchAsync()
+    {
+        using var loading = AppLoading.General.Begin();
+
+        ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+
+        DependencyInstaller.RegisterCoreServices();
+        DependencyInstaller.RegisterUiServices();
+        DependencyInstaller.RegisterViewsForViewModels();
+
+        EnvironmentContainer.Initialize(Locator.Current);
+
+        var logService = EnvironmentContainer.Resolve<ILogService>();
+        var dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
+
+        logService.ErrorOccured += (_, ev) => 
+            dialogService.ShowError(ev.Message, more: ev.Exception.ToString());
+
+        await StartUp.LoadConfigurationAsync();
+        await StartUp.LoadContextAsync();
+
+        _ = AppConfig.CurrentObservable.Subscribe(new AppConfigObserver(passMetaClient, logService));
+        _ = AppContext.CurrentObservable.Subscribe(new AppContextObserver(logService));
+            
+        _ = passMetaClient.OnlineObservable.Subscribe(new OnlineObserver(passMetaClient, logService));
+
+        _ = Task.Run(StartUp.CheckSystem);
+    }
+
+    private static MainWindow MakeWindow()
+    {
+        var win = new MainWindow { DataContext = new MainWindowViewModel() };
+
+        win.Closed += (_, _) => win.DataContext.Dispose();
+ 
+        DependencyInstaller.Unregister<INotificationManager>();
+        DependencyInstaller.RegisterSingleton<INotificationManager>(new WindowNotificationManager(win)
         {
-            EnvironmentContainer.Initialize(Locator.Current);
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Opacity = 0.8,
+            Margin = Thickness.Parse("0 0 0 -4")
+        });
 
-            RegisterBaseServices();
-            RegisterUiServices();
-
-            await StartUp.LoadConfigurationAsync();
-
-            _ = AppConfig.CurrentObservable.Subscribe(new AppConfigObserver());
-            _ = AppContext.CurrentObservable.Subscribe(new AppContextObserver());
-
-            _ = Task.Run(StartUp.CheckSystemAsync);
-        }
-
-        private static void RegisterBaseServices()
-        {
-            Locator.CurrentMutable.RegisterConstant<ILogService>(new LogService());
-            
-            Locator.CurrentMutable.RegisterConstant<IDialogService>(new DialogService());
-
-            Locator.CurrentMutable.RegisterConstant<IOkBadService>(new OkBadService());
-
-            Locator.CurrentMutable.RegisterConstant<IAuthService>(new AuthService());
-
-            Locator.CurrentMutable.RegisterConstant<IAccountService>(new AccountService());
-            
-            Locator.CurrentMutable.RegisterConstant<ICryptoService>(new CryptoService());
-            
-            Locator.CurrentMutable.RegisterConstant<IPassFileRemoteService>(new PassFileRemoteService());
-            
-            Locator.CurrentMutable.RegisterConstant<IPassFileSyncService>(new PassFileSyncService());
-            
-            Locator.CurrentMutable.RegisterConstant<IPassFileImportService>(new PassFilePwdImportService(), PassFileType.Pwd.ToString());
-
-            Locator.CurrentMutable.RegisterConstant<IPassFileExportService>(new PassFilePwdExportService(), PassFileType.Pwd.ToString());
-            
-            Locator.CurrentMutable.RegisterConstant<IPwdMergePreparingService>(new PwdMergePreparingService());
-            
-            Locator.CurrentMutable.RegisterConstant<IClipboardService>(new ClipboardService());
-        }
-
-        private static void RegisterUiServices()
-        {
-            Locator.CurrentMutable.RegisterConstant<IPassFileExportUiService>(new PassFileExportUiService());
-            
-            Locator.CurrentMutable.RegisterConstant<IPassFileMergeUiService>(new PassFileMergeUiService());
-            
-            Locator.CurrentMutable.RegisterConstant<IPassFileRestoreUiService>(new PassFileRestoreUiService());
-            
-            Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
-        }
-
-        private static MainWindow MakeWindow()
-        {
-            Thread.CurrentThread.CurrentCulture = Common.Resources.Culture;
-            Thread.CurrentThread.CurrentUICulture = Common.Resources.Culture;
-
-            var dataContext = new MainWindowViewModel();
-
-            var win = new MainWindow { DataContext = dataContext };
-
-            win.Closed += (_, _) => dataContext.Dispose();
-            
-            Locator.CurrentMutable.UnregisterCurrent<INotificationManager>();
-            Locator.CurrentMutable.RegisterConstant<INotificationManager>(new WindowNotificationManager(win)
-            {
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Bottom,
-                Opacity = 0.8,
-                Margin = Thickness.Parse("0 0 0 -4")
-            });
-
-            return win;
-        }
+        return win;
     }
 }

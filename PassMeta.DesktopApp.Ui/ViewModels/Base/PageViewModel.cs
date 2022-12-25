@@ -1,16 +1,14 @@
-﻿namespace PassMeta.DesktopApp.Ui.ViewModels.Base
+﻿using System;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using ReactiveUI;
+
+namespace PassMeta.DesktopApp.Ui.ViewModels.Base
 {
-    using System;
-    using System.Linq;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
-    using Avalonia.Controls;
-    using ReactiveUI;
-    
     public abstract class PageViewModel : ReactiveObject, IRoutableViewModel
     {
-        public static event EventHandler<EventArgs>? Navigated;
-
         public string? UrlPathSegment { get; }
         
         public IScreen HostScreen { get; }
@@ -54,17 +52,11 @@
             {
                 if (!await allow) return;
                 await HostScreen.Router.Navigate.Execute(this);
-                Navigated?.Invoke(this, EventArgs.Empty);
             });
             
             HostScreen.Router.CurrentViewModel.FirstOrDefaultAsync()
                 .Select(async vm => vm is not PageViewModel page || await page.OnCloseAsync())
                 .InvokeCommand(navigateCommand);
-        }
-
-        protected void FakeNavigated()
-        {
-             Navigated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

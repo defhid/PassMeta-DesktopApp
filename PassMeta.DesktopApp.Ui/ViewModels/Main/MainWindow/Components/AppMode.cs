@@ -1,11 +1,13 @@
+using System.Reactive.Linq;
+using Avalonia.Media;
+using ReactiveUI;
+
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Core;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
 {
-    using System.Reactive.Linq;
-    using Avalonia.Media;
-    using Common;
-    using Core.Utils;
-    using ReactiveUI;
-
     public class AppMode : ReactiveObject
     {
         private readonly ObservableAsPropertyHelper<string> _text;
@@ -16,12 +18,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
 
         public AppMode()
         {
-            _text = PassMetaClient.OnlineObservable.Select(online => online 
+            var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
+
+            _text = passMetaClient.OnlineObservable.Select(online => online 
                     ? Resources.APP__ONLINE_MODE
                     : Resources.APP__OFFLINE_MODE)
                 .ToProperty(this, nameof(Text));
 
-            _foreground = PassMetaClient.OnlineObservable.Select(online => online 
+            _foreground = passMetaClient.OnlineObservable.Select(online => online 
                     ? Brushes.Green 
                     : Brushes.SlateGray)
                 .ToProperty(this, nameof(Foreground));

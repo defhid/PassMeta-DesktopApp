@@ -1,187 +1,204 @@
-namespace PassMeta.DesktopApp.Core.Services
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Services.Logging.Extra;
+using PassMeta.DesktopApp.Common.Models.Entities;
+
+namespace PassMeta.DesktopApp.Core.Services;
+
+/// <inheritdoc />
+public class LogService : ILogService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using Common.Abstractions.Services;
-    using Common.Models.Entities;
+    private static readonly string Folder = AppConfig.LogFilesDirectory;
+    private readonly object _lockObject = new();
+
+    private const char Separator = '|';
+    private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+    private const int LogLifeTimeMonths = 2;
+
+    private FileStream? _fileStream;
+    private DateTime? _fileStreamDateOpened;
 
     /// <inheritdoc />
-    public class LogService : ILogService
+    public void Write(Log log)
     {
-        private static readonly string Folder = AppConfig.LogFilesDirectory;
-
-        private FileStream? _fileStream;
-        private DateTime? _fileStreamDateOpened;
+        log.Section ??= Log.Sections.Unknown;
+        log.Text ??= "?";
+        log.CreatedOn ??= DateTime.Now;
         
-        private readonly object _lockObject = new();
+#if DEBUG
+        Console.WriteLine($@"{log.CreatedOn:hh:mm:ss} {log.Section} {log.Text}");
+#endif
 
-        private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-        private const int LogLifeTimeMonths = 2;
-
-        /// <inheritdoc />
-        public void Info(string text)
-            => _Write(new Log { Section = Log.Sections.Info, Text = text });
-
-        /// <inheritdoc />
-        public void Warning(string text)
-            => _Write(new Log { Section = Log.Sections.Warning, Text = text });
-        
-        /// <inheritdoc />
-        public void Error(string text)
-            => _Write(new Log { Section = Log.Sections.Error, Text = text });
-
-        /// <inheritdoc />
-        public void Error(Exception ex, string? text = null)
-            => Error(text is null ? ex.ToString() : text + $" [{ex}]");
-
-        /// <inheritdoc />
-        public List<Log> ReadLogs(DateTime dateFrom, DateTime dateTo)
+        try
         {
-            var dates = new List<DateTime> { dateFrom };
-            var curr = dateFrom;
-            
-            while (curr < dateTo)
+            lock (_lockObject)
             {
-                curr = curr.AddMonths(1);
-                dates.Add(curr);
+                EnsureFileStreamActual();
+
+                _fileStream!.Write(Encoding.UTF8.GetBytes(
+                    log.Section + Separator +
+                    log.CreatedOn
+                        .Value
+                        .ToString(DateTimeFormat, CultureInfo.InvariantCulture) + Separator +
+                    log.Text
+                        .Replace("\n", " ")
+                        .Replace("\r", " ")
+                        .Replace(Separator.ToString(), " ") +
+                    Environment.NewLine));
+
+                _fileStream.Flush();
             }
-
-            var logs = new List<Log>();
-            var errors = new List<(string, Exception)>();
-
-            foreach (var fileName in dates.Select(_GetFileNameFor))
-            {
-                try
-                {
-                    if (!File.Exists(fileName)) continue;
-                    
-                    lock (_lockObject)
-                    {
-                        _fileStream?.Dispose();
-                        _fileStreamDateOpened = null;
-                        
-                        using var stream = new StreamReader(fileName, Encoding.UTF8);
-                        while (!stream.EndOfStream)
-                        {
-                            var line = stream.ReadLine();
-                            if (string.IsNullOrWhiteSpace(line))
-                            {
-                                continue;
-                            }
-
-                            var i1 = line.IndexOf('|');
-                            var i2 = line.IndexOf('|', i1 + 1);
-
-                            if (i1 > 0 && i2 > 0 && DateTime.TryParseExact(line[(i1 + 1)..i2], DateTimeFormat, 
-                                    CultureInfo.InvariantCulture, DateTimeStyles.None, out var createdOn))
-                            {
-                                if (createdOn < dateFrom) continue;
-                                if (createdOn.Date > dateTo) break;
-
-                                logs.Add(new Log
-                                {
-                                    Section = line[..i1],
-                                    CreatedOn = createdOn,
-                                    Text = line[(i2 + 1)..]
-                                });
-                            }
-                        }
-                    
-                        stream.Close();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    errors.Add(($"Can't read log file '{fileName}'", ex));
-                }
-            }
-
-            foreach (var (text, exception) in errors)
-            {
-                EnvironmentContainer.Resolve<IDialogService>()
-                    .ShowError(text, more: exception.ToString());
-            }
-
-            return logs;
         }
-        
-        /// <inheritdoc />
-        public void OptimizeLogs()
+        catch (Exception ex)
+        {
+            EmitErrorOccured($"Can't log to file '{GetFileNameFor(log.CreatedOn.Value)}'", ex);
+        }
+    }
+
+    /// <inheritdoc />
+    public List<Log> Read(DateTime dateFrom, DateTime dateTo)
+    {
+        var dates = new List<DateTime> { dateFrom };
+        var curr = dateFrom;
+            
+        while (curr < dateTo)
+        {
+            curr = curr.AddMonths(1);
+            dates.Add(curr);
+        }
+
+        var logs = new List<Log>();
+
+        foreach (var fileName in dates.Select(GetFileNameFor))
         {
             try
             {
-                var logFiles = Directory.EnumerateFiles(Folder).ToList();
-
-                for (var i = logFiles.Count - 1; i >= 0; --i)
+                if (!File.Exists(fileName)) continue;
+                    
+                lock (_lockObject)
                 {
-                    if (!logFiles[i].EndsWith(".log"))
+                    _fileStream?.Dispose();
+                    _fileStreamDateOpened = null;
+                        
+                    using var stream = new StreamReader(fileName, Encoding.UTF8);
+                    while (!stream.EndOfStream)
                     {
-                        File.Delete(logFiles[i]);
-                        logFiles.RemoveAt(i);
+                        var line = stream.ReadLine();
+                        if (string.IsNullOrWhiteSpace(line))
+                        {
+                            continue;
+                        }
+
+                        var i1 = line.IndexOf(Separator);
+                        var i2 = line.IndexOf(Separator, i1 + 1);
+
+                        if (i1 > 0 && i2 > 0 && DateTime.TryParseExact(line[(i1 + 1)..i2], DateTimeFormat, 
+                                CultureInfo.InvariantCulture, DateTimeStyles.None, out var createdOn))
+                        {
+                            if (createdOn < dateFrom) continue;
+                            if (createdOn.Date > dateTo) break;
+
+                            logs.Add(new Log
+                            {
+                                Section = line[..i1],
+                                CreatedOn = createdOn,
+                                Text = line[(i2 + 1)..]
+                            });
+                        }
                     }
-                }
-
-                logFiles.Sort(StringComparer.Ordinal);
-
-                for (var i = logFiles.Count - 1 - LogLifeTimeMonths; i >= 0; --i)
-                {
-                    File.Delete(logFiles[i]);
+                    
+                    stream.Close();
                 }
             }
             catch (Exception ex)
             {
-                Error(ex, "Logs optimizing failed");
+                EmitErrorOccured($"Can't read log from file '{fileName}'", ex);
             }
         }
 
-        private void _Write(Log log)
+        return logs;
+    }
+        
+    /// <inheritdoc />
+    public void CleanUp()
+    {
+        try
         {
-            log.Section ??= Log.Sections.Unknown;
-            log.Text ??= "?";
-            log.CreatedOn ??= DateTime.Now;
+            var logFiles = Directory.EnumerateFiles(Folder).ToList();
+
+            for (var i = logFiles.Count - 1; i >= 0; --i)
+            {
+                if (!logFiles[i].EndsWith(".log"))
+                {
+                    File.Delete(logFiles[i]);
+                    logFiles.RemoveAt(i);
+                }
+            }
+
+            logFiles.Sort(StringComparer.Ordinal);
+
+            for (var i = logFiles.Count - 1 - LogLifeTimeMonths; i >= 0; --i)
+            {
+                File.Delete(logFiles[i]);
+            }
+        }
+        catch (Exception ex)
+        {
+            Write(new Log
+            {
+                Section = Log.Sections.Error, 
+                Text = $"Logs optimizing failed [{ex}]"
+            });
+        }
+    }
+
+    /// <inheritdoc />
+    public event EventHandler<LoggerErrorEventArgs>? ErrorOccured;
+
+    /// <summary></summary>
+    ~LogService() => Dispose();
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        _fileStream?.Dispose();
+        _fileStream = null;
+        GC.SuppressFinalize(this);
+    }
+
+    private void EnsureFileStreamActual()
+    {
+        var today = DateTime.Today;
             
+        if (_fileStreamDateOpened is null || _fileStreamDateOpened.Value.Month != today.Month)
+        {
             if (!Directory.Exists(Folder))
             {
                 Directory.CreateDirectory(Folder);
             }
 
-            lock (_lockObject)
-            {
-                _CheckFileStream();
-                _fileStream!.Write(Encoding.UTF8.GetBytes(log.Section + '|' 
-                                                                      + log.CreatedOn.Value.ToString(DateTimeFormat, CultureInfo.InvariantCulture) + '|' 
-                                                                      + log.Text.Replace(Environment.NewLine, " ") + Environment.NewLine));
-                _fileStream.Flush();
-            }
-        }
-        
-        private static string _GetFileNameFor(DateTime date) => Path.Combine(Folder, $"{date:yyyy-MM}.log");
-
-        private void _CheckFileStream()
-        {
-            var today = DateTime.Today;
-            
-            if (_fileStreamDateOpened is null || _fileStreamDateOpened.Value.Month != today.Month)
-            {
-                _fileStream?.Dispose();
-                _fileStream = new FileStream(_GetFileNameFor(today), FileMode.Append);
-                _fileStreamDateOpened = today;
-            }
-        }
-
-        /// <summary></summary>
-        ~LogService() => Dispose();
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
             _fileStream?.Dispose();
-            _fileStream = null;
-            GC.SuppressFinalize(this);
+            _fileStream = new FileStream(GetFileNameFor(today), FileMode.Append);
+            _fileStreamDateOpened = today;
         }
     }
+
+    private void EmitErrorOccured(string message, Exception ex)
+    {
+        try
+        {
+            ErrorOccured?.Invoke(this, new LoggerErrorEventArgs(message, ex));
+        }
+        catch
+        {
+            // ignored
+        }
+    }
+
+    private static string GetFileNameFor(DateTime date) => Path.Combine(Folder, $"{date:yyyy-MM}.log");
 }

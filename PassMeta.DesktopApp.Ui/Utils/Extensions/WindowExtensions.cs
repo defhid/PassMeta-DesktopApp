@@ -16,9 +16,9 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         public static void CorrectMainWindowFocusWhileOpened(this Window win)
         {
             win.Opened += (_, _) =>
-                MainWindow.Current!.GotFocus += win._FocusInsteadMainWindow;
+                App.App.MainWindow!.GotFocus += win._FocusInsteadMainWindow;
             win.Closing += (_, _) =>
-                MainWindow.Current!.GotFocus -= win._FocusInsteadMainWindow;
+                App.App.MainWindow!.GotFocus -= win._FocusInsteadMainWindow;
         }
         
         private static void _FocusInsteadMainWindow(this Window win, object? sender, GotFocusEventArgs e) => win.Activate();

@@ -32,32 +32,17 @@
     <data name="APP__MENU_BTN__STORAGE" xml:space="preserve">
         <value>Хранилище</value>
     </data>
-    <data name="APP_CONFIG__LOAD_ERR" xml:space="preserve">
-        <value>Ошибка чтения файла конфигурации приложения! Создание нового...</value>
-    </data>
     <data name="APP_CONFIG__SAVE_ERR" xml:space="preserve">
         <value>Ошибка сохранения файла конфигурации приложения! (см. логи)</value>
     </data>
     <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
         <value>Не удаётся расшифровать файл</value>
     </data>
-    <data name="API__INVALID_RESPONSE_ERR" xml:space="preserve">
-        <value>Невалидный ответ сервера!</value>
-    </data>
     <data name="API__CONNECTION_ERR" xml:space="preserve">
         <value>Ошибка подключения к серверу!</value>
     </data>
     <data name="API__CONNECTION_TIMEOUT_ERR" xml:space="preserve">
         <value>Превышено допустимое время ожидания ответа сервера!</value>
-    </data>
-    <data name="API__UNAUTHORIZED_ERR" xml:space="preserve">
-        <value>Ошибка авторизации! Пожалуйста, попробуйте войти в систему заново.</value>
-    </data>
-    <data name="API__FORBIDDEN_ERR" xml:space="preserve">
-        <value>Ошибка доступа!</value>
-    </data>
-    <data name="API__INTERNAL_SERVER_ERR" xml:space="preserve">
-        <value>Ошибка сервера!</value>
     </data>
     <data name="OKBAD_MORE__INFO" xml:space="preserve">
         <value>Доп. информация</value>

@@ -1,7 +1,6 @@
 namespace PassMeta.DesktopApp.Ui.Utils
 {
     using Core;
-    using Core.Utils;
 
     public static class PresetsCache
     {

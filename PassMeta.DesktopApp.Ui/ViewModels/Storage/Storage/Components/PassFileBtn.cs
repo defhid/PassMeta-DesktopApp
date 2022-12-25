@@ -1,17 +1,16 @@
+using System;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+    
+using Avalonia.Media;
+using ReactiveUI;
+using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
+    
+using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Ui.Utils.Extensions;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 {
-    using System;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
-    using Avalonia.Media;
-    using Common.Models.Entities;
-    using ReactiveUI;
-    using Ui.Utils.Extensions;
-    using Views.Main;
-    using Views.Storage;
-    
-    using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
-
     public class PassFileBtn : ReactiveObject
     {
         private PassFile? _passFile;
@@ -62,9 +61,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         public async Task OpenAsync()
         {
-            var win = new PassFileWin(PassFile!);
+            var win = new Views.Storage.PassFileWin(PassFile!);
 
-            await win.ShowDialog(MainWindow.Current);
+            await win.ShowDialog(App.App.MainWindow);
             
             if (win.PassFileChanged)
             {

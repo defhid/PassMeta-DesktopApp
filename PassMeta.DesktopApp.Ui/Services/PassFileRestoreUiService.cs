@@ -1,26 +1,37 @@
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+    
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Models;
+using PassMeta.DesktopApp.Common.Models.Entities;
+    
+using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Core.Services.Extensions;
+    
+using PassMeta.DesktopApp.Ui.Interfaces.UiServices;
+using PassMeta.DesktopApp.Ui.Views.Storage;
+
 namespace PassMeta.DesktopApp.Ui.Services
 {
-    using System;
-    using System.IO;
-    using System.Threading.Tasks;
-    using Avalonia.Controls;
-    using Common;
-    using Common.Abstractions;
-    using Common.Abstractions.Services;
-    using Common.Abstractions.Services.PassFile;
-    using Common.Models;
-    using Common.Models.Entities;
-    using Core;
-    using Core.Utils;
-    using Interfaces.UiServices;
-    using Views.Storage;
-
     /// <inheritdoc />
     public class PassFileRestoreUiService : IPassFileRestoreUiService
     {
-        private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
-        
+        private readonly IDialogService _dialogService;
+        private readonly ILogService _logger;
+
+        public PassFileRestoreUiService(IDialogService dialogService, ILogService logger)
+        {
+            _dialogService = dialogService;
+            _logger = logger;
+        }
+
         /// <inheritdoc />
         public async Task<IResult> SelectAndRestoreAsync(PassFile passFile, Window currentWindow)
         {

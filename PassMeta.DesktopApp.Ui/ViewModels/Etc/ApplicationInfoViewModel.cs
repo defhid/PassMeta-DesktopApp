@@ -1,7 +1,6 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels.Etc
 {
     using Core;
-    using DesktopApp.Core.Utils;
     using ReactiveUI;
         
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;

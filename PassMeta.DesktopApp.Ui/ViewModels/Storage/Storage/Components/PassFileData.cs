@@ -1,26 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+    
+using Avalonia;
+using Avalonia.Controls;
+using ReactiveUI;
+    
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Common.Models.Entities.Extra;
+using PassMeta.DesktopApp.Common.Utils.Extensions;
+using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Core.Utils.Extensions;
+using PassMeta.DesktopApp.Ui.Utils.Comparers;
+using PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Models;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
-    using Avalonia;
-    using Avalonia.Controls;
-    using Common;
-    using Common.Abstractions.Services;
-    using Common.Models.Entities;
-    using Common.Utils.Extensions;
-    using Core;
-    using Core.Utils;
-    using Common.Models.Entities.Extra;
-    using Core.Utils.Extensions;
-    using Models;
-    using ReactiveUI;
-    using Utils.Comparers;
-    using Views.Main;
-
     public class PassFileData : ReactiveObject
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
@@ -280,7 +281,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             var confirm = await _dialogService.ConfirmAsync(string.Format(Resources.STORAGE__CONFIRM_DELETE_SECTION, section.Name));
             if (confirm.Bad) return;
 
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
 
             var result = PassFileManager.UpdatePwdDataSelectively(passFile, data => 
                 data.RemoveAll(s => s.Id == section.Id));
@@ -314,7 +315,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         private void ItemsApplyChanges()
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
 
             var passFile = _passFile!;
             var section = SelectedSection!;

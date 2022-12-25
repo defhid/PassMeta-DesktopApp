@@ -3,10 +3,9 @@
     using System;
     using Avalonia.Controls;
     using Components;
-    using Interfaces;
     using ReactiveUI;
 
-    public sealed class MainWindowViewModel : ReactiveObject, IScreen, IPreloaderSupport, IDisposable
+    public sealed class MainWindowViewModel : ReactiveObject, IScreen, IDisposable
     {
         public RoutingState Router { get; } = new();
 

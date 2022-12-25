@@ -39,32 +39,17 @@
     <data name="APP__MENU_BTN__SETTINGS" xml:space="preserve">
         <value>Settings</value>
     </data>
-    <data name="APP_CONFIG__LOAD_ERR" xml:space="preserve">
-        <value>Application config file reading failed! Creating a new one...</value>
-    </data>
     <data name="APP_CONFIG__SAVE_ERR" xml:space="preserve">
         <value>Application config file saving error! (see logs)</value>
     </data>
     <data name="PASSFILE__DECRYPTION_ERROR" xml:space="preserve">
         <value>Passfile decryption failed</value>
     </data>
-    <data name="API__INVALID_RESPONSE_ERR" xml:space="preserve">
-        <value>Invalid server response!</value>
-    </data>
     <data name="API__CONNECTION_ERR" xml:space="preserve">
         <value>Server connection error!</value>
     </data>
     <data name="API__CONNECTION_TIMEOUT_ERR" xml:space="preserve">
         <value>Connection timeout error!</value>
-    </data>
-    <data name="API__UNAUTHORIZED_ERR" xml:space="preserve">
-        <value>Authorization error! Please, try re-login.</value>
-    </data>
-    <data name="API__FORBIDDEN_ERR" xml:space="preserve">
-        <value>Access error!</value>
-    </data>
-    <data name="API__INTERNAL_SERVER_ERR" xml:space="preserve">
-        <value>Server error!</value>
     </data>
     <data name="OKBAD_MORE__INFO" xml:space="preserve">
         <value>Additional info: </value>

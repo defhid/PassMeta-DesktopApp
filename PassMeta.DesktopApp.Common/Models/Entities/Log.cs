@@ -1,7 +1,7 @@
 namespace PassMeta.DesktopApp.Common.Models.Entities
 {
     using System;
-    using Abstractions.Mapping;
+    using Abstractions.Utils.Mapping;
     using Utils.Mapping;
 
     /// <summary>

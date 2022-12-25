@@ -11,8 +11,8 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Response
         /// <summary>
         /// Page number, starting from 1.
         /// </summary>
-        [JsonProperty("page_num")]
-        public int PageNumber { get; init; }
+        [JsonProperty("page_index")]
+        public int PageIndex { get; init; }
 
         /// <summary>
         /// Page size.

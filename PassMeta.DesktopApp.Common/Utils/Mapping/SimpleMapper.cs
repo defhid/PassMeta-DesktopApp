@@ -3,7 +3,7 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using Abstractions.Mapping;
+    using Abstractions.Utils.Mapping;
 
     /// <summary>
     /// Default implementation of <see cref="IMapper{TValueFrom,TValueTo}"/>.

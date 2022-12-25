@@ -3,7 +3,7 @@ namespace PassMeta.DesktopApp.Common.Utils.Mapping
     using System;
     using System.Diagnostics;
     using System.Linq.Expressions;
-    using Abstractions.Mapping;
+    using Abstractions.Utils.Mapping;
 
     /// <summary>
     /// Mapping to resource.

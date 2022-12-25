@@ -186,42 +186,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Access error!.
-        /// </summary>
-        public static string API__FORBIDDEN_ERR {
-            get {
-                return ResourceManager.GetString("API__FORBIDDEN_ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Server error!.
-        /// </summary>
-        public static string API__INTERNAL_SERVER_ERR {
-            get {
-                return ResourceManager.GetString("API__INTERNAL_SERVER_ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid server response!.
-        /// </summary>
-        public static string API__INVALID_RESPONSE_ERR {
-            get {
-                return ResourceManager.GetString("API__INVALID_RESPONSE_ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Authorization error! Please, try re-login..
-        /// </summary>
-        public static string API__UNAUTHORIZED_ERR {
-            get {
-                return ResourceManager.GetString("API__UNAUTHORIZED_ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Incorrect url! Please, check app settings..
         /// </summary>
         public static string API__URL_ERR {
@@ -317,15 +281,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string APP__RIGHT_BAR_BTN__REFRESH {
             get {
                 return ResourceManager.GetString("APP__RIGHT_BAR_BTN__REFRESH", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Application config file reading failed! Creating a new one....
-        /// </summary>
-        public static string APP_CONFIG__LOAD_ERR {
-            get {
-                return ResourceManager.GetString("APP_CONFIG__LOAD_ERR", resourceCulture);
             }
         }
         

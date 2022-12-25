@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Mapping
+namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Mapping
 {
     /// <summary>
     /// Mapping object.

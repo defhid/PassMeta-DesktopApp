@@ -23,8 +23,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Utils.Comparers;
     using Utils.Extensions;
     using ViewModels.Components;
-    using Views.Main;
-    
     using AppContext = Core.AppContext;
 
     public class StorageViewModel : PageViewModel
@@ -154,7 +152,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
         {
             if (AppContext.Current.User is null)
             {
-                FakeNavigated();
                 TryNavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
             }
             else
@@ -203,7 +200,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         private async Task LoadPassFilesAsync(PassFileItemPath lastItemPath)
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
 
             if (!_loaded)
             {
@@ -258,7 +255,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
             if (!passFile.LocalDeleted)
             {
-                using var preloader = MainWindow.Current!.StartPreloader();
+                using var preloader = AppLoading.General.Begin();
 
                 var result = await passFile.LoadIfRequiredAndDecryptAsync(_dialogService);
                 if (result.Ok)
@@ -273,7 +270,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         private async Task SaveAsync()
         {
-            using (MainWindow.Current!.StartPreloader())
+            using (AppLoading.General.Begin())
             {
                 await _pfSyncService.ApplyPassFileLocalChangesAsync(PassFileType.Pwd);
             }
@@ -283,7 +280,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         public async Task PassFileAddAsync()
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
             
             var askPassPhrase = await _dialogService.AskPasswordAsync(Resources.STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE);
             if (askPassPhrase.Bad || askPassPhrase.Data == string.Empty) return;

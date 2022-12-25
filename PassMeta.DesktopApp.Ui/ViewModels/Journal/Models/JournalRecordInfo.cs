@@ -2,7 +2,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal.Models
 {
     using System.Linq;
     using Common.Models.Dto.Response;
-    using Common.Models.Entities;
     using Common.Utils.Extensions;
 
     public class JournalRecordInfo
