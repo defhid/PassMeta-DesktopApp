@@ -1,22 +1,27 @@
+using System;
+using System.Threading.Tasks;
+
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Core.Services.Extensions;
+
 namespace PassMeta.DesktopApp.Ui.Services
 {
-    using System;
-    using System.Threading.Tasks;
-    using Common;
-    using Common.Abstractions.Services;
-    using Core;
-
+    /// <inheritdoc />
     public class ClipboardService : IClipboardService
     {
         private readonly IDialogService _dialogService;
         private readonly ILogService _logger;
-        
-        public ClipboardService()
+
+        /// <summary></summary>
+        public ClipboardService(IDialogService dialogService, ILogService logger)
         {
-            _dialogService = EnvironmentContainer.Resolve<IDialogService>();
-            _logger = EnvironmentContainer.Resolve<ILogService>();
+            _dialogService = dialogService;
+            _logger = logger;
         }
-        
+
+        /// <inheritdoc />
         public async Task<bool> TrySetTextAsync(string? text)
         {
             try

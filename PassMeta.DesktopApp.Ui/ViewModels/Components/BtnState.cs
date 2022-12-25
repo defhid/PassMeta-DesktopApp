@@ -3,7 +3,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Components
     using System;
     using System.Reactive;
     using System.Windows.Input;
-    using Avalonia;
     using Avalonia.Media;
     using ReactiveUI;
 

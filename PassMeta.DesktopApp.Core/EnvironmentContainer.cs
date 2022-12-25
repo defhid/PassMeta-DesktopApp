@@ -1,27 +1,26 @@
-namespace PassMeta.DesktopApp.Core
+using System.Runtime.CompilerServices;
+using Splat;
+
+namespace PassMeta.DesktopApp.Core;
+
+/// <summary>
+/// Environment container.
+/// </summary>
+public static class EnvironmentContainer
 {
-    using System.Runtime.CompilerServices;
-    using Splat;
+    private static IReadonlyDependencyResolver _resolver = null!;
+        
+    /// <summary>
+    /// Resolve service.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static TService Resolve<TService>(string? contract = null) => (TService)_resolver.GetService(typeof(TService), contract)!;
 
     /// <summary>
-    /// Environment container.
+    /// Initialize environment container.
     /// </summary>
-    public static class EnvironmentContainer
+    public static void Initialize(IReadonlyDependencyResolver resolver)
     {
-        private static IReadonlyDependencyResolver _resolver = null!;
-        
-        /// <summary>
-        /// Resolve service.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TService Resolve<TService>(string? contract = null) => (TService)_resolver.GetService(typeof(TService), contract)!;
-
-        /// <summary>
-        /// Initialize environment container.
-        /// </summary>
-        public static void Initialize(IReadonlyDependencyResolver resolver)
-        {
-            _resolver = resolver;
-        }
+        _resolver = resolver;
     }
 }

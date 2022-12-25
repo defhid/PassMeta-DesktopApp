@@ -2,7 +2,7 @@ namespace PassMeta.DesktopApp.Common.Models
 {
     using System;
     using System.Collections.Generic;
-    using Abstractions.Mapping;
+    using Abstractions.Utils.Mapping;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     
@@ -20,14 +20,14 @@ namespace PassMeta.DesktopApp.Common.Models
         /// <summary>
         /// Response message.
         /// </summary>
-        [JsonProperty("message")]
+        [JsonProperty("msg")]
         public string Message { get; init; } = null!;
         
         /// <summary>
         /// If not <see cref="Success"/>, short reason.
         /// </summary>
         [JsonProperty("what")]
-        public string? What { get; private set; }
+        public string? What { get; set; }
         
         /// <summary>
         /// Sub-responses. Sub-error information list.

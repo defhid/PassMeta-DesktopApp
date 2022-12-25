@@ -7,11 +7,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
     using System.Threading.Tasks;
     using Base;
     using Common;
-    using Common.Abstractions.Services;
+    using Common.Abstractions.Services.Logging;
     using Core;
     using Models;
     using ReactiveUI;
-    using Views.Main;
 
     public class LogsViewModel : PageViewModel
     {
@@ -82,7 +81,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
 
         private void LoadLogs((DateTimeOffset from, DateTimeOffset to) period)
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
 
             var (fromDate, toDate) = (period.from.Date, period.to.Date);
             
@@ -92,7 +91,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
                 return;
             }
 
-            var logs = _logger.ReadLogs(fromDate, toDate);
+            var logs = _logger.Read(fromDate, toDate);
             logs.Reverse();
 
             Logs = logs.Select(l => new LogInfo(l)).ToList();

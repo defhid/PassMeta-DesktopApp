@@ -1,110 +1,174 @@
-namespace PassMeta.DesktopApp.Core.Services
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Models;
+using PassMeta.DesktopApp.Common.Models.Dto.Request;
+using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Common.Utils.Mapping;
+
+using PassMeta.DesktopApp.Core.Services.Extensions;
+using PassMeta.DesktopApp.Core.Utils.Extensions;
+
+namespace PassMeta.DesktopApp.Core.Services;
+
+/// <inheritdoc />
+public class PassFileRemoteService : IPassFileRemoteService
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Common;
-    using Common.Abstractions;
-    using Common.Abstractions.Services.PassFile;
-    using Common.Enums;
-    using Common.Models;
-    using Common.Models.Dto.Request;
-    using Common.Models.Entities;
-    using Common.Utils.Mapping;
-    using Utils;
-    using Utils.Extensions;
+    private static readonly SimpleMapper<string, string> WhatToStringMapper = new MapToResource<string>[]
+    {
+        new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
+        new("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
+        new("color", () => Resources.DICT_STORAGE__PASSFILE_COLOR),
+        new("created_on", () => Resources.DICT_STORAGE__PASSFILE_CREATED_ON),
+        new("smth", () => Resources.DICT_STORAGE__PASSFILE_SMTH),
+        new("check_password", () => Resources.DICT_STORAGE__CHECK_PASSWORD)
+    };
+
+    private readonly IPassMetaClient _passMetaClient;
+    private readonly ILogService _logger;
+
+    /// <summary></summary>
+    public PassFileRemoteService(IPassMetaClient passMetaClient, ILogService logger)
+    {
+        _passMetaClient = passMetaClient;
+        _logger = logger;
+    }
 
     /// <inheritdoc />
-    public class PassFileRemoteService : IPassFileRemoteService
+    public async Task<IResult<PassFile>> GetInfoAsync(int passFileId)
     {
-        private static readonly SimpleMapper<string, string> WhatToStringMapper = new MapToResource<string>[]
-        {
-            new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
-            new("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
-            new("color", () => Resources.DICT_STORAGE__PASSFILE_COLOR),
-            new("created_on", () => Resources.DICT_STORAGE__PASSFILE_CREATED_ON),
-            new("smth", () => Resources.DICT_STORAGE__PASSFILE_SMTH),
-            new("check_password", () => Resources.DICT_STORAGE__CHECK_PASSWORD)
-        };
+        var response = await _passMetaClient.Begin(PassMetaApi.PassFile.Get(passFileId))
+            .WithBadHandling()
+            .ExecuteAsync<PassFile>();
 
-        /// <inheritdoc />
-        public async Task<IResult<PassFile>> GetAsync(int passFileId)
-        {
-            var response = await PassMetaApi.GetAsync<PassFile>($"passfiles/{passFileId}", true);
-            return Result.FromResponse(response);
-        }
+        _logger.Info($"PasFile #{passFileId} info was fetched from the server: " + GetIsSuccess(response));
+
+        return Result.FromResponse(response);
+    }
         
-        /// <inheritdoc />
-        public async Task<List<PassFile>?> GetListAsync(PassFileType ofType)
-        {
-            var response = await PassMetaApi.GetAsync<List<PassFile>>($"passfiles?type_id={(int)ofType}", true);
-            return response?.Data;
-        }
+    /// <inheritdoc />
+    public async Task<List<PassFile>?> GetListAsync(PassFileType ofType)
+    {
+        var response = await _passMetaClient.Begin(PassMetaApi.PassFile.GetList(ofType))
+            .WithBadHandling()
+            .ExecuteAsync<List<PassFile>>();
 
-        /// <inheritdoc />
-        public Task<OkBadResponse<string>?> GetDataAsync(int passFileId, int version)
-        {
-            return PassMetaApi.GetAsync<string>($"passfiles/{passFileId}/versions/{version}", true);
-        }
+        _logger.Info("PasFile list was fetched from the server: " + GetIsSuccess(response));
+            
+        return response?.Data;
+    }
 
-        /// <inheritdoc />
-        public Task<OkBadResponse<PassFile>?> SaveInfoAsync(PassFile passFile)
-        {
-            var request = PassMetaApi.Patch($"passfiles/{passFile.Id}/info", new PassFileInfoPatchData
+    /// <inheritdoc />
+    public async Task<byte[]?> GetDataAsync(int passFileId, int version)
+    {
+        var data =  await _passMetaClient.Begin(PassMetaApi.PassFile.GetVersion(passFileId, version))
+            .WithBadHandling()
+            .ExecuteRawAsync();
+
+        _logger.Info($"PasFile #{passFileId} v{version} content was fetched from the server: " + GetIsSuccess(data is not null));
+
+        return data;
+    }
+
+    /// <inheritdoc />
+    public async Task<OkBadResponse<PassFile>?> SaveInfoAsync(PassFile passFile)
+    {
+        var request = _passMetaClient.Begin(PassMetaApi.PassFile.Patch(passFile.Id))
+            .WithJsonBody(new PassFileInfoPatchData
             {
                 Name = passFile.Name,
                 Color = passFile.Color
-            });
+            })
+            .WithContext(passFile.GetTitle())
+            .WithBadMapping(WhatToStringMapper)
+            .WithBadHandling();
 
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<PassFile>();
-        }
-        
-        /// <inheritdoc />
-        public Task<OkBadResponse<PassFile>?> SaveDataAsync(PassFile passFile)
-        {
-            var request = PassMetaApi.Post($"passfiles/{passFile.Id}/versions/new", new PassFileVersionPostData
+        var response = await request.ExecuteAsync<PassFile>();
+
+        _logger.Info($"PassFile #{passFile.Id} info was saved on the server: " + GetIsSuccess(response));
+            
+        return response;
+    }
+
+    /// <inheritdoc />
+    public async Task<OkBadResponse<PassFile>?> SaveDataAsync(PassFile passFile)
+    {
+        var request = _passMetaClient.Begin(PassMetaApi.PassFile.PostVersion(passFile.Id))
+            .WithFormBody(new
             {
-                DataEncrypted = passFile.DataEncrypted!
-            });
+                smth = passFile.DataEncrypted,
+            })
+            .WithContext(passFile.GetTitle())
+            .WithBadMapping(WhatToStringMapper)
+            .WithBadHandling();
 
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<PassFile>();
-        }
+        var response = await request.ExecuteAsync<PassFile>();
 
-        /// <inheritdoc />
-        public Task<OkBadResponse<PassFile>?> AddAsync(PassFile passFile)
-        {
-            var request = PassMetaApi.Post("passfiles/new", new PassFilePostData
+        _logger.Info($"PassFile #{passFile.Id} content was saved on the server: " + GetIsSuccess(response));
+
+        return response;
+    }
+
+    /// <inheritdoc />
+    public async Task<IResult<PassFile>> AddAsync(PassFile passFile)
+    {
+        var infoResponse = await _passMetaClient.Begin(PassMetaApi.PassFile.Post())
+            .WithJsonBody(new PassFilePostData
             {
                 Name = passFile.Name,
                 Color = passFile.Color,
                 TypeId = passFile.TypeId,
                 CreatedOn = passFile.CreatedOn,
-                Smth = passFile.DataEncrypted!
-            });
+            })
+            .WithContext(passFile.GetTitle())
+            .WithBadMapping(WhatToStringMapper)
+            .WithBadHandling()
+            .ExecuteAsync<PassFile>();
 
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<PassFile>();
+        _logger.Info($"PassFile #{passFile.Id} info was added to the server: " + GetIsSuccess(infoResponse));
+
+        if (infoResponse?.Success is not true)
+        {
+            return Result.Failure<PassFile>();
         }
 
-        /// <inheritdoc />
-        public Task<OkBadResponse?> DeleteAsync(PassFile passFile, string accountPassword)
+        var actualPassFile = infoResponse.Data!;
+        actualPassFile.DataEncrypted = passFile.DataEncrypted;
+
+        var dataResponse = await SaveDataAsync(actualPassFile);
+        if (dataResponse?.Success is true)
         {
-            var request = PassMetaApi.Delete($"passfiles/{passFile.Id}", new PassFileDeleteData
+            actualPassFile.RefreshDataFieldsFrom(dataResponse.Data!.WithEncryptedDataFrom(actualPassFile), false);
+        }
+
+        return Result.Success(actualPassFile);
+    }
+
+    /// <inheritdoc />
+    public async Task<OkBadResponse?> DeleteAsync(PassFile passFile, string accountPassword)
+    {
+        var request = _passMetaClient.Begin(PassMetaApi.PassFile.Delete(passFile.Id))
+            .WithJsonBody(new PassFileDeleteData
             {
                 CheckPassword = accountPassword
-            });
-                
-            return request.WithContext(passFile.GetTitle())
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync();
-        }
+            })
+            .WithContext(passFile.GetTitle())
+            .WithBadMapping(WhatToStringMapper)
+            .WithBadHandling();
+
+        var response = await request.ExecuteAsync();
+
+        _logger.Info($"PassFile #{passFile.Id} was deleted from the server: " + GetIsSuccess(response));
+
+        return response;
     }
+
+    private static string GetIsSuccess(OkBadResponse? response) => GetIsSuccess(response?.Success is true);
+    private static string GetIsSuccess(bool success) => success ? "SUCCESS" : "FAILURE";
 }

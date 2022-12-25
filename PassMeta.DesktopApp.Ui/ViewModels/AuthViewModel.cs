@@ -1,16 +1,14 @@
+using System.Threading.Tasks;
+using System.Windows.Input;
+using ReactiveUI;
+    
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Models.Dto.Request;
+using PassMeta.DesktopApp.Ui.ViewModels.Base;
+using PassMeta.DesktopApp.Core;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    using DesktopApp.Common.Models.Dto.Request;
-    using DesktopApp.Core.Utils;
-    using DesktopApp.Ui.ViewModels.Base;
-    using DesktopApp.Ui.Views.Main;
-    
-    using System.Threading.Tasks;
-    using System.Windows.Input;
-    using Common.Abstractions.Services;
-    using Core;
-    using ReactiveUI;
-
     public class AuthViewModel : PageViewModel
     {
         private static IAuthService AuthService => EnvironmentContainer.Resolve<IAuthService>();
@@ -49,7 +47,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private async Task _SignInAsync()
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
             
             var data = new SignInPostData(Login?.Trim() ?? "", Password ?? "");
             var result = await AuthService.SignInAsync(data);
@@ -59,7 +57,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private async Task _SignUpAsync()
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
             
             var data = new SignUpPostData(Login?.Trim() ?? "", Password ?? "", "Unknown");
             var result = await AuthService.SignUpAsync(data);

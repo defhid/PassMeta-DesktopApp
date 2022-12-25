@@ -1,22 +1,20 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using ReactiveUI;
+using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
+    
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Constants;
+using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Ui.Views.Etc;
+using PassMeta.DesktopApp.Ui.ViewModels.Base;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    using DesktopApp.Common;
-    using DesktopApp.Common.Constants;
-    using DesktopApp.Core.Utils;
-    using DesktopApp.Core;
-    using DesktopApp.Ui.ViewModels.Base;
-    
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Common.Abstractions.Services;
-    using Common.Models.Settings;
-    using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
-    
-    using ReactiveUI;
-    using Views.Etc;
-    using Views.Main;
-
     public class SettingsViewModel : PageViewModel
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
@@ -57,7 +55,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
             FillFromAppConfig();
 
             AppInfoCommand = ReactiveCommand.CreateFromTask(
-                () => new ApplicationInfoWin().ShowDialog(MainWindow.Current));
+                () => new ApplicationInfoWin().ShowDialog(App.App.MainWindow));
 
             SaveCommand = ReactiveCommand.CreateFromTask(_SaveAsync);
         }
@@ -80,7 +78,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                 ? "https://"
                 : AppConfig.Current.ServerUrl;
 
-            SelectedCulture = Cultures.FirstOrDefault(cult => cult.Code == AppConfig.Current.CultureCode);
+            SelectedCulture = Cultures.FirstOrDefault(cult => cult == AppConfig.Current.Culture);
 
             HidePasswords = AppConfig.Current.HidePasswords;
             DevMode = AppConfig.Current.DevMode;
@@ -88,7 +86,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         private async Task _SaveAsync()
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
             
             var serverUrl = ServerUrl?.Trim() ?? "";
 
@@ -107,13 +105,12 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
                 return;
             }
 
-            var result = await AppConfig.CreateAndSetCurrentAsync(new AppConfigData
+            var result = await AppConfig.ApplyAsync(appConfig =>
             {
-                ServerUrl = serverUrl,
-                CultureCode = SelectedCulture?.Code,
-                HidePasswords = HidePasswords,
-                DevMode = DevMode,
-                DefaultPasswordLength = AppConfig.Current.DefaultPasswordLength
+                appConfig.ServerUrl = serverUrl;
+                appConfig.Culture = SelectedCulture ?? appConfig.Culture;
+                appConfig.HidePasswords = HidePasswords;
+                appConfig.DevMode = DevMode;
             });
 
             if (result.Ok)

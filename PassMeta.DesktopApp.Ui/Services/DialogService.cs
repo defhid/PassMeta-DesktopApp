@@ -1,43 +1,52 @@
+using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Models;
+using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Core.Services.Extensions;
+
+using PassMeta.DesktopApp.Ui.Constants;
+using PassMeta.DesktopApp.Ui.Utils.Extensions;
+using PassMeta.DesktopApp.Ui.Views.Main;
+using PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow;
+using PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components;
+
 namespace PassMeta.DesktopApp.Ui.Services
 {
-    using DesktopApp.Common;
-    using DesktopApp.Common.Enums;
-    using DesktopApp.Common.Models;
-    using DesktopApp.Ui.Views.Main;
-    
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    
-    using Avalonia.Controls;
-    using Avalonia.Controls.Notifications;
-    using Common.Abstractions;
-    using Common.Abstractions.Services;
-    using Constants;
-    using Core;
-    using Utils.Extensions;
-    using ViewModels.Main.DialogWindow;
-    using ViewModels.Main.DialogWindow.Components;
-
     /// <inheritdoc />
     public class DialogService : IDialogService
     {
-        private static INotificationManager? NotificationManager => EnvironmentContainer.Resolve<INotificationManager?>();
-        private static ILogService Logger => EnvironmentContainer.Resolve<ILogService>();
-        
-        private static readonly List<Action> Deferred = new();
-        private static readonly List<Window> Opened = new();
-        
-        static DialogService()
+        private readonly Func<INotificationManager?> _notificationManagerResolver;
+        private readonly ILogService _logger;
+        private readonly List<Action> _deferred = new();
+        private readonly List<Window> _opened = new();
+
+        public DialogService(Func<INotificationManager?> notificationManagerResolver, ILogService logger)
         {
-            MainWindow.CurrentChanged += _SetCurrentWindowAsync;
+            _notificationManagerResolver = notificationManagerResolver;
+            _logger = logger;
         }
 
-        private static Task _SetCurrentWindowAsync(Window window)
+        private INotificationManager? NotificationManager => _notificationManagerResolver();
+
+        public void Flush()
         {
-            lock (Deferred)
+            if (App.App.MainWindow is null)
             {
-                foreach (var shower in Deferred)
+                return;
+            }
+
+            lock (_deferred)
+            {
+                foreach (var shower in _deferred)
                 {
                     try
                     {
@@ -45,30 +54,28 @@ namespace PassMeta.DesktopApp.Ui.Services
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex, "Deferred dialog showing failed");
+                        _logger.Error(ex, "Deferred dialog showing failed");
                     }
                 }
-                Deferred.Clear();
+                _deferred.Clear();
             }
-
-            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
         public void ShowInfo(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.PopUp)
         {
-            _CallOrDeffer(() =>
+            CallOrDeffer(() =>
             {
                 if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
                 {
-                    _ShowNotification(new Notification(title,
+                    ShowNotification(new Notification(title,
                         message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
                         NotificationType.Information, TimeSpan.FromSeconds(2.5)));
                 }
                 else
                 {
-                    _ShowDialog(new DialogWindowViewModel(
+                    ShowDialog(new DialogWindowViewModel(
                         title ?? Resources.DIALOG__DEFAULT_INFO_TITLE,
                         message,
                         more,
@@ -83,11 +90,11 @@ namespace PassMeta.DesktopApp.Ui.Services
         public void ShowError(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.PopUp)
         {
-            _CallOrDeffer(() =>
+            CallOrDeffer(() =>
             {
                 if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
                 {
-                    _ShowNotification(new Notification(
+                    ShowNotification(new Notification(
                         title ?? Resources.DIALOG__DEFAULT_ERROR_TITLE,
                         message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
                         NotificationType.Error,
@@ -95,7 +102,7 @@ namespace PassMeta.DesktopApp.Ui.Services
                 }
                 else
                 {
-                    _ShowDialog(new DialogWindowViewModel(
+                    ShowDialog(new DialogWindowViewModel(
                         title ?? Resources.DIALOG__DEFAULT_ERROR_TITLE,
                         message,
                         more,
@@ -110,11 +117,11 @@ namespace PassMeta.DesktopApp.Ui.Services
         public void ShowFailure(string message, string? title = null, string? more = null, 
             DialogPresenter defaultPresenter = DialogPresenter.Window)
         {
-            _CallOrDeffer(() =>
+            CallOrDeffer(() =>
             {
                 if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
                 {
-                    _ShowNotification(new Notification(
+                    ShowNotification(new Notification(
                         title ?? Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                         message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
                         NotificationType.Warning,
@@ -122,7 +129,7 @@ namespace PassMeta.DesktopApp.Ui.Services
                 }
                 else
                 {
-                    _ShowDialog(new DialogWindowViewModel(
+                    ShowDialog(new DialogWindowViewModel(
                         title ?? Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                         message,
                         more,
@@ -137,9 +144,9 @@ namespace PassMeta.DesktopApp.Ui.Services
         /// <remarks>Use only when the main window has been rendered.</remarks>
         public async Task<IResult> ConfirmAsync(string message, string? title = null)
         {
-            if (MainWindow.Current is null) return Result.Failure();
+            if (App.App.MainWindow is null) return Result.Failure();
 
-            var dialog = await _ShowDialogAsync(new DialogWindowViewModel(
+            var dialog = await ShowDialogAndWaitAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_CONFIRM_TITLE,
                 message,
                 null,
@@ -147,16 +154,16 @@ namespace PassMeta.DesktopApp.Ui.Services
                 DialogWindowIcon.Confirm,
                 null));
 
-            return Result.From(dialog.ResultButton == DialogButton.Yes);
+            return Result.From(dialog.ResultButton is DialogButton.Yes);
         }
 
         /// <inheritdoc />
         /// <remarks>Use only when the main window has been rendered.</remarks>
         public async Task<IResult<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null)
         {
-            if (MainWindow.Current is null) return Result.Failure<string>();
+            if (App.App.MainWindow is null) return Result.Failure<string>();
 
-            var dialog = await _ShowDialogAsync(new DialogWindowViewModel(
+            var dialog = await ShowDialogAndWaitAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
                 message,
                 null,
@@ -166,16 +173,16 @@ namespace PassMeta.DesktopApp.Ui.Services
 
             var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextInputBox.Value?.Trim();
 
-            return Result.From(dialog.ResultButton == DialogButton.Ok, value ?? string.Empty);
+            return Result.From(dialog.ResultButton is DialogButton.Ok, value ?? string.Empty);
         }
         
         /// <inheritdoc />
         /// <remarks>Use only when the main window has been rendered.</remarks>
         public async Task<IResult<string>> AskPasswordAsync(string message, string? title = null)
         {
-            if (MainWindow.Current is null) return Result.Failure<string>();
+            if (App.App.MainWindow is null) return Result.Failure<string>();
 
-            var dialog = await _ShowDialogAsync(new DialogWindowViewModel(
+            var dialog = await ShowDialogAndWaitAsync(new DialogWindowViewModel(
                 title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
                 message,
                 null,
@@ -185,12 +192,12 @@ namespace PassMeta.DesktopApp.Ui.Services
 
             var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextInputBox.Value;
             
-            return Result.From(dialog.ResultButton == DialogButton.Ok, value ?? string.Empty);
+            return Result.From(dialog.ResultButton is DialogButton.Ok, value ?? string.Empty);
         }
 
-        private static void _CallOrDeffer(Action shower)
+        private void CallOrDeffer(Action shower)
         {
-            if (MainWindow.Current is not null)
+            if (App.App.MainWindow is not null)
             {
                 shower();
                 return;
@@ -198,11 +205,11 @@ namespace PassMeta.DesktopApp.Ui.Services
             
             var added = false;
                 
-            lock (Deferred)
+            lock (_deferred)
             {
-                if (MainWindow.Current is null)
+                if (App.App.MainWindow is null)
                 {
-                    Deferred.Add(shower);
+                    _deferred.Add(shower);
                     added = true;
                 }
             }
@@ -210,62 +217,62 @@ namespace PassMeta.DesktopApp.Ui.Services
             if (!added) shower();
         }
         
-        private static void _ShowNotification(INotification context)
+        private void ShowNotification(INotification context)
         {
             NotificationManager!.Show(context);
         }
 
-        private static void _ShowDialog(DialogWindowViewModel context)
+        private void ShowDialog(DialogWindowViewModel context)
         {
             var dialog = new DialogWindow { DataContext = context };
             
             dialog.CorrectMainWindowFocusWhileOpened();
 
-            dialog.Closing += (_, _) => _TryRemoveOpened(dialog);
-            _AddOpened(dialog);
+            dialog.Closing += (_, _) => TryRemoveOpened(dialog);
+            AddOpened(dialog);
 
             try
             {
-                dialog.Show(MainWindow.Current);
+                dialog.Show(App.App.MainWindow);
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Dialog window opening failed");
-                _TryRemoveOpened(dialog);
+                _logger.Error(ex, "Dialog window opening failed");
+                TryRemoveOpened(dialog);
             }
         }
         
-        private static async Task<DialogWindow> _ShowDialogAsync(DialogWindowViewModel context)
+        private async Task<DialogWindow> ShowDialogAndWaitAsync(DialogWindowViewModel context)
         {
             var dialog = new DialogWindow { DataContext = context };
 
             try
             {
-                await dialog.ShowDialog(MainWindow.Current);
+                await dialog.ShowDialog(App.App.MainWindow);
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Dialog window showing failed");
+                _logger.Error(ex, "Dialog window showing failed");
             }
             
             return dialog;
         }
 
-        private static void _AddOpened(Window dialog)
+        private void AddOpened(Window dialog)
         {
-            lock (Opened)
+            lock (_opened)
             {
-                Opened.Add(dialog);
-                MainWindow.Current!.IsEnabled = false;
+                _opened.Add(dialog);
+                App.App.MainWindow!.IsEnabled = false;
             }
         }
         
-        private static void _TryRemoveOpened(Window dialog)
+        private void TryRemoveOpened(Window dialog)
         {
-            lock (Opened)
+            lock (_opened)
             {
-                Opened.Remove(dialog);
-                MainWindow.Current!.IsEnabled = Opened.Count == 0;
+                _opened.Remove(dialog);
+                App.App.MainWindow!.IsEnabled = _opened.Count == 0;
             }
         }
     }

@@ -9,7 +9,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using Common.Abstractions.Services;
     using Common.Models.Entities.Extra;
     using Core;
-    using Core.Utils;
     using ReactiveUI;
     
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;

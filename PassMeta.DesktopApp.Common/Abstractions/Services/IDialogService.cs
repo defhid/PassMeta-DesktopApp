@@ -1,8 +1,8 @@
+using System.Threading.Tasks;
+using PassMeta.DesktopApp.Common.Enums;
+
 namespace PassMeta.DesktopApp.Common.Abstractions.Services
 {
-    using System.Threading.Tasks;
-    using PassMeta.DesktopApp.Common.Enums;
-
     /// <summary>
     /// Service for communication with app user.
     /// </summary>
@@ -15,7 +15,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services
         /// <param name="title">Message title.</param>
         /// <param name="more">Secondary content.</param>
         /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
-        public void ShowInfo(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
+        void ShowInfo(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
 
         /// <summary>
         /// Show error message to user.
@@ -25,7 +25,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services
         /// <param name="more">Secondary content.</param>
         /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
         /// <remarks>Auto-logging.</remarks>
-        public void ShowError(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
+        void ShowError(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
         
         /// <summary>
         /// Show failure message to user.
@@ -35,7 +35,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services
         /// <param name="more">Secondary content.</param>
         /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
         /// <remarks>Auto-logging.</remarks>
-        public void ShowFailure(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.Window);
+        void ShowFailure(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.Window);
 
         /// <summary>
         /// Ask user for confirmation.
@@ -43,7 +43,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services
         /// <param name="message">Confirmation content.</param>
         /// <param name="title">Window title.</param>
         /// <returns>Did user answered YES?</returns>
-        public Task<IResult> ConfirmAsync(string message, string? title = null);
+        Task<IResult> ConfirmAsync(string message, string? title = null);
 
         /// <summary>
         /// Ask user for string value.
@@ -54,7 +54,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services
         /// <returns>
         /// Result with not null trimmed string value.
         /// </returns>
-        public Task<IResult<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null);
+        Task<IResult<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null);
         
         /// <summary>
         /// Ask user for string password.
@@ -64,6 +64,11 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services
         /// <returns>
         /// Result with not null raw password.
         /// </returns>
-        public Task<IResult<string>> AskPasswordAsync(string message, string? title = null);
+        Task<IResult<string>> AskPasswordAsync(string message, string? title = null);
+
+        /// <summary>
+        /// Show all deferred messages.
+        /// </summary>
+        void Flush();
     }
 }

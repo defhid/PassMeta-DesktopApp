@@ -1,25 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using ReactiveUI;
+    
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Models.Dto.Response;
+    
+using PassMeta.DesktopApp.Core;
+using AppContext = PassMeta.DesktopApp.Core.AppContext;
+
+using PassMeta.DesktopApp.Ui.ViewModels.Base;
+using PassMeta.DesktopApp.Ui.ViewModels.Logs.Models;
+using PassMeta.DesktopApp.Ui.ViewModels.Journal.Models;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
-    using Base;
-    using Common;
-    using Common.Models.Dto.Response;
-    using Common.Models.Entities;
-    using Core.Utils;
-    using Logs.Models;
-    using Models;
-    using ReactiveUI;
-    using Views.Main;
-
-    using AppContext = Core.AppContext;
-
     public class JournalViewModel : PageViewModel
     {
-        private static int _pageLimit = 50;
+        private static int _pageSize = 50;
         
         #region Filters
 
@@ -67,6 +68,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             set => this.RaiseAndSetIfChanged(ref _records, value);
         }
 
+        private IPassMetaClient PassMetaClient => EnvironmentContainer.Resolve<IPassMetaClient>();
+
         public JournalViewModel(IScreen hostScreen) : base(hostScreen)
         {
             LogInfo.RefreshStatics();
@@ -89,7 +92,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
         {
             if (AppContext.Current.User is null)
             {
-                FakeNavigated();
                 TryNavigateTo<AuthRequiredViewModel>(typeof(JournalViewModel));
             }
             else
@@ -102,28 +104,30 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
 
         private async Task LoadRecordsAsync(int pageIndex)
         {
-            using var preloader = MainWindow.Current!.StartPreloader();
+            using var preloader = AppLoading.General.Begin();
 
             if (pageIndex < 0) return;
 
-            var kind = SelectedKind?.Id > 0 ? ("&kind=" + SelectedKind.Id) : string.Empty;
-            var offset = "offset=" + pageIndex * _pageLimit;
-            var limit = "limit=" + _pageLimit;
-            var month = "month=" + _selectedMonth.Date.ToString("O");
+            var url = PassMetaApi.History.GetList(_selectedMonth.Date, _pageSize, pageIndex, SelectedKind?.Id > 0 
+                ? new[] { SelectedKind.Id }
+                : null);
 
-            var response = await PassMetaApi.GetAsync<PageResult<JournalRecord>>($"history?{month}&{limit}&{offset}{kind}", true);
+            var response = await PassMetaClient.Begin(url)
+                .WithBadHandling()
+                .ExecuteAsync<PageResult<JournalRecord>>();
+
             if (response?.Success is not true) return;
 
-            _pageLimit = response.Data!.Limit;
+            _pageSize = response.Data!.PageSize;
 
-            var pageList = Enumerable.Range(1, (int)Math.Ceiling((double)response.Data.Total / _pageLimit)).ToList();
+            var pageList = Enumerable.Range(1, (int)Math.Ceiling((double)response.Data.Total / _pageSize)).ToList();
             if (!pageList.Any())
             {
                 pageList.Add(1);
             }
 
             PageList = pageList;
-            SelectedPageIndex = response.Data.Offset / _pageLimit;
+            SelectedPageIndex = response.Data.PageIndex;
 
             Records = response.Data.List.Select(rec => new JournalRecordInfo(rec)).ToList();
         }
@@ -134,9 +138,11 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
 
             if (!Kinds.Any())
             {
-                using var preloader = MainWindow.Current!.StartPreloader();
+                using var preloader = AppLoading.General.Begin();
                 
-                var kindsResponse = await PassMetaApi.GetAsync<List<JournalRecordKind>>("history/kinds", true);
+                var kindsResponse = await PassMetaClient.Begin(PassMetaApi.History.GetKinds())
+                    .WithBadHandling()
+                    .ExecuteAsync<List<JournalRecordKind>>();
 
                 if (kindsResponse?.Success is not true) return;
 

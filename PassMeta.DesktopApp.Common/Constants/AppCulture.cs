@@ -32,6 +32,12 @@ namespace PassMeta.DesktopApp.Common.Constants
         /// Get culture name.
         /// </summary>
         public override string ToString() => _nameGetter();
+        
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is AppCulture other && _code == other._code;
+
+        /// <inheritdoc />
+        public override int GetHashCode() => _code.GetHashCode();
 
         /// <summary>
         /// Get culture from <see cref="All"/> by <paramref name="code"/>.
@@ -72,6 +78,12 @@ namespace PassMeta.DesktopApp.Common.Constants
         /// Cast to <see cref="CultureInfo"/> by <see cref="Code"/>.
         /// </summary>
         public static implicit operator CultureInfo(AppCulture culture) => new(culture._code);
+
+        /// <summary></summary>
+        public static bool operator ==(AppCulture first, AppCulture second) => first.Equals(second);
+
+        /// <summary></summary>
+        public static bool operator !=(AppCulture first, AppCulture second) => !first.Equals(second);
 
         #region Variants
 

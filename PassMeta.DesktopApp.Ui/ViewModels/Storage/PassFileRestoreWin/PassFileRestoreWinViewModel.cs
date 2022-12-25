@@ -1,26 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+
+using Avalonia.Controls;
+using ReactiveUI;
+using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
+    
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Utils.Extensions;
+using PassMeta.DesktopApp.Common.Models;
+using PassMeta.DesktopApp.Common.Models.Entities;
+
+using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Core.Utils;
+
+using PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin.Models;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Linq;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
-    using Avalonia.Controls;
-    using Common.Abstractions.Services.PassFile;
-    using Common.Enums;
-    using Common.Utils.Extensions;
-    using PassMeta.DesktopApp.Common;
-    using PassMeta.DesktopApp.Common.Models;
-    using PassMeta.DesktopApp.Common.Models.Entities;
-    using PassMeta.DesktopApp.Core;
-    using PassMeta.DesktopApp.Core.Utils;
-    using PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin.Models;
-    using PassMeta.DesktopApp.Ui.Views.Main;
-    using ReactiveUI;
-    using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
-
     public class PassFileRestoreWinViewModel : ReactiveObject
     {
         private readonly int _passFileId;
@@ -41,7 +45,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
         public ReactCommand DownloadCommand { get; }
         public ReactCommand CloseCommand { get; }
 
-        public static IObservable<bool> CanBeDownloaded => PassMetaApi.OnlineObservable;
+        public static IObservable<bool> CanBeDownloaded => EnvironmentContainer.Resolve<IPassMetaClient>().OnlineObservable;
 
         public readonly ViewElements ViewElements = new();
 
@@ -142,7 +146,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
                 }
             };
             
-            var result = await fileDialog.ShowAsync(MainWindow.Current!);
+            var result = await fileDialog.ShowAsync(App.App.MainWindow!);
             if (result?.Any() is true)
             {
                 ViewElements.Window!.Close(Result.Success(result.First()));
@@ -151,10 +155,21 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 
         private async Task DownloadAsync()
         {
-            var downloadResult = await EnvironmentContainer.Resolve<IPassFileRemoteService>().GetAsync(_passFileId);
-            if (downloadResult.Bad) return;
+            var remoteService = EnvironmentContainer.Resolve<IPassFileRemoteService>();
 
-            ViewElements.Window!.Close(Result.Success(downloadResult.Data!));
+            var infoResult = await remoteService.GetInfoAsync(_passFileId);
+            if (infoResult.Bad)
+            {
+                return;
+            }
+
+            var passFile = infoResult.Data!;
+            passFile.DataEncrypted = await remoteService.GetDataAsync(_passFileId, infoResult.Data!.Version);
+
+            if (passFile.DataEncrypted is not null)
+            {
+                ViewElements.Window!.Close(Result.Success(passFile));
+            }
         }
         
         private void Close() => ViewElements.Window!.Close(Result.Failure<string?>());

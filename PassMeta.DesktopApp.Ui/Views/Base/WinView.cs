@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Base
 
     public abstract class WinView<TViewModel> : Window
     {
-        protected new TViewModel? DataContext
+        public new TViewModel? DataContext
         {
             get => (TViewModel?)base.DataContext;
             init => base.DataContext = value;

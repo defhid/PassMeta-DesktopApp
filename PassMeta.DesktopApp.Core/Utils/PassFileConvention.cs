@@ -1,94 +1,78 @@
-namespace PassMeta.DesktopApp.Core.Utils
+using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
+using Newtonsoft.Json;
+using PassMeta.DesktopApp.Common.Models.Entities.Extra;
+
+namespace PassMeta.DesktopApp.Core.Utils;
+
+/// <summary>
+/// Rules for working with passfiles.
+/// </summary>
+public static class PassFileConvention
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Security.Cryptography;
-    using System.Text;
-    using Common.Models.Entities.Extra;
-    using Newtonsoft.Json;
+    /// <summary>
+    /// Encoding for passfile's data.
+    /// </summary>
+    public static readonly Encoding JsonEncoding = new UTF8Encoding(false);
 
     /// <summary>
-    /// Rules for working with passfiles.
+    /// Statics for converting passfile data.
     /// </summary>
-    public static class PassFileConvention
+    public static class Convert
     {
         /// <summary>
-        /// Encoding for passfile's data.
+        /// Convert decrypted json data to raw sections list.
         /// </summary>
-        public static readonly Encoding JsonEncoding = new UTF8Encoding(false);
+        public static List<PwdSection> ToRaw(string decryptedJson)
+            => JsonConvert.DeserializeObject<List<PwdSection>>(decryptedJson, JsonSettings) ?? new List<PwdSection>();
 
         /// <summary>
-        /// Statics for converting passfile data.
+        /// Convert raw sections list to decrypted json data.
         /// </summary>
-        public static class Convert
+        public static string FromRaw(List<PwdSection> sections, bool indented = false)
+            => JsonConvert.SerializeObject(sections, indented ? JsonIndentedSettings : JsonSettings);
+
+        private static readonly JsonSerializerSettings JsonSettings = new()
         {
-            /// <summary>
-            /// Convert encrypted passfile data from bytes to string.
-            /// </summary>
-            [return: NotNullIfNotNull("dataBytes")]
-            public static string? EncryptedBytesToString(byte[]? dataBytes) 
-                => dataBytes is null ? null : System.Convert.ToBase64String(dataBytes);
-        
-            /// <summary>
-            /// Convert encrypted passfile data from string to bytes.
-            /// </summary>
-            [return: NotNullIfNotNull("dataString")]
-            public static byte[]? EncryptedStringToBytes(string? dataString) 
-                => dataString is null ? null : System.Convert.FromBase64String(dataString);
-
-            /// <summary>
-            /// Convert decrypted json data to raw sections list.
-            /// </summary>
-            public static List<PwdSection> ToRaw(string decryptedJson)
-                => JsonConvert.DeserializeObject<List<PwdSection>>(decryptedJson, JsonSettings) ?? new List<PwdSection>();
-
-            /// <summary>
-            /// Convert raw sections list to decrypted json data.
-            /// </summary>
-            public static string FromRaw(List<PwdSection> sections, bool indented = false)
-                => JsonConvert.SerializeObject(sections, indented ? JsonIndentedSettings : JsonSettings);
-
-            private static readonly JsonSerializerSettings JsonSettings = new()
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore,
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.None
-            };
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            NullValueHandling = NullValueHandling.Ignore,
+            Formatting = Formatting.None
+        };
             
-            private static readonly JsonSerializerSettings JsonIndentedSettings = new()
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore,
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.Indented
-            };
-        }
+        private static readonly JsonSerializerSettings JsonIndentedSettings = new()
+        {
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            NullValueHandling = NullValueHandling.Ignore,
+            Formatting = Formatting.Indented
+        };
+    }
         
+    /// <summary>
+    /// Statics for encryption/decryption passfile data.
+    /// </summary>
+    public static class Encryption
+    {
         /// <summary>
-        /// Statics for encryption/decryption passfile data.
+        /// Number of encryption iterations.
         /// </summary>
-        public static class Encryption
-        {
-            /// <summary>
-            /// Number of encryption iterations.
-            /// </summary>
-            public const int CryptoK = 100;
+        public const int CryptoK = 100;
             
-            /// <summary>
-            /// Passfiles encryption salt.
-            /// </summary>
-            public static readonly byte[] Salt = Encoding.UTF8.GetBytes("PassMetaFileSalt");
+        /// <summary>
+        /// Passfiles encryption salt.
+        /// </summary>
+        public static readonly byte[] Salt = Encoding.UTF8.GetBytes("PassMetaFileSalt");
 
-            /// <summary>
-            /// Make encryption/decryption key for specific iteration by keyphrase.
-            /// </summary>
-            public static byte[] MakeKey(int iteration, string keyPhrase)
-            {
-                var offset = (CryptoK + iteration) % keyPhrase.Length;
-                var key = keyPhrase[..offset] + Math.Pow(CryptoK - iteration, iteration % 5) + keyPhrase[offset..];
+        /// <summary>
+        /// Make encryption/decryption key for specific iteration by keyphrase.
+        /// </summary>
+        public static byte[] MakeKey(int iteration, string keyPhrase)
+        {
+            var offset = (CryptoK + iteration) % keyPhrase.Length;
+            var key = keyPhrase[..offset] + Math.Pow(CryptoK - iteration, iteration % 5) + keyPhrase[offset..];
                         
-                return SHA256.HashData(Encoding.Unicode.GetBytes(key));
-            }
+            return SHA256.HashData(Encoding.Unicode.GetBytes(key));
         }
     }
 }

@@ -1,30 +1,43 @@
-namespace PassMeta.DesktopApp.Core.Utils
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+
+using System.Threading.Tasks;
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+
+namespace PassMeta.DesktopApp.Core.Utils;
+
+/// <summary>
+/// Checking, loading and optimizing at startup.
+/// </summary>
+public static class StartUp
 {
-    using System.Threading.Tasks;
-    using Common.Abstractions.Services;
-
-    /// <summary>
-    /// Checking, loading and optimizing at startup.
-    /// </summary>
-    public static class StartUp
+    /// <summary></summary>
+    public static async Task LoadConfigurationAsync()
     {
-        /// <summary></summary>
-        public static async Task LoadConfigurationAsync()
-        {
-            await AppConfig.LoadAndSetCurrentAsync();
-        }
+        using var loading = AppLoading.General.Begin();
+        await AppConfig.LoadAndSetCurrentAsync();
+    }
 
-        /// <summary></summary>
-        public static async Task LoadContextAsync()
-        {
-            await AppContext.LoadAndSetCurrentAsync();
-            await AppContext.RefreshCurrentFromServerAsync();
-        }
+    /// <summary></summary>
+    public static async Task LoadContextAsync()
+    {
+        using var loading = AppLoading.General.Begin();
 
-        /// <summary></summary>
-        public static async Task CheckSystemAsync()
+        await AppContext.LoadAndSetCurrentAsync();
+
+        var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
+
+        if (!await passMetaClient.CheckConnectionAsync())
         {
-            await Task.Run(EnvironmentContainer.Resolve<ILogService>().OptimizeLogs);
+            EnvironmentContainer.Resolve<IDialogService>().ShowInfo(Resources.API__CONNECTION_ERR);
         }
+    }
+
+    /// <summary></summary>
+    public static void CheckSystem()
+    {
+        using var loading = AppLoading.GeneralBackground.Begin();
+        EnvironmentContainer.Resolve<ILogService>().CleanUp();
     }
 }

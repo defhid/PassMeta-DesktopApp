@@ -9,22 +9,22 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Response
     public class PageResult<TElement>
     {
         /// <summary>
+        /// Page number, starting from 1.
+        /// </summary>
+        [JsonProperty("page_index")]
+        public int PageIndex { get; init; }
+
+        /// <summary>
+        /// Page size.
+        /// </summary>
+        [JsonProperty("page_size")]
+        public int PageSize { get; init; }
+
+        /// <summary>
         /// Total found.
         /// </summary>
         [JsonProperty("total")]
         public int Total { get; init; }
-        
-        /// <summary>
-        /// Page offset, in records.
-        /// </summary>
-        [JsonProperty("offset")]
-        public int Offset { get; init; }
-        
-        /// <summary>
-        /// Page limit.
-        /// </summary>
-        [JsonProperty("limit")]
-        public int Limit { get; init; }
 
         /// <summary>
         /// List of elements.

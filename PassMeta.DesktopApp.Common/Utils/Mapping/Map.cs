@@ -1,6 +1,6 @@
 namespace PassMeta.DesktopApp.Common.Utils.Mapping
 {
-    using Abstractions.Mapping;
+    using Abstractions.Utils.Mapping;
 
     /// <summary>
     /// Mapping from one constant value to another.

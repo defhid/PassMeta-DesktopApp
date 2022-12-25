@@ -1,114 +1,127 @@
-namespace PassMeta.DesktopApp.Core.Services
+using System;
+using System.Net;
+using System.Threading.Tasks;
+    
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Models;
+using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Common.Models.Dto.Request;
+using PassMeta.DesktopApp.Common.Utils.Mapping;
+
+namespace PassMeta.DesktopApp.Core.Services;
+
+/// <inheritdoc />
+public class AuthService : IAuthService
 {
-    using DesktopApp.Common;
-    using DesktopApp.Common.Models;
-    using DesktopApp.Common.Models.Entities;
-    using DesktopApp.Common.Models.Dto.Request;
-    using DesktopApp.Common.Utils.Mapping;
-    using DesktopApp.Core.Utils;
-    using System.Threading.Tasks;
-    using Common.Abstractions;
-    using Common.Abstractions.Services;
+    private static readonly SimpleMapper<string, string> WhatToStringMapper = AccountService.WhatToStringMapper + new MapToResource<string>[]
+    {
+        new("user", () => Resources.DICT_AUTH__USER),
+    };
+        
+    private readonly IPassMetaClient _passMetaClient;
+    private readonly IDialogService _dialogService;
+
+    /// <summary></summary>
+    public AuthService(IPassMetaClient passMetaClient, IDialogService dialogService)
+    {
+        _passMetaClient = passMetaClient;
+        _dialogService = dialogService;
+    }
 
     /// <inheritdoc />
-    public class AuthService : IAuthService
+    public async Task<IResult<User>> SignInAsync(SignInPostData data)
     {
-        private static readonly SimpleMapper<string, string> WhatToStringMapper = AccountService.WhatToStringMapper + new MapToResource<string>[]
+        if (!_Validate(data).Ok)
         {
-            new("user", () => Resources.DICT_AUTH__USER),
-        };
+            _dialogService.ShowError(Resources.AUTH__DATA_VALIDATION_ERR);
+            return Result.Failure<User>();
+        }
+            
+        var response = await _passMetaClient.Begin(PassMetaApi.Auth.PostSignIn())
+            .WithJsonBody(data)
+            .WithBadMapping(WhatToStringMapper)
+            .WithBadHandling()
+            .ExecuteAsync<User>();
+            
+        if (response?.Success is not true)
+            return Result.Failure<User>();
+
+        await AppContext.ApplyAsync(appContext => appContext.User = response.Data);
+
+        return Result.Success(response.Data!);
+    }
+
+    /// <inheritdoc />
+    public async Task SignOutAsync()
+    {
+        var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__SIGN_OUT_CONFIRM);
+        if (answer.Bad) return;
+
+        await AppContext.ApplyAsync(appContext =>
+        {
+            appContext.User = null;
+            appContext.Cookies = Array.Empty<Cookie>();
+        });
+    }
+
+    /// <inheritdoc />
+    public async Task ResetAllExceptMeAsync()
+    {
+        var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__RESET_SESSIONS_CONFIRM);
+        if (answer.Bad) return;
+
+        var response = await _passMetaClient.Begin(PassMetaApi.Auth.PostResetAllExceptMe())
+            .WithBadHandling()
+            .ExecuteAsync();
+
+        if (response?.Success is true)
+        {
+            _dialogService.ShowInfo(Resources.ACCOUNT__RESET_SESSIONS_SUCCESS);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<IResult> SignUpAsync(SignUpPostData data)
+    {
+        if (!_Validate(data).Ok)
+        {
+            _dialogService.ShowError(Resources.AUTH__DATA_VALIDATION_ERR);
+            return Result.Failure<User>();
+        }
+            
+        var response = await _passMetaClient.Begin(PassMetaApi.User.Post())
+            .WithJsonBody(data)
+            .WithBadMapping(WhatToStringMapper)
+            .WithBadHandling()
+            .ExecuteAsync<User>();
+            
+        if (response?.Success is not true) 
+            return Result.Failure<User>();
+
+        await AppContext.ApplyAsync(appContext => appContext.User = response.Data);
+
+        return Result.Success();
+    }
         
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
-
-        /// <inheritdoc />
-        public async Task<IResult<User>> SignInAsync(SignInPostData data)
+    private static IResult<TData> _Validate<TData>(TData data)
+        where TData : SignInPostData
+    {
+        if (data.Login.Length < 1 || data.Password.Length < 1)
         {
-            if (!_Validate(data).Ok)
-            {
-                _dialogService.ShowError(Resources.AUTH__DATA_VALIDATION_ERR);
-                return Result.Failure<User>();
-            }
-            
-            var response = await PassMetaApi.Post("auth/sign-in", data)
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<User>();
-            
-            if (response?.Success is not true)
-                return Result.Failure<User>();
-
-            AppContext.Current.User = response.Data!;
-            await AppContext.FlushCurrentAsync();
-            
-            return Result.Success(response.Data!);
+            return Result.Failure<TData>();
         }
 
-        /// <inheritdoc />
-        public async Task SignOutAsync()
+        if (data is SignUpPostData signUpData)
         {
-            var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__SIGN_OUT_CONFIRM);
-            if (answer.Bad) return;
-
-            AppContext.Current.User = null;
-            await AppContext.FlushCurrentAsync();
-        }
-
-        /// <inheritdoc />
-        public async Task ResetAllExceptMeAsync()
-        {
-            var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__RESET_SESSIONS_CONFIRM);
-            if (answer.Bad) return;
-
-            var response = await PassMetaApi.Post("auth/reset/all-except-me")
-                .WithBadHandling()
-                .ExecuteAsync();
-
-            if (response?.Success is true)
-            {
-                _dialogService.ShowInfo(Resources.ACCOUNT__RESET_SESSIONS_SUCCESS);
-            }
-        }
-
-        /// <inheritdoc />
-        public async Task<IResult> SignUpAsync(SignUpPostData data)
-        {
-            if (!_Validate(data).Ok)
-            {
-                _dialogService.ShowError(Resources.AUTH__DATA_VALIDATION_ERR);
-                return Result.Failure<User>();
-            }
-            
-            var response = await PassMetaApi.Post("users/new", data)
-                .WithBadMapping(WhatToStringMapper)
-                .WithBadHandling()
-                .ExecuteAsync<User>();
-            
-            if (response?.Success is not true) 
-                return Result.Failure<User>();
-
-            AppContext.Current.User = response.Data!;
-            await AppContext.FlushCurrentAsync();
-
-            return Result.Success();
-        }
-        
-        private static IResult<TData> _Validate<TData>(TData data)
-            where TData : SignInPostData
-        {
-            if (data.Login.Length < 1 || data.Password.Length < 1)
+            if (signUpData.FullName.Length < 1)
             {
                 return Result.Failure<TData>();
             }
-
-            if (data is SignUpPostData signUpData)
-            {
-                if (signUpData.FullName.Length < 1)
-                {
-                    return Result.Failure<TData>();
-                }
-            }
-
-            return Result.Success(data);
         }
+
+        return Result.Success(data);
     }
 }

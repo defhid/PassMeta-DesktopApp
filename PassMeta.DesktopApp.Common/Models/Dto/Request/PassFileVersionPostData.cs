@@ -9,6 +9,6 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Request
     {
         ///
         [JsonProperty("smth")]
-        public string DataEncrypted { get; init; } = null!;
+        public string DataEncrypted { get; init; } = null!;  // TODO: form
     }
 }
