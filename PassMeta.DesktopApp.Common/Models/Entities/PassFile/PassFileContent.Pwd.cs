@@ -41,17 +41,4 @@ public sealed class PwdPassFileContent : PassFileContent<List<PwdSection>>
         : base(dataDecrypted, dataEncrypted, passPhrase)
     {
     }
-
-    /// <inheritdoc />
-    public override List<PwdSection>? CloneDecryptedData()
-    {
-        if (DataDecrypted is null)
-        {
-            return null;
-        }
-
-        var clone = new List<PwdSection>(DataDecrypted.Count);
-        clone.AddRange(DataDecrypted.Select(x => x.Copy()));
-        return clone;
-    }
 }

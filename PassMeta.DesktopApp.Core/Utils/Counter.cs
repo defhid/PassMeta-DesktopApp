@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Utils;
@@ -11,34 +14,44 @@ namespace PassMeta.DesktopApp.Core.Utils;
 /// <inheritdoc />
 public class Counter : ICounter
 {
+    private const string StorageFileName = AppConfig.CounterStorageFileName;
+
     private readonly SemaphoreSlim _semaphore = new(1);
+    private readonly IFileRepository _repository;
     private readonly ILogService _logger;
     private Dictionary<string, long>? _dict;
 
     /// <summary></summary>
-    public Counter(ILogService logger)
+    public Counter(IFileRepository repository, ILogService logger)
     {
+        _repository = repository;
         _logger = logger;
     }
-    
+
     /// <inheritdoc />
-    public async Task<long> GetNextValueAsync(string name)
+    public async Task<long> GetNextValueAsync(string name, long gt = 0, CancellationToken cancellationToken = default)
     {
-        await _semaphore.WaitAsync();
+        await _semaphore.WaitAsync(cancellationToken);
 
-        _dict ??= await LoadAsync();
-        _dict.TryGetValue(name, out var curr);
-
+        long curr = 0;
         long next;
         try
         {
-            _dict[name] = next = curr + 1;
-            await FlushAsync();
+            _dict ??= await LoadAsync(cancellationToken);
+            _dict.TryGetValue(name, out curr);
+
+            _dict[name] = next = Math.Max(curr, gt) + 1;
+            await FlushAsync(cancellationToken);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.Error(ex, $"Getting the next value of counter '{name}' failed");
-            _dict[name] = curr;
+
+            if (_dict != null)
+            {
+                _dict[name] = curr;
+            }
+
             throw;
         }
         finally
@@ -49,7 +62,33 @@ public class Counter : ICounter
         return next;
     }
 
-    private async Task<Dictionary<string, long>> LoadAsync()
+    private async ValueTask<Dictionary<string, long>> LoadAsync(CancellationToken cancellationToken)
+    {
+        Dictionary<string, long>? dict = null;
 
-    private async Task FlushAsync()
+        if (await _repository.ExistsAsync(StorageFileName, cancellationToken))
+        {
+            try
+            {
+                var dictBytes = await _repository.ReadAllBytesAsync(StorageFileName, cancellationToken);
+                var dictString = Encoding.UTF8.GetString(dictBytes);
+
+                dict = JsonConvert.DeserializeObject<Dictionary<string, long>>(dictString);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.Error(ex, "Invalid counter data, reset");
+            }
+        }
+
+        return dict ?? new Dictionary<string, long>(1);
+    }
+
+    private async ValueTask FlushAsync(CancellationToken cancellationToken)
+    {
+        var dictString = JsonConvert.SerializeObject(_dict ?? new Dictionary<string, long>());
+        var dictBytes = Encoding.UTF8.GetBytes(dictString);
+
+        await _repository.WriteAllBytesAsync(StorageFileName, dictBytes, cancellationToken);
+    }
 }

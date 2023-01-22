@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
-using PassMeta.DesktopApp.Common.Models.Entities.Extra;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 
 namespace PassMeta.DesktopApp.Core.Utils;
 
@@ -25,6 +25,7 @@ public static class PassFileConvention
         /// <summary>
         /// Convert decrypted json data to raw sections list.
         /// </summary>
+        /// TODO: by type
         public static List<PwdSection> ToRaw(string decryptedJson)
             => JsonConvert.DeserializeObject<List<PwdSection>>(decryptedJson, JsonSettings) ?? new List<PwdSection>();
 

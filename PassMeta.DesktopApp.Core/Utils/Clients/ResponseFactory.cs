@@ -1,4 +1,3 @@
-using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;
@@ -15,8 +14,6 @@ internal static class ResponseFactory
     {
         Code = origin.Code,
         Message = origin.Message,
-        What = origin.What,
         More = origin.More,
-        Sub = origin.Sub
     };
 }

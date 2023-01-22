@@ -24,7 +24,4 @@ public abstract class PassFileContent<TData> : IPassFileContent<TData>
 
     /// <inheritdoc />
     public string? PassPhrase { get; }
-
-    /// <inheritdoc />
-    public abstract TData? CloneDecryptedData();
 }

@@ -70,12 +70,6 @@ public class PassFileLocalDto
     public DateTime VersionChangedOn { get; init; }
 
     /// <summary>
-    /// Timestamp of local deletion.
-    /// </summary>
-    [JsonProperty("l_deleted_on")]
-    public DateTime? LocalDeletedOn { get; init; }
-
-    /// <summary>
     /// Origin remote passfile information. 
     /// </summary>
     [JsonProperty("origin")]

@@ -1,7 +1,6 @@
 using System;
 using PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Enums;
-using PassMeta.DesktopApp.Common.Models.Dto.Response;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
@@ -42,10 +41,7 @@ public abstract class PassFile : IPassFile
     public DateTime VersionChangedOn { get; init; }
 
     /// <inheritdoc />
-    public DateTime? LocalDeletedOn { get; init; }
-
-    /// <inheritdoc />
-    public PassFileInfoDto? RemoteOrigin { get; init; }
+    public IPassFileTimestamps? Origin { get; init; }
 
     /// <inheritdoc />
     public override string ToString() 

@@ -1,19 +1,13 @@
 using System;
 using PassMeta.DesktopApp.Common.Enums;
-using PassMeta.DesktopApp.Common.Models.Dto.Response;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
 
 /// <summary>
 /// Passfile entity.
 /// </summary>
-public interface IPassFile
+public interface IPassFile : IPassFileTimestamps
 {
-    /// <summary>
-    /// Identifier.
-    /// </summary>
-    int Id { get; }
-
     /// <summary>
     /// Identifier of owner user.
     /// </summary>
@@ -45,25 +39,15 @@ public interface IPassFile
     DateTime CreatedOn { get; }
 
     /// <summary>
-    /// Timestamp of information change.
+    /// Assigned marks.
     /// </summary>
-    DateTime InfoChangedOn { get; }
+    PassFileMark Mark { get; set; }
 
     /// <summary>
-    /// Timestamp of data change.
+    /// Origin passfile information from the server
+    /// at the moment of the first unsynchronized change, if any.
     /// </summary>
-    DateTime VersionChangedOn { get; }
-
-    /// <summary>
-    /// Timestamp of local deletion.
-    /// </summary>
-    DateTime? LocalDeletedOn { get; }
-
-    /// <summary>
-    /// Passfile information from the server at the current moment or
-    /// the moment of the first unsynchronized change, if any.
-    /// </summary>
-    public PassFileInfoDto? RemoteOrigin { get; }
+    public IPassFileTimestamps? Origin { get; }
 }
 
 /// <summary>

@@ -23,9 +23,4 @@ public interface IPassFileContent<out TData>
     /// Can not be null if <see cref="DataDecrypted"/> is not null.
     /// </summary>
     string? PassPhrase { get; }
-
-    /// <summary>
-    /// Make a deep copy of <see cref="DataDecrypted"/>
-    /// </summary>
-    TData? CloneDecryptedData();
 }

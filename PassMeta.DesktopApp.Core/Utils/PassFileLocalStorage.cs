@@ -42,17 +42,17 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         _logger.Debug("Loading passfile list...");
 
         var result = await LoadListInternalAsync(userContext, cancellationToken);
-        
-        _logger.Debug(result.Ok 
-            ? "Passfile list was loaded successfully" 
-            : "Passfile list loading failed: " + result.Message);
+        if (result.Ok)
+        {
+            _logger.Debug("Passfile list was loaded successfully" );
+        }
 
         return result;
     }
 
-    private async Task<IDetailedResult<List<PassFileLocalDto>>> LoadListInternalAsync(
+    private async ValueTask<IDetailedResult<List<PassFileLocalDto>>> LoadListInternalAsync(
         IUserContext userContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
 
@@ -97,10 +97,10 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         _logger.Debug("Saving passfile list...");
         
         var result = await SaveListInternalAsync(list, userContext, cancellationToken);
-
-        _logger.Debug(result.Ok 
-            ? "Passfile list was saved successfully" 
-            : "Passfile list saving failed: " + result.Message);
+        if (result.Ok)
+        {
+            _logger.Debug("Passfile list was saved successfully");
+        }
 
         return result;
     }
@@ -108,7 +108,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
     private async ValueTask<IDetailedResult> SaveListInternalAsync(
         IEnumerable<PassFileLocalDto> list,
         IUserContext userContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
 
@@ -141,9 +141,11 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         var result = await LoadEncryptedContentInternalAsync(
             passFileType, passFileId, version, userContext, cancellationToken);
 
-        _logger.Debug("Passfile #{Id} v{Version} content " + 
-                      (result.Ok ? "was loaded successfully" : "loading failed: " + result.Message),
-            passFileId, version);
+        if (result.Ok)
+        {
+            _logger.Debug("Passfile #{Id} v{Version} content was loaded successfully",
+                passFileId, version);
+        }
 
         return result;
     }
@@ -153,7 +155,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         int passFileId,
         int version,
         IUserContext userContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
         
@@ -190,9 +192,11 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         var result = await SaveEncryptedContentInternalAsync(
             passFileType, passFileId, version, content, userContext, cancellationToken);
 
-        _logger.Debug("Passfile #{Id} v{Version} content " + 
-                      (result.Ok ? "was saved successfully" : "saving failed: " + result.Message),
-            passFileId, version);
+        if (result.Ok)
+        {
+            _logger.Debug("Passfile #{Id} v{Version} content was saved successfully",
+                passFileId, version);
+        }
 
         return result;
     }
@@ -203,7 +207,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         int version,
         byte[] content,
         IUserContext userContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
         
@@ -238,11 +242,12 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         _logger.Debug("Deleting passfile #{Id} v{Version} content...", passFileId, version);
 
         var result = await DeleteEncryptedContentInternalAsync(passFileId, version, userContext, cancellationToken);
-
-        _logger.Debug("Passfile #{Id} v{Version} content " + 
-                      (result.Ok ? "was deleted successfully" : "deleting failed: " + result.Message), 
-            passFileId, version);
-
+        if (result.Ok)
+        {
+            _logger.Debug("Passfile #{Id} v{Version} content was deleted successfully", 
+                passFileId, version);
+        }
+        
         return result;
     }
 
@@ -250,7 +255,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         int passFileId,
         int version,
         IUserContext userContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
 
@@ -287,6 +292,20 @@ public class PassFileLocalStorage : IPassFileLocalStorage
     {
         _logger.Debug("Loading passfile #{Id} versions...", passFileId);
 
+        var result = await GetVersionsInternalAsync(passFileId, userContext, cancellationToken);
+        if (result.Ok)
+        {
+            _logger.Debug("Passfile #{Id} versions were loaded successfully", passFileId);
+        }
+
+        return result;
+    }
+    
+    private async ValueTask<IDetailedResult<IEnumerable<int>>> GetVersionsInternalAsync(
+        int passFileId,
+        IUserContext userContext,
+        CancellationToken cancellationToken)
+    {
         var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -311,16 +330,11 @@ public class PassFileLocalStorage : IPassFileLocalStorage
             return StorageError($"Passfile #{passFileId} versions loading failed", ex).WithNullData<IEnumerable<int>>();
         }
 
-        _logger.Debug("Passfile #{Id} versions were loaded successfully", passFileId);
-
         return Result.Success(versions);
     }
 
     #region Others
 
-    /// <summary>
-    /// Log error and return result with common manager error message.
-    /// </summary>
     private IDetailedResult StorageError(string log, Exception? ex = null)
     {
         log = GetType().Name + ": " + log;
@@ -329,7 +343,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         return Result.Failure(Resources.PASSSTORAGE__ERR);
     }
 
-    private async Task<IDetailedResult<string>> LoadListJsonAsync(IFileRepository repository, CancellationToken cancellationToken)
+    private async ValueTask<IDetailedResult<string>> LoadListJsonAsync(IFileRepository repository, CancellationToken cancellationToken)
     {
         const string listFileName = PassFilePathHelper.PassFileListName;
 
@@ -372,7 +386,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         return Result.Success(listData ?? EmptyListJson);
     }
 
-    private async Task<IDetailedResult> SaveListJsonAsync(string listJson, IFileRepository repository, CancellationToken cancellationToken)
+    private async ValueTask<IDetailedResult> SaveListJsonAsync(string listJson, IFileRepository repository, CancellationToken cancellationToken)
     {
         const string listFileName = PassFilePathHelper.PassFileListName;
         

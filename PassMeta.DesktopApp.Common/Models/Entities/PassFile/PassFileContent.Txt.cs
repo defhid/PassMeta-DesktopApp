@@ -41,17 +41,4 @@ public sealed class TxtPassFileContent : PassFileContent<List<TxtSection>>
         : base(dataDecrypted, dataEncrypted, passPhrase)
     {
     }
-
-    /// <inheritdoc />
-    public override List<TxtSection>? CloneDecryptedData()
-    {
-        if (DataDecrypted is null)
-        {
-            return null;
-        }
-
-        var clone = new List<TxtSection>(DataDecrypted.Count);
-        clone.AddRange(DataDecrypted.Select(x => x.Copy()));
-        return clone;
-    }
 }

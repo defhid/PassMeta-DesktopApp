@@ -11,13 +11,13 @@ public static class PassFileExtensions
     /// Is passfile created locally, but not uploaded to the server?
     /// </summary>
     public static bool IsLocalCreated(this IPassFile passFile)
-        => passFile is { Id: < 0, RemoteOrigin: null };
+        => passFile is { Id: < 0, Origin: null };
 
     /// <summary>
     /// Is passfile deleted locally, but not deleted from the server?
     /// </summary>
     public static bool IsLocalDeleted(this IPassFile passFile) 
-        => passFile is not { LocalDeletedOn: null };
+        => passFile is { Id: < 0, Origin: not null };
 
     /// <summary>
     /// Is passfile changed locally (created/updated/deleted), but not uploaded on the server?
@@ -32,16 +32,13 @@ public static class PassFileExtensions
     /// Is passfile information changed locally, but not uploaded on the server?
     /// </summary>
     public static bool IsLocalInfoFieldsChanged(this IPassFile passFile) 
-        => passFile.RemoteOrigin is null ||
-           passFile.RemoteOrigin.Id != passFile.Id ||
-           passFile.RemoteOrigin.Name != passFile.Name ||
-           passFile.RemoteOrigin.Color != passFile.Color;
+        => passFile.Origin is null ||
+           passFile.Origin.InfoChangedOn != passFile.InfoChangedOn;
 
     /// <summary>
     /// Is passfile version changed locally, but not uploaded on the server?
     /// </summary>
     public static bool IsLocalVersionFieldsChanged(this IPassFile passFile) 
-        => passFile.RemoteOrigin is null ||
-           passFile.RemoteOrigin.Version != passFile.Version ||
-           passFile.RemoteOrigin.VersionChangedOn != passFile.VersionChangedOn;
+        => passFile.Origin is null ||
+           passFile.Origin.VersionChangedOn != passFile.VersionChangedOn;
 }

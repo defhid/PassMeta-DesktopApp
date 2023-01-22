@@ -60,6 +60,11 @@ public static class AppConfig
     /// </summary>
     public static readonly string LogFilesDirectory = Path.Combine(RootPath, ".logs");
 
+    /// <summary>
+    /// File name for counter storage.
+    /// </summary>
+    public const string CounterStorageFileName = ".counter";
+
     #endregion
 
     /// <summary>

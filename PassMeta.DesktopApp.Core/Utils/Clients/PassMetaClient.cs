@@ -13,7 +13,6 @@ using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 using PassMeta.DesktopApp.Core.Utils.Extensions;
@@ -109,7 +108,7 @@ public sealed class PassMetaClient : IPassMetaClient
         if (successBody is null)
         {
             if (requestBuilder.BadMapper is not null)
-                failureOkBadResponse!.ApplyWhatMapping(requestBuilder.BadMapper);
+                failureOkBadResponse!.More?.ApplyWhatMapping(requestBuilder.BadMapper);
 
             if (requestBuilder.HandleBad)
                 _okBadService.ShowResponseFailure(failureOkBadResponse!, context);
@@ -149,8 +148,8 @@ public sealed class PassMetaClient : IPassMetaClient
 
         if (requestBuilder.BadMapper is not null)
         {
-            failureOkBadResponse?.ApplyWhatMapping(requestBuilder.BadMapper);
-            successOkBadResponse?.ApplyWhatMapping(requestBuilder.BadMapper);
+            failureOkBadResponse?.More?.ApplyWhatMapping(requestBuilder.BadMapper);
+            successOkBadResponse?.More?.ApplyWhatMapping(requestBuilder.BadMapper);
         }
 
         if (successBody is null)

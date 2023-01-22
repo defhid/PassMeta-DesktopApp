@@ -14,6 +14,8 @@ public enum PassFileMark : short
     /// </summary>
     None = 0,
 
+    #region Merge
+
     /// <summary>
     /// Passfile needs merge with remote version.
     /// </summary>
@@ -23,6 +25,10 @@ public enum PassFileMark : short
     /// Passfile is merged.
     /// </summary>
     Merged = 0b10,
+
+    #endregion
+
+    #region Error
 
     /// <summary>
     /// Passfile wasn't downloaded from the server because of some error.
@@ -42,7 +48,9 @@ public enum PassFileMark : short
     /// <summary>
     /// Other passfile problem.
     /// </summary>
-    Other = 0b100000
+    OtherError = 0b100000,
+
+    #endregion
 }
 
 public class Dict
@@ -50,9 +58,10 @@ public class Dict
     private static readonly SimpleMapper<PassFileMark, string> KindToName = new MapToResource<PassFileMark>[]
     {
         new(PassFileMark.NeedsMerge, () => Resources.PASSFILE_PROBLEM__NEEDS_MERGE),
+        new(PassFileMark.Merged, () => Resources.),
         new(PassFileMark.DownloadingError, () => Resources.PASSFILE_PROBLEM__DOWNLOAD_ERR),
         new(PassFileMark.UploadingError, () => Resources.PASSFILE_PROBLEM__UPLOAD_ERR),
         new(PassFileMark.RemoteDeletingError, () => Resources.PASSFILE_PROBLEM__REMOTE_DELETING_ERR),
-        new(PassFileMark.Other, () => Resources.PASSFILE_PROBLEM__OTHER),
+        new(PassFileMark.OtherError, () => Resources.PASSFILE_PROBLEM__OTHER),
     };
 }
