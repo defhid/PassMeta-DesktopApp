@@ -1,10 +1,11 @@
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+
 namespace PassMeta.DesktopApp.Ui.Views.Storage
 {
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
     using Base;
-    using Common.Models.Entities;
     using Utils.Extensions;
     using ViewModels.Storage.PassFileRestoreWin;
 

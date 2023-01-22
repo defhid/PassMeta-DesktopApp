@@ -1,9 +1,10 @@
+using PassMeta.DesktopApp.Common.Extensions;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Logs.Models
 {
     using System;
     using System.Linq;
     using Common.Models.Entities;
-    using Common.Utils.Extensions;
 
     public class LogInfo
     {

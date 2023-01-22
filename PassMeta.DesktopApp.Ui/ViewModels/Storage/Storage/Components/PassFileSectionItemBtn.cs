@@ -1,3 +1,5 @@
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 {
     using System;
@@ -7,7 +9,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
     using System.Threading.Tasks;
     using Common;
     using Common.Abstractions.Services;
-    using Common.Models.Entities.Extra;
     using Core;
     using ReactiveUI;
     
@@ -51,9 +52,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             Action<PassFileSectionItemBtn> onDelete,
             Action<PassFileSectionItemBtn, int> onMove)
         {
-            What = string.Join('\n', item.What.Select(x => x.Trim()).Where(x => x != string.Empty));
+            What = string.Join('\n', item.Usernames.Select(x => x.Trim()).Where(x => x != string.Empty));
             Password = item.Password;
-            Comment = item.Comment;
+            Comment = item.Remark;
 
             _isReadOnly = editModeObservable.Select(editMode => !editMode)
                 .ToProperty(this, nameof(IsReadOnly));
@@ -90,9 +91,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
         public PwdItem ToItem() => new()
         {
-            What = _NormalizeWhat().Split('\n'),
+            Usernames = _NormalizeWhat().Split('\n'),
             Password = Password ?? string.Empty,
-            Comment = Comment?.Trim() ?? string.Empty
+            Remark = Comment?.Trim() ?? string.Empty
         };
 
         private string _NormalizeWhat()

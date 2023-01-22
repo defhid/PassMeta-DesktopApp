@@ -28,6 +28,11 @@ public interface IAppConfig
     public bool DevMode { get; }
 
     /// <summary>
+    /// Debugging mode.
+    /// </summary>
+    public bool DebugMode { get; }
+
+    /// <summary>
     /// Default length for password generator.
     /// </summary>
     public int DefaultPasswordLength { get; }

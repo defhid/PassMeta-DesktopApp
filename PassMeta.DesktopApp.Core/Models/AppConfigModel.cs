@@ -1,6 +1,6 @@
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Constants;
-using PassMeta.DesktopApp.Common.Models.Settings;
+using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 
 namespace PassMeta.DesktopApp.Core.Models;
 
@@ -22,6 +22,9 @@ public class AppConfigModel : IAppConfig
     public bool DevMode { get; set; }
 
     /// <inheritdoc />
+    public bool DebugMode { get; set; }
+
+    /// <inheritdoc />
     public int DefaultPasswordLength { get; set; }
 
     /// <summary></summary>
@@ -35,6 +38,7 @@ public class AppConfigModel : IAppConfig
         
         HidePasswords = dto.HidePasswords ?? false;
         DevMode = dto.DevMode ?? false;
+        DebugMode = dto.DebugMode ?? false;
         DefaultPasswordLength = dto.DefaultPasswordLength ?? 12;
     }
 
@@ -45,6 +49,7 @@ public class AppConfigModel : IAppConfig
         ServerUrl = ServerUrl,
         HidePasswords = HidePasswords,
         DevMode = DevMode,
+        DebugMode = DebugMode,
         DefaultPasswordLength = DefaultPasswordLength,
     };
 

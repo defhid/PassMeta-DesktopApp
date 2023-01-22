@@ -1,4 +1,5 @@
 using PassMeta.DesktopApp.Common.Models;
+using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;
 

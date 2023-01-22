@@ -1,3 +1,7 @@
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
 {
     using System;
@@ -5,9 +9,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
     using System.Linq;
     using System.Reactive.Linq;
     using Common.Models;
-    using Common.Models.Dto;
-    using Common.Models.Entities.Extra;
-    using Common.Utils.Extensions;
     using Components;
     using Models;
     using ReactiveUI;
@@ -38,20 +39,20 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
         public IObservable<string> LocalSectionName { get; }
         public IObservable<string> RemoteSectionName { get; }
         
-        public string LocalVersion => $"v{_merge.Versions.Splitting}..{_merge.Versions.Local}";
-        public string RemoteVersion => $"v{_merge.Versions.Splitting}..{_merge.Versions.Remote}";
+        public string LocalVersion => $"v{_sectionsMerge.Versions.Splitting}..{_sectionsMerge.Versions.Local}";
+        public string RemoteVersion => $"v{_sectionsMerge.Versions.Splitting}..{_sectionsMerge.Versions.Remote}";
 
-        public string LocalVersionDate => _merge.VersionsChangedOn.Local.ToShortDateTimeString();
-        public string RemoteVersionDate => _merge.VersionsChangedOn.Remote.ToShortDateTimeString();
+        public string LocalVersionDate => _sectionsMerge.VersionsChangedOn.Local.ToShortDateTimeString();
+        public string RemoteVersionDate => _sectionsMerge.VersionsChangedOn.Remote.ToShortDateTimeString();
 
         public readonly ViewElements ViewElements = new();
 
-        private readonly PwdMerge _merge;
+        private readonly PwdSectionsMerge _sectionsMerge;
 
-        public PassFileMergeWinViewModel(PwdMerge merge)
+        public PassFileMergeWinViewModel(PwdSectionsMerge sectionsMerge)
         {
-            _merge = merge;
-            ConflictButtons = new ObservableCollection<ConflictBtn>(merge.Conflicts.Select(_MakeConflictBtn));
+            _sectionsMerge = sectionsMerge;
+            ConflictButtons = new ObservableCollection<ConflictBtn>(sectionsMerge.Conflicts.Select(_MakeConflictBtn));
             
             var conflictChanged = this.WhenAnyValue(vm => vm.SelectedConflictBtn);
             
@@ -70,7 +71,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
             RemoteSectionName = conflictChanged.Select(btn => btn?.Conflict.Remote?.Name ?? string.Empty);
         }
 
-        private void Close() => ViewElements.Window!.Close(Result.From(!_merge.Conflicts.Any()));
+        private void Close() => ViewElements.Window!.Close(Result.From(!_sectionsMerge.Conflicts.Any()));
 
         private void _Accept(bool isLocal)
         {
@@ -78,13 +79,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
             var conflictBtn = SelectedConflictBtn!;
             var conflict = conflictBtn.Conflict;
             
-            _merge.ResultSections.Add(new PwdSection
+            _sectionsMerge.ResultSections.Add(new PwdSection
             {
                 Id = (conflict.Local?.Id ?? conflict.Remote?.Id)!,
                 Name = (conflict.Local?.Name ?? conflict.Remote?.Name)!,
                 Items = items.Select(btn => btn.ToItem()).ToList()
             });
-            _merge.Conflicts.Remove(conflict);
+            _sectionsMerge.Conflicts.Remove(conflict);
 
             var index = ConflictButtons.IndexOf(conflictBtn);
             
@@ -103,10 +104,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
 
         #region Buttons factory
 
-        private ConflictBtn _MakeConflictBtn(PwdMerge.Conflict conflict)
+        private ConflictBtn _MakeConflictBtn(PwdSectionsMerge.Conflict conflict)
             => new(conflict, btn =>
             {
-                _merge.Conflicts.Remove(btn.Conflict);
+                _sectionsMerge.Conflicts.Remove(btn.Conflict);
                 ConflictButtons.Remove(btn);
                 if (!ConflictButtons.Any())
                 {

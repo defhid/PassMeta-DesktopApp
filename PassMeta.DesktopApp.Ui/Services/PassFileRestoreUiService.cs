@@ -8,9 +8,9 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-    
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Core.Services.Extensions;
@@ -43,7 +43,7 @@ namespace PassMeta.DesktopApp.Ui.Services
                     return Result.Failure();
                 }
 
-                if (passFile.LocalDeleted)
+                if (passFile.IsLocalDeleted())
                 {
                     var restoreResult = PassFileManager.Restore(passFile);
                     if (restoreResult.Bad)
@@ -79,7 +79,7 @@ namespace PassMeta.DesktopApp.Ui.Services
             }
             else if (pfResult is not null)
             {
-                passFile.DataEncrypted = pfResult.Data!.DataEncrypted;
+                passFile.ContentEncrypted = pfResult.Data!.ContentEncrypted;
                 passFile.PassPhrase = null;
             }
             else return Result.Failure();

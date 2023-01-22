@@ -9,9 +9,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
 
 using PassMeta.DesktopApp.Core;
-using AppContext = PassMeta.DesktopApp.Core.AppContext;
-
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
+using AppContext = PassMeta.DesktopApp.Core.AppContext;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels;
 

@@ -10,8 +10,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-    
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 using PassMeta.DesktopApp.Ui.Interfaces.UiServices;
@@ -52,12 +51,12 @@ namespace PassMeta.DesktopApp.Ui.Services
         {
             var fileDialog = new SaveFileDialog
             {
-                InitialFileName = passFile.Name + ExternalFormat.PwdPassfileEncrypted.FullExtension,
-                DefaultExtension = ExternalFormat.PwdPassfileEncrypted.FullExtension,
+                InitialFileName = passFile.Name + PassFileExternalFormat.PwdPassfileEncrypted.FullExtension,
+                DefaultExtension = PassFileExternalFormat.PwdPassfileEncrypted.FullExtension,
                 Filters = exportService.SupportedFormats.Select(format => new FileDialogFilter
                 {
                     Name = format.Name,
-                    Extensions = { format.PureExtension }
+                    Extensions = { format.Extension }
                 }).ToList()
             };
             

@@ -8,12 +8,10 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Models.Entities.Extra;
 using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Utils.Extensions;
-
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Core.Utils.Extensions;
 using PassMeta.DesktopApp.Core.Services.Extensions;
@@ -126,7 +124,7 @@ public class PassFileSyncService : IPassFileSyncService
                 continue;
             }
                 
-            if (local.LocalDeleted)
+            if (local.IsLocalDeleted())
             {
                 if (local.InfoChangedOn < remote.InfoChangedOn ||
                     local.VersionChangedOn < remote.VersionChangedOn)
@@ -145,7 +143,7 @@ public class PassFileSyncService : IPassFileSyncService
                 continue;
             }
 
-            if (local.LocalChanged)
+            if (local.IsLocalChanged())
             {
                 PassFile actual;
 
@@ -180,7 +178,7 @@ public class PassFileSyncService : IPassFileSyncService
                     {
                         if (CheckAsUploading(actual, await _EnsureHasLocalEncryptedAsync(actual)))
                         {
-                            var res = Result.FromResponse(await _remoteService.SaveDataAsync(actual));
+                            var res = Result.FromResponse(await _remoteService.SaveContentAsync(actual));
                             if (CheckAsUploading(actual, res))
                             {
                                 PassFileManager.TryResetProblem(actual.Id);
@@ -218,7 +216,7 @@ public class PassFileSyncService : IPassFileSyncService
             
         foreach (var local in localList)
         {
-            if (local.LocalCreated) await _TryAddPassFileAsync(local);
+            if (local.IsLocalCreated()) await _TryAddPassFileAsync(local);
             else PassFileManager.Delete(local, true);
         }
             
@@ -234,7 +232,7 @@ public class PassFileSyncService : IPassFileSyncService
             {
                 _logger.Info($"{passFile} created on the server");
 
-                var actual = result.Data!.WithEncryptedDataFrom(passFile);
+                var actual = result.Data!.WithEncryptedContentFrom(passFile);
 
                 CheckAsDownloading(actual, PassFileManager.AddFromRemote(actual, passFile.Id));
             }
@@ -264,27 +262,27 @@ public class PassFileSyncService : IPassFileSyncService
 
     private async Task<bool> _TryLoadRemoteEncryptedAsync(PassFile passFile, int version)
     {
-        var data = await _remoteService.GetDataAsync(passFile.Id, version);
+        var data = await _remoteService.GetContentAsync(passFile.Id, version);
         if (data is null)
         {
             PassFileManager.TrySetProblem(passFile.Id, PassFileProblemKind.DownloadingError);
             return false;
         }
 
-        passFile.DataEncrypted = data;
+        passFile.ContentEncrypted = data;
         return true;
     }
         
     private async Task<IDetailedResult> _EnsureHasLocalEncryptedAsync(PassFile passFile)
     {
-        if (passFile.DataEncrypted is null)
+        if (passFile.ContentEncrypted is null)
         {
             var result = await PassFileManager.GetEncryptedDataAsync(passFile.Type, passFile.Id);
                 
             var res = EnsureOk(passFile, result);
             if (res.Bad) return res;
 
-            passFile.DataEncrypted = result.Data;
+            passFile.ContentEncrypted = result.Data;
         }
 
         return Result.Success();

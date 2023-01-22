@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Settings;
 
 namespace PassMeta.DesktopApp.Core.Models;
 
@@ -17,9 +17,6 @@ public class AppContextModel : IAppContext
     public User? User { get; set; }
 
     /// <inheritdoc />
-    public uint PassFilesCounter { get; set; }
-
-    /// <inheritdoc />
     public string? ServerId { get; set; }
 
     /// <inheritdoc />
@@ -30,7 +27,6 @@ public class AppContextModel : IAppContext
     {
         Cookies = dto.Cookies ?? new List<Cookie>();
         User = dto.User;
-        PassFilesCounter = dto.PassFilesCounter ?? 0;
         ServerId = dto.ServerId;
     }
 
@@ -39,7 +35,6 @@ public class AppContextModel : IAppContext
     {
         User = User,
         Cookies = Cookies.ToList(),
-        PassFilesCounter = PassFilesCounter,
         ServerId = ServerId
     };
 

@@ -1,6 +1,7 @@
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 {
-    using Common.Models.Entities.Extra;
     using ReactiveUI;
 
     public class PassFileSectionBtn : ReactiveObject

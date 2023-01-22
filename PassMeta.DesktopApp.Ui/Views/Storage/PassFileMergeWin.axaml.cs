@@ -1,8 +1,9 @@
+using PassMeta.DesktopApp.Common.Models.Entities;
+
 namespace PassMeta.DesktopApp.Ui.Views.Storage
 {
     using Avalonia.Markup.Xaml;
     using Base;
-    using Common.Models.Dto;
     using Utils.Extensions;
     using ViewModels.Storage.PassFileMergeWin;
 
@@ -14,9 +15,9 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
             this.CorrectMainWindowFocusWhileOpened();
         }
 
-        public PassFileMergeWin(PwdMerge merge) : this()
+        public PassFileMergeWin(PwdSectionsMerge sectionsMerge) : this()
         {
-            DataContext = new PassFileMergeWinViewModel(merge)
+            DataContext = new PassFileMergeWinViewModel(sectionsMerge)
             {
                 ViewElements = { Window = this }
             };

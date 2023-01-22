@@ -3,10 +3,10 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
     
 using Avalonia.Media;
+using PassMeta.DesktopApp.Common.Extensions;
 using ReactiveUI;
 using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
-    
-using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Utils.Extensions;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
@@ -45,7 +45,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             Name = this.WhenAnyValue(btn => btn.PassFile, btn => btn.ShortMode)
                 .Select(pair => pair.Item1 is null 
                     ? "~"
-                    : pair.Item1.LocalDeleted
+                    : pair.Item1.IsLocalDeleted()
                         ? '~' + (pair.Item2 ? pair.Item1.Name[..1] : pair.Item1.Name)
                         : pair.Item2 ? pair.Item1.Name[..2] : pair.Item1.Name);
             
@@ -53,7 +53,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
             Color = passFileObservable.Select(pf => pf?.GetPassFileColor().Brush);
 
-            Opacity = passFileObservable.Select(pf => pf?.LocalDeleted ?? true ? 0.6d : 1d);
+            Opacity = passFileObservable.Select(pf => pf?.IsLocalDeleted() ?? true ? 0.6d : 1d);
 
             OpenCommand = ReactiveCommand.CreateFromTask(OpenAsync, passFileObservable.Select(pf => pf is not null));
 

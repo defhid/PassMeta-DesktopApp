@@ -1,16 +1,14 @@
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
+using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Extensions;
+
 namespace PassMeta.DesktopApp.Core.Utils.Extensions;
 
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Common;
-using Common.Enums;
-using Common.Models.Entities;
-using Common.Models.Entities.Extra;
-
 /// <summary>
-/// Extension methods for <see cref="PassFile"/>.
+/// Extension methods for <see cref="IPassFile{TContent}"/>.
 /// </summary>
 public static class PassFileExtensions
 {
@@ -18,128 +16,47 @@ public static class PassFileExtensions
     /// Does passfile information differs from other?
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsInformationDifferentFrom(this PassFile left, PassFile right)
-    {
-        return left.Id != right.Id ||
-               left.Name != right.Name ||
-               left.Color != right.Color ||
-               left.LocalDeletedOn != right.LocalDeletedOn;
-    }
-        
+    public static bool IsInformationDifferentFrom(this IPassFile left, IPassFile right)
+        => left.Id != right.Id ||
+           left.Name != right.Name ||
+           left.Color != right.Color;
+
     /// <summary>
     /// Does passfile version differs from other?
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsVersionDifferentFrom(this PassFile left, PassFile right)
-    {
-        return left.Version != right.Version || 
-               left.VersionChangedOn != right.VersionChangedOn;
-    }
-        
-    /// <summary>
-    /// Has passfile information been changed? (based on <see cref="PassFile.Origin"/>)
-    /// </summary>
-    public static bool IsInformationChanged(this PassFile passFile)
-    {
-        var origin = passFile.Origin;
-        return origin is not null && 
-               IsInformationDifferentFrom(origin, passFile);
-    }
-        
-    /// <summary>
-    /// Has passfile version been changed? (based on <see cref="PassFile.Origin"/>)
-    /// </summary>
-    public static bool IsVersionChanged(this PassFile passFile)
-    {
-        var origin = passFile.Origin;
-        return origin is not null && 
-               IsVersionDifferentFrom(origin, passFile);
-    }
+    public static bool IsVersionDifferentFrom(this IPassFile left, IPassFile right)
+        => left.Version != right.Version || 
+           left.VersionChangedOn != right.VersionChangedOn;
 
     /// <summary>
     /// Get passfile short identity string (id + name).
     /// </summary>
-    public static string GetIdentityString(this PassFile passFile) 
+    public static string GetIdentityString(this IPassFile passFile) 
         => $"#{passFile.Id.ToString().Replace('-', '~')} '{passFile.Name.Replace("'", "")}'";
 
     /// <summary>
     /// Get title for passfile, depending on its current state.
     /// </summary>
-    public static string GetTitle(this PassFile passFile)
+    public static string GetTitle(this IPassFile passFile)
     {
-        if (passFile.LocalCreated) 
+        if (passFile.IsLocalCreated()) 
             return string.Format(Resources.PASSFILE__TITLE_NEW, passFile.GetIdentityString());
             
-        if (passFile.LocalDeleted) 
+        if (passFile.IsLocalDeleted()) 
             return string.Format(Resources.PASSFILE__TITLE_DELETED, passFile.GetIdentityString());
             
         return string.Format(Resources.PASSFILE__TITLE, passFile.GetIdentityString());
     }
 
     /// <summary>
-    /// Set <see cref="PassFile.DataEncrypted"/> and <see cref="PassFile.PassPhrase"/>
-    /// from other passfile.
-    /// </summary>
-    /// <returns>Refreshed passfile.</returns>
-    public static PassFile WithEncryptedDataFrom(this PassFile passFile, PassFile fromPassFile)
-    {
-        passFile.DataEncrypted = fromPassFile.DataEncrypted;
-        passFile.PassPhrase = fromPassFile.PassPhrase;
-        return passFile;
-    }
-        
-    /// <summary>
-    /// Set decrypted data field from other passfile according to <see cref="PassFile.Type"/>.
-    /// </summary>
-    /// <returns>Refreshed passfile.</returns>
-    public static PassFile WithDecryptedDataFrom(this PassFile passFile, PassFile fromPassFile)
-    {
-        Debug.Assert(passFile.Type == fromPassFile.Type);
-            
-        switch (passFile.Type)
-        {
-            case PassFileType.Pwd:
-                passFile.PwdData = fromPassFile.PwdData?.Select(section => section.Copy()).ToList();
-                break;
-            case PassFileType.Txt:
-                passFile.TxtData = fromPassFile.TxtData?.Select(section => section.Copy()).ToList();
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
-        }
-
-        return passFile;
-    }
-        
-    /// <summary>
-    /// Set decrypted data field to null according to <see cref="PassFile.Type"/>.
-    /// </summary>
-    /// <returns>Refreshed passfile.</returns>
-    public static PassFile WithoutDecryptedData(this PassFile passFile)
-    {
-        switch (passFile.Type)
-        {
-            case PassFileType.Pwd:
-                passFile.PwdData = null;
-                break;
-            case PassFileType.Txt:
-                passFile.TxtData = null;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
-        }
-
-        return passFile;
-    }
-
-    /// <summary>
     /// Set information fields from other <paramref name="passFile"/>.
     /// </summary>
-    public static void RefreshInfoFieldsFrom(this PassFile passFile, PassFile otherPassFile)
+    public static void RefreshInfoFieldsFrom(this IPassFile passFile, IPassFile otherPassFile)
     {
         passFile.Name = otherPassFile.Name;
         passFile.Color = otherPassFile.Color;
-        passFile.Origin = otherPassFile.Origin?.Copy(false);
+        passFile.Origin = otherPassFile.Origin?.Clone();  // TODO: Hm...
         passFile.InfoChangedOn = otherPassFile.InfoChangedOn;
         passFile.LocalDeletedOn = otherPassFile.LocalDeletedOn;
     }
@@ -147,41 +64,59 @@ public static class PassFileExtensions
     /// <summary>
     /// Set data fields from other <paramref name="passFile"/>.
     /// </summary>
-    public static void RefreshDataFieldsFrom(this PassFile passFile, PassFile otherPassFile, bool refreshDecryptedData)
+    public static void RefreshDataFieldsFrom(this IPassFile passFile, IPassFile otherPassFile, bool refreshDecryptedData)
     {
         if (refreshDecryptedData)
         {
-            passFile.WithDecryptedDataFrom(otherPassFile);
+            passFile.WithDecryptedContentFrom(otherPassFile);
         }
-        passFile.DataEncrypted = otherPassFile.DataEncrypted;
+        passFile.ContentEncrypted = otherPassFile.ContentEncrypted;
         passFile.PassPhrase = otherPassFile.PassPhrase;
-        passFile.Origin = otherPassFile.Origin?.Copy(false);
+        passFile.Origin = otherPassFile.Origin?.Clone();
         passFile.Version = otherPassFile.Version;
         passFile.VersionChangedOn = otherPassFile.VersionChangedOn;
-        passFile.Marks = otherPassFile.Marks;
+    }
+    
+    #region With / without
+
+    /// <summary>
+    /// Set <see cref="IPassFile{TContent}.ContentEncrypted"/> and <see cref="IPassFile{TContent}.PassPhrase"/>
+    /// from other passfile.
+    /// </summary>
+    /// <returns>Refreshed passfile.</returns>
+    public static TPassFile WithEncryptedContentFrom<TPassFile>(this TPassFile passFile, TPassFile fromPassFile)
+        where TPassFile : IPassFile
+    {
+        passFile.ContentEncrypted = fromPassFile.ContentEncrypted;
+        passFile.PassPhrase = fromPassFile.PassPhrase;
+        return passFile;
     }
         
     /// <summary>
-    /// Does <paramref name="left"/> section have any difference
-    /// with <paramref name="right"/>?
+    /// Set decrypted data field from other passfile according to <see cref="IPassFile{TContent}.Type"/>.
     /// </summary>
-    public static bool DiffersFrom(this PwdSection left, PwdSection right)
+    /// <returns>Refreshed passfile.</returns>
+    public static TPassFile WithDecryptedContentFrom<TPassFile, TContent>(this TPassFile passFile, TPassFile fromPassFile)
+        where TPassFile : IPassFile<TContent>
+        where TContent : class
     {
-        return left.Name != right.Name || 
-               left.Items.Count != right.Items.Count ||
-               left.Items.Any(lItem => 
-                   right.Items.All(rItem => rItem.DiffersFrom(lItem)));
+        Debug.Assert(passFile.Type == fromPassFile.Type);
+
+        passFile.Content = fromPassFile.CloneContent();
+        return passFile;
     }
         
     /// <summary>
-    /// Does <paramref name="left"/> item have any difference
-    /// with <paramref name="right"/>?
+    /// Set decrypted data field to null according to <see cref="IPassFile{TContent}.Type"/>.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool DiffersFrom(this PwdItem left, PwdItem right)
+    /// <returns>Refreshed passfile.</returns>
+    public static TPassFile WithoutDecryptedData<TPassFile, TContent>(this TPassFile passFile)
+        where TPassFile : IPassFile<TContent>
+        where TContent : class
     {
-        return left.Password != right.Password || 
-               left.Comment != right.Comment ||
-               !left.What.All(right.What.Contains);
+        passFile.Content = null;
+        return passFile;
     }
+
+    #endregion
 }

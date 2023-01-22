@@ -13,9 +13,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Extra;
-
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 using PassMeta.DesktopApp.Core.Utils;
 
@@ -55,10 +54,10 @@ public class PassFilePwdImportService : IPassFileImportService
     }
 
     /// <inheritdoc />
-    public IEnumerable<ExternalFormat> SupportedFormats { get; } = new[]
+    public IEnumerable<PassFileExternalFormat> SupportedFormats { get; } = new[]
     {
-        ExternalFormat.PwdPassfileEncrypted,
-        ExternalFormat.PwdPassfileDecrypted,
+        PassFileExternalFormat.PwdPassfileEncrypted,
+        PassFileExternalFormat.PwdPassfileDecrypted,
     };
 
     /// <inheritdoc />
@@ -79,11 +78,11 @@ public class PassFilePwdImportService : IPassFileImportService
 
             IResult<(List<PwdSection>, string)> result;
 
-            if (ext == ExternalFormat.PwdPassfileEncrypted.FullExtension)
+            if (ext == PassFileExternalFormat.PwdPassfileEncrypted.FullExtension)
             {
                 result = await ImportPassfileEncryptedAsync(bytes, name, supposedPassPhrase);
             }
-            else if (ext == ExternalFormat.PwdPassfileDecrypted.FullExtension)
+            else if (ext == PassFileExternalFormat.PwdPassfileDecrypted.FullExtension)
             {
                 result = await ImportPassfileDecryptedAsync(bytes, name);
             }

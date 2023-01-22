@@ -1,8 +1,9 @@
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
 {
     using System;
     using System.Linq;
-    using Common.Models.Entities.Extra;
     using ReactiveUI;
     
     using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
@@ -23,9 +24,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
             Action<ItemBtn, int> onMove,
             Action<ItemBtn> onTransfer)
         {
-            What = string.Join('\n', item.What.Select(x => x.Trim()).Where(x => x != string.Empty));
+            What = string.Join('\n', item.Usernames.Select(x => x.Trim()).Where(x => x != string.Empty));
             Password = item.Password;
-            Comment = item.Comment;
+            Comment = item.Remark;
 
             DeleteCommand = ReactiveCommand.Create(() => onDelete(this));
             UpCommand = ReactiveCommand.Create(() => onMove(this, -1));
@@ -35,9 +36,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
 
         public PwdItem ToItem() => new()
         {
-            What = _NormalizeWhat().Split('\n'),
+            Usernames = _NormalizeWhat().Split('\n'),
             Password = Password ?? string.Empty,
-            Comment = Comment?.Trim() ?? string.Empty
+            Remark = Comment?.Trim() ?? string.Empty
         };
 
         private string _NormalizeWhat()

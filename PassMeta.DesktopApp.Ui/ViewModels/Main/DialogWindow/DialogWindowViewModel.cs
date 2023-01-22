@@ -1,9 +1,10 @@
+using PassMeta.DesktopApp.Common.Extensions;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow
 {
     using System;
     using System.Linq;
     using Common.Enums;
-    using Common.Utils.Extensions;
     using Components;
     using Constants;
     using ReactiveUI;

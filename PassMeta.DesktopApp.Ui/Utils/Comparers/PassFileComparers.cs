@@ -1,8 +1,9 @@
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+
 namespace PassMeta.DesktopApp.Ui.Utils.Comparers
 {
     using System;
     using System.Collections.Generic;
-    using Common.Models.Entities;
 
     public class PassFileComparer : IComparer<PassFile>
     {

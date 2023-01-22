@@ -1,3 +1,6 @@
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+
 namespace PassMeta.DesktopApp.Ui.Utils.Extensions
 {
     using System;
@@ -8,10 +11,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using Common;
     using Common.Abstractions;
     using Common.Abstractions.Services;
-    using Common.Enums;
     using Common.Models;
-    using Common.Models.Entities;
-    using Common.Utils.Extensions;
     using Constants;
     using Core.Utils;
     using Core.Utils.Extensions;
@@ -28,8 +28,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         {
             if (passFile is null) return Brushes.LightGray;
 
-            if (passFile.Problem is null && 
-                !passFile.LocalCreated && !passFile.LocalChanged && !passFile.LocalDeleted)
+            if (passFile.Problem is null && !passFile.IsLocalChanged())
             {
                 return Brushes.WhiteSmoke;
             }
@@ -41,7 +40,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
                 PassFileProblemKind.UploadingError => Brushes.OrangeRed,
                 PassFileProblemKind.RemoteDeletingError => Brushes.OrangeRed,
                 PassFileProblemKind.Other => Brushes.Red,
-                _ => passFile.LocalDeleted
+                _ => passFile.IsLocalDeleted()
                     ? Brushes.LightGray
                     : Brushes.Yellow
             };
@@ -62,13 +61,17 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
         {
             var dates = new List<DateTime>(3);
 
-            if (passFile.LocalCreated)
+            if (passFile.IsLocalCreated())
             {
                 dates.Add(passFile.CreatedOn);
                 dates.Add(passFile.InfoChangedOn);
                 dates.Add(passFile.VersionChangedOn);
             }
-            else if (passFile.LocalChanged)
+            else if (passFile.IsLocalDeleted())
+            {
+                dates.Add(passFile.LocalDeletedOn!.Value);
+            }
+            else if (passFile.IsLocalChanged())
             {
                 if (passFile.IsInformationChanged())
                 {
@@ -80,11 +83,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
                     dates.Add(passFile.VersionChangedOn);
                 }
             }
-            else if (passFile.LocalDeleted)
-            {
-                dates.Add(passFile.LocalDeletedOn!.Value);
-            }
-            
+
             dates.Sort();
             if (dates.Count > 2)
             {

@@ -32,6 +32,11 @@ namespace PassMeta.DesktopApp.Common.Models.Entities
             /// <summary>
             /// Informational section.
             /// </summary>
+            public const string Debug = "DG";
+
+            /// <summary>
+            /// Informational section.
+            /// </summary>
             public const string Info = "IN";
             
             /// <summary>

@@ -1,3 +1,6 @@
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 {
     using System;
@@ -12,8 +15,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Common.Abstractions.Services;
     using Common.Abstractions.Services.PassFile;
     using Common.Enums;
-    using Common.Models.Entities;
-    using Common.Utils.Extensions;
     using Components;
     using Constants;
     using Core;
@@ -23,7 +24,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Utils.Comparers;
     using Utils.Extensions;
     using ViewModels.Components;
-    using AppContext = Core.AppContext;
 
     public class StorageViewModel : PageViewModel
     {
@@ -150,7 +150,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         public override void TryNavigate()
         {
-            if (AppContext.Current.User is null)
+            if (Core.AppContext.Current.User is null)
             {
                 TryNavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
             }
@@ -169,7 +169,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         public override async Task RefreshAsync()
         {
-            if (AppContext.Current.User is null)
+            if (Core.AppContext.Current.User is null)
             {
                 TryNavigateTo<AuthRequiredViewModel>(typeof(StorageViewModel));
             }
@@ -235,13 +235,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             var list = PassFileManager.GetCurrentList(PassFileType.Pwd);
             list.Sort(new PassFileComparer());
 
-            var localCreated = list.Where(pf => pf.LocalCreated);
-            var localChanged = list.Where(pf => pf.LocalChanged); 
-            var unchanged = list.Where(pf => pf.LocalNotChanged);
-            var localDeleted = list.Where(pf => pf.LocalDeleted);
-
-            PassFileList = new ObservableCollection<PassFileBtn>(
-                localCreated.Concat(localChanged).Concat(unchanged).Concat(localDeleted).Select(_MakePassFileBtn));
+            PassFileList = new ObservableCollection<PassFileBtn>(list.Select(_MakePassFileBtn));
         }
 
         private async Task DecryptIfRequiredAndSetSectionsAsync(int _)
@@ -253,7 +247,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
                 return;
             }
 
-            if (!passFile.LocalDeleted)
+            if (!passFile.IsLocalDeleted())
             {
                 using var preloader = AppLoading.General.Begin();
 

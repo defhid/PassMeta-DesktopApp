@@ -9,9 +9,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Extra;
-
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
@@ -47,7 +46,7 @@ public class PassFileCryptoService : IPassFileCryptoService
             return DecryptionError;
         }
 
-        if (passFile.DataEncrypted is null)
+        if (passFile.ContentEncrypted is null)
         {
             passFile.PassPhrase = originPassPhrase;
             _logger.Error("Using Decrypt method without encrypted data!");
@@ -56,7 +55,7 @@ public class PassFileCryptoService : IPassFileCryptoService
 
         var service = EnvironmentContainer.Resolve<ICryptoService>();
 
-        var content = service.Decrypt(passFile.DataEncrypted, passFile.PassPhrase, silent);
+        var content = service.Decrypt(passFile.ContentEncrypted, passFile.PassPhrase, silent);
         if (content is null)
         {
             passFile.PassPhrase = originPassPhrase;
@@ -122,8 +121,8 @@ public class PassFileCryptoService : IPassFileCryptoService
 
         var data = PassFileConvention.JsonEncoding.GetBytes(json);
 
-        passFile.DataEncrypted = service.Encrypt(data, passFile.PassPhrase);
-        if (passFile.DataEncrypted is null)
+        passFile.ContentEncrypted = service.Encrypt(data, passFile.PassPhrase);
+        if (passFile.ContentEncrypted is null)
         {
             return EncryptionError;
         }

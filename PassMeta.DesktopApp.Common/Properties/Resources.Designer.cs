@@ -888,6 +888,24 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Passfiles are saved to the local storage with errors! (see logs).
+        /// </summary>
+        public static string PASSCONTEXT__COMMIT_WARNING {
+            get {
+                return ResourceManager.GetString("PASSCONTEXT__COMMIT_WARNING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New.
+        /// </summary>
+        public static string PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME {
+            get {
+                return ResourceManager.GetString("PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please, input your account password to delete passfile &apos;{0}&apos; from the server (#{1}, deleted locally on {2}).
         /// </summary>
         public static string PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE {
@@ -1608,38 +1626,20 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Passfiles are saved to the local storage with errors! (see logs).
-        /// </summary>
-        public static string PASSMGR__COMMIT_WARNING {
-            get {
-                return ResourceManager.GetString("PASSMGR__COMMIT_WARNING", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New.
-        /// </summary>
-        public static string PASSMGR__DEFAULT_NEW_PASSFILE_NAME {
-            get {
-                return ResourceManager.GetString("PASSMGR__DEFAULT_NEW_PASSFILE_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Passfile local manager error! (see logs).
         /// </summary>
-        public static string PASSMGR__ERR {
+        public static string PASSSTORAGE__ERR {
             get {
-                return ResourceManager.GetString("PASSMGR__ERR", resourceCulture);
+                return ResourceManager.GetString("PASSSTORAGE__ERR", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Passfile local version not found!.
         /// </summary>
-        public static string PASSMGR__VERSION_NOT_FOUND_ERR {
+        public static string PASSSTORAGE__VERSION_NOT_FOUND_ERR {
             get {
-                return ResourceManager.GetString("PASSMGR__VERSION_NOT_FOUND_ERR", resourceCulture);
+                return ResourceManager.GetString("PASSSTORAGE__VERSION_NOT_FOUND_ERR", resourceCulture);
             }
         }
         

@@ -1,10 +1,11 @@
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+
 namespace PassMeta.DesktopApp.Ui.Views.Storage
 {
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
     using Base;
-    using Common.Models.Entities;
     using Utils.Extensions;
     using ViewModels.Storage.PassFileWin;
 
@@ -28,7 +29,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
             DataContext = new PassFileWinViewModel(passFile.Copy());
             DataContext.ViewElements.Window = this;
 
-            _changeNameAdvice = PassFile!.Name.Trim() == Common.Resources.PASSMGR__DEFAULT_NEW_PASSFILE_NAME;
+            _changeNameAdvice = PassFile!.Name.Trim() == Common.Resources.PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME;
             Closing += (_, _) =>
             {
                 if (DataContext!.PassFileChanged)

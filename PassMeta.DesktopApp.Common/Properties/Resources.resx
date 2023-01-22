@@ -288,13 +288,13 @@
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Passfile encryption failed</value>
     </data>
-    <data name="PASSMGR__VERSION_NOT_FOUND_ERR" xml:space="preserve">
+    <data name="PASSSTORAGE__VERSION_NOT_FOUND_ERR" xml:space="preserve">
         <value>Passfile local version not found!</value>
     </data>
-    <data name="PASSMGR__ERR" xml:space="preserve">
+    <data name="PASSSTORAGE__ERR" xml:space="preserve">
         <value>Passfile local manager error! (see logs)</value>
     </data>
-    <data name="PASSMGR__COMMIT_WARNING" xml:space="preserve">
+    <data name="PASSCONTEXT__COMMIT_WARNING" xml:space="preserve">
         <value>Passfiles are saved to the local storage with errors! (see logs)</value>
     </data>
     <data name="PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE" xml:space="preserve">
@@ -351,7 +351,7 @@
     <data name="STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE" xml:space="preserve">
         <value>Input passphrase for a new passfile</value>
     </data>
-    <data name="PASSMGR__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
+    <data name="PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
         <value>New</value>
     </data>
     <data name="STORAGE__SECTION_SEARCH_INPUT_WATERMARK" xml:space="preserve">

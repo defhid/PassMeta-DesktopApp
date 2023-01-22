@@ -1,8 +1,9 @@
+using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
+
 namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient
 {
     using System.Threading.Tasks;
     using Mapping;
-    using Models;
 
     /// <summary>
     /// PassMeta client request builder.
@@ -10,7 +11,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient
     public interface IRequestBuilder
     {
         /// <summary>
-        /// Add response <see cref="OkBadResponse.What"/> mapping.
+        /// Add response <see cref="OkBadMore.What"/> mapping.
         /// </summary>
         /// <returns>this.</returns>
         IRequestBuilder WithBadMapping(IMapper<string, string> whatMapper);

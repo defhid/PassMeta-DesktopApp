@@ -1,9 +1,8 @@
+using PassMeta.DesktopApp.Core;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using DesktopApp.Ui.ViewModels.Base;
-    
-    using AppContext = Core.AppContext;
-    
     using System;
     using System.Threading.Tasks;
     using ReactiveUI;
@@ -20,7 +19,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public override Task RefreshAsync()
         {
-            if (AppContext.Current.User is not null)
+            if (Core.AppContext.Current.User is not null)
             {
                 TryNavigateTo(ForViewModelPageType);
             }

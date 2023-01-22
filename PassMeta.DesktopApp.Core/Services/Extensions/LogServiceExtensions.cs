@@ -1,4 +1,5 @@
 using System;
+using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
@@ -9,6 +10,30 @@ namespace PassMeta.DesktopApp.Core.Services.Extensions;
 /// </summary>
 public static class LogServiceExtensions
 {
+    /// <summary>
+    /// Log debug text, if <see cref="AppConfig.Current"/> config
+    /// has <see cref="IAppConfig.DebugMode"/> flag.
+    /// </summary>
+    public static void Debug(this ILogService logService, string text)
+    {
+        if (AppConfig.Current.DebugMode)
+        {
+            logService.Write(new Log { Section = Log.Sections.Debug, Text = text });
+        }
+    }
+
+    /// <summary>
+    /// Log debug text, if <see cref="AppConfig.Current"/> config
+    /// has <see cref="IAppConfig.DebugMode"/> flag.
+    /// </summary>
+    public static void Debug(this ILogService logService, string formattedText, params object[] args)
+    {
+        if (AppConfig.Current.DebugMode)
+        {
+            logService.Write(new Log { Section = Log.Sections.Debug, Text = string.Format(formattedText, args) });
+        }
+    }
+
     /// <summary>
     /// Log information text.
     /// </summary>
