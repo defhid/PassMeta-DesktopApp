@@ -1,21 +1,17 @@
-namespace PassMeta.DesktopApp.Common.Models.Dto.Request
+namespace PassMeta.DesktopApp.Common.Models.Dto.Request;
+
+/// <summary>
+/// Data to send for a new user registration.
+/// </summary>
+public class SignUpPostData : SignInPostData
 {
-    using Newtonsoft.Json;
+    ///
+    public string FullName { get; set; }
 
-    /// <summary>
-    /// Data to send for a new user registration.
-    /// </summary>
-    public class SignUpPostData : SignInPostData
+    /// <summary></summary>
+    public SignUpPostData(string login, string password, string fullName) 
+        : base(login, password)
     {
-        ///
-        [JsonProperty("full_name")]
-        public string FullName { get; set; }
-
-        /// <summary></summary>
-        public SignUpPostData(string login, string password, string fullName) 
-            : base(login, password)
-        {
-            FullName = fullName;
-        }
+        FullName = fullName;
     }
 }

@@ -14,7 +14,6 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     using Common.Models;
     using Constants;
     using Core.Utils;
-    using Core.Utils.Extensions;
 
     /// <summary>
     /// Extension UI-methods for <see cref="PassFile"/>.

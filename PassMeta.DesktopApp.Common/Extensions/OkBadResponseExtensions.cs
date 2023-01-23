@@ -15,7 +15,7 @@ public static class OkBadResponseExtensions
         return response is null 
             ? string.Empty 
             : response.More?.What is null 
-                ? response.Message 
-                : $"{response.More.What}: {response.Message}";
+                ? response.Msg 
+                : $"{response.More.What}: {response.Msg}";
     }
 }

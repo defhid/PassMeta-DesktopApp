@@ -1,25 +1,20 @@
-namespace PassMeta.DesktopApp.Common.Models.Dto.Request
+namespace PassMeta.DesktopApp.Common.Models.Dto.Request;
+
+/// <summary>
+/// Data to send for login.
+/// </summary>
+public class SignInPostData
 {
-    using Newtonsoft.Json;
-
-    /// <summary>
-    /// Data to send for login.
-    /// </summary>
-    public class SignInPostData
-    {
-        ///
-        [JsonProperty("login")]
-        public string Login { get; set; }
+    ///
+    public string Login { get; set; }
         
-        ///
-        [JsonProperty("password")]
-        public string Password { get; set; }
+    ///
+    public string Password { get; set; }
 
-        /// <summary></summary>
-        public SignInPostData(string login, string password)
-        {
-            Login = login;
-            Password = password;
-        }
+    /// <summary></summary>
+    public SignInPostData(string login, string password)
+    {
+        Login = login;
+        Password = password;
     }
 }

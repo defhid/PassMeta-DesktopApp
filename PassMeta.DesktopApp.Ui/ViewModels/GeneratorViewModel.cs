@@ -1,8 +1,8 @@
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using Core;
-    using DesktopApp.Common;
-    using DesktopApp.Ui.ViewModels.Base;
+    using Common;
+    using Base;
     
     using System;
     using System.Reactive.Linq;
@@ -15,7 +15,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
     public class GeneratorViewModel : PageViewModel
     {
         private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
-        private readonly ICryptoService _cryptoService = EnvironmentContainer.Resolve<ICryptoService>();
+        private readonly IPassMetaCryptoService _passMetaCryptoService = EnvironmentContainer.Resolve<IPassMetaCryptoService>();
         private readonly IClipboardService _clipboardService = EnvironmentContainer.Resolve<IClipboardService>();
 
         public int Length
@@ -63,7 +63,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         public GeneratorViewModel(IScreen hostScreen) : base(hostScreen)
         {
-            _result = _cryptoService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
+            _result = _passMetaCryptoService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
 
             GenerateCommand = ReactiveCommand.Create(_Generate);
             CopyCommand = ReactiveCommand.Create(_CopyResultAsync);
@@ -80,7 +80,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
         
         private void _Generate()
         {
-            Result = _cryptoService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
+            Result = _passMetaCryptoService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
         }
 
         private async Task _CopyResultAsync()

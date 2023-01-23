@@ -5,14 +5,9 @@ using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Dto;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Extra;
-    
 using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Core.Utils.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services;
 

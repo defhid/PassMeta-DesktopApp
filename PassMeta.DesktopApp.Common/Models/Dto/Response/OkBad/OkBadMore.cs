@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Mapping;
 
 namespace PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
@@ -14,25 +13,21 @@ public class OkBadMore
     /// <summary>
     /// Short reason.
     /// </summary>
-    [JsonProperty("what")]
     public string? What { get; set; }
         
     /// <summary>
     /// Some text message.
     /// </summary>
-    [JsonProperty("text")]
     public string? Text { get; init; }
         
     /// <summary>
     /// Json-information.
     /// </summary>
-    [JsonProperty("info")]
-    public JContainer? Info { get; init; }
+    public JsonNode? Info { get; init; }
 
     /// <summary>
     /// Sub-responses. Sub-error information list.
     /// </summary>
-    [JsonProperty("sub")]
     public List<OkBadResponse>? Sub { get; init; }
 
     /// <summary>

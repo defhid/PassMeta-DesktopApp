@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 
@@ -33,7 +32,7 @@ public class PwdSectionsMerge
     public readonly List<Conflict> Conflicts = new();
 
     /// <summary></summary>
-    public PwdSectionsMerge(IPassFile localPassFile, IPassFile remotePassFile)
+    public PwdSectionsMerge(PassFile localPassFile, PassFile remotePassFile)
     {
         Versions = (localPassFile.Version, remotePassFile.Version, localPassFile.Origin!.Version);
         VersionsChangedOn = (localPassFile.VersionChangedOn, remotePassFile.VersionChangedOn, localPassFile.Origin!.VersionChangedOn);

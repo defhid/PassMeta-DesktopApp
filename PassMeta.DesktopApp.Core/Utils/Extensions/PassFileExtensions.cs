@@ -2,13 +2,12 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
-using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
 namespace PassMeta.DesktopApp.Core.Utils.Extensions;
 
 /// <summary>
-/// Extension methods for <see cref="IPassFile{TContent}"/>.
+/// Extension methods for <see cref="PassFile{TContent}"/>.
 /// </summary>
 public static class PassFileExtensions
 {
@@ -16,7 +15,7 @@ public static class PassFileExtensions
     /// Does passfile information differs from other?
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsInformationDifferentFrom(this IPassFile left, IPassFile right)
+    public static bool IsInformationDifferentFrom(this PassFile left, PassFile right)
         => left.Id != right.Id ||
            left.Name != right.Name ||
            left.Color != right.Color;
@@ -25,20 +24,20 @@ public static class PassFileExtensions
     /// Does passfile version differs from other?
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsVersionDifferentFrom(this IPassFile left, IPassFile right)
+    public static bool IsVersionDifferentFrom(this PassFile left, PassFile right)
         => left.Version != right.Version || 
            left.VersionChangedOn != right.VersionChangedOn;
 
     /// <summary>
     /// Get passfile short identity string (id + name).
     /// </summary>
-    public static string GetIdentityString(this IPassFile passFile) 
+    public static string GetIdentityString(this PassFile passFile) 
         => $"#{passFile.Id.ToString().Replace('-', '~')} '{passFile.Name.Replace("'", "")}'";
 
     /// <summary>
     /// Get title for passfile, depending on its current state.
     /// </summary>
-    public static string GetTitle(this IPassFile passFile)
+    public static string GetTitle(this PassFile passFile)
     {
         if (passFile.IsLocalCreated()) 
             return string.Format(Resources.PASSFILE__TITLE_NEW, passFile.GetIdentityString());
@@ -52,7 +51,7 @@ public static class PassFileExtensions
     /// <summary>
     /// Set information fields from other <paramref name="passFile"/>.
     /// </summary>
-    public static void RefreshInfoFieldsFrom(this IPassFile passFile, IPassFile otherPassFile)
+    public static void RefreshInfoFieldsFrom(this PassFile passFile, PassFile otherPassFile)
     {
         passFile.Name = otherPassFile.Name;
         passFile.Color = otherPassFile.Color;
@@ -64,7 +63,7 @@ public static class PassFileExtensions
     /// <summary>
     /// Set data fields from other <paramref name="passFile"/>.
     /// </summary>
-    public static void RefreshDataFieldsFrom(this IPassFile passFile, IPassFile otherPassFile, bool refreshDecryptedData)
+    public static void RefreshDataFieldsFrom(this PassFile passFile, PassFile otherPassFile, bool refreshDecryptedData)
     {
         if (refreshDecryptedData)
         {
@@ -80,12 +79,12 @@ public static class PassFileExtensions
     #region With / without
 
     /// <summary>
-    /// Set <see cref="IPassFile{TContent}.ContentEncrypted"/> and <see cref="IPassFile{TContent}.PassPhrase"/>
+    /// Set <see cref="PassFile{TContent}.ContentEncrypted"/> and <see cref="PassFile{TContent}.PassPhrase"/>
     /// from other passfile.
     /// </summary>
     /// <returns>Refreshed passfile.</returns>
     public static TPassFile WithEncryptedContentFrom<TPassFile>(this TPassFile passFile, TPassFile fromPassFile)
-        where TPassFile : IPassFile
+        where TPassFile : PassFile
     {
         passFile.ContentEncrypted = fromPassFile.ContentEncrypted;
         passFile.PassPhrase = fromPassFile.PassPhrase;
@@ -93,11 +92,11 @@ public static class PassFileExtensions
     }
         
     /// <summary>
-    /// Set decrypted data field from other passfile according to <see cref="IPassFile{TContent}.Type"/>.
+    /// Set decrypted data field from other passfile according to <see cref="PassFile{TContent}.Type"/>.
     /// </summary>
     /// <returns>Refreshed passfile.</returns>
     public static TPassFile WithDecryptedContentFrom<TPassFile, TContent>(this TPassFile passFile, TPassFile fromPassFile)
-        where TPassFile : IPassFile<TContent>
+        where TPassFile : PassFile<TContent>
         where TContent : class
     {
         Debug.Assert(passFile.Type == fromPassFile.Type);
@@ -107,11 +106,11 @@ public static class PassFileExtensions
     }
         
     /// <summary>
-    /// Set decrypted data field to null according to <see cref="IPassFile{TContent}.Type"/>.
+    /// Set decrypted data field to null according to <see cref="PassFile{TContent}.Type"/>.
     /// </summary>
     /// <returns>Refreshed passfile.</returns>
     public static TPassFile WithoutDecryptedData<TPassFile, TContent>(this TPassFile passFile)
-        where TPassFile : IPassFile<TContent>
+        where TPassFile : PassFile<TContent>
         where TContent : class
     {
         passFile.Content = null;

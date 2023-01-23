@@ -2,7 +2,7 @@ using System.Reflection;
 using Avalonia.Controls.Notifications;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Core.Services;
@@ -30,8 +30,8 @@ public static class DependencyInstaller
         var passMetaClient = RegisterSingleton<IPassMetaClient>(
             new PassMetaClient(logService, dialogService, okBadService));
 
-        var cryptoService = RegisterSingleton<ICryptoService>(
-            new CryptoService(logService));
+        var cryptoService = RegisterSingleton<IPassMetaCryptoService>(
+            new PassMetaCryptoService(logService));
             
         var passFileRemoteService = RegisterSingleton<IPassFileRemoteService>(
             new PassFileRemoteService(passMetaClient, logService));

@@ -2,14 +2,14 @@ using System;
 using System.IO;
 using System.Reactive.Subjects;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Settings;
+using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 using PassMeta.DesktopApp.Core.Models;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
@@ -78,7 +78,8 @@ public static class AppConfig
         {
             try
             {
-                data = JsonConvert.DeserializeObject<AppConfigDto>(await File.ReadAllTextAsync(ConfigFilePath));
+                await using var stream = File.OpenRead(ConfigFilePath);
+                data = JsonSerializer.Deserialize<AppConfigDto>(stream);
             }
             catch (Exception ex)
             {
@@ -128,7 +129,7 @@ public static class AppConfig
                 File.SetAttributes(ConfigFilePath, attributes);
             }
 
-            await File.WriteAllTextAsync(ConfigFilePath, JsonConvert.SerializeObject(dto));
+            await File.WriteAllBytesAsync(ConfigFilePath, JsonSerializer.SerializeToUtf8Bytes(dto));
 
             attributes |= FileAttributes.Hidden;
             File.SetAttributes(ConfigFilePath, attributes);

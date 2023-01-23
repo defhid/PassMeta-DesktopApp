@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 
@@ -13,25 +13,25 @@ public class PwdSection
     /// <summary>
     /// Section identifier.
     /// </summary>
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public Guid Id { get; init; }
 
     /// <summary>
     /// Section name.
     /// </summary>
-    [JsonProperty("nm")]
+    [JsonPropertyName("nm")]
     public string Name { get; set; }
 
     /// <summary>
     /// Website address.
     /// </summary>
-    [JsonProperty("url")]
+    [JsonPropertyName("url")]
     public string WebsiteUrl { get; set; }
 
     /// <summary>
     /// Section items.
     /// </summary>
-    [JsonProperty("it")]
+    [JsonPropertyName("it")]
     public List<PwdItem> Items { get; set; }
 
     /// <summary></summary>

@@ -1,17 +1,12 @@
 using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
-using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
-using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services;
@@ -22,62 +17,67 @@ public class PassFileCryptoService : IPassFileCryptoService
     private static IDetailedResult DecryptionError => Result.Failure(Resources.PASSFILE__DECRYPTION_ERROR);
     private static IDetailedResult EncryptionError => Result.Failure(Resources.PASSFILE__ENCRYPTION_ERROR);
 
+    private readonly IPassMetaCryptoService _pmCryptoService;
+    private readonly IPassFileContentSerializerFactory _contentSerializerFactory;
     private readonly ILogService _logger;
 
     /// <summary></summary>
-    public PassFileCryptoService(ILogService logger)
+    public PassFileCryptoService(
+        IPassMetaCryptoService pmCryptoService,
+        IPassFileContentSerializerFactory contentSerializerFactory,
+        ILogService logger)
     {
+        _pmCryptoService = pmCryptoService;
+        _contentSerializerFactory = contentSerializerFactory;
         _logger = logger;
     }
 
     /// <inheritdoc />
-    public IDetailedResult Decrypt(PassFile passFile, string? passPhrase = null, bool silent = false)
+    public IDetailedResult Decrypt<TContent>(PassFile<TContent> passFile, string? passPhrase = null, bool silent = false)
+        where TContent : class, new()
     {
-        var originPassPhrase = passFile.PassPhrase;
-        if (passPhrase is not null)
-        {
-            passFile.PassPhrase = passPhrase;
-        }
+        passPhrase ??= passFile.Content.PassPhrase;
 
-        if (string.IsNullOrEmpty(passFile.PassPhrase))
+        if (string.IsNullOrEmpty(passPhrase))
         {
-            passFile.PassPhrase = originPassPhrase;
-            _logger.Error("Using Decrypt method without key phrase!");
+            _logger.Error("Using Decrypt method without key phrase! " +
+                          $"(passfile #{passFile.Id}, v{passFile.Version})");
             return DecryptionError;
         }
 
-        if (passFile.ContentEncrypted is null)
+        if (passFile.Content.Encrypted is null)
         {
-            passFile.PassPhrase = originPassPhrase;
-            _logger.Error("Using Decrypt method without encrypted data!");
+            _logger.Error("Using Decrypt method without encrypted data! " +
+                          $"(passfile #{passFile.Id}, v{passFile.Version})");
             return DecryptionError;
         }
 
-        var service = EnvironmentContainer.Resolve<ICryptoService>();
-
-        var content = service.Decrypt(passFile.ContentEncrypted, passFile.PassPhrase, silent);
-        if (content is null)
+        byte[] contentBytes;
+        try
         {
-            passFile.PassPhrase = originPassPhrase;
+            contentBytes = _pmCryptoService.Decrypt(passFile.Content.Encrypted, passPhrase);
+        }
+        catch (Exception ex)
+        {
+            _logger.Debug("Silent passfile #{Id} v{Version} decryption failed: {Ex}", 
+                passFile.Id, passFile.Version, ex.ToString());
+
+            if (!silent)
+            {
+                _logger.Warning($"Passfile #{passFile.Id} v{passFile.Version} decryption failed: {ex.Message}");
+            }
+
             return Result.Failure(Resources.PASSFILE__VALIDATION__WRONG_PASSPHRASE);
         }
 
         try
         {
-            switch (passFile.Type)
-            {
-                case PassFileType.Pwd:
-                    var json = PassFileConvention.JsonEncoding.GetString(content);
-                    passFile.PwdData = JsonConvert.DeserializeObject<List<PwdSection>>(json) ?? new List<PwdSection>();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
-            }
+            var contentRaw = _contentSerializerFactory.For<TContent>().Deserialize(contentBytes);
+            passFile.Content = new PassFileContent<TContent>(contentRaw, passFile.Content.Encrypted, passPhrase);
         }
         catch (Exception ex)
         {
-            passFile.PassPhrase = originPassPhrase;
-            _logger.Error(ex, "Passfile deserializing");
+            _logger.Error(ex, "Passfile deserializing failed");
             return DecryptionError;
         }
 
@@ -85,45 +85,44 @@ public class PassFileCryptoService : IPassFileCryptoService
     }
 
     /// <inheritdoc />
-    public IDetailedResult Encrypt(PassFile passFile)
+    public IDetailedResult Encrypt<TContent>(PassFile<TContent> passFile, string? passPhrase = null)
+        where TContent : class, new()
     {
-        if (string.IsNullOrEmpty(passFile.PassPhrase))
+        passPhrase ??= passFile.Content.PassPhrase;
+
+        if (string.IsNullOrEmpty(passPhrase))
         {
-            _logger.Error("Using Encrypt method without key phrase!");
+            _logger.Error("Using Encrypt method without key phrase! " +
+                          $"(passfile #{passFile.Id}, v{passFile.Version})");
             return EncryptionError;
         }
 
-        if (passFile.PwdData is null)
+        if (passFile.Content.Decrypted is null)
         {
-            _logger.Error("Using Encrypt method without decrypted data!");
+            _logger.Error("Using Encrypt method without decrypted data! " +
+                          $"(passfile #{passFile.Id}, v{passFile.Version})");
             return EncryptionError;
         }
 
-        string json;
+        byte[] contentBytes;
         try
         {
-            switch (passFile.Type)
-            {
-                case PassFileType.Pwd:
-                    json = JsonConvert.SerializeObject(passFile.PwdData);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(passFile.Type), passFile.Type, null);
-            }
+            contentBytes = _contentSerializerFactory.For<TContent>().Serialize(passFile.Content.Decrypted, false);
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Passfile deserializing");
+            _logger.Error(ex, $"Passfile #{passFile.Id}, v{passFile.Version} deserializing failed");
             return EncryptionError;
         }
 
-        var service = EnvironmentContainer.Resolve<ICryptoService>();
-
-        var data = PassFileConvention.JsonEncoding.GetBytes(json);
-
-        passFile.ContentEncrypted = service.Encrypt(data, passFile.PassPhrase);
-        if (passFile.ContentEncrypted is null)
+        try
         {
+            var encryptedBytes = _pmCryptoService.Encrypt(contentBytes, passPhrase);
+            passFile.Content = new PassFileContent<TContent>(passFile.Content.Decrypted, encryptedBytes, passPhrase);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, $"Passfile #{passFile.Id}, v{passFile.Version} encryption failed");
             return EncryptionError;
         }
 

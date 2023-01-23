@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using PassMeta.DesktopApp.Common.Abstractions;
 
 namespace PassMeta.DesktopApp.Common.Models.Dto.Internal;
@@ -9,26 +9,26 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Internal;
 public class AppConfigDto
 {
     /// <inheritdoc cref="IAppConfig.ServerUrl"/>
-    [JsonProperty("server")]
+    [JsonPropertyName("server")]
     public string? ServerUrl { get; set; }
         
     /// <inheritdoc cref="IAppConfig.Culture"/>
-    [JsonProperty("culture")]
+    [JsonPropertyName("culture")]
     public string? CultureCode { get; set; }
 
     /// <inheritdoc cref="IAppConfig.HidePasswords"/>
-    [JsonProperty("hide_pwd")]
+    [JsonPropertyName("hide_pwd")]
     public bool? HidePasswords { get; set; }
 
     /// <inheritdoc cref="IAppConfig.DevMode"/>
-    [JsonProperty("dev")]
+    [JsonPropertyName("dev")]
     public bool? DevMode { get; set; }
 
     /// <inheritdoc cref="IAppConfig.DebugMode"/>
-    [JsonProperty("debug")]
+    [JsonPropertyName("debug")]
     public bool? DebugMode { get; set; }
 
     /// <inheritdoc cref="IAppConfig.DefaultPasswordLength"/>
-    [JsonProperty("default_password_length")]
+    [JsonPropertyName("default_password_length")]
     public int? DefaultPasswordLength { get; set; }
 }

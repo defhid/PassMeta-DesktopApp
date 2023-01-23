@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
@@ -22,8 +23,6 @@ namespace PassMeta.DesktopApp.Core.Utils;
 /// <inheritdoc />
 public class PassFileLocalStorage : IPassFileLocalStorage
 {
-    private const string EmptyListJson = "[]";
-
     private readonly IFileRepositoryFactory _repositoryFactory;
     private readonly ILogService _logger;
 
@@ -69,7 +68,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         List<PassFileLocalDto>? passFiles = null;
         try
         {
-            passFiles = JsonConvert.DeserializeObject<List<PassFileLocalDto>>(loadResult.Data!) ?? 
+            passFiles = JsonSerializer.Deserialize<List<PassFileLocalDto>>(loadResult.Data!) ?? 
                         new List<PassFileLocalDto>();
         }
         catch (Exception ex)
@@ -116,11 +115,11 @@ public class PassFileLocalStorage : IPassFileLocalStorage
 
         try
         {
-            var listData = JsonConvert.SerializeObject(list);
+            var listJson = JsonSerializer.SerializeToUtf8Bytes(list);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return await SaveListJsonAsync(listData, repository, cancellationToken);
+            return await SaveListJsonAsync(listJson, repository, cancellationToken);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -343,7 +342,9 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         return Result.Failure(Resources.PASSSTORAGE__ERR);
     }
 
-    private async ValueTask<IDetailedResult<string>> LoadListJsonAsync(IFileRepository repository, CancellationToken cancellationToken)
+    private async ValueTask<IDetailedResult<byte[]>> LoadListJsonAsync(
+        IFileRepository repository,
+        CancellationToken cancellationToken)
     {
         const string listFileName = PassFilePathHelper.PassFileListName;
 
@@ -356,17 +357,16 @@ public class PassFileLocalStorage : IPassFileLocalStorage
             var result = await SaveListJsonAsync(EmptyListJson, repository, cancellationToken);
             if (result.Bad)
             {
-                return result.WithNullData<string>();
+                return result.WithNullData<byte[]>();
             }
         }
         
         cancellationToken.ThrowIfCancellationRequested();
 
-        string? listData = null;
+        byte[]? listJson = null;
         try
         {
-            var listBytes = await repository.ReadAllBytesAsync(listFileName, cancellationToken);
-            listData = PassFileConvention.JsonEncoding.GetString(listBytes);
+            listJson = await repository.ReadAllBytesAsync(listFileName, cancellationToken);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -377,16 +377,19 @@ public class PassFileLocalStorage : IPassFileLocalStorage
             var result = await SaveListJsonAsync(EmptyListJson, repository, cancellationToken);
             if (result.Bad)
             {
-                return result.WithNullData<string>();
+                return result.WithNullData<byte[]>();
             }
         }
         
         _logger.Debug("JSON passfile list was read successfully");
 
-        return Result.Success(listData ?? EmptyListJson);
+        return Result.Success(listJson ?? EmptyListJson);
     }
 
-    private async ValueTask<IDetailedResult> SaveListJsonAsync(string listJson, IFileRepository repository, CancellationToken cancellationToken)
+    private async ValueTask<IDetailedResult> SaveListJsonAsync(
+        byte[] listJson,
+        IFileRepository repository,
+        CancellationToken cancellationToken)
     {
         const string listFileName = PassFilePathHelper.PassFileListName;
         
@@ -396,8 +399,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
 
         try
         {
-            var listBytes = PassFileConvention.JsonEncoding.GetBytes(listJson);
-            await repository.WriteAllBytesAsync(listFileName, listBytes, cancellationToken);
+            await repository.WriteAllBytesAsync(listFileName, listJson, cancellationToken);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -408,7 +410,9 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         return Result.Success();
     }
 
-    private async ValueTask<IDetailedResult> MoveInvalidListAsync(IFileRepository repository, CancellationToken cancellationToken)
+    private async ValueTask<IDetailedResult> MoveInvalidListAsync(
+        IFileRepository repository,
+        CancellationToken cancellationToken)
     {
         const string listFileName = PassFilePathHelper.PassFileListName;
         
@@ -434,6 +438,8 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         _logger.Debug("Invalid JSON passfile list was moved successfully");
         return Result.Success();
     }
+
+    private static byte[] EmptyListJson => Encoding.UTF8.GetBytes("[]");
 
     #endregion
 }

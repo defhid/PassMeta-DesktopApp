@@ -1,5 +1,5 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 
@@ -11,19 +11,19 @@ public class PwdItem
     /// <summary>
     /// Username list: email, phone, etc.
     /// </summary>
-    [JsonProperty("usr")]
+    [JsonPropertyName("usr")]
     public string[] Usernames { get; set; }
 
     /// <summary>
     /// One password.
     /// </summary>
-    [JsonProperty("pwd")]
+    [JsonPropertyName("pwd")]
     public string Password { get; set; }
 
     /// <summary>
     /// Some comment.
     /// </summary>
-    [JsonProperty("rmk")]
+    [JsonPropertyName("rmk")]
     public string Remark { get; set; }
 
     /// <summary></summary>

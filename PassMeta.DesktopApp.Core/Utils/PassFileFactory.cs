@@ -1,5 +1,4 @@
 using System;
-using PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
@@ -12,7 +11,7 @@ namespace PassMeta.DesktopApp.Core.Utils;
 /// </summary>
 public static class PassFileFactory
 {
-    public static IPassFile FromDto(PassFileInfoDto dto)
+    public static PassFile FromDto(PassFileInfoDto dto)
     {
         var passFile = CreatePassFile(
             dto.Id, dto.UserId, dto.TypeId, dto.CreatedOn, dto.InfoChangedOn, dto.VersionChangedOn);
@@ -24,7 +23,7 @@ public static class PassFileFactory
         return passFile;
     }
     
-    public static IPassFile FromDto(PassFileLocalDto dto)
+    public static PassFile FromDto(PassFileLocalDto dto)
     {
         var passFile = CreatePassFile(
             dto.Id, dto.UserId, (int) dto.Type, dto.CreatedOn, dto.InfoChangedOn, dto.VersionChangedOn,
@@ -37,10 +36,10 @@ public static class PassFileFactory
         return passFile;
     }
 
-    private static IPassFile CreatePassFile(
+    private static PassFile CreatePassFile(
         int id, int userId, int passFileTypeId,
         DateTime createdOn, DateTime infoChangedOn, DateTime versionChangedOn,
-        DateTime? localDeletedOn = null, IPassFile? origin = null)
+        DateTime? localDeletedOn = null, PassFile? origin = null)
         => passFileTypeId switch
         {
             (int) PassFileType.Pwd => new PwdPassFile

@@ -1,5 +1,5 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using PassMeta.DesktopApp.Common.Enums;
 
 namespace PassMeta.DesktopApp.Common.Models.Dto.Internal;
@@ -18,60 +18,60 @@ public class PassFileLocalDto
     /// <summary>
     /// Identifier.
     /// </summary>
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public int Id { get; init; }
     
     /// <summary>
     /// Identifier of owner user.
     /// </summary>
-    [JsonProperty("user_id")]
+    [JsonPropertyName("user_id")]
     public int UserId { get; init; }
 
     /// <summary>
     /// Identifier of content type.
     /// </summary>
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public PassFileType Type { get; init; }
 
     /// <summary>
     /// Name.
     /// </summary>
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; init; }
 
     /// <summary>
     /// Distinctive color (HEX).
     /// </summary>
-    [JsonProperty("color")]
+    [JsonPropertyName("color")]
     public string? Color { get; init; }
 
     /// <summary>
     /// Content version.
     /// </summary>
-    [JsonProperty("version")]
+    [JsonPropertyName("version")]
     public int Version { get; init; }
 
     /// <summary>
     /// Timestamp of creation.
     /// </summary>
-    [JsonProperty("created_on")]
+    [JsonPropertyName("created_on")]
     public DateTime CreatedOn { get; init; }
 
     /// <summary>
     /// Timestamp of information change.
     /// </summary>
-    [JsonProperty("i_changed_on")]
+    [JsonPropertyName("i_changed_on")]
     public DateTime InfoChangedOn { get; init; }
 
     /// <summary>
     /// Timestamp of data change.
     /// </summary>
-    [JsonProperty("v_changed_on")]
+    [JsonPropertyName("v_changed_on")]
     public DateTime VersionChangedOn { get; init; }
 
     /// <summary>
     /// Origin remote passfile information. 
     /// </summary>
-    [JsonProperty("origin")]
+    [JsonPropertyName("origin")]
     public PassFileLocalDto? Origin { get; init; }
 }

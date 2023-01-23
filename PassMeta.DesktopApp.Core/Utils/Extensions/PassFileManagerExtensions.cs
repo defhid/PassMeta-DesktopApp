@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions;
-using PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 
 namespace PassMeta.DesktopApp.Core.Utils.Extensions;
@@ -14,7 +13,7 @@ public static class PassFileManagerExtensions
     /// Load current encrypted content for given passfile.
     /// </summary>
     public static Task<IDetailedResult<byte[]>> GetEncryptedContentAsync(this IPassFileLocalStorage passFileLocalStorage,
-        IPassFile passFile) 
+        PassFile passFile) 
         => passFileLocalStorage.LoadEncryptedContentAsync(passFile.Id, passFile.Version);
 
     /// <summary>
@@ -22,7 +21,7 @@ public static class PassFileManagerExtensions
     /// </summary>
     /// <remarks><see cref="PassFile.PassPhrase"/> must be set.</remarks>
     public static Task<IDetailedResult> TryLoadIfRequiredAndDecryptAsync<TContent>(this IPassFileLocalStorage passFileLocalStorage,
-        IPassFile<TContent> passFile)
+        PassFile<TContent> passFile)
         where TContent : class
     {
         if (passFile.Content is not null)

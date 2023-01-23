@@ -1,5 +1,4 @@
 using System;
-using Newtonsoft.Json;
 
 namespace PassMeta.DesktopApp.Common.Models.Dto.Response;
 
@@ -11,12 +10,10 @@ public class PassFileVersionDto
     /// <summary>
     /// Version number
     /// </summary>
-    [JsonProperty("version")]
-    public int Version { get; set; }
+    public int Version { get; init; }
 
     /// <summary>
     /// Version timestamp.
     /// </summary>
-    [JsonProperty("version_date")]
-    public DateTime VersionDate { get; set; }
+    public DateTime VersionDate { get; init; }
 }

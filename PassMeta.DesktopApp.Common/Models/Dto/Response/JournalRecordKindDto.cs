@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace PassMeta.DesktopApp.Common.Models.Dto.Response;
 
 /// <summary>
@@ -7,17 +5,21 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Response;
 /// </summary>
 public class JournalRecordKindDto
 {
+    /// <summary></summary>
+    public JournalRecordKindDto()
+    {
+        Name ??= string.Empty;
+    }
+
     /// <summary>
     /// Kind identifier.
     /// </summary>
-    [JsonProperty("id")]
     public int Id { get; init; }
 
     /// <summary>
     /// Kind name.
     /// </summary>
-    [JsonProperty("name")]
-    public string Name { get; init; } = null!;
+    public string Name { get; init; }
 
     /// <inheritdoc />
     public override string ToString() => Name;

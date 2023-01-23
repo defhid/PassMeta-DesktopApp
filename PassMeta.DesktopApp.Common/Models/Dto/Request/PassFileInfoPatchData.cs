@@ -1,18 +1,13 @@
-namespace PassMeta.DesktopApp.Common.Models.Dto.Request
-{
-    using Newtonsoft.Json;
+namespace PassMeta.DesktopApp.Common.Models.Dto.Request;
 
-    /// <summary>
-    /// Passfile information patch data.
-    /// </summary>
-    public class PassFileInfoPatchData
-    {
-        ///
-        [JsonProperty("name")]
-        public string Name { get; init; } = null!;
+/// <summary>
+/// Passfile information patch data.
+/// </summary>
+public class PassFileInfoPatchData
+{
+    ///
+    public string Name { get; init; } = null!;
         
-        ///
-        [JsonProperty("color")]
-        public string? Color { get; init; }
-    }
+    ///
+    public string? Color { get; init; }
 }

@@ -3,17 +3,15 @@ using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
-using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Utils.Mapping;
 
 using PassMeta.DesktopApp.Core.Services.Extensions;
-using PassMeta.DesktopApp.Core.Utils.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services;
 

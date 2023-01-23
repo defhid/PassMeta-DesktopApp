@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
@@ -71,9 +70,8 @@ public class Counter : ICounter
             try
             {
                 var dictBytes = await _repository.ReadAllBytesAsync(StorageFileName, cancellationToken);
-                var dictString = Encoding.UTF8.GetString(dictBytes);
 
-                dict = JsonConvert.DeserializeObject<Dictionary<string, long>>(dictString);
+                dict = JsonSerializer.Deserialize<Dictionary<string, long>>(dictBytes);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -86,8 +84,7 @@ public class Counter : ICounter
 
     private async ValueTask FlushAsync(CancellationToken cancellationToken)
     {
-        var dictString = JsonConvert.SerializeObject(_dict ?? new Dictionary<string, long>());
-        var dictBytes = Encoding.UTF8.GetBytes(dictString);
+        var dictBytes = JsonSerializer.SerializeToUtf8Bytes(_dict ?? new Dictionary<string, long>());
 
         await _repository.WriteAllBytesAsync(StorageFileName, dictBytes, cancellationToken);
     }

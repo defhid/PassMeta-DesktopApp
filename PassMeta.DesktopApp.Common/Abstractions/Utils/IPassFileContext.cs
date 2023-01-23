@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.Utils;
 
@@ -40,7 +40,7 @@ public interface IPassFileContext : IDisposable
 
 /// <inheritdoc />
 public interface IPassFileContext<TPassFile> : IPassFileContext
-    where TPassFile : IPassFile
+    where TPassFile : PassFile
 {
     /// <summary>
     /// Get current passfile list.

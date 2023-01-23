@@ -8,18 +8,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Avalonia.Media;
     using Common;
     using Common.Abstractions.Services;
-    using Common.Enums;
-    using Common.Models.Entities;
-    using Common.Utils.Extensions;
     using Components;
     using Constants;
     using Core;
     using Core.Utils;
-    using Core.Utils.Extensions;
     using Interfaces.UiServices;
     using Models;
     using ReactiveUI;
-    using Utils.Extensions;
 
     public class PassFileWinViewModel : ReactiveObject
     {

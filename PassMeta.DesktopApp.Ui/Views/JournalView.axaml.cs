@@ -1,6 +1,6 @@
 namespace PassMeta.DesktopApp.Ui.Views
 {
-    using DesktopApp.Ui.Views.Base;
+    using Base;
     
     using Avalonia.Markup.Xaml;
     using ViewModels.Journal;

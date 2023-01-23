@@ -1,9 +1,9 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
-
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Constants;
-using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+
+namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 
 /// <summary>
 /// Service for exporting pasfiles.
@@ -19,5 +19,6 @@ public interface IPassFileExportService
     /// Export passfile to <paramref name="resultFilePath"/>.
     /// </summary>
     /// <returns>Success?</returns>
-    Task<IResult> ExportAsync(PassFile passFile, string resultFilePath);
+    Task<IResult> ExportAsync<TContent>(PassFile<TContent> passFile, string resultFilePath)
+        where TContent : class, new();
 }

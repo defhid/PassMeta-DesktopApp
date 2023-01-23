@@ -1,3 +1,5 @@
+using Avalonia.Input;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
@@ -13,7 +15,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
     using Base;
     using Common;
     using Common.Abstractions.Services;
-    using Common.Abstractions.Services.PassFile;
     using Common.Enums;
     using Components;
     using Constants;
@@ -36,10 +37,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
             {
                 Content = "\uE74E", 
                 Command = ReactiveCommand.CreateFromTask(SaveAsync),
-                [!Button.IsVisibleProperty] = SelectedData.Edit.WhenAnyValue(vm => vm.Mode)
+                [!Visual.IsVisibleProperty] = SelectedData.Edit.WhenAnyValue(vm => vm.Mode)
                     .Select(editMode => !editMode)
                     .ToBinding(),
-                [!Button.IsEnabledProperty] = PassFileManager.AnyCurrentChangedSource
+                [!InputElement.IsEnabledProperty] = PassFileManager.AnyCurrentChangedSource
                     .Select(state => state)
                     .ToBinding(),
                 [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__SAVE,

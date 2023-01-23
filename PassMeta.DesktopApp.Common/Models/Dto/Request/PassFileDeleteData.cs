@@ -1,14 +1,10 @@
-namespace PassMeta.DesktopApp.Common.Models.Dto.Request
-{
-    using Newtonsoft.Json;
+namespace PassMeta.DesktopApp.Common.Models.Dto.Request;
 
-    /// <summary>
-    /// Passfile deletion data.
-    /// </summary>
-    public class PassFileDeleteData
-    {
-        ///
-        [JsonProperty("check_password")]
-        public string CheckPassword { get; init; } = null!;
-    }
+/// <summary>
+/// Passfile deletion data.
+/// </summary>
+public class PassFileDeleteData
+{
+    ///
+    public string CheckPassword { get; init; } = null!;
 }

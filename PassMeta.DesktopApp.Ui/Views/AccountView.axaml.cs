@@ -1,7 +1,7 @@
 namespace PassMeta.DesktopApp.Ui.Views
 {
-    using DesktopApp.Ui.ViewModels;
-    using DesktopApp.Ui.Views.Base;
+    using ViewModels;
+    using Base;
     using Avalonia.Markup.Xaml;
     
     public class AccountView : PageView<AccountViewModel>

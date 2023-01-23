@@ -6,8 +6,8 @@ using System.Net.Http.Headers;
 using System.Reactive.Subjects;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
@@ -16,14 +16,14 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 using PassMeta.DesktopApp.Core.Utils.Extensions;
+using PassMeta.DesktopApp.Core.Utils.Json;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;
 
 /// <inheritdoc />
 public sealed class PassMetaClient : IPassMetaClient
 {
-    private static readonly BehaviorSubject<bool> OnlineSubject = new(false);
-
+    private readonly BehaviorSubject<bool> _onlineSubject = new(false);
     private readonly ILogService _logger;
     private readonly IDialogService _dialogService;
     private readonly IOkBadService _okBadService;
@@ -39,10 +39,10 @@ public sealed class PassMetaClient : IPassMetaClient
     }
         
     /// <inheritdoc />
-    public bool Online => OnlineSubject.Value;
+    public bool Online => _onlineSubject.Value;
 
     /// <inheritdoc />
-    public IObservable<bool> OnlineObservable => OnlineSubject;
+    public IObservable<bool> OnlineObservable => _onlineSubject;
 
     /// <inheritdoc />
     public void Dispose() => _httpClient.Dispose();
@@ -127,13 +127,13 @@ public sealed class PassMetaClient : IPassMetaClient
         }
             
         var context = requestBuilder.Context;
-        string? successBody;
+        byte[]? successBody;
         OkBadResponse? failureOkBadResponse;
         OkBadResponse<TData>? successOkBadResponse = null;
 
         try
         {
-            (successBody, failureOkBadResponse) = await SendAsync(request, context, content => content.ReadAsStringAsync());
+            (successBody, failureOkBadResponse) = await SendAsync(request, context, content => content.ReadAsByteArrayAsync());
             if (successBody is not null)
             {
                 successOkBadResponse = ParseOkBadResponse<TData>(successBody);
@@ -162,7 +162,7 @@ public sealed class PassMetaClient : IPassMetaClient
 
         if (successOkBadResponse!.Success is false)
         {
-            _logger.Warning("Failure response with success HTTP code: " + successBody);
+            _logger.Warning("Failure response with success HTTP code: " + Encoding.UTF8.GetString(successBody));
 
             if (requestBuilder.HandleBad)
                 _okBadService.ShowResponseFailure(successOkBadResponse, context);
@@ -198,10 +198,10 @@ public sealed class PassMetaClient : IPassMetaClient
                 }
                 default:
                 {
-                    var responseBody = await response.Content.ReadAsStringAsync();
+                    var responseBody = await response.Content.ReadAsByteArrayAsync();
                     var okBadResponse = ParseOkBadResponse<object>(responseBody);
 
-                    _logger.Warning($"{message.GetShortInformation()} {response.StatusCode} [{context}] {responseBody}");
+                    _logger.Warning($"{message.GetShortInformation()} {response.StatusCode} [{context}] {Encoding.UTF8.GetString(responseBody)}");
 
                     return (null, okBadResponse);
                 }
@@ -249,7 +249,7 @@ public sealed class PassMetaClient : IPassMetaClient
 
     private static void SetJsonBody(HttpRequestMessage message, object data)
     {
-        var dataBytes = Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(data));
+        var dataBytes = JsonSerializer.SerializeToUtf8Bytes(data, SerializerOptions);
 
         message.Content = new ByteArrayContent(dataBytes);
         message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -280,9 +280,9 @@ public sealed class PassMetaClient : IPassMetaClient
         message.Content = form;
     }
 
-    private static OkBadResponse<TData> ParseOkBadResponse<TData>(string body)
+    private static OkBadResponse<TData> ParseOkBadResponse<TData>(byte[] body)
     {
-        var okBad = JsonConvert.DeserializeObject<OkBadResponse<TData>>(body);
+        var okBad = JsonSerializer.Deserialize<OkBadResponse<TData>>(body, SerializerOptions);
         return okBad ?? throw new FormatException();
     }
 
@@ -295,7 +295,7 @@ public sealed class PassMetaClient : IPassMetaClient
 
         try
         {
-            OnlineSubject.OnNext(isOnline);
+            _onlineSubject.OnNext(isOnline);
         }
         catch (Exception ex)
         {
@@ -308,4 +308,10 @@ public sealed class PassMetaClient : IPassMetaClient
         var handler = new PassMetaClientHandler(_logger);
         return new HttpClient(handler, disposeHandler: true);
     }
+
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance,
+        WriteIndented = false
+    };
 }

@@ -1,8 +1,6 @@
-using PassMeta.DesktopApp.Core;
-
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
-    using DesktopApp.Ui.ViewModels.Base;
+    using Base;
     using System;
     using System.Threading.Tasks;
     using ReactiveUI;

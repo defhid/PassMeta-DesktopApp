@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
 /// <summary>
@@ -7,22 +5,25 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 /// </summary>
 public class OkBadResponse
 {
+    /// <summary></summary>
+    public OkBadResponse()
+    {
+        Msg ??= string.Empty;
+    }
+
     /// <summary>
     /// Response code.
     /// </summary>
-    [JsonProperty("code")]
     public int Code { get; init; }
 
     /// <summary>
     /// Response message.
     /// </summary>
-    [JsonProperty("msg")]
-    public string Message { get; init; } = null!;
+    public string Msg { get; init; }
 
     /// <summary>
     /// Additional failure information.
     /// </summary>
-    [JsonProperty("more")]
     public OkBadMore? More { get; init; }
 
     /// <summary>
@@ -39,6 +40,5 @@ public class OkBadResponse<TData> : OkBadResponse
     /// <summary>
     /// If <see cref="OkBadResponse.Success"/>, response data.
     /// </summary>
-    [JsonProperty("data")]
     public TData? Data { get; init; }
 }

@@ -5,20 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
     
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Enums;
-using PassMeta.DesktopApp.Common.Utils.Extensions;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Extra;
-
 using PassMeta.DesktopApp.Core.Services.Extensions;
-using PassMeta.DesktopApp.Core.Utils.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Utils;
 

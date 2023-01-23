@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
     
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Core.Services.Extensions;
-using PassMeta.DesktopApp.Core.Utils;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
@@ -24,14 +22,14 @@ namespace PassMeta.DesktopApp.Core.Services;
 /// <remarks><see cref="PassFileType.Pwd"/> supports only.</remarks>
 public class PassFilePwdImportService : IPassFileImportService
 {
-    private readonly ICryptoService _cryptoService;
+    private readonly IPassMetaCryptoService _passMetaCryptoService;
     private readonly IDialogService _dialogService;
     private readonly ILogService _logger;
 
     /// <summary></summary>
-    public PassFilePwdImportService(ICryptoService cryptoService, IDialogService dialogService, ILogService logger)
+    public PassFilePwdImportService(IPassMetaCryptoService passMetaCryptoService, IDialogService dialogService, ILogService logger)
     {
-        _cryptoService = cryptoService;
+        _passMetaCryptoService = passMetaCryptoService;
         _dialogService = dialogService;
         _logger = logger;
     }
@@ -115,7 +113,7 @@ public class PassFilePwdImportService : IPassFileImportService
                 return Result.Failure<(List<PwdSection>, string)>();
 
             ++i;
-            var passFileData = _cryptoService.Decrypt(fileBytes, passPhrase);
+            var passFileData = _passMetaCryptoService.Decrypt(fileBytes, passPhrase);
             if (passFileData is null) continue;
                 
             try

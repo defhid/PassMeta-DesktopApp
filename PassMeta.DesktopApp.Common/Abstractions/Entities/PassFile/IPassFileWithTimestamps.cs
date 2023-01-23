@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
 /// <summary>
 /// Passfile with timestamps information.
 /// </summary>
-public interface IPassFileTimestamps : IPassFileBase
+public interface IPassFileWithTimestamps : IPassFileBase
 {
     /// <summary>
     /// Timestamp of information change.

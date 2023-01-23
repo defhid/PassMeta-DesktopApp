@@ -1,7 +1,7 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
-
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Enums;
+
+namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 
 /// <summary>
 /// Service for working with passfiles.

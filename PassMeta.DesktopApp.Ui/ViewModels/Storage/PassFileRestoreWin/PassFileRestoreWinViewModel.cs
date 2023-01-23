@@ -11,13 +11,10 @@ using ReactiveUI;
 using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
     
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
 using PassMeta.DesktopApp.Common.Enums;
-using PassMeta.DesktopApp.Common.Utils.Extensions;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
 

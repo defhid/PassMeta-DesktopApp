@@ -1,6 +1,6 @@
 namespace PassMeta.DesktopApp.Ui.App
 {
-    using DesktopApp.Ui.ViewModels.Base;
+    using ViewModels.Base;
     
     using Avalonia.Controls.Templates;
     using Avalonia.Controls;

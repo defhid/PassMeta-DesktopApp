@@ -11,12 +11,8 @@ using ReactiveUI;
     
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Models.Entities;
-using PassMeta.DesktopApp.Common.Models.Entities.Extra;
-using PassMeta.DesktopApp.Common.Utils.Extensions;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Core.Utils.Extensions;
 using PassMeta.DesktopApp.Ui.Utils.Comparers;
 using PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Models;
 
@@ -33,7 +29,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 Content = "\uE70F",
                 
                 Command = ReactiveCommand.Create(ItemsEdit),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
+                [!Visual.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && !x.Item2)
                     .ToBinding(),
                 [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__EDIT_ITEMS,
@@ -43,7 +39,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             {
                 Content = "\uE711", 
                 Command = ReactiveCommand.Create(ItemsDiscardChanges),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
+                [!Visual.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && x.Item2)
                     .ToBinding(),
                 [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__DISCARD_ITEMS,
@@ -53,7 +49,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             {
                 Content = "\uE8FB", 
                 Command = ReactiveCommand.Create(ItemsApplyChanges),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
+                [!Visual.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && x.Item2)
                     .ToBinding(),
                 [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__APPLY_ITEMS,
@@ -63,7 +59,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
             {
                 Content = "\uE74D", 
                 Command = ReactiveCommand.Create(SectionDeleteAsync),
-                [!Button.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
+                [!Visual.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionItemsList, vm => vm.Edit.Mode)
                     .Select(x => x.Item1 is not null && !x.Item2)
                     .ToBinding(),
                 [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__DELETE_SECTION,

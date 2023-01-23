@@ -1,5 +1,5 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 
@@ -11,19 +11,19 @@ public class TxtSection
     /// <summary>
     /// Section identifier.
     /// </summary>
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public Guid Id { get; init; }
 
     /// <summary>
     /// Section name.
     /// </summary>
-    [JsonProperty("nm")]
+    [JsonPropertyName("nm")]
     public string Name { get; set; }
 
     /// <summary>
     /// Section content.
     /// </summary>
-    [JsonProperty("it")]
+    [JsonPropertyName("it")]
     public string Content { get; set; }
 
     /// <summary></summary>

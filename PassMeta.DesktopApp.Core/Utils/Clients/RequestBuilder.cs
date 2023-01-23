@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Mapping;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;

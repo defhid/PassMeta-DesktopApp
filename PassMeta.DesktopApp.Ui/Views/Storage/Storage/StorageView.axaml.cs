@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage.Storage
     using Avalonia.LogicalTree;
     using Avalonia.Markup.Xaml;
     using PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage;
-    using PassMeta.DesktopApp.Ui.Views.Base;
+    using Base;
 
     public class StorageView : PageView<StorageViewModel>
     {
