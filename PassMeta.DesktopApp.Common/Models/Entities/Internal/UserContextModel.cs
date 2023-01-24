@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using PassMeta.DesktopApp.Common.Abstractions.UserContext;
 
-namespace PassMeta.DesktopApp.Core.Models;
+namespace PassMeta.DesktopApp.Common.Models.Entities.Internal;
 
 /// <inheritdoc />
 public class UserContextModel : IUserContext

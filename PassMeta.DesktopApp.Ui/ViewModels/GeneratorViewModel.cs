@@ -1,3 +1,5 @@
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     using Core;

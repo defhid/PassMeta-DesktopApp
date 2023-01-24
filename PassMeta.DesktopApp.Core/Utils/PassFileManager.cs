@@ -281,38 +281,6 @@ public static class PassFileManager
     /// </summary>
     public static bool TryResetProblem(int passFileId) 
         => TrySetProblem(passFileId, null);
-        
-    /// <summary>
-    /// Set passphrase to passfile.
-    /// </summary>
-    public static bool TrySetPassPhrase(int passFileId, string? passPhrase)
-    {
-        var found = _currentPassFiles.FindIndex(pf =>
-            pf.source?.Id == passFileId || 
-            pf.changed?.Id == passFileId);
-
-        if (found < 0) return false;
-            
-        var (source, changed) = _currentPassFiles[found];
-        (changed ?? source)!.PassPhrase = passPhrase;
-            
-        return true;
-    }
-
-    /// <summary>
-    /// Get passphrase after call <see cref="TrySetPassPhrase"/>.
-    /// </summary>
-    public static string? GetPassPhrase(int passFileId)
-    {
-        var found = _currentPassFiles.FindIndex(pf =>
-            pf.source?.Id == passFileId || 
-            pf.changed?.Id == passFileId);
-
-        if (found < 0) return null;
-            
-        var (source, changed) = _currentPassFiles[found];
-        return (changed ?? source)!.PassPhrase;
-    }
 
     /// <summary>
     /// Update passfile information.

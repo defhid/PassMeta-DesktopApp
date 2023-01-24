@@ -1,5 +1,6 @@
 using System;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Models.Entities;
 

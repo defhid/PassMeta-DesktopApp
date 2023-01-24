@@ -1,8 +1,9 @@
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 
-namespace PassMeta.DesktopApp.Core.Models;
+namespace PassMeta.DesktopApp.Common.Models.Entities.Internal;
 
 /// <inheritdoc />
 public class AppConfigModel : IAppConfig

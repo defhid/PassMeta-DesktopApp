@@ -1,6 +1,7 @@
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFileMerge;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
 {
@@ -39,20 +40,20 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
         public IObservable<string> LocalSectionName { get; }
         public IObservable<string> RemoteSectionName { get; }
         
-        public string LocalVersion => $"v{_sectionsMerge.Versions.Splitting}..{_sectionsMerge.Versions.Local}";
-        public string RemoteVersion => $"v{_sectionsMerge.Versions.Splitting}..{_sectionsMerge.Versions.Remote}";
+        public string LocalVersion => $"v{_passFileMerge.Versions.Splitting}..{_passFileMerge.Versions.Local}";
+        public string RemoteVersion => $"v{_passFileMerge.Versions.Splitting}..{_passFileMerge.Versions.Remote}";
 
-        public string LocalVersionDate => _sectionsMerge.VersionsChangedOn.Local.ToShortDateTimeString();
-        public string RemoteVersionDate => _sectionsMerge.VersionsChangedOn.Remote.ToShortDateTimeString();
+        public string LocalVersionDate => _passFileMerge.VersionsChangedOn.Local.ToShortDateTimeString();
+        public string RemoteVersionDate => _passFileMerge.VersionsChangedOn.Remote.ToShortDateTimeString();
 
         public readonly ViewElements ViewElements = new();
 
-        private readonly PwdSectionsMerge _sectionsMerge;
+        private readonly PwdPassFileMerge _passFileMerge;
 
-        public PassFileMergeWinViewModel(PwdSectionsMerge sectionsMerge)
+        public PassFileMergeWinViewModel(PwdPassFileMerge passFileMerge)
         {
-            _sectionsMerge = sectionsMerge;
-            ConflictButtons = new ObservableCollection<ConflictBtn>(sectionsMerge.Conflicts.Select(_MakeConflictBtn));
+            _passFileMerge = passFileMerge;
+            ConflictButtons = new ObservableCollection<ConflictBtn>(passFileMerge.Conflicts.Select(_MakeConflictBtn));
             
             var conflictChanged = this.WhenAnyValue(vm => vm.SelectedConflictBtn);
             
@@ -71,7 +72,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
             RemoteSectionName = conflictChanged.Select(btn => btn?.Conflict.Remote?.Name ?? string.Empty);
         }
 
-        private void Close() => ViewElements.Window!.Close(Result.From(!_sectionsMerge.Conflicts.Any()));
+        private void Close() => ViewElements.Window!.Close(Result.From(!_passFileMerge.Conflicts.Any()));
 
         private void _Accept(bool isLocal)
         {
@@ -79,13 +80,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
             var conflictBtn = SelectedConflictBtn!;
             var conflict = conflictBtn.Conflict;
             
-            _sectionsMerge.ResultSections.Add(new PwdSection
+            _passFileMerge.ResultSections.Add(new PwdSection
             {
                 Id = (conflict.Local?.Id ?? conflict.Remote?.Id)!,
                 Name = (conflict.Local?.Name ?? conflict.Remote?.Name)!,
                 Items = items.Select(btn => btn.ToItem()).ToList()
             });
-            _sectionsMerge.Conflicts.Remove(conflict);
+            _passFileMerge.Conflicts.Remove(conflict);
 
             var index = ConflictButtons.IndexOf(conflictBtn);
             
@@ -104,10 +105,10 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin
 
         #region Buttons factory
 
-        private ConflictBtn _MakeConflictBtn(PwdSectionsMerge.Conflict conflict)
+        private ConflictBtn _MakeConflictBtn(PwdPassFileMerge.Conflict conflict)
             => new(conflict, btn =>
             {
-                _sectionsMerge.Conflicts.Remove(btn.Conflict);
+                _passFileMerge.Conflicts.Remove(btn.Conflict);
                 ConflictButtons.Remove(btn);
                 if (!ConflictButtons.Any())
                 {

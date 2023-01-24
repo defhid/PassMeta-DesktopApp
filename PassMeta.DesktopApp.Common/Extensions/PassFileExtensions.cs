@@ -1,7 +1,9 @@
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+
 namespace PassMeta.DesktopApp.Common.Extensions;
 
 /// <summary>
-/// Extension methods for <see cref="PassFile{TContent}"/>.
+/// Extension methods for <see cref="PassFile"/>.
 /// </summary>
 public static class PassFileExtensions
 {

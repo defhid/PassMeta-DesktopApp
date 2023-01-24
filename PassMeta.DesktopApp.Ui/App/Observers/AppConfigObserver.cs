@@ -4,6 +4,7 @@ using System.Threading;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 
 using PassMeta.DesktopApp.Core.Utils;

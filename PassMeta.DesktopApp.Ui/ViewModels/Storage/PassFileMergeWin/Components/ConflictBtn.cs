@@ -1,4 +1,5 @@
 using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFileMerge;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
 {
@@ -9,13 +10,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components
 
     public class ConflictBtn : ReactiveObject
     {
-        public readonly PwdSectionsMerge.Conflict Conflict;
+        public readonly PwdPassFileMerge.Conflict Conflict;
 
         public string Name => (Conflict.Local?.Name ?? Conflict.Remote?.Name)!;
 
         public ReactCommand DeleteCommand { get; }
 
-        public ConflictBtn(PwdSectionsMerge.Conflict conflict, Action<ConflictBtn> onDelete)
+        public ConflictBtn(PwdPassFileMerge.Conflict conflict, Action<ConflictBtn> onDelete)
         {
             Conflict = conflict;
             DeleteCommand = ReactiveCommand.Create(() => onDelete(this));

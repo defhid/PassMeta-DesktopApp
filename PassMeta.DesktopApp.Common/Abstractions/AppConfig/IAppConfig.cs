@@ -1,6 +1,6 @@
 using PassMeta.DesktopApp.Common.Constants;
 
-namespace PassMeta.DesktopApp.Common.Abstractions;
+namespace PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 
 /// <summary>
 /// Application mutable configuration.

@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.UserContext;
-using PassMeta.DesktopApp.Core.Models;
+using PassMeta.DesktopApp.Common.Models.Entities.Internal;
 
 namespace PassMeta.DesktopApp.Core.Utils;
 

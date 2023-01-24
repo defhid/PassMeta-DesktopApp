@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Models;
@@ -27,12 +28,17 @@ public class AccountService : IAccountService
     };
 
     private readonly IPassMetaClient _passMetaClient;
+    private readonly IAppContextManager _appContextManager;
     private readonly IDialogService _dialogService;
 
     /// <summary></summary>
-    public AccountService(IPassMetaClient passMetaClient, IDialogService dialogService)
+    public AccountService(
+        IPassMetaClient passMetaClient,
+        IAppContextManager appContextManager,
+        IDialogService dialogService)
     {
         _passMetaClient = passMetaClient;
+        _appContextManager = appContextManager;
         _dialogService = dialogService;
     }
 
@@ -43,9 +49,9 @@ public class AccountService : IAccountService
             .WithBadHandling()
             .ExecuteAsync<User>();
 
-        if (response?.Success is true && AppContext.Current.User?.Equals(response.Data) is not true)
+        if (response?.Success is true && _appContextManager.Current.User?.Equals(response.Data) is not true)
         {
-            await AppContext.ApplyAsync(appContext => appContext.User = response.Data);
+            await _appContextManager.ApplyAsync(appContext => appContext.User = response.Data);
         }
 
         return Result.FromResponse(response);
@@ -54,12 +60,12 @@ public class AccountService : IAccountService
     /// <inheritdoc />
     public async Task<IResult> UpdateUserDataAsync(UserPatchData data)
     {
-        if (data.FullName == AppContext.Current.User!.FullName)
+        if (data.FullName == _appContextManager.Current.User!.FullName)
         {
             data.FullName = null;
         }
 
-        if (data.Login == AppContext.Current.User!.Login)
+        if (data.Login == _appContextManager.Current.User!.Login)
         {
             data.Login = null;
         }
@@ -77,7 +83,7 @@ public class AccountService : IAccountService
             
         _dialogService.ShowInfo(Resources.ACCOUNT__SAVE_SUCCESS);
 
-        await AppContext.ApplyAsync(appContext => appContext.User = response.Data);
+        await _appContextManager.ApplyAsync(appContext => appContext.User = response.Data);
 
         return Result.Success();
     }

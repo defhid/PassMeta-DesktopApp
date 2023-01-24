@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
@@ -30,12 +31,16 @@ public sealed class PassMetaClient : IPassMetaClient
     private readonly HttpClient _httpClient;
 
     /// <summary></summary>
-    public PassMetaClient(ILogService logger, IDialogService dialogService, IOkBadService okBadService)
+    public PassMetaClient(
+        IAppContextManager appContextManager,
+        ILogService logger,
+        IDialogService dialogService,
+        IOkBadService okBadService)
     {
         _logger = logger;
         _dialogService = dialogService;
         _okBadService = okBadService;
-        _httpClient = CreateHttpClient();
+        _httpClient = CreateHttpClient(appContextManager);
     }
         
     /// <inheritdoc />
@@ -303,9 +308,9 @@ public sealed class PassMetaClient : IPassMetaClient
         }
     }
 
-    private HttpClient CreateHttpClient()
+    private HttpClient CreateHttpClient(IAppContextManager appContextManager)
     {
-        var handler = new PassMetaClientHandler(_logger);
+        var handler = new PassMetaClientHandler(appContextManager, _logger);
         return new HttpClient(handler, disposeHandler: true);
     }
 

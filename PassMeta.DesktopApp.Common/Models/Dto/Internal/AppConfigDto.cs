@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 
 namespace PassMeta.DesktopApp.Common.Models.Dto.Internal;
 

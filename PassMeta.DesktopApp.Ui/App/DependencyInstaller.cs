@@ -3,6 +3,7 @@ using Avalonia.Controls.Notifications;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Core.Services;
@@ -55,10 +56,10 @@ public static class DependencyInstaller
             new PassFilePwdImportService(cryptoService, dialogService, logService), PassFileType.Pwd.ToString());
 
         RegisterSingleton<IPassFileExportService>(
-            new PassFilePwdExportService(passFileCryptoService, dialogService, logService), PassFileType.Pwd.ToString());
+            new PassFileExportService(passFileCryptoService, dialogService, logService), PassFileType.Pwd.ToString());
 
-        RegisterSingleton<IPwdMergePreparingService>(
-            new PwdMergePreparingService(passFileRemoteService, passFileCryptoService, dialogService));
+        RegisterSingleton<IPwdPassFileMergePreparingService>(
+            new PwdPassFileMergePreparingService(passFileRemoteService, passFileCryptoService, dialogService));
     }
         
     public static void RegisterUiServices()

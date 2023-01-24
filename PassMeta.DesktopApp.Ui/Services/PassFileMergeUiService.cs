@@ -67,7 +67,7 @@ namespace PassMeta.DesktopApp.Ui.Services
 
         private static async Task<IResult> _ProcessPwdPassFile(PassFile passFile, Window currentWindow)
         {
-            var mergeService = EnvironmentContainer.Resolve<IPwdMergePreparingService>();
+            var mergeService = EnvironmentContainer.Resolve<IPwdPassFileMergePreparingService>();
             
             var mergeResult = await mergeService.LoadAndPrepareMergeAsync(passFile);
             if (mergeResult.Bad)

@@ -1,9 +1,9 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services;
+namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 
 /// <summary>
-/// Service for providing passwords generation.
+/// Service for providing random generation.
 /// </summary>
-public interface IPasswordGenerationService
+public interface IPassMetaRandomService
 {
     /// <summary>
     /// Generate random password by length, using digits and special symbols.

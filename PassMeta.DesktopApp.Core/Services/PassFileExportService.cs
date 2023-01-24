@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -9,24 +8,32 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
+using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
 /// <inheritdoc />
 /// <remarks><see cref="PassFileType.Pwd"/> supports only.</remarks>
-public class PassFilePwdExportService : IPassFileExportService
+public class PassFileExportService : IPassFileExportService
 {
+    private readonly IPassFileContentSerializerFactory _contentSerializerFactory;
     private readonly IPassFileCryptoService _passFileCryptoService;
     private readonly IDialogService _dialogService;
     private readonly ILogService _logger;
 
     /// <summary></summary>
-    public PassFilePwdExportService(IPassFileCryptoService passFileCryptoService, IDialogService dialogService, ILogService logger)
+    public PassFileExportService(
+        IPassFileContentSerializerFactory contentSerializerFactory,
+        IPassFileCryptoService passFileCryptoService,
+        IDialogService dialogService,
+        ILogService logger)
     {
+        _contentSerializerFactory = contentSerializerFactory;
         _passFileCryptoService = passFileCryptoService;
         _dialogService = dialogService;
         _logger = logger;
@@ -47,33 +54,32 @@ public class PassFilePwdExportService : IPassFileExportService
 
     private void LogError(string log, Exception? ex = null)
     {
-        log = nameof(PassFilePwdExportService) + ": " + log;
+        log = nameof(PassFileExportService) + ": " + log;
         if (ex is null) _logger.Error(log);
         else _logger.Error(ex, log);
     }
 
     /// <inheritdoc />
-    public IEnumerable<ExternalFormat> SupportedFormats { get; } = new[]
+    public IEnumerable<PassFileExternalFormat> SupportedFormats { get; } = new[]
     {
-        ExternalFormat.PwdPassfileEncrypted,
-        ExternalFormat.PwdPassfileDecrypted,
+        PassFileExternalFormat.Encrypted,
+        PassFileExternalFormat.Decrypted,
     };
 
     /// <inheritdoc />
-    public async Task<IResult> ExportAsync(PassFile passFile, string resultFilePath)
+    public async Task<IResult> ExportAsync<TContent>(PassFile<TContent> passFile, string resultFilePath)
+        where TContent : class, new()
     {
-        Debug.Assert(passFile.Type == PassFileType.Pwd);
-
         try
         {
-            var ext = Path.GetExtension(resultFilePath).ToLower();
+            var ext = Path.GetExtension(resultFilePath).TrimStart().ToLower();
 
-            if (ext == ExternalFormat.PwdPassfileEncrypted.FullExtension)
+            if (ext == PassFileExternalFormat.Encrypted.Extension)
             {
                 return await ExportPassfileEncryptedAsync(passFile, resultFilePath);
             }
 
-            if (ext == ExternalFormat.PwdPassfileDecrypted.FullExtension)
+            if (ext == PassFileExternalFormat.Decrypted.Extension)
             {
                 return await ExportPassfileDecryptedAsync(passFile, resultFilePath);
             }
@@ -88,7 +94,7 @@ public class PassFilePwdExportService : IPassFileExportService
         
     private async Task<IResult> ExportPassfileEncryptedAsync(PassFile passFile, string path)
     {
-        var result = await PassFileManager.GetEncryptedDataAsync(passFile.Type, passFile.Id);
+        var result = await .GetEncryptedDataAsync(passFile.Type, passFile.Id);
         if (result.Bad)
             return ExporterError(result.Message ?? "Getting encrypted data");
             
@@ -105,15 +111,17 @@ public class PassFilePwdExportService : IPassFileExportService
         
     private async Task<IResult> ExportPassfileDecryptedAsync(PassFile passFile, string path)
     {
-        if (passFile.PwdData is null)
+        if (passFile.Content.Decrypted is null)
         {
-            var result = await PassFileManager.GetEncryptedDataAsync(passFile.Type, passFile.Id);
-            if (result.Bad)
+            if (passFile.Content.Encrypted is null)
             {
-                return ExporterError(result.Message ?? "Getting encrypted data");
+                var result = await .GetEncryptedDataAsync(passFile.Type, passFile.Id);
+                if (result.Bad)
+                {
+                    return ExporterError(result.Message ?? "Getting encrypted data");
+                }
             }
 
-            passFile.DataEncrypted = result.Data!;
             if (!await _DecryptAsync(passFile))
             {
                 return Result.Failure();
@@ -122,7 +130,7 @@ public class PassFilePwdExportService : IPassFileExportService
 
         try
         {
-            var data = PassFileConvention.Convert.FromRaw(passFile.PwdData!, true);
+            var data = _contentSerializerFactory.For<TContent>().Serialize(passFile.Content.Decrypted!, true);
             await File.WriteAllTextAsync(path, data, PassFileConvention.JsonEncoding);
             return ExporterSuccess(passFile, path);
         }
@@ -145,9 +153,6 @@ public class PassFilePwdExportService : IPassFileExportService
                 string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name));
         }
 
-        if (passFile.PwdData is null) return false;
-
-        PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
-        return true;
+        return passFile.PwdData is not null;
     }
 }

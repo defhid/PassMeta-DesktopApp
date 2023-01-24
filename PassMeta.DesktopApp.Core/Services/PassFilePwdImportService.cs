@@ -9,6 +9,7 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;

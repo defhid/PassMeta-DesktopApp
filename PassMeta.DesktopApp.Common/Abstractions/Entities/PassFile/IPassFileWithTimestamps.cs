@@ -13,7 +13,12 @@ public interface IPassFileWithTimestamps : IPassFileBase
     DateTime InfoChangedOn { get; }
 
     /// <summary>
-    /// Timestamp of data change.
+    /// Timestamp of content change.
     /// </summary>
     DateTime VersionChangedOn { get; }
+
+    /// <summary>
+    /// Content version.
+    /// </summary>
+    int Version { get; }
 }

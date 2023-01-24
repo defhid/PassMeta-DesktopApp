@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
-using PassMeta.DesktopApp.Core.Models;
+using PassMeta.DesktopApp.Common.Models.Entities.Internal;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core;

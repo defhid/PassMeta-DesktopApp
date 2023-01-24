@@ -4,6 +4,7 @@ using System.Threading.Tasks;
     
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Models;
@@ -22,12 +23,17 @@ public class AuthService : IAuthService
     };
         
     private readonly IPassMetaClient _passMetaClient;
+    private readonly IAppContextManager _appContextManager;
     private readonly IDialogService _dialogService;
 
     /// <summary></summary>
-    public AuthService(IPassMetaClient passMetaClient, IDialogService dialogService)
+    public AuthService(
+        IPassMetaClient passMetaClient,
+        IAppContextManager appContextManager,
+        IDialogService dialogService)
     {
         _passMetaClient = passMetaClient;
+        _appContextManager = appContextManager;
         _dialogService = dialogService;
     }
 
@@ -49,7 +55,7 @@ public class AuthService : IAuthService
         if (response?.Success is not true)
             return Result.Failure<User>();
 
-        await AppContext.ApplyAsync(appContext => appContext.User = response.Data);
+        await _appContextManager.ApplyAsync(appContext => appContext.User = response.Data);
 
         return Result.Success(response.Data!);
     }
@@ -60,7 +66,7 @@ public class AuthService : IAuthService
         var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__SIGN_OUT_CONFIRM);
         if (answer.Bad) return;
 
-        await AppContext.ApplyAsync(appContext =>
+        await _appContextManager.ApplyAsync(appContext =>
         {
             appContext.User = null;
             appContext.Cookies = Array.Empty<Cookie>();
@@ -101,7 +107,7 @@ public class AuthService : IAuthService
         if (response?.Success is not true) 
             return Result.Failure<User>();
 
-        await AppContext.ApplyAsync(appContext => appContext.User = response.Data);
+        await _appContextManager.ApplyAsync(appContext => appContext.User = response.Data);
 
         return Result.Success();
     }

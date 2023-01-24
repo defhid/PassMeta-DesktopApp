@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
 /// <inheritdoc />
-public class PasswordGenerationService : IPasswordGenerationService
+public class PassMetaRandomService : IPassMetaRandomService
 {
     private const string FailureGenerationResult = ":(";
     private static readonly Random Random = new();
     private readonly ILogService _logger;
 
     /// <summary></summary>
-    public PasswordGenerationService(ILogService logger)
+    public PassMetaRandomService(ILogService logger)
     {
         _logger = logger;
     }

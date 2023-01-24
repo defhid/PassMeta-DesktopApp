@@ -1,41 +1,24 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 
-namespace PassMeta.DesktopApp.Common.Models.Entities;
+namespace PassMeta.DesktopApp.Common.Models.Entities.PassFileMerge;
 
 /// <summary>
 /// Passfile of <see cref="PassFileType.Pwd"/> type merge.
 /// </summary>
-public class PwdSectionsMerge
+public class PwdPassFileMerge : PassFileMerge<List<PwdSection>>
 {
-    /// <summary>
-    /// Local and remote passfile versions.
-    /// </summary>
-    public readonly (int Local, int Remote, int Splitting) Versions;
-        
-    /// <summary>
-    /// Local and remote passfile "changed on" timestamps.
-    /// </summary>
-    public readonly (DateTime Local, DateTime Remote, DateTime Splitting) VersionsChangedOn;
-
-    /// <summary>
-    /// Result passfile sections.
-    /// </summary>
-    public readonly List<PwdSection> ResultSections = new();
-
     /// <summary>
     /// Conflicts between sections from remote and local versions.
     /// </summary>
     public readonly List<Conflict> Conflicts = new();
 
     /// <summary></summary>
-    public PwdSectionsMerge(PassFile localPassFile, PassFile remotePassFile)
+    public PwdPassFileMerge(PassFile.PassFile localPassFile, PassFile.PassFile remotePassFile)
+        : base(localPassFile, remotePassFile)
     {
-        Versions = (localPassFile.Version, remotePassFile.Version, localPassFile.Origin!.Version);
-        VersionsChangedOn = (localPassFile.VersionChangedOn, remotePassFile.VersionChangedOn, localPassFile.Origin!.VersionChangedOn);
     }
 
     /// <summary>

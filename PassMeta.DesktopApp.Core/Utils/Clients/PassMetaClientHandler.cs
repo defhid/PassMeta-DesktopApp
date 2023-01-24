@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
@@ -12,16 +13,21 @@ namespace PassMeta.DesktopApp.Core.Utils.Clients;
 internal class PassMetaClientHandler : HttpClientHandler
 {
     private static readonly SemaphoreSlim CookiesRefreshSemaphore = new(1, 1);
+    private readonly IAppContextManager _appContextManager;
     private readonly ILogService _logger;
     private readonly IDisposable _appContextSubscription;
 
-    public PassMetaClientHandler(ILogService logger)
+    public PassMetaClientHandler(IAppContextManager appContextManager, ILogService logger)
     {
-        CookieContainer = new CookieContainer(5);
+        CookieContainer = new CookieContainer(3);
+
+        _appContextManager = appContextManager;
         _logger = logger;
-        _appContextSubscription = AppContext.CurrentObservable
+        _appContextSubscription = appContextManager.CurrentObservable
             .Subscribe(appContext => 
                 CookieHelper.RefillCookieContainer(CookieContainer, appContext.Cookies));
+
+        CookieHelper.RefillCookieContainer(CookieContainer, _appContextManager.Current.Cookies);
     }
 
     protected override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -50,7 +56,7 @@ internal class PassMetaClientHandler : HttpClientHandler
         await CookiesRefreshSemaphore.WaitAsync();
         try
         {
-            await AppContext.ApplyAsync(appContext =>
+            await _appContextManager.ApplyAsync(appContext =>
             {
                 var currentCookies = appContext.Cookies;
                 var freshCookies = CookieContainer.GetAllCookies();

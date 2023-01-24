@@ -8,6 +8,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 /// <summary>
 /// Service for exporting pasfiles.
 /// </summary>
+/// <remarks>Transient.</remarks>
 public interface IPassFileExportService
 {
     /// <summary>

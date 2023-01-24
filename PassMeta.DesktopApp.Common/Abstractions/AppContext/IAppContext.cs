@@ -25,8 +25,7 @@ public interface IAppContext
     public string? ServerId { get; }
 
     /// <summary>
-    /// Server version. If not null, indicates correct <see cref="IAppConfig.ServerUrl"/>
-    /// and internet connection has been established at least once.
+    /// Server version from last connection.
     /// </summary>
     public string? ServerVersion { get; }
 }

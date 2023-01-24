@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services;
+namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 
 /// <summary>
 /// Service that provides PassMeta crypto-methods.

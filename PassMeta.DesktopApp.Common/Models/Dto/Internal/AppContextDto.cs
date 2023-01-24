@@ -22,4 +22,8 @@ public class AppContextDto
     /// <inheritdoc cref="IAppContext.ServerId"/>
     [JsonPropertyName("sid")]
     public string? ServerId { get; set; }
+
+    /// <inheritdoc cref="IAppContext.ServerVersion"/>
+    [JsonPropertyName("sver")]
+    public string? ServerVersion { get; set; }
 }

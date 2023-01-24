@@ -1,4 +1,5 @@
 using PassMeta.DesktopApp.Common.Models.Entities;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFileMerge;
 
 namespace PassMeta.DesktopApp.Ui.Views.Storage
 {
@@ -15,9 +16,9 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
             this.CorrectMainWindowFocusWhileOpened();
         }
 
-        public PassFileMergeWin(PwdSectionsMerge sectionsMerge) : this()
+        public PassFileMergeWin(PwdPassFileMerge passFileMerge) : this()
         {
-            DataContext = new PassFileMergeWinViewModel(sectionsMerge)
+            DataContext = new PassFileMergeWinViewModel(passFileMerge)
             {
                 ViewElements = { Window = this }
             };

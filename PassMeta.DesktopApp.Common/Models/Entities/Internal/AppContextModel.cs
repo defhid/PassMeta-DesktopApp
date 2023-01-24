@@ -3,9 +3,8 @@ using System.Linq;
 using System.Net;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
-using PassMeta.DesktopApp.Common.Models.Entities;
 
-namespace PassMeta.DesktopApp.Core.Models;
+namespace PassMeta.DesktopApp.Common.Models.Entities.Internal;
 
 /// <inheritdoc />
 public class AppContextModel : IAppContext
@@ -28,6 +27,7 @@ public class AppContextModel : IAppContext
         Cookies = dto.Cookies ?? new List<Cookie>();
         User = dto.User;
         ServerId = dto.ServerId;
+        ServerVersion = dto.ServerVersion;
     }
 
     /// <summary></summary>
@@ -35,7 +35,8 @@ public class AppContextModel : IAppContext
     {
         User = User,
         Cookies = Cookies.ToList(),
-        ServerId = ServerId
+        ServerId = ServerId,
+        ServerVersion = ServerVersion
     };
 
     /// <summary>
