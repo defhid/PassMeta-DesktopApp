@@ -1,11 +1,11 @@
 using System;
 
-namespace PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
+namespace PassMeta.DesktopApp.Common.Abstractions.Entities;
 
 /// <summary>
-/// Passfile with timestamps information.
+/// Information about last passfile changes.
 /// </summary>
-public interface IPassFileWithTimestamps : IPassFileBase
+public interface IPassFileChangeStamps
 {
     /// <summary>
     /// Timestamp of information change.

@@ -33,7 +33,7 @@ public interface IPassFileLocalStorage
     /// </summary>
     Task<IDetailedResult<byte[]>> LoadEncryptedContentAsync(
         PassFileType passFileType,
-        int passFileId,
+        long passFileId,
         int version,
         IUserContext userContext,
         CancellationToken cancellationToken = default);
@@ -43,7 +43,7 @@ public interface IPassFileLocalStorage
     /// </summary>
     Task<IDetailedResult> SaveEncryptedContentAsync(
         PassFileType passFileType,
-        int passFileId,
+        long passFileId,
         int version,
         byte[] content,
         IUserContext userContext,
@@ -53,7 +53,7 @@ public interface IPassFileLocalStorage
     /// Delete local encrypted content by passfile id and version.
     /// </summary>
     Task<IDetailedResult> DeleteEncryptedContentAsync(
-        int passFileId,
+        long passFileId,
         int version,
         IUserContext userContext,
         CancellationToken cancellationToken = default);
@@ -62,7 +62,7 @@ public interface IPassFileLocalStorage
     /// Get all locally saved versions of encrypted content by passfile id.
     /// </summary>
     Task<IDetailedResult<IEnumerable<int>>> GetVersionsAsync(
-        int passFileId,
+        long passFileId,
         IUserContext userContext,
         CancellationToken cancellationToken = default);
 }

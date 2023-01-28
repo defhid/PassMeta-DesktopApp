@@ -672,4 +672,7 @@
     <data name="SETTINGS__DEV_MODE" xml:space="preserve">
         <value>Режим разработчика</value>
     </data>
+    <data name="PASSCONTEXT_ERR" xml:space="preserve">
+        <value>Ошибка при работе контекстного менеджера пакетов паролей (см. логи)</value>
+    </data>
 </root>

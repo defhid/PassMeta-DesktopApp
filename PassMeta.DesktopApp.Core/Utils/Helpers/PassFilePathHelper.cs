@@ -17,15 +17,15 @@ public static class PassFilePathHelper
     /// <summary>
     /// Get name for encrypted passfile content with extension.
     /// </summary>
-    public static string GetPassFileContentName(PassFileType fileType, int fileId, int version)
-        => $"{fileId}v{version}.{fileType.ToString().ToLower()}.{PassFileExternalFormat.Encrypted.Extension}";
+    public static string GetPassFileContentName(PassFileType fileType, long passFileId, int version)
+        => $"{passFileId}v{version}.{fileType.ToString().ToLower()}.{PassFileExternalFormat.Encrypted.Extension}";
 
     /// <summary>
     /// Get predicate for matching encrypted passfile content name with extension.
     /// </summary>
-    public static Func<string, bool> GetPassFileContentNamePattern(int fileId, int version)
+    public static Func<string, bool> GetPassFileContentNamePattern(long passFileId, int version)
     {
-        var start = $"{fileId}v{version}";
+        var start = $"{passFileId}v{version}";
         var end = '.' + PassFileExternalFormat.Encrypted.Extension;
 
         return x => x.StartsWith(start) && x.EndsWith(end);
@@ -34,9 +34,9 @@ public static class PassFilePathHelper
     /// <summary>
     /// Get predicate for matching encrypted passfile content name with extension.
     /// </summary>
-    public static Func<string, bool> GetPassFileContentNamePattern(int fileId)
+    public static Func<string, bool> GetPassFileContentNamePattern(long passFileId)
     {
-        var start = $"{fileId}v";
+        var start = $"{passFileId}v";
         var end = '.' + PassFileExternalFormat.Encrypted.Extension;
 
         return x => x.StartsWith(start) && x.EndsWith(end);

@@ -54,7 +54,7 @@ public static class PassFileExtensions
     {
         passFile.Name = otherPassFile.Name;
         passFile.Color = otherPassFile.Color;
-        passFile.Origin = otherPassFile.Origin?.Clone();  // TODO: Hm...
+        passFile.OriginChangeStamps = otherPassFile.OriginChangeStamps?.Clone();  // TODO: Hm...
         passFile.InfoChangedOn = otherPassFile.InfoChangedOn;
         passFile.LocalDeletedOn = otherPassFile.LocalDeletedOn;
     }
@@ -70,7 +70,7 @@ public static class PassFileExtensions
         }
         passFile.ContentEncrypted = otherPassFile.ContentEncrypted;
         passFile.PassPhrase = otherPassFile.PassPhrase;
-        passFile.Origin = otherPassFile.Origin?.Clone();
+        passFile.OriginChangeStamps = otherPassFile.OriginChangeStamps?.Clone();
         passFile.Version = otherPassFile.Version;
         passFile.VersionChangedOn = otherPassFile.VersionChangedOn;
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
@@ -16,7 +17,7 @@ public interface IPassFileContext : IDisposable
     /// Supported passfile type.
     /// </summary>
     PassFileType PassFileType { get; }
-    
+
     /// <summary>
     /// Has any added/changed/deleted passfile?
     /// </summary>
@@ -30,7 +31,7 @@ public interface IPassFileContext : IDisposable
     /// <summary>
     /// Save all changes.
     /// </summary>
-    Task<IResult> CommitAsync();
+    Task<IResult> CommitAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Rollback all changes.
@@ -48,21 +49,26 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     IEnumerable<TPassFile> CurrentList { get; }
 
     /// <summary>
+    /// Load <see cref="CurrentList"/>.
+    /// </summary>
+    Task<IResult> LoadListAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Load passfile content of its current version.
     /// </summary>
-    Task<IResult> LoadContentAsync(TPassFile passFile);
+    Task<IResult> LoadContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Create a new passfile with local id, add it to <see cref="CurrentList"/>.
     /// </summary>
-    TPassFile Create();
+    Task<TPassFile> CreateAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Add <see cref="originPassFile"/> to <see cref="CurrentList"/>,
     /// remove <paramref name="replacePassFile"/> from <see cref="CurrentList"/>
     /// and reassign contents to the origin passfile.
     /// </summary>
-    IResult<TPassFile> Add(TPassFile originPassFile, TPassFile? replacePassFile);
+    IResult Add(TPassFile originPassFile, TPassFile? replacePassFile);
 
     /// <summary>
     /// Mark passfile as information-changed.

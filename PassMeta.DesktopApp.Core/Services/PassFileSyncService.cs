@@ -168,7 +168,7 @@ public class PassFileSyncService : IPassFileSyncService
 
                 if (local.IsVersionChanged())
                 {
-                    if (local.Origin!.Version != remote.Version && !local.Marks.HasFlag(PassFileMark.Merged))
+                    if (local.OriginChangeStamps!.Version != remote.Version && !local.Marks.HasFlag(PassFileMark.Merged))
                     {
                         PassFileManager.TrySetProblem(actual.Id, PassFileProblemKind.NeedsMerge);
                         _dialogService.ShowFailure(Resources.PASSERVICE__WARN_NEED_MERGE, actual.GetTitle(), 

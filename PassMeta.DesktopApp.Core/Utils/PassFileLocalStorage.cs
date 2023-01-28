@@ -68,8 +68,9 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         List<PassFileLocalDto>? passFiles = null;
         try
         {
-            passFiles = JsonSerializer.Deserialize<List<PassFileLocalDto>>(loadResult.Data!) ?? 
-                        new List<PassFileLocalDto>();
+            passFiles = JsonSerializer.Deserialize<List<PassFileLocalDto>>(loadResult.Data!)?
+                .Where(x => x.UserId == userContext.UserId)
+                .ToList();
         }
         catch (Exception ex)
         {
@@ -130,7 +131,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
     /// <inheritdoc />
     public async Task<IDetailedResult<byte[]>> LoadEncryptedContentAsync(
         PassFileType passFileType,
-        int passFileId,
+        long passFileId,
         int version,
         IUserContext userContext,
         CancellationToken cancellationToken = default)
@@ -151,7 +152,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
 
     private async ValueTask<IDetailedResult<byte[]>> LoadEncryptedContentInternalAsync(
         PassFileType passFileType,
-        int passFileId,
+        long passFileId,
         int version,
         IUserContext userContext,
         CancellationToken cancellationToken)
@@ -180,7 +181,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
     /// <inheritdoc />
     public async Task<IDetailedResult> SaveEncryptedContentAsync(
         PassFileType passFileType,
-        int passFileId,
+        long passFileId,
         int version,
         byte[] content,
         IUserContext userContext,
@@ -202,7 +203,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
 
     private async ValueTask<IDetailedResult> SaveEncryptedContentInternalAsync(
         PassFileType passFileType,
-        int passFileId,
+        long passFileId,
         int version,
         byte[] content,
         IUserContext userContext,
@@ -233,7 +234,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
 
     /// <inheritdoc />
     public async Task<IDetailedResult> DeleteEncryptedContentAsync(
-        int passFileId,
+        long passFileId,
         int version,
         IUserContext userContext,
         CancellationToken cancellationToken = default)
@@ -251,7 +252,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
     }
 
     private async ValueTask<IDetailedResult> DeleteEncryptedContentInternalAsync(
-        int passFileId,
+        long passFileId,
         int version,
         IUserContext userContext,
         CancellationToken cancellationToken)
@@ -285,7 +286,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
 
     /// <inheritdoc />
     public async Task<IDetailedResult<IEnumerable<int>>> GetVersionsAsync(
-        int passFileId,
+        long passFileId,
         IUserContext userContext,
         CancellationToken cancellationToken = default)
     {
@@ -301,7 +302,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
     }
     
     private async ValueTask<IDetailedResult<IEnumerable<int>>> GetVersionsInternalAsync(
-        int passFileId,
+        long passFileId,
         IUserContext userContext,
         CancellationToken cancellationToken)
     {

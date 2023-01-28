@@ -37,7 +37,7 @@ public static class PassFileFactory
     }
 
     private static PassFile CreatePassFile(
-        int id, int userId, int passFileTypeId,
+        long id, int userId, int passFileTypeId,
         DateTime createdOn, DateTime infoChangedOn, DateTime versionChangedOn,
         DateTime? localDeletedOn = null, PassFile? origin = null)
         => passFileTypeId switch
@@ -46,13 +46,13 @@ public static class PassFileFactory
             {
                 Id = id, UserId = userId, CreatedOn = createdOn, 
                 InfoChangedOn = infoChangedOn, VersionChangedOn = versionChangedOn,
-                LocalDeletedOn = localDeletedOn, Origin = origin
+                LocalDeletedOn = localDeletedOn, OriginChangeStamps = origin
             },
             (int) PassFileType.Txt => new TxtPassFile
             {
                 Id = id, UserId = userId, CreatedOn = createdOn,
                 InfoChangedOn = infoChangedOn, VersionChangedOn = versionChangedOn,
-                LocalDeletedOn = localDeletedOn, Origin = origin
+                LocalDeletedOn = localDeletedOn, OriginChangeStamps = origin
             },
             _ => throw new ArgumentOutOfRangeException(nameof(passFileTypeId), passFileTypeId, @"Passfile type is not supported")
         };

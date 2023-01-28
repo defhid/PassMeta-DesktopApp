@@ -21,7 +21,7 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
     public static class PassFileUiExtensions
     {
         /// <summary>
-        /// Get color depending on <see cref="PassFile.Problem"/> and <see cref="PassFile.Origin"/>.
+        /// Get color depending on <see cref="PassFile.Problem"/> and <see cref="PassFile.OriginChangeStamps"/>.
         /// </summary>
         public static ISolidColorBrush GetStateColor(this PassFile? passFile)
         {

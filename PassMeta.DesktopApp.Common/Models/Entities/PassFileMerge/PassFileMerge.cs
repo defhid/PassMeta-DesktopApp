@@ -30,10 +30,10 @@ public abstract class PassFileMerge<TContent>
         Versions = (
             localPassFile.Version,
             remotePassFile.Version,
-            localPassFile.Origin!.Version);
+            localPassFile.OriginChangeStamps!.Version);
         VersionsChangedOn = (
             localPassFile.VersionChangedOn,
             remotePassFile.VersionChangedOn,
-            localPassFile.Origin!.VersionChangedOn);
+            localPassFile.OriginChangeStamps!.VersionChangedOn);
     }
 }

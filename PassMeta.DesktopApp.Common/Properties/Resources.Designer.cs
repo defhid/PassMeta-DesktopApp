@@ -906,6 +906,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Passfile context manager error (see logs).
+        /// </summary>
+        public static string PASSCONTEXT_ERR {
+            get {
+                return ResourceManager.GetString("PASSCONTEXT_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please, input your account password to delete passfile &apos;{0}&apos; from the server (#{1}, deleted locally on {2}).
         /// </summary>
         public static string PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE {

@@ -1,5 +1,5 @@
 using System;
-using PassMeta.DesktopApp.Common.Abstractions.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Abstractions.Entities;
 using PassMeta.DesktopApp.Common.Enums;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.PassFile;
@@ -7,7 +7,7 @@ namespace PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 /// <summary>
 /// Passfile entity.
 /// </summary>
-public abstract class PassFile : IPassFileWithTimestamps
+public abstract class PassFile : IPassFileChangeStamps
 {
     /// <summary></summary>
     protected PassFile()
@@ -20,8 +20,10 @@ public abstract class PassFile : IPassFileWithTimestamps
     /// </summary>
     public abstract PassFileType Type { get; }
 
-    /// <inheritdoc />
-    public int Id { get; init; }
+    /// <summary>
+    /// Identifier.
+    /// </summary>
+    public long Id { get; init; }
 
     /// <summary>
     /// Identifier of owner user.
@@ -43,6 +45,11 @@ public abstract class PassFile : IPassFileWithTimestamps
     /// </summary>
     public DateTime CreatedOn { get; init; }
 
+    /// <summary>
+    /// Timestamp of deletion.
+    /// </summary>
+    public DateTime? DeletedOn { get; set; }
+
     /// <inheritdoc />
     public DateTime InfoChangedOn { get; set; }
 
@@ -53,10 +60,9 @@ public abstract class PassFile : IPassFileWithTimestamps
     public int Version { get; set; }
 
     /// <summary>
-    /// Origin passfile information from the server
-    /// at the moment of the first unsynchronized change, if any.
+    /// Information about last passfile changes from the server origin.
     /// </summary>
-    public IPassFileWithTimestamps? Origin { get; init; }
+    public IPassFileChangeStamps? OriginChangeStamps { get; set; }
 
     /// <summary>
     /// Assigned marks.

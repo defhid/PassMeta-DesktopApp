@@ -679,4 +679,7 @@ try another keywords...</value>
     <data name="SETTINGS__DEV_MODE" xml:space="preserve">
         <value>Developer mode</value>
     </data>
+    <data name="PASSCONTEXT_ERR" xml:space="preserve">
+        <value>Passfile context manager error (see logs)</value>
+    </data>
 </root>

@@ -19,7 +19,7 @@ public class PassFileLocalDto
     /// Identifier.
     /// </summary>
     [JsonPropertyName("id")]
-    public int Id { get; init; }
+    public long Id { get; init; }
     
     /// <summary>
     /// Identifier of owner user.
@@ -46,32 +46,38 @@ public class PassFileLocalDto
     public string? Color { get; init; }
 
     /// <summary>
-    /// Content version.
-    /// </summary>
-    [JsonPropertyName("version")]
-    public int Version { get; init; }
-
-    /// <summary>
     /// Timestamp of creation.
     /// </summary>
-    [JsonPropertyName("created_on")]
+    [JsonPropertyName("cre_on")]
     public DateTime CreatedOn { get; init; }
+
+    /// <summary>
+    /// Timestamp of deletion.
+    /// </summary>
+    [JsonPropertyName("del_on")]
+    public DateTime? DeletedOn { get; init; }
 
     /// <summary>
     /// Timestamp of information change.
     /// </summary>
-    [JsonPropertyName("i_changed_on")]
+    [JsonPropertyName("inf_on")]
     public DateTime InfoChangedOn { get; init; }
 
     /// <summary>
     /// Timestamp of data change.
     /// </summary>
-    [JsonPropertyName("v_changed_on")]
+    [JsonPropertyName("ver_on")]
     public DateTime VersionChangedOn { get; init; }
+
+    /// <summary>
+    /// Content version.
+    /// </summary>
+    [JsonPropertyName("ver")]
+    public int Version { get; init; }
 
     /// <summary>
     /// Origin remote passfile information. 
     /// </summary>
-    [JsonPropertyName("origin")]
+    [JsonPropertyName("orig")]
     public PassFileLocalDto? Origin { get; init; }
 }

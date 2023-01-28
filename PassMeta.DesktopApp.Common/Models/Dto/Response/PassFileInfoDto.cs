@@ -16,7 +16,7 @@ public class PassFileInfoDto
     /// <summary>
     /// Identifier.
     /// </summary>
-    public int Id { get; init; }
+    public long Id { get; init; }
     
     /// <summary>
     /// Identifier of owner user.
