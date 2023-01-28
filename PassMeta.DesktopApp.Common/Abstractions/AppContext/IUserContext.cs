@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.UserContext;
+namespace PassMeta.DesktopApp.Common.Abstractions.AppContext;
 
 /// <summary>
 /// Application user context.

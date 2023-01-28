@@ -24,11 +24,18 @@ public readonly struct PassFileContent<TData>
     /// </summary>
     public readonly string? PassPhrase;
 
+    private PassFileContent(TData? decrypted, byte[]? encrypted, string? passPhrase)
+    {
+        Decrypted = decrypted;
+        Encrypted = encrypted;
+        PassPhrase = passPhrase;
+    }
+
     /// <summary>
     /// Initialize unloaded content.
     /// </summary>
     public PassFileContent()
-        : this(null!, null!, null!)
+        : this(null, null, null)
     {
     }
 
@@ -36,7 +43,15 @@ public readonly struct PassFileContent<TData>
     /// Initialize content with encrypted data.
     /// </summary>
     public PassFileContent(byte[] encrypted)
-        : this(null!, encrypted, null!)
+        : this(null, encrypted, null)
+    {
+    }
+
+    /// <summary>
+    /// Initialize content with encrypted data and passphrase to decrypt it.
+    /// </summary>
+    public PassFileContent(byte[] encrypted, string passPhrase)
+        : this(null, encrypted, passPhrase)
     {
     }
 
@@ -44,17 +59,7 @@ public readonly struct PassFileContent<TData>
     /// Initialize content with decrypted data and passphrase to encrypt it.
     /// </summary>
     public PassFileContent(TData decrypted, string passPhrase)
-        : this(decrypted, null!, passPhrase)
+        : this(decrypted, null, passPhrase)
     {
-    }
-
-    /// <summary>
-    /// Initialize content with decrypted data, encrypted data and passphrase to encrypt and decrypt them.
-    /// </summary>
-    public PassFileContent(TData decrypted, byte[] encrypted, string passPhrase)
-    {
-        Decrypted = decrypted;
-        Encrypted = encrypted;
-        PassPhrase = passPhrase;
     }
 }

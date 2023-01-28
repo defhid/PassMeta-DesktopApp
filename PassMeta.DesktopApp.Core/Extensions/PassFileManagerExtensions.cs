@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 
-namespace PassMeta.DesktopApp.Core.Utils.Extensions;
+namespace PassMeta.DesktopApp.Core.Extensions;
 
 /// <summary>
 /// Extension methods for <see cref="IPassFileLocalStorage"/>.

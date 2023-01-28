@@ -1,10 +1,9 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
-namespace PassMeta.DesktopApp.Core.Utils.Extensions;
+namespace PassMeta.DesktopApp.Core.Extensions;
 
 /// <summary>
 /// Extension methods for <see cref="PassFile{TContent}"/>.

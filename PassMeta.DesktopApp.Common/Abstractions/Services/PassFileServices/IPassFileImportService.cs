@@ -18,6 +18,6 @@ public interface IPassFileImportService
     /// <summary>
     /// Import data to passfile from file by specified path (<paramref name="sourceFilePath"/>).
     /// </summary>
-    Task<IResult> ImportAsync<TContent>(PassFile<TContent> toPassFile, string sourceFilePath, string? supposedPassPhrase = null)
+    Task<IResult> ImportAsync<TContent>(PassFile<TContent> passFile, string sourceFilePath)
         where TContent : class, new();
 }

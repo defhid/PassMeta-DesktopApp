@@ -53,7 +53,7 @@ public static class DependencyInstaller
             new PassFileSyncService(passFileRemoteService, passMetaClient, dialogService, logService));
 
         RegisterSingleton<IPassFileImportService>(
-            new PassFilePwdImportService(cryptoService, dialogService, logService), PassFileType.Pwd.ToString());
+            new PassFileImportService(cryptoService, dialogService, logService), PassFileType.Pwd.ToString());
 
         RegisterSingleton<IPassFileExportService>(
             new PassFileExportService(passFileCryptoService, dialogService, logService), PassFileType.Pwd.ToString());

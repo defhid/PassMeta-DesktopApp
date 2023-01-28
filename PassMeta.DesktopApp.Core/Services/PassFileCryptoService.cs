@@ -1,7 +1,6 @@
 using System;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
-using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
@@ -74,7 +73,7 @@ public class PassFileCryptoService : IPassFileCryptoService
         try
         {
             var contentRaw = _contentSerializerFactory.For<TContent>().Deserialize(contentBytes);
-            passFile.Content = new PassFileContent<TContent>(contentRaw, passFile.Content.Encrypted, passPhrase);
+            passFile.Content = new PassFileContent<TContent>(contentRaw, passPhrase);
         }
         catch (Exception ex)
         {
@@ -119,7 +118,7 @@ public class PassFileCryptoService : IPassFileCryptoService
         try
         {
             var encryptedBytes = _pmCryptoService.Encrypt(contentBytes, passPhrase);
-            passFile.Content = new PassFileContent<TContent>(passFile.Content.Decrypted, encryptedBytes, passPhrase);
+            passFile.Content = new PassFileContent<TContent>(encryptedBytes, passPhrase);
         }
         catch (Exception ex)
         {

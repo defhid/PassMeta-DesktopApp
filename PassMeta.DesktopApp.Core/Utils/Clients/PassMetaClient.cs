@@ -15,8 +15,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Services.Extensions;
-using PassMeta.DesktopApp.Core.Utils.Extensions;
 using PassMeta.DesktopApp.Core.Utils.Json;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;

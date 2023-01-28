@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
@@ -20,6 +21,6 @@ public interface IPassFileExportService
     /// Export passfile to <paramref name="resultFilePath"/>.
     /// </summary>
     /// <returns>Success?</returns>
-    Task<IResult> ExportAsync<TContent>(PassFile<TContent> passFile, string resultFilePath)
+    Task<IResult> ExportAsync<TContent>(PassFile<TContent> passFile, string resultFilePath, IUserContext userContext)
         where TContent : class, new();
 }

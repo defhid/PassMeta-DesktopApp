@@ -2,27 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Constants;
-using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
 /// <inheritdoc />
-/// <remarks><see cref="PassFileType.Pwd"/> supports only.</remarks>
 public class PassFileExportService : IPassFileExportService
 {
     private readonly IPassFileContentSerializerFactory _contentSerializerFactory;
     private readonly IPassFileCryptoService _passFileCryptoService;
+    private readonly IPassFileLocalStorage _passFileLocalStorage;
     private readonly IDialogService _dialogService;
     private readonly ILogService _logger;
 
@@ -30,33 +31,15 @@ public class PassFileExportService : IPassFileExportService
     public PassFileExportService(
         IPassFileContentSerializerFactory contentSerializerFactory,
         IPassFileCryptoService passFileCryptoService,
+        IPassFileLocalStorage passFileLocalStorage,
         IDialogService dialogService,
         ILogService logger)
     {
         _contentSerializerFactory = contentSerializerFactory;
         _passFileCryptoService = passFileCryptoService;
+        _passFileLocalStorage = passFileLocalStorage;
         _dialogService = dialogService;
         _logger = logger;
-    }
-
-    private IResult ExporterSuccess(PassFile passFile, string resultFilePath)
-    {
-        _logger.Info($"{passFile} exported to '{resultFilePath}'");
-        return Result.Success();
-    }
-        
-    private IResult ExporterError(string log, Exception? ex = null)
-    {
-        LogError(log, ex);
-        _dialogService.ShowFailure(Resources.PASSIMPORT__ERR, more: ex?.Message ?? log);
-        return Result.Failure();
-    }
-
-    private void LogError(string log, Exception? ex = null)
-    {
-        log = nameof(PassFileExportService) + ": " + log;
-        if (ex is null) _logger.Error(log);
-        else _logger.Error(ex, log);
     }
 
     /// <inheritdoc />
@@ -67,62 +50,98 @@ public class PassFileExportService : IPassFileExportService
     };
 
     /// <inheritdoc />
-    public async Task<IResult> ExportAsync<TContent>(PassFile<TContent> passFile, string resultFilePath)
+    public async Task<IResult> ExportAsync<TContent>(
+        PassFile<TContent> passFile,
+        string resultFilePath,
+        IUserContext userContext)
         where TContent : class, new()
     {
         try
         {
-            var ext = Path.GetExtension(resultFilePath).TrimStart().ToLower();
+            var ext = Path.GetExtension(resultFilePath).TrimStart('.');
 
-            if (ext == PassFileExternalFormat.Encrypted.Extension)
+            if (PassFileExternalFormat.Encrypted.Extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
             {
-                return await ExportPassfileEncryptedAsync(passFile, resultFilePath);
+                return await ExportPassfileEncryptedAsync(passFile, resultFilePath, userContext);
             }
 
-            if (ext == PassFileExternalFormat.Decrypted.Extension)
+            if (PassFileExternalFormat.Decrypted.Extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
             {
-                return await ExportPassfileDecryptedAsync(passFile, resultFilePath);
+                return await ExportPassfileDecryptedAsync(passFile, resultFilePath, userContext);
             }
 
-            return ExporterError(Resources.PASSEXPORT__NOT_SUPPORTED_EXTENSION_ERR);
+            _dialogService.ShowFailure(Resources.PASSEXPORT__NOT_SUPPORTED_EXTENSION_ERR);
         }
         catch (Exception ex)
         {
-            return ExporterError("Export error", ex);
+            LogError($"Export {passFile.GetIdentityString()} to '{resultFilePath}' failed", ex);
+            _dialogService.ShowFailure(Resources.PASSIMPORT__ERR, more: ex.Message);
         }
+
+        return Result.Failure();
     }
-        
-    private async Task<IResult> ExportPassfileEncryptedAsync(PassFile passFile, string path)
+
+    private async Task<IResult> ExportPassfileEncryptedAsync<TContent>(
+        PassFile<TContent> passFile,
+        string path,
+        IUserContext userContext)
+        where TContent : class, new()
     {
-        var result = await .GetEncryptedDataAsync(passFile.Type, passFile.Id);
-        if (result.Bad)
-            return ExporterError(result.Message ?? "Getting encrypted data");
-            
+        if (passFile.Content.Encrypted is null)
+        {
+            if (passFile.Content.Decrypted is not null)
+            {
+                var result = _passFileCryptoService.Encrypt(passFile);
+                if (result.Bad)
+                {
+                    _dialogService.ShowFailure(result.Message!);
+                    return Result.Failure();
+                }
+            }
+            else
+            {
+                var result = await _passFileLocalStorage.LoadEncryptedContentAsync(passFile, userContext);
+                if (result.Bad)
+                {
+                    _dialogService.ShowFailure(result.Message!);
+                    return Result.Failure();
+                }
+            }
+        }
+
         try
         {
-            await File.WriteAllBytesAsync(path, result.Data!);
-            return ExporterSuccess(passFile, path);
+            await File.WriteAllBytesAsync(path, passFile.Content.Encrypted!);
         }
         catch (Exception ex)
         {
-            return ExporterError("Encrypted data saving", ex);
+            LogError("Encrypted content saving failed", ex);
+            throw;
         }
+
+        LogWarning($"{passFile.GetIdentityString()} encrypted content exported to '{path}'");
+        return Result.Success();
     }
-        
-    private async Task<IResult> ExportPassfileDecryptedAsync(PassFile passFile, string path)
+
+    private async Task<IResult> ExportPassfileDecryptedAsync<TContent>(
+        PassFile<TContent> passFile,
+        string path,
+        IUserContext userContext)
+        where TContent : class, new()
     {
         if (passFile.Content.Decrypted is null)
         {
             if (passFile.Content.Encrypted is null)
             {
-                var result = await .GetEncryptedDataAsync(passFile.Type, passFile.Id);
+                var result = await _passFileLocalStorage.LoadEncryptedContentAsync(passFile, userContext);
                 if (result.Bad)
                 {
-                    return ExporterError(result.Message ?? "Getting encrypted data");
+                    _dialogService.ShowFailure(result.Message!);
+                    return Result.Failure();
                 }
             }
 
-            if (!await _DecryptAsync(passFile))
+            if (!await TryDecryptAsync(passFile))
             {
                 return Result.Failure();
             }
@@ -131,28 +150,42 @@ public class PassFileExportService : IPassFileExportService
         try
         {
             var data = _contentSerializerFactory.For<TContent>().Serialize(passFile.Content.Decrypted!, true);
-            await File.WriteAllTextAsync(path, data, PassFileConvention.JsonEncoding);
-            return ExporterSuccess(passFile, path);
+            await File.WriteAllBytesAsync(path, data);
         }
         catch (Exception ex)
         {
-            return ExporterError("Decrypted data saving", ex);
+            LogError("Decrypted content saving failed", ex);
+            throw;
         }
+
+        LogWarning($"{passFile.GetIdentityString()} decrypted content exported to '{path}'");
+        return Result.Success();
     }
-        
-    private async Task<bool> _DecryptAsync(PassFile passFile)
+
+    private async Task<bool> TryDecryptAsync<TContent>(PassFile<TContent> passFile)
+        where TContent : class, new()
     {
         var passPhrase = await _dialogService.AskPasswordAsync(
             string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE, passFile.Name));
 
         while (passPhrase.Ok && (
-                   passPhrase.Data == string.Empty || 
+                   passPhrase.Data == string.Empty ||
                    _passFileCryptoService.Decrypt(passFile, passPhrase.Data!).Bad))
         {
             passPhrase = await _dialogService.AskPasswordAsync(
                 string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name));
         }
 
-        return passFile.PwdData is not null;
+        return passFile.Content.Decrypted is not null;
     }
+
+    private void LogError(string log, Exception? ex = null)
+    {
+        log = nameof(PassFileExportService) + ": " + log;
+        if (ex is null) _logger.Error(log);
+        else _logger.Error(ex, log);
+    }
+
+    private void LogWarning(string log)
+        => _logger.Warning(nameof(PassFileExportService) + ": " + log);
 }
