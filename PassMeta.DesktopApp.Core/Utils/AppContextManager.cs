@@ -16,7 +16,7 @@ namespace PassMeta.DesktopApp.Core.Utils;
 /// <see cref="IAppContext"/> manager.
 /// </summary>
 /// <remarks>Singleton.</remarks>
-public sealed class AppContextManager : IAppContextManager, IDisposable
+public sealed class AppContextManager : IAppContextManager, IUserContextProvider, IDisposable
 {
     private readonly BehaviorSubject<AppContextModel> _currentSubject = new(new AppContextModel(new AppContextDto()));
     private readonly ILogService _logger;
@@ -28,10 +28,14 @@ public sealed class AppContextManager : IAppContextManager, IDisposable
     }
 
     /// <inheritdoc />
-    public IAppContext Current => _currentSubject.Value;
+    IAppContext IAppContextProvider.Current => _currentSubject.Value;
 
     /// <inheritdoc />
-    public IObservable<IAppContext> CurrentObservable => _currentSubject;
+    IObservable<IAppContext> IAppContextProvider.CurrentObservable => _currentSubject;
+    
+    /// <inheritdoc />
+    IUserContext IUserContextProvider.Current 
+        => new UserContextModel(_currentSubject.Value.User?.Id, _currentSubject.Value.ServerId);
 
     /// <inheritdoc />
     public async Task LoadAsync()
@@ -63,9 +67,9 @@ public sealed class AppContextManager : IAppContextManager, IDisposable
     /// <inheritdoc />
     public async Task RefreshFromAsync(PassMetaInfoDto passMetaInfoDto)
     {
-        if (Current.User?.Equals(passMetaInfoDto.User) is true &&
-            Current.ServerId?.Equals(passMetaInfoDto.AppId) is true &&
-            Current.ServerVersion?.Equals(passMetaInfoDto.AppVersion) is true)
+        if (_currentSubject.Value.User?.Equals(passMetaInfoDto.User) is true &&
+            _currentSubject.Value.ServerId?.Equals(passMetaInfoDto.AppId) is true &&
+            _currentSubject.Value.ServerVersion?.Equals(passMetaInfoDto.AppVersion) is true)
         {
             return;
         }

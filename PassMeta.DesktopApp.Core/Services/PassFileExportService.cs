@@ -24,6 +24,7 @@ public class PassFileExportService : IPassFileExportService
     private readonly IPassFileContentSerializerFactory _contentSerializerFactory;
     private readonly IPassFileCryptoService _passFileCryptoService;
     private readonly IPassFileLocalStorage _passFileLocalStorage;
+    private readonly IUserContextProvider _userContextProvider;
     private readonly IDialogService _dialogService;
     private readonly ILogService _logger;
 
@@ -32,12 +33,14 @@ public class PassFileExportService : IPassFileExportService
         IPassFileContentSerializerFactory contentSerializerFactory,
         IPassFileCryptoService passFileCryptoService,
         IPassFileLocalStorage passFileLocalStorage,
+        IUserContextProvider userContextProvider,
         IDialogService dialogService,
         ILogService logger)
     {
         _contentSerializerFactory = contentSerializerFactory;
         _passFileCryptoService = passFileCryptoService;
         _passFileLocalStorage = passFileLocalStorage;
+        _userContextProvider = userContextProvider;
         _dialogService = dialogService;
         _logger = logger;
     }
@@ -50,10 +53,7 @@ public class PassFileExportService : IPassFileExportService
     };
 
     /// <inheritdoc />
-    public async Task<IResult> ExportAsync<TContent>(
-        PassFile<TContent> passFile,
-        string resultFilePath,
-        IUserContext userContext)
+    public async Task<IResult> ExportAsync<TContent>(PassFile<TContent> passFile, string resultFilePath)
         where TContent : class, new()
     {
         try
@@ -62,12 +62,12 @@ public class PassFileExportService : IPassFileExportService
 
             if (PassFileExternalFormat.Encrypted.Extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
             {
-                return await ExportPassfileEncryptedAsync(passFile, resultFilePath, userContext);
+                return await ExportPassfileEncryptedAsync(passFile, resultFilePath);
             }
 
             if (PassFileExternalFormat.Decrypted.Extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
             {
-                return await ExportPassfileDecryptedAsync(passFile, resultFilePath, userContext);
+                return await ExportPassfileDecryptedAsync(passFile, resultFilePath);
             }
 
             _dialogService.ShowFailure(Resources.PASSEXPORT__NOT_SUPPORTED_EXTENSION_ERR);
@@ -81,10 +81,7 @@ public class PassFileExportService : IPassFileExportService
         return Result.Failure();
     }
 
-    private async Task<IResult> ExportPassfileEncryptedAsync<TContent>(
-        PassFile<TContent> passFile,
-        string path,
-        IUserContext userContext)
+    private async Task<IResult> ExportPassfileEncryptedAsync<TContent>(PassFile<TContent> passFile, string path)
         where TContent : class, new()
     {
         if (passFile.Content.Encrypted is null)
@@ -100,7 +97,7 @@ public class PassFileExportService : IPassFileExportService
             }
             else
             {
-                var result = await _passFileLocalStorage.LoadEncryptedContentAsync(passFile, userContext);
+                var result = await _passFileLocalStorage.LoadEncryptedContentAsync(passFile, _userContextProvider.Current);
                 if (result.Bad)
                 {
                     _dialogService.ShowFailure(result.Message!);
@@ -123,17 +120,14 @@ public class PassFileExportService : IPassFileExportService
         return Result.Success();
     }
 
-    private async Task<IResult> ExportPassfileDecryptedAsync<TContent>(
-        PassFile<TContent> passFile,
-        string path,
-        IUserContext userContext)
+    private async Task<IResult> ExportPassfileDecryptedAsync<TContent>(PassFile<TContent> passFile, string path)
         where TContent : class, new()
     {
         if (passFile.Content.Decrypted is null)
         {
             if (passFile.Content.Encrypted is null)
             {
-                var result = await _passFileLocalStorage.LoadEncryptedContentAsync(passFile, userContext);
+                var result = await _passFileLocalStorage.LoadEncryptedContentAsync(passFile, _userContextProvider.Current);
                 if (result.Bad)
                 {
                     _dialogService.ShowFailure(result.Message!);

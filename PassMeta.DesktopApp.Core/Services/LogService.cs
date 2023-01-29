@@ -158,7 +158,7 @@ public class LogService : ILogService
     }
 
     /// <inheritdoc />
-    public event EventHandler<LoggerErrorEventArgs>? ErrorOccured;
+    public event EventHandler<LoggerErrorEventArgs>? InternalErrorOccured;
 
     /// <summary></summary>
     ~LogService() => Dispose();
@@ -192,7 +192,7 @@ public class LogService : ILogService
     {
         try
         {
-            ErrorOccured?.Invoke(this, new LoggerErrorEventArgs(message, ex));
+            InternalErrorOccured?.Invoke(this, new LoggerErrorEventArgs(message, ex));
         }
         catch
         {

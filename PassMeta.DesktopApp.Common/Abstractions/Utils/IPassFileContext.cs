@@ -31,7 +31,7 @@ public interface IPassFileContext : IDisposable
     /// <summary>
     /// Save all changes.
     /// </summary>
-    Task<IResult> CommitAsync(CancellationToken cancellationToken = default);
+    Task<IResult> CommitAsync();
 
     /// <summary>
     /// Rollback all changes.

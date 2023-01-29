@@ -44,6 +44,12 @@ public class AppConfigObserver : IObserver<IAppConfig>
             CultureInfo.DefaultThreadCurrentCulture = Resources.Culture;
             CultureInfo.DefaultThreadCurrentUICulture = Resources.Culture;
 
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                Thread.CurrentThread.CurrentCulture = Resources.Culture;
+                Thread.CurrentThread.CurrentUICulture = Resources.Culture;
+            });
+
             if (_prev is null)
             {
                 _prev = value;

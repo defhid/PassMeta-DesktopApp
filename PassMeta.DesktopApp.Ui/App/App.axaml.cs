@@ -50,7 +50,7 @@ public class App : Application
         var window = MakeWindow();
         window.Show();
 
-        MainWindow?.Close(true);
+        MainWindow?.Close();
         MainWindow = window;
 
         EnvironmentContainer.Resolve<IDialogService>().Flush();
@@ -72,7 +72,7 @@ public class App : Application
         var dialogService = EnvironmentContainer.Resolve<IDialogService>();
         var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
 
-        logService.ErrorOccured += (_, ev) => 
+        logService.InternalErrorOccured += (_, ev) => 
             dialogService.ShowError(ev.Message, more: ev.Exception.ToString());
 
         await StartUp.LoadConfigurationAsync();

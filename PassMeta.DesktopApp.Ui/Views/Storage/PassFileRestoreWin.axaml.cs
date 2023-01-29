@@ -24,7 +24,7 @@ namespace PassMeta.DesktopApp.Ui.Views.Storage
                 ViewElements = { Window = this }
             };
 
-            Opened += (_, _) => DataContext.Load();
+            Opened += async (_, _) => await DataContext.LoadAsync();
         }
 
         private void DataGrid_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)

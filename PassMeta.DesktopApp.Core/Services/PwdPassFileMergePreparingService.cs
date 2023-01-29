@@ -57,7 +57,7 @@ public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingServic
             }
         }
 
-        var fetchResult = await _remoteService.GetInfoAsync(localPassFile.Id);
+        var fetchResult = await _remoteService.GetInfoAsync(localPassFile);
         if (fetchResult.Bad)
             return Result.Failure<PwdPassFileMerge>();
 

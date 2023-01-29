@@ -28,5 +28,5 @@ public interface ILogService : IDisposable
     /// <summary>
     /// The event that is emitted when an error occurs during logging.
     /// </summary>
-    event EventHandler<LoggerErrorEventArgs> ErrorOccured;
+    event EventHandler<LoggerErrorEventArgs> InternalErrorOccured;
 }

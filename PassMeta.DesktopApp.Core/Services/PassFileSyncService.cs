@@ -227,7 +227,7 @@ public class PassFileSyncService : IPassFileSyncService
     {
         if (CheckAsUploading(passFile, await _EnsureHasLocalEncryptedAsync(passFile)))
         {
-            var result = await _remoteService.AddAsync(passFile);
+            var result = await _remoteService.AddAsync(passFile);  // + save content
             if (result.Ok)
             {
                 _logger.Info($"{passFile} created on the server");

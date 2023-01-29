@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common;
@@ -88,7 +89,7 @@ public sealed class PassMetaClient : IPassMetaClient
         return Online;
     }
 
-    internal async ValueTask<byte[]?> BuildAndExecuteRawAsync(RequestBuilder requestBuilder)
+    internal async ValueTask<byte[]?> BuildAndExecuteRawAsync(RequestBuilder requestBuilder, CancellationToken cancellationToken)
     {
         if (!TryBuildRequestMessage(requestBuilder, out var request))
         {
@@ -101,7 +102,8 @@ public sealed class PassMetaClient : IPassMetaClient
         OkBadResponse? failureOkBadResponse;
         try
         {
-            (successBody, failureOkBadResponse) = await SendAsync(request, context, content => content.ReadAsByteArrayAsync());
+            (successBody, failureOkBadResponse) = await SendAsync(
+                request, context, content => content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
         }
         catch (Exception ex)
         {
@@ -124,7 +126,7 @@ public sealed class PassMetaClient : IPassMetaClient
         return successBody;
     }
 
-    internal async ValueTask<OkBadResponse<TData>?> BuildAndExecuteAsync<TData>(RequestBuilder requestBuilder)
+    internal async ValueTask<OkBadResponse<TData>?> BuildAndExecuteAsync<TData>(RequestBuilder requestBuilder, CancellationToken cancellationToken)
     {
         if (!TryBuildRequestMessage(requestBuilder, out var request))
         {
@@ -138,7 +140,9 @@ public sealed class PassMetaClient : IPassMetaClient
 
         try
         {
-            (successBody, failureOkBadResponse) = await SendAsync(request, context, content => content.ReadAsByteArrayAsync());
+            (successBody, failureOkBadResponse) = await SendAsync(
+                request, context, content => content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
+
             if (successBody is not null)
             {
                 successOkBadResponse = ParseOkBadResponse<TData>(successBody);
@@ -183,12 +187,13 @@ public sealed class PassMetaClient : IPassMetaClient
     private async Task<(TBody? SuccessBody, OkBadResponse? FailureResponse)> SendAsync<TBody>(
         HttpRequestMessage message,
         string? context,
-        Func<HttpContent, Task<TBody>> handleResponseAsync)
+        Func<HttpContent, Task<TBody>> handleResponseAsync,
+        CancellationToken cancellationToken)
         where TBody : class
     {
         try
         {
-            using var response = await _httpClient.SendAsync(message);
+            using var response = await _httpClient.SendAsync(message, cancellationToken);
 
             switch (response.StatusCode)
             {
@@ -203,7 +208,7 @@ public sealed class PassMetaClient : IPassMetaClient
                 }
                 default:
                 {
-                    var responseBody = await response.Content.ReadAsByteArrayAsync();
+                    var responseBody = await response.Content.ReadAsByteArrayAsync(cancellationToken);
                     var okBadResponse = ParseOkBadResponse<object>(responseBody);
 
                     _logger.Warning($"{message.GetShortInformation()} {response.StatusCode} [{context}] {Encoding.UTF8.GetString(responseBody)}");

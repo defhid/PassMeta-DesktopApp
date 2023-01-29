@@ -7,7 +7,7 @@ public class PassFileInfoPatchData
 {
     ///
     public string Name { get; init; } = null!;
-        
+
     ///
     public string? Color { get; init; }
 }

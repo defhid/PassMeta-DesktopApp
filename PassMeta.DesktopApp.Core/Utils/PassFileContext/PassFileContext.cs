@@ -13,6 +13,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
+using PassMeta.DesktopApp.Common.Conventions;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
@@ -24,7 +25,7 @@ using PassMeta.DesktopApp.Core.Services.Extensions;
 namespace PassMeta.DesktopApp.Core.Utils.PassFileContext;
 
 /// <inheritdoc />
-public abstract class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
+public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     where TPassFile : PassFile<TContent>
     where TContent : class, new()
 {
@@ -40,7 +41,7 @@ public abstract class PassFileContext<TPassFile, TContent> : IPassFileContext<TP
     private Dictionary<long, PassFileState> _states = new();
 
     /// <summary></summary>
-    protected PassFileContext(
+    public PassFileContext(
         IPassFileLocalStorage pfLocalStorage,
         IPassFileCryptoService pfCryptoService,
         ICounter counter,
@@ -61,7 +62,7 @@ public abstract class PassFileContext<TPassFile, TContent> : IPassFileContext<TP
     }
 
     /// <inheritdoc />
-    public abstract PassFileType PassFileType { get; }
+    public PassFileType PassFileType { get; } = PassFileConvention.GetPassFileType<TPassFile>();
 
     /// <inheritdoc />
     public bool AnyChanged => _anyChangedSource.Value;
@@ -133,7 +134,7 @@ public abstract class PassFileContext<TPassFile, TContent> : IPassFileContext<TP
             CreatedOn = DateTime.UtcNow,
             InfoChangedOn = DateTime.UtcNow,
             VersionChangedOn = DateTime.UtcNow,
-            Version = 1,
+            Version = 1
         };
 
         var state = new PassFileState(null, _mapper.Map<PassFileLocalDto, TPassFile>(dto));
@@ -262,13 +263,18 @@ public abstract class PassFileContext<TPassFile, TContent> : IPassFileContext<TP
 
         passFile.DeletedOn = null;
 
+        if (passFile.Content.Any)
+        {
+            return UpdateContent(passFile, false);
+        }
+
         _anyChangedSource.OnNext(DetectChanges());
 
         return Result.Success();
     }
 
     /// <inheritdoc />
-    public async Task<IResult> CommitAsync(CancellationToken cancellationToken = default)
+    public async Task<IResult> CommitAsync()
     {
         var toSaveInfo = new List<TPassFile>();
         var toSaveContent = new List<TPassFile>();
@@ -301,7 +307,7 @@ public abstract class PassFileContext<TPassFile, TContent> : IPassFileContext<TP
 
         foreach (var passFile in toSaveContent)
         {
-            var res = await _pfLocalStorage.GetVersionsAsync(passFile.Id, _userContext, cancellationToken);
+            var res = await _pfLocalStorage.GetVersionsAsync(passFile.Id, _userContext, CancellationToken.None);
             if (res.Bad)
             {
                 warnings.Add($"{passFile.GetIdentityString()}: {res.Message}");
@@ -361,7 +367,7 @@ public abstract class PassFileContext<TPassFile, TContent> : IPassFileContext<TP
             }
         }
 
-        var dtoList = toSaveInfo.Select(_mapper.Map<TPassFile, PassFileLocalDto>);
+        var dtoList = toSaveInfo.Select(_mapper.Map<PassFile, PassFileLocalDto>);
 
         var result = await _pfLocalStorage.SaveListAsync(dtoList, _userContext, CancellationToken.None);
         if (result.Bad)
@@ -398,7 +404,7 @@ public abstract class PassFileContext<TPassFile, TContent> : IPassFileContext<TP
             {
                 var clone = _mapper.Map<TPassFile, TPassFile>(state.Source);
 
-                if (state.Source.Content.Encrypted is not null && 
+                if (state.Source.Content.Encrypted is not null &&
                     state.Current.Content.PassPhrase is not null)
                 {
                     clone.Content =

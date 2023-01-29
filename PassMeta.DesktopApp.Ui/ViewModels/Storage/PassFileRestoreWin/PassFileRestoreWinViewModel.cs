@@ -11,10 +11,15 @@ using ReactiveUI;
 using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
     
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
 
@@ -24,7 +29,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 {
     public class PassFileRestoreWinViewModel : ReactiveObject
     {
-        private readonly int _passFileId;
+        private readonly long _passFileId;
         private readonly PassFileType _passFileType;
         private readonly bool _ignoreCurrentPath;
         
@@ -50,7 +55,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
         {
             _passFileId = currentPassFile.Id;
             _passFileType = currentPassFile.Type;
-            _ignoreCurrentPath = !currentPassFile.LocalDeleted;
+            _ignoreCurrentPath = !currentPassFile.IsLocalDeleted();
 
             SelectCommand = ReactiveCommand.Create(Select, 
                 this.WhenAnyValue(vm => vm.SelectedFile).Select(file => file is not null));
@@ -62,15 +67,22 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
             CloseCommand = ReactiveCommand.Create(Close);
         }
 
-        public void Load()
+        public async Task LoadAsync()
         {
             FoundList.Clear();
+            
+            var remoteVersions = await EnvironmentContainer.Resolve<IPassFileRemoteService>().GetVersionsAsync(_passFileId);
+            
 
-            var passfileExt = _passFileType.ToFileExtension();
+            var passfileExt = '.' + PassFileExternalFormat.Encrypted.Extension;
             var passFileList = PassFileManager.GetCurrentList(_passFileType);
             var descriptionParts = new Stack<string>();
 
-            foreach (var filePath in Directory.EnumerateFiles(PassFileManager.UserPassFilesPath).OrderBy(x => x))
+            var userContext = EnvironmentContainer.Resolve<IUserContextProvider>().Current;
+            var fileRepository = EnvironmentContainer.Resolve<IFileRepositoryFactory>().ForLocalPassFiles(userContext.UserServerId);
+            var files = await fileRepository.GetFilesAsync();
+
+            foreach (var filePath in files.OrderBy(x => x))
             {
                 var fileName = Path.GetFileName(filePath);
                 var isOld = fileName.EndsWith(".old");
@@ -138,7 +150,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
                     new()
                     {
                         Name = Resources.PASSFILELIST__FILTER_PASSFILES,
-                        Extensions = importService.SupportedFormats.Select(format => format.PureExtension).ToList()
+                        Extensions = importService.SupportedFormats.Select(format => format.Extension).ToList()
                     }
                 }
             };
@@ -161,7 +173,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
             }
 
             var passFile = infoResult.Data!;
-            passFile.DataEncrypted = await remoteService.GetDataAsync(_passFileId, infoResult.Data!.Version);
+            passFile.DataEncrypted = await remoteService.GetEncryptedContentAsync(_passFileId, infoResult.Data!.Version);
 
             if (passFile.DataEncrypted is not null)
             {

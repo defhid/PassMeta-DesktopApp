@@ -24,6 +24,11 @@ public readonly struct PassFileContent<TData>
     /// </summary>
     public readonly string? PassPhrase;
 
+    /// <summary>
+    /// Has <see cref="Decrypted"/> or <see cref="Encrypted"/> content.
+    /// </summary>
+    public bool Any => PassPhrase is not null;
+
     private PassFileContent(TData? decrypted, byte[]? encrypted, string? passPhrase)
     {
         Decrypted = decrypted;

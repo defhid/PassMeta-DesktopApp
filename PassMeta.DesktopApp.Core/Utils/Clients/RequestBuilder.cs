@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
@@ -78,16 +79,16 @@ internal class RequestBuilder : IRequestWithBodySupportBuilder
     }
 
     /// <inheritdoc />
-    public async ValueTask<OkBadResponse?> ExecuteAsync()
-        => await _client.BuildAndExecuteAsync<object>(this);
+    public async ValueTask<OkBadResponse?> ExecuteAsync(CancellationToken cancellationToken = default)
+        => await _client.BuildAndExecuteAsync<object>(this, cancellationToken);
 
     /// <inheritdoc />
-    public async ValueTask<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>()
-        => await _client.BuildAndExecuteAsync<TResponseData>(this);
+    public async ValueTask<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>(CancellationToken cancellationToken = default)
+        => await _client.BuildAndExecuteAsync<TResponseData>(this, cancellationToken);
 
     /// <inheritdoc />
-    public async ValueTask<byte[]?> ExecuteRawAsync()
-        => await _client.BuildAndExecuteRawAsync(this);
+    public async ValueTask<byte[]?> ExecuteRawAsync(CancellationToken cancellationToken = default)
+        => await _client.BuildAndExecuteRawAsync(this, cancellationToken);
 
     private static Uri? BuildUri(string url)
     {
