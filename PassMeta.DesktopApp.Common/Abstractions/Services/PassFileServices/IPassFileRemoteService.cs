@@ -1,7 +1,6 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Enums;
-using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
@@ -12,37 +11,46 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 public interface IPassFileRemoteService
 {
     /// <summary>
-    /// Load user's passfile list of specified type without encrypted data.
+    /// Load actual user's passfile list of specified type.
     /// </summary>
-    Task<List<PassFile>?> GetListAsync(PassFileType ofType);
+    Task<IResult<IEnumerable<TPassFile>>> GetListAsync<TPassFile>(CancellationToken cancellationToken = default)
+        where TPassFile : PassFile;
 
     /// <summary>
-    /// Load passfile with encrypted data from the server.
+    /// Load actual passfile information from the server.
     /// </summary>
-    Task<IResult<PassFile>> GetInfoAsync(int passFileId);
+    Task<IResult<TPassFile>> GetInfoAsync<TPassFile>(TPassFile passFile, CancellationToken cancellationToken = default)
+        where TPassFile : PassFile;
 
     /// <summary>
-    /// Load passfile encrypted data.
+    /// Load passfile encrypted content of specified version.
     /// </summary>
-    Task<byte[]?> GetEncryptedContentAsync(int passFileId, int version);
-    
-    /// <summary>
-    /// Add a new passfile.
-    /// </summary>
-    Task<IResult<PassFile>> AddAsync(PassFile passFile);
+    Task<IResult<byte[]>> GetEncryptedContentAsync(
+        long passFileId,
+        int version,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Save passfile information fields.
+    /// Add a new passfile and get actual information.
     /// </summary>
-    Task<OkBadResponse<PassFile>?> SaveInfoAsync(PassFile passFile);
+    Task<IResult<TPassFile>> AddAsync<TPassFile>(TPassFile passFile)
+        where TPassFile : PassFile;
 
     /// <summary>
-    /// Save passfile data fields with encrypted data.
+    /// Save passfile information and get actual.
     /// </summary>
-    Task<OkBadResponse<PassFile>?> SaveEncryptedContentAsync(int passFileId, byte[] bytes);
+    Task<IResult<PassFile>> SaveInfoAsync<TPassFile>(TPassFile passFile)
+        where TPassFile : PassFile;
+
+    /// <summary>
+    /// Save passfile content and get actual information.
+    /// </summary>
+    Task<IResult<TPassFile>> SaveEncryptedContentAsync<TPassFile, TContent>(TPassFile passFile)
+        where TPassFile : PassFile<TContent>
+        where TContent : class, new();
 
     /// <summary>
     /// Delete passfile.
     /// </summary>
-    Task<OkBadResponse?> DeleteAsync(int passFileId, string accountPassword);
+    Task<IResult> DeleteAsync(PassFile passFile, string accountPassword);
 }

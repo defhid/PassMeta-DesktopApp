@@ -28,32 +28,4 @@ public static class PassFileExtensions
             
         return string.Format(Resources.PASSFILE__TITLE, passFile.GetIdentityString());
     }
-
-    /// <summary>
-    /// Set information fields from other <paramref name="passFile"/>.
-    /// </summary>
-    public static void RefreshInfoFieldsFrom(this PassFile passFile, PassFile otherPassFile)
-    {
-        passFile.Name = otherPassFile.Name;
-        passFile.Color = otherPassFile.Color;
-        passFile.OriginChangeStamps = otherPassFile.OriginChangeStamps?.Clone();  // TODO: Hm...
-        passFile.InfoChangedOn = otherPassFile.InfoChangedOn;
-        passFile.LocalDeletedOn = otherPassFile.LocalDeletedOn;
-    }
-        
-    /// <summary>
-    /// Set data fields from other <paramref name="passFile"/>.
-    /// </summary>
-    public static void RefreshDataFieldsFrom(this PassFile passFile, PassFile otherPassFile, bool refreshDecryptedData)
-    {
-        if (refreshDecryptedData)
-        {
-            passFile.WithDecryptedContentFrom(otherPassFile);
-        }
-        passFile.ContentEncrypted = otherPassFile.ContentEncrypted;
-        passFile.PassPhrase = otherPassFile.PassPhrase;
-        passFile.OriginChangeStamps = otherPassFile.OriginChangeStamps?.Clone();
-        passFile.Version = otherPassFile.Version;
-        passFile.VersionChangedOn = otherPassFile.VersionChangedOn;
-    }
 }

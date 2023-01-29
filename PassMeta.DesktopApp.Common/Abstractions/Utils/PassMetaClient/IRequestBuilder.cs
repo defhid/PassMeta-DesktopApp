@@ -1,3 +1,4 @@
+using System.Threading;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
@@ -32,19 +33,19 @@ public interface IRequestBuilder
     /// Execute request and return response content bytes.
     /// </summary>
     /// <returns>this.</returns>
-    ValueTask<byte[]?> ExecuteRawAsync();
+    ValueTask<byte[]?> ExecuteRawAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Execute request and return deserialized response content.
     /// </summary>
     /// <returns>this.</returns>
-    ValueTask<OkBadResponse?> ExecuteAsync();
+    ValueTask<OkBadResponse?> ExecuteAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Execute request and return deserialized response content.
     /// </summary>
     /// <returns>this.</returns>
-    ValueTask<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>();
+    ValueTask<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>(CancellationToken cancellationToken = default);
 }
 
 /// <summary>

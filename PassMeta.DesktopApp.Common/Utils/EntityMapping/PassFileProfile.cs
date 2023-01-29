@@ -1,5 +1,7 @@
 using AutoMapper;
+using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
+using PassMeta.DesktopApp.Common.Models.Dto.Request;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
@@ -22,6 +24,12 @@ public class PassFileProfile : Profile
             .Include<PwdPassFile, PwdPassFile>()
             .Include<TxtPassFile, TxtPassFile>();
 
+        AddLocalDto();
+        AddRemoteDto();
+    }
+
+    private void AddLocalDto()
+    {
         CreateMap<PassFile, PassFileLocalDto>()
             .ForMember(dto => dto.OriginChangeStamps, opt => opt
                 .MapFrom(x => x == null
@@ -47,13 +55,20 @@ public class PassFileProfile : Profile
                     }))
             .Include<PassFileLocalDto, PwdPassFile>()
             .Include<PassFileLocalDto, TxtPassFile>();
+    }
 
-        CreateMap<PassFile, PassFileInfoDto>()
-            .Include<PwdPassFile, PassFileInfoDto>()
-            .Include<TxtPassFile, PassFileInfoDto>();
-
+    private void AddRemoteDto()
+    {
         CreateMap<PassFileInfoDto, PassFile>()
+            .ForMember(x => x.Type, opt => opt
+                .MapFrom(dto => (PassFileType) dto.TypeId))
             .Include<PassFileInfoDto, PwdPassFile>()
             .Include<PassFileInfoDto, TxtPassFile>();
+
+        CreateMap<PassFile, PassFilePostData>()
+            .ForMember(dto => dto.TypeId, opt => opt
+                .MapFrom(x => (int) x.Type));
+        
+        CreateMap<PassFile, PassFileInfoPatchData>();
     }
 }

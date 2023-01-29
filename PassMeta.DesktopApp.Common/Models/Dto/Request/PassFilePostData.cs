@@ -8,17 +8,14 @@ namespace PassMeta.DesktopApp.Common.Models.Dto.Request;
 public class PassFilePostData
 {
     ///
+    public int TypeId { get; init; }
+
+    ///
     public string Name { get; init; } = null!;
-        
+
     ///
     public string? Color { get; init; }
-        
-    ///
-    public int TypeId { get; init; }
-        
+
     ///
     public DateTime CreatedOn { get; init; }
-        
-    ///
-    public string Smth { get; init; } = null!;
 }
