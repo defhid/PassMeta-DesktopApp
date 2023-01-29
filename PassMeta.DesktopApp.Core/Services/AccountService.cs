@@ -8,7 +8,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
-using PassMeta.DesktopApp.Common.Utils.Mapping;
+using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
@@ -18,7 +18,7 @@ public class AccountService : IAccountService
     /// <summary>
     /// Requests bad mapping.
     /// </summary>
-    public static readonly SimpleMapper<string, string> WhatToStringMapper = new MapToResource<string>[]
+    public static readonly ValuesMapper<string, string> WhatToStringValuesMapper = new MapToResource<string>[]
     {
         new("first_name", () => Resources.DICT_ACCOUNT__FIRST_NAME),
         new("last_name", () => Resources.DICT_ACCOUNT__LAST_NAME),
@@ -72,7 +72,7 @@ public class AccountService : IAccountService
 
         var response = await _passMetaClient.Begin(PassMetaApi.User.PatchMe())
             .WithJsonBody(data)
-            .WithBadMapping(WhatToStringMapper)
+            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling()
             .ExecuteAsync<User>();
 

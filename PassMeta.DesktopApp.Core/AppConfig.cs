@@ -66,6 +66,11 @@ public static class AppConfig
     /// </summary>
     public const string CounterStorageFileName = ".counter";
 
+    /// <summary>
+    /// Amount of passfile content versions to keep before final deletion.
+    /// </summary>
+    public const int KeepPassFileVersions = 5;
+
     #endregion
 
     /// <summary>

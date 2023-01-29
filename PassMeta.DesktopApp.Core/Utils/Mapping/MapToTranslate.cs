@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using PassMeta.DesktopApp.Common.Abstractions.Utils.Mapping;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
 
 namespace PassMeta.DesktopApp.Core.Utils.Mapping;
 
@@ -7,7 +7,7 @@ namespace PassMeta.DesktopApp.Core.Utils.Mapping;
 /// Mapping to values from dictionary-like object,
 /// where: keys - locale, values - specific text.
 /// </summary>
-public class MapToTranslate<TValueFrom> : IMapping<TValueFrom, string>
+public class MapToTranslate<TValueFrom> : IValueMapping<TValueFrom, string>
     where TValueFrom : notnull
 {
     private readonly IDictionary<string, string> _translates;

@@ -83,7 +83,12 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     IResult UpdateContent(TPassFile passFile, bool fromOrigin);
 
     /// <summary>
-    /// Mark passfile as deleted, exclude from <see cref="CurrentList"/>.
+    /// Mark passfile as deleted.
     /// </summary>
-    IResult Delete(int passFileId, bool fromOrigin);
+    IResult Delete(TPassFile passFile, bool fromOrigin);
+
+    /// <summary>
+    /// Mark passfile as restored after local deletion.
+    /// </summary>
+    IResult Restore(TPassFile passFile);
 }

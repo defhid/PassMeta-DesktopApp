@@ -1,23 +1,22 @@
-namespace PassMeta.DesktopApp.Common.Enums
+namespace PassMeta.DesktopApp.Common.Enums;
+
+/// <summary>
+/// Buttons for dialog windows.
+/// </summary>
+public enum DialogButton
 {
-    /// <summary>
-    /// Buttons for dialog windows.
-    /// </summary>
-    public enum DialogButton
-    {
-        /// Ok, confirm.
-        Ok,
+    /// Ok, confirm.
+    Ok,
         
-        /// Yes, agree.
-        Yes,
+    /// Yes, agree.
+    Yes,
         
-        /// No, disagree.
-        No,
+    /// No, disagree.
+    No,
         
-        /// Cancel action.
-        Cancel,
+    /// Cancel action.
+    Cancel,
         
-        /// Close dialog.
-        Close,
-    }
+    /// Close dialog.
+    Close,
 }

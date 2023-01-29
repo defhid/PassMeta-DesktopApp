@@ -9,8 +9,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
-using PassMeta.DesktopApp.Common.Utils.Mapping;
-
+using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services;
@@ -18,7 +17,7 @@ namespace PassMeta.DesktopApp.Core.Services;
 /// <inheritdoc />
 public class PassFileRemoteService : IPassFileRemoteService
 {
-    private static readonly SimpleMapper<string, string> WhatToStringMapper = new MapToResource<string>[]
+    private static readonly ValuesMapper<string, string> WhatToStringValuesMapper = new MapToResource<string>[]
     {
         new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
         new("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
@@ -84,7 +83,7 @@ public class PassFileRemoteService : IPassFileRemoteService
                 Color = passFile.Color
             })
             .WithContext(passFile.GetTitle())
-            .WithBadMapping(WhatToStringMapper)
+            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling();
 
         var response = await request.ExecuteAsync<PassFile>();
@@ -103,7 +102,7 @@ public class PassFileRemoteService : IPassFileRemoteService
                 smth = passFile.DataEncrypted,
             })
             .WithContext(passFile.GetTitle())
-            .WithBadMapping(WhatToStringMapper)
+            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling();
 
         var response = await request.ExecuteAsync<PassFile>();
@@ -125,7 +124,7 @@ public class PassFileRemoteService : IPassFileRemoteService
                 CreatedOn = passFile.CreatedOn,
             })
             .WithContext(passFile.GetTitle())
-            .WithBadMapping(WhatToStringMapper)
+            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling()
             .ExecuteAsync<PassFile>();
 
@@ -157,7 +156,7 @@ public class PassFileRemoteService : IPassFileRemoteService
                 CheckPassword = accountPassword
             })
             .WithContext(passFile.GetTitle())
-            .WithBadMapping(WhatToStringMapper)
+            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling();
 
         var response = await request.ExecuteAsync();

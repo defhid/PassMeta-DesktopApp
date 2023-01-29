@@ -1,4 +1,5 @@
 using System.Reflection;
+using AutoMapper;
 using Avalonia.Controls.Notifications;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
@@ -6,6 +7,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Utils.EntityMapping;
 using PassMeta.DesktopApp.Core.Services;
 using PassMeta.DesktopApp.Core.Utils.Clients;
 using PassMeta.DesktopApp.Ui.Interfaces.UiServices;
@@ -19,6 +21,10 @@ public static class DependencyInstaller
 {
     public static void RegisterCoreServices()
     {
+        var mapper = new Mapper(
+            new MapperConfiguration(config => config
+                .AddProfile<PassFileProfile>()));
+        
         var logService = RegisterSingleton<ILogService>(
             new LogService());
 

@@ -3,6 +3,7 @@
     <Import Project="$(SolutionDir)\.props" />
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="12.0.1" />
       <PackageReference Include="System.Reactive" Version="5.0.0" />
       <PackageReference Include="System.Text.Json" Version="7.0.1" />
     </ItemGroup>

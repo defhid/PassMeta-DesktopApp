@@ -76,8 +76,8 @@ public class PassFileLocalDto
     public int Version { get; init; }
 
     /// <summary>
-    /// Origin remote passfile information. 
+    /// Information about last passfile changes from the server origin. 
     /// </summary>
     [JsonPropertyName("orig")]
-    public PassFileLocalDto? Origin { get; init; }
+    public PassFileLocalDto? OriginChangeStamps { get; init; }
 }

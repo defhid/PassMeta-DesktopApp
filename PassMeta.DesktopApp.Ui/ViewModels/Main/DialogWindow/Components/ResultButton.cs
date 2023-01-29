@@ -1,10 +1,11 @@
+using PassMeta.DesktopApp.Common.Utils.ValueMapping;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
 {
     using System.Collections.Generic;
     using System.Linq;
     using Common;
     using Common.Enums;
-    using Common.Utils.Mapping;
 
     public class ResultButton
     {
@@ -20,7 +21,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components
             IsVisible = requiredButtonKinds?.Contains(buttonKind) ?? false;
         }
         
-        private static readonly SimpleMapper<DialogButton, string> ButtonKindToName = new MapToResource<DialogButton>[]
+        private static readonly ValuesMapper<DialogButton, string> ButtonKindToName = new MapToResource<DialogButton>[]
         {
             new(DialogButton.Ok, () => Resources.DIALOG__BTN_OK),
             new(DialogButton.Yes, () => Resources.DIALOG__BTN_YES),

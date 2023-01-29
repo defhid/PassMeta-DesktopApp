@@ -1,9 +1,8 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-
-using PassMeta.DesktopApp.Common.Abstractions.Utils.Mapping;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;
@@ -23,7 +22,7 @@ internal class RequestBuilder : IRequestWithBodySupportBuilder
 
     internal string? Context { get; private set; }
 
-    internal IMapper<string, string>? BadMapper { get; private set; }
+    internal IValuesMapper<string, string>? BadMapper { get; private set; }
 
     internal bool HandleBad { get; private set; }
 
@@ -39,12 +38,12 @@ internal class RequestBuilder : IRequestWithBodySupportBuilder
     }
         
     /// <inheritdoc />
-    public IRequestBuilder WithBadMapping(IMapper<string, string> whatMapper)
+    public IRequestBuilder WithBadMapping(IValuesMapper<string, string> whatValuesMapper)
     {
         if (BadMapper is null)
-            BadMapper = whatMapper;
+            BadMapper = whatValuesMapper;
         else
-            BadMapper += whatMapper;
+            BadMapper += whatValuesMapper;
         return this;
     }
         

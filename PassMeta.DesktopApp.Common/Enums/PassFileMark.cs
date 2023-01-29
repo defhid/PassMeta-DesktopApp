@@ -1,5 +1,5 @@
 using System;
-using PassMeta.DesktopApp.Common.Utils.Mapping;
+using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 
 namespace PassMeta.DesktopApp.Common.Enums;
 
@@ -55,7 +55,7 @@ public enum PassFileMark : short
 
 public class Dict
 {
-    private static readonly SimpleMapper<PassFileMark, string> KindToName = new MapToResource<PassFileMark>[]
+    private static readonly ValuesMapper<PassFileMark, string> KindToName = new MapToResource<PassFileMark>[]
     {
         new(PassFileMark.NeedsMerge, () => Resources.PASSFILE_PROBLEM__NEEDS_MERGE),
         new(PassFileMark.Merged, () => Resources.),

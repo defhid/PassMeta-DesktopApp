@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using PassMeta.DesktopApp.Common.Abstractions.Utils.Mapping;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
 
 namespace PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
@@ -48,13 +48,13 @@ public class OkBadMore
     /// <summary>
     /// Replace <see cref="What"/> field values with mapped values recursively.
     /// </summary>
-    public void ApplyWhatMapping(IMapper<string, string> mapper)
+    public void ApplyWhatMapping(IValuesMapper<string, string> valuesMapper)
     {
-        What = mapper.Map(What, What);
+        What = valuesMapper.Map(What, What);
         if (Sub is null) return;
         foreach (var sub in Sub)
         {
-            sub.More?.ApplyWhatMapping(mapper);
+            sub.More?.ApplyWhatMapping(valuesMapper);
         }
     }
 }

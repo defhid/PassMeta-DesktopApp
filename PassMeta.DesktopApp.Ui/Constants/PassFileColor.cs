@@ -1,11 +1,12 @@
+using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
+using PassMeta.DesktopApp.Common.Utils.ValueMapping;
+
 namespace PassMeta.DesktopApp.Ui.Constants
 {
     using System.Collections.Generic;
     using System.Linq;
     using Avalonia.Media;
     using Common;
-    using Common.Abstractions.Utils.Mapping;
-    using Common.Utils.Mapping;
 
     public class PassFileColor
     {
@@ -41,7 +42,7 @@ namespace PassMeta.DesktopApp.Ui.Constants
         public static readonly PassFileColor Purple = new("#9370DB");
         public static readonly PassFileColor Yellow = new("#D5D500");
 
-        private static readonly SimpleMapper<PassFileColor, string> ColorToName = new IMapping<PassFileColor, string>[]
+        private static readonly ValuesMapper<PassFileColor, string> ColorToName = new IValueMapping<PassFileColor, string>[]
         {
             new MapToString<PassFileColor>(None, "-"),
             new MapToResource<PassFileColor>(Red, () => Resources.PASSFILE_COLOR__RED),

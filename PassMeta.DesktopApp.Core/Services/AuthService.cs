@@ -10,14 +10,14 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
-using PassMeta.DesktopApp.Common.Utils.Mapping;
+using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
 /// <inheritdoc />
 public class AuthService : IAuthService
 {
-    private static readonly SimpleMapper<string, string> WhatToStringMapper = AccountService.WhatToStringMapper + new MapToResource<string>[]
+    private static readonly ValuesMapper<string, string> WhatToStringValuesMapper = AccountService.WhatToStringValuesMapper + new MapToResource<string>[]
     {
         new("user", () => Resources.DICT_AUTH__USER),
     };
@@ -48,7 +48,7 @@ public class AuthService : IAuthService
             
         var response = await _passMetaClient.Begin(PassMetaApi.Auth.PostSignIn())
             .WithJsonBody(data)
-            .WithBadMapping(WhatToStringMapper)
+            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling()
             .ExecuteAsync<User>();
             
@@ -100,7 +100,7 @@ public class AuthService : IAuthService
             
         var response = await _passMetaClient.Begin(PassMetaApi.User.Post())
             .WithJsonBody(data)
-            .WithBadMapping(WhatToStringMapper)
+            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling()
             .ExecuteAsync<User>();
             

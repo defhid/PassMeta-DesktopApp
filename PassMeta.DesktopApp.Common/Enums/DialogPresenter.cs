@@ -1,18 +1,17 @@
-namespace PassMeta.DesktopApp.Common.Enums
+namespace PassMeta.DesktopApp.Common.Enums;
+
+/// <summary>
+/// A way to show info to user.
+/// </summary>
+public enum DialogPresenter
 {
     /// <summary>
-    /// A way to show info to user.
+    /// Temporary notification.
     /// </summary>
-    public enum DialogPresenter
-    {
-        /// <summary>
-        /// Temporary notification.
-        /// </summary>
-        PopUp = 1,
+    PopUp = 1,
         
-        /// <summary>
-        /// Independent dialog window.
-        /// </summary>
-        Window = 2
-    }
+    /// <summary>
+    /// Independent dialog window.
+    /// </summary>
+    Window = 2
 }
