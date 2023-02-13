@@ -74,14 +74,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
         private void FillFromAppConfig()
         {
-            ServerUrl = string.IsNullOrWhiteSpace(AppConfig.Current.ServerUrl)
+            ServerUrl = string.IsNullOrWhiteSpace(AppPaths.Current.ServerUrl)
                 ? "https://"
-                : AppConfig.Current.ServerUrl;
+                : AppPaths.Current.ServerUrl;
 
-            SelectedCulture = Cultures.FirstOrDefault(cult => cult == AppConfig.Current.Culture);
+            SelectedCulture = Cultures.FirstOrDefault(cult => cult == AppPaths.Current.Culture);
 
-            HidePasswords = AppConfig.Current.HidePasswords;
-            DevMode = AppConfig.Current.DevMode;
+            HidePasswords = AppPaths.Current.HidePasswords;
+            DevMode = AppPaths.Current.DevMode;
         }
 
         private async Task _SaveAsync()
@@ -98,14 +98,14 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 #endif
             }
 
-            if (serverUrl != AppConfig.Current.ServerUrl && 
+            if (serverUrl != AppPaths.Current.ServerUrl && 
                 PassFileManager.AnyCurrentChanged && 
                 (await _dialogService.ConfirmAsync(Resources.SETTINGS__CONFIRM_SERVER_CHANGE)).Bad)
             {
                 return;
             }
 
-            var result = await AppConfig.ApplyAsync(appConfig =>
+            var result = await AppPaths.ApplyAsync(appConfig =>
             {
                 appConfig.ServerUrl = serverUrl;
                 appConfig.Culture = SelectedCulture ?? appConfig.Culture;

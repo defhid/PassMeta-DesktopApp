@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core.Services.Extensions;
@@ -18,12 +18,12 @@ public class PassFileExportUiService : IPassFileExportUiService
 {
     private readonly IPassFileExportService _exportService;
     private readonly IDialogService _dialogService;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
     public PassFileExportUiService(
         IPassFileExportService exportService,
         IDialogService dialogService,
-        ILogService logger)
+        ILogsWriter logger)
     {
         _exportService = exportService;
         _dialogService = dialogService;

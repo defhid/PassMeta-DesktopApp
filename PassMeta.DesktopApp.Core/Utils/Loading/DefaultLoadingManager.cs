@@ -9,13 +9,22 @@ internal class DefaultLoadingManager : ILoadingManager
 {
     private readonly object _lockObject = new();
     private readonly BehaviorSubject<bool> _subject = new(false);
+    private readonly Func<string> _nameGetter;
     private int _counter;
 
-    /// <inheritdoc />
-    public bool Current => _subject.Value;
+    public DefaultLoadingManager(Func<string> nameGetter)
+    {
+        _nameGetter = nameGetter;
+    }
 
     /// <inheritdoc />
-    public IObservable<bool> CurrentObservable => _subject;
+    public string Name => _nameGetter();
+
+    /// <inheritdoc />
+    public bool Active => _subject.Value;
+
+    /// <inheritdoc />
+    public IObservable<bool> ActiveObservable => _subject;
 
     /// <inheritdoc />
     public IDisposable Begin()

@@ -10,7 +10,7 @@ using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 using PassMeta.DesktopApp.Ui.Constants;
@@ -25,11 +25,11 @@ namespace PassMeta.DesktopApp.Ui.Services;
 public class DialogService : IDialogService
 {
     private readonly Func<INotificationManager?> _notificationManagerResolver;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
     private readonly List<Action> _deferred = new();
     private readonly List<Window> _opened = new();
 
-    public DialogService(Func<INotificationManager?> notificationManagerResolver, ILogService logger)
+    public DialogService(Func<INotificationManager?> notificationManagerResolver, ILogsWriter logger)
     {
         _notificationManagerResolver = notificationManagerResolver;
         _logger = logger;

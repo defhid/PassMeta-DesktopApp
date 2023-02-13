@@ -1,30 +1,25 @@
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
-
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 
 namespace PassMeta.DesktopApp.Core.Utils;
 
 /// <summary>
-/// Checking, loading and optimizing at startup.
+/// Loading and optimizing system at startup.
 /// </summary>
 public static class StartUp
 {
     /// <summary></summary>
-    public static async Task LoadConfigurationAsync()
-    {
-        using var loading = AppLoading.General.Begin();
-        await AppConfig.LoadAndSetCurrentAsync();
-    }
-
-    /// <summary></summary>
-    public static async Task LoadContextAsync()
+    public static async Task LoadAsync()
     {
         using var loading = AppLoading.General.Begin();
 
-        await AppContext.LoadAndSetCurrentAsync();
+        await EnvironmentContainer.Resolve<IAppConfigManager>().LoadAsync();
+        await EnvironmentContainer.Resolve<IAppContextManager>().LoadAsync();
 
         var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
 
@@ -35,9 +30,9 @@ public static class StartUp
     }
 
     /// <summary></summary>
-    public static void CheckSystem()
+    public static void CleanUp()
     {
         using var loading = AppLoading.GeneralBackground.Begin();
-        EnvironmentContainer.Resolve<ILogService>().CleanUp();
+        EnvironmentContainer.Resolve<ILogsManager>().CleanUp();
     }
 }

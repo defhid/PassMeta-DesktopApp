@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Utils;
@@ -13,15 +13,15 @@ namespace PassMeta.DesktopApp.Core.Utils;
 /// <inheritdoc />
 public class Counter : ICounter
 {
-    private const string StorageFileName = AppConfig.CounterStorageFileName;
+    private const string CounterFileName = ".counter";
 
     private readonly SemaphoreSlim _semaphore = new(1);
     private readonly IFileRepository _repository;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
     private Dictionary<string, long>? _dict;
 
     /// <summary></summary>
-    public Counter(IFileRepository repository, ILogService logger)
+    public Counter(IFileRepository repository, ILogsWriter logger)
     {
         _repository = repository;
         _logger = logger;
@@ -65,11 +65,11 @@ public class Counter : ICounter
     {
         Dictionary<string, long>? dict = null;
 
-        if (await _repository.ExistsAsync(StorageFileName, cancellationToken))
+        if (await _repository.ExistsAsync(CounterFileName, cancellationToken))
         {
             try
             {
-                var dictBytes = await _repository.ReadAllBytesAsync(StorageFileName, cancellationToken);
+                var dictBytes = await _repository.ReadAllBytesAsync(CounterFileName, cancellationToken);
 
                 dict = JsonSerializer.Deserialize<Dictionary<string, long>>(dictBytes);
             }
@@ -86,6 +86,6 @@ public class Counter : ICounter
     {
         var dictBytes = JsonSerializer.SerializeToUtf8Bytes(_dict ?? new Dictionary<string, long>());
 
-        await _repository.WriteAllBytesAsync(StorageFileName, dictBytes, cancellationToken);
+        await _repository.WriteAllBytesAsync(CounterFileName, dictBytes, cancellationToken);
     }
 }

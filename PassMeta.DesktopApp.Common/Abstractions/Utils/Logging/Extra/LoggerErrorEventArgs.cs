@@ -1,6 +1,6 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services.Logging.Extra;
-
 using System;
+
+namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Logging.Extra;
 
 /// <summary>
 /// Information about an error that occurred during the operation of a logger.

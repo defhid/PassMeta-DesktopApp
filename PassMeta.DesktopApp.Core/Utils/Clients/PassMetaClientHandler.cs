@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;
@@ -14,10 +14,10 @@ internal class PassMetaClientHandler : HttpClientHandler
 {
     private static readonly SemaphoreSlim CookiesRefreshSemaphore = new(1, 1);
     private readonly IAppContextManager _appContextManager;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
     private readonly IDisposable _appContextSubscription;
 
-    public PassMetaClientHandler(IAppContextManager appContextManager, ILogService logger)
+    public PassMetaClientHandler(IAppContextManager appContextManager, ILogsWriter logger)
     {
         CookieContainer = new CookieContainer(3);
 

@@ -6,8 +6,8 @@ using AutoMapper;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Conventions;
 using PassMeta.DesktopApp.Common.Models;
@@ -37,7 +37,7 @@ public class PassFileRemoteService : IPassFileRemoteService
     private readonly IPassFileCryptoService _pfCryptoService;
     private readonly IMapper _mapper;
     private readonly IDialogService _dialogService;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
     /// <summary></summary>
     public PassFileRemoteService(
@@ -45,7 +45,7 @@ public class PassFileRemoteService : IPassFileRemoteService
         IPassFileCryptoService pfCryptoService,
         IMapper mapper,
         IDialogService dialogService,
-        ILogService logger)
+        ILogsWriter logger)
     {
         _pmClient = pmClient;
         _pfCryptoService = pfCryptoService;

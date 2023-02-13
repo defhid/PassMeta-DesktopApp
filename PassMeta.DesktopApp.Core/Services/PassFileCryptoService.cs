@@ -1,9 +1,9 @@
 using System;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
@@ -19,13 +19,13 @@ public class PassFileCryptoService : IPassFileCryptoService
 
     private readonly IPassMetaCryptoService _pmCryptoService;
     private readonly IPassFileContentSerializerFactory _contentSerializerFactory;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
     /// <summary></summary>
     public PassFileCryptoService(
         IPassMetaCryptoService pmCryptoService,
         IPassFileContentSerializerFactory contentSerializerFactory,
-        ILogService logger)
+        ILogsWriter logger)
     {
         _pmCryptoService = pmCryptoService;
         _contentSerializerFactory = contentSerializerFactory;

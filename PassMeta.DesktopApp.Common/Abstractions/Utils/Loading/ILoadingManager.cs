@@ -12,7 +12,8 @@ public interface ILoadingManager : ILoadingState
     /// </summary>
     /// <returns>Loading finisher.</returns>
     /// <remarks>
-    /// If method is called multiple times, <see cref="ILoadingState.Current"/> value
-    /// will be FALSE only when all the finishers are disposed.</remarks>
+    /// If method is called multiple times, <see cref="ILoadingState.Active"/> value
+    /// will be FALSE only when all the finishers are disposed.
+    /// </remarks>
     IDisposable Begin();
 }

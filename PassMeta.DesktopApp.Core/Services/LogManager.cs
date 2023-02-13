@@ -4,16 +4,17 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging.Extra;
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging.Extra;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
 /// <inheritdoc />
-public class LogService : ILogService
+public class LogsManager : ILogsManager
 {
-    private static readonly string Folder = AppConfig.LogFilesDirectory;
+    private static readonly string LogsDirectory = Path.Combine(AppInfo.RootPath, ".logs");
     private readonly object _lockObject = new();
 
     private const char Separator = '|';
@@ -61,6 +62,9 @@ public class LogService : ILogService
     }
 
     /// <inheritdoc />
+    public IAppConfigProvider AppConfigProvider { get; set; }
+
+    /// <inheritdoc />
     public List<Log> Read(DateTime dateFrom, DateTime dateTo)
     {
         var dates = new List<DateTime> { dateFrom };
@@ -78,7 +82,10 @@ public class LogService : ILogService
         {
             try
             {
-                if (!File.Exists(fileName)) continue;
+                if (!File.Exists(fileName))
+                {
+                    continue;
+                }
                     
                 lock (_lockObject)
                 {
@@ -129,7 +136,7 @@ public class LogService : ILogService
     {
         try
         {
-            var logFiles = Directory.EnumerateFiles(Folder).ToList();
+            var logFiles = Directory.EnumerateFiles(LogsDirectory).ToList();
 
             for (var i = logFiles.Count - 1; i >= 0; --i)
             {
@@ -161,7 +168,7 @@ public class LogService : ILogService
     public event EventHandler<LoggerErrorEventArgs>? InternalErrorOccured;
 
     /// <summary></summary>
-    ~LogService() => Dispose();
+    ~LogsManager() => Dispose();
 
     /// <inheritdoc />
     public void Dispose()
@@ -175,13 +182,9 @@ public class LogService : ILogService
     {
         var today = DateTime.Today;
             
-        if (_fileStreamDateOpened is null || _fileStreamDateOpened.Value.Month != today.Month)
+        if (_fileStreamDateOpened is null || 
+            _fileStreamDateOpened.Value.Month != today.Month)
         {
-            if (!Directory.Exists(Folder))
-            {
-                Directory.CreateDirectory(Folder);
-            }
-
             _fileStream?.Dispose();
             _fileStream = new FileStream(GetFileNameFor(today), FileMode.Append);
             _fileStreamDateOpened = today;
@@ -200,5 +203,5 @@ public class LogService : ILogService
         }
     }
 
-    private static string GetFileNameFor(DateTime date) => Path.Combine(Folder, $"{date:yyyy-MM}.log");
+    private static string GetFileNameFor(DateTime date) => $"{date:yyyy-MM}.log";
 }

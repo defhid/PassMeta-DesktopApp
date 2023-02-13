@@ -2,9 +2,9 @@ using System.Reflection;
 using AutoMapper;
 using Avalonia.Controls.Notifications;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Utils.EntityMapping;
@@ -25,8 +25,8 @@ public static class DependencyInstaller
             new MapperConfiguration(config => config
                 .AddProfile<PassFileProfile>()));
         
-        var logService = RegisterSingleton<ILogService>(
-            new LogService());
+        var logService = RegisterSingleton<ILogsWriter>(
+            new LogsManager());
 
         var dialogService = RegisterSingleton<IDialogService>(
             new DialogService(Resolve<INotificationManager>, logService));
@@ -71,7 +71,7 @@ public static class DependencyInstaller
     public static void RegisterUiServices()
     {
         var dialogService = Resolve<IDialogService>()!;
-        var logService = Resolve<ILogService>()!;
+        var logService = Resolve<ILogsWriter>()!;
 
         RegisterSingleton<IPassFileExportUiService>(new PassFileExportUiService(dialogService, logService));
             

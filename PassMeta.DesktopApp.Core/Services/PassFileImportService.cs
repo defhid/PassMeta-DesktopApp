@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Models;
@@ -23,14 +23,14 @@ public class PassFileImportService : IPassFileImportService
     private readonly IPassMetaCryptoService _passMetaCryptoService;
     private readonly IPassFileContentSerializerFactory _contentSerializerFactory;
     private readonly IDialogService _dialogService;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
     /// <summary></summary>
     public PassFileImportService(
         IPassMetaCryptoService passMetaCryptoService,
         IPassFileContentSerializerFactory contentSerializerFactory,
         IDialogService dialogService,
-        ILogService logger)
+        ILogsWriter logger)
     {
         _passMetaCryptoService = passMetaCryptoService;
         _contentSerializerFactory = contentSerializerFactory;

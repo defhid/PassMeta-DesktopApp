@@ -6,7 +6,7 @@ namespace PassMeta.DesktopApp.Ui.Utils
     {
         public static class Generator
         {
-            public static int Length = AppConfig.Current.DefaultPasswordLength;
+            public static int Length = AppPaths.Current.DefaultPasswordLength;
             
             public static bool IncludeDigits = true;
 

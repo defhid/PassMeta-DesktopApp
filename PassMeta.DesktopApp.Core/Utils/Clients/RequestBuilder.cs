@@ -90,11 +90,11 @@ internal class RequestBuilder : IRequestWithBodySupportBuilder
     public async ValueTask<byte[]?> ExecuteRawAsync(CancellationToken cancellationToken = default)
         => await _client.BuildAndExecuteRawAsync(this, cancellationToken);
 
-    private static Uri? BuildUri(string url)
+    private Uri? BuildUri(string url)
     {
-        url = AppConfig.Current.ServerUrl + '/' + url +
+        url = _client.AppConfigProvider.Current.ServerUrl + '/' + url +
               (url.Contains('?') ? '&' : '?') +
-              "lang=" + AppConfig.Current.Culture.Code;
+              "lang=" + _client.AppConfigProvider.Current.Culture.Code;
         try
         {
             return new Uri(url);

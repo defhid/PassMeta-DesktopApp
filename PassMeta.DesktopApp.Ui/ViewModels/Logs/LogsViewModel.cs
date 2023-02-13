@@ -1,3 +1,5 @@
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
 {
     using System;
@@ -7,14 +9,13 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
     using System.Threading.Tasks;
     using Base;
     using Common;
-    using Common.Abstractions.Services.Logging;
     using Core;
     using Models;
     using ReactiveUI;
 
     public class LogsViewModel : PageViewModel
     {
-        private readonly ILogService _logger = EnvironmentContainer.Resolve<ILogService>();
+        private readonly ILogsWriter _logger = EnvironmentContainer.Resolve<ILogsWriter>();
 
         private const int InitIntervalDays = 3;
         private const int MaxIntervalDays = 60;

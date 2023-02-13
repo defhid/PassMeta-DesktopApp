@@ -10,9 +10,9 @@ using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Conventions;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
@@ -29,6 +29,11 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     where TPassFile : PassFile<TContent>
     where TContent : class, new()
 {
+    /// <summary>
+    /// Amount of passfile content versions to keep before final deletion.
+    /// </summary>
+    private const int KeepPassFileVersions = 5;
+
     private readonly BehaviorSubject<bool> _anyChangedSource = new(false);
     private readonly IPassFileLocalStorage _pfLocalStorage;
     private readonly IPassFileCryptoService _pfCryptoService;
@@ -36,7 +41,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     private readonly IMapper _mapper;
     private readonly IUserContext _userContext;
     private readonly IDialogService _dialogService;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
     private Dictionary<long, PassFileState> _states = new();
 
@@ -48,7 +53,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         IMapper mapper,
         IUserContext userContext,
         IDialogService dialogService,
-        ILogService logger)
+        ILogsWriter logger)
     {
         Debug.Assert(userContext.UserId is not null);
 
@@ -316,7 +321,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
             toDeleteContent.AddRange(res.Data!
                 .OrderByDescending(x => x)
-                .Skip(AppConfig.KeepPassFileVersions - 1)
+                .Skip(KeepPassFileVersions - 1)
                 .Select(x => (passFile, x)));
         }
 

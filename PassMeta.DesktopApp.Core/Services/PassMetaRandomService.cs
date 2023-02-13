@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services;
@@ -13,10 +13,10 @@ public class PassMetaRandomService : IPassMetaRandomService
 {
     private const string FailureGenerationResult = ":(";
     private static readonly Random Random = new();
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
     /// <summary></summary>
-    public PassMetaRandomService(ILogService logger)
+    public PassMetaRandomService(ILogsWriter logger)
     {
         _logger = logger;
     }

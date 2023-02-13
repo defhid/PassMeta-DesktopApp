@@ -66,7 +66,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
                 .Select(isReadOnly => !isReadOnly);
 
             PasswordChar = this.WhenAnyValue(btn => btn.IsReadOnly)
-                .Select(isReadOnly => isReadOnly && AppConfig.Current.HidePasswords ? '*' : (char?)null);
+                .Select(isReadOnly => isReadOnly && AppPaths.Current.HidePasswords ? '*' : (char?)null);
 
             PopupGeneratorCanBeOpened = this.WhenAnyValue(
                     btn => btn.IsReadOnly,

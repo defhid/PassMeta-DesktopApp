@@ -79,7 +79,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
             var descriptionParts = new Stack<string>();
 
             var userContext = EnvironmentContainer.Resolve<IUserContextProvider>().Current;
-            var fileRepository = EnvironmentContainer.Resolve<IFileRepositoryFactory>().ForLocalPassFiles(userContext.UserServerId);
+            var fileRepository = EnvironmentContainer.Resolve<IFileRepositoryFactory>().ForPassFiles(userContext.UserServerId);
             var files = await fileRepository.GetFilesAsync();
 
             foreach (var filePath in files.OrderBy(x => x))

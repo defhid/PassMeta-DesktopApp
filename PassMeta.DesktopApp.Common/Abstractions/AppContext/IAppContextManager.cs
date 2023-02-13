@@ -19,10 +19,10 @@ public interface IAppContextManager : IAppContextProvider
     /// <summary>
     /// Refresh context from the server.
     /// </summary>
-    Task RefreshFromAsync(PassMetaInfoDto passMetaInfoDto);
+    Task<IResult> RefreshFromAsync(PassMetaInfoDto passMetaInfoDto);
 
     /// <summary>
     /// Edit current context model and flush changes.
     /// </summary>
-    Task ApplyAsync(Action<AppContextModel> setup);
+    Task<IResult> ApplyAsync(Action<AppContextModel> setup);
 }

@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
@@ -24,10 +24,10 @@ namespace PassMeta.DesktopApp.Core.Utils;
 public class PassFileLocalStorage : IPassFileLocalStorage
 {
     private readonly IFileRepositoryFactory _repositoryFactory;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
     /// <summary></summary>
-    public PassFileLocalStorage(IFileRepositoryFactory repositoryFactory, ILogService logger)
+    public PassFileLocalStorage(IFileRepositoryFactory repositoryFactory, ILogsWriter logger)
     {
         _repositoryFactory = repositoryFactory;
         _logger = logger;
@@ -53,7 +53,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         IUserContext userContext,
         CancellationToken cancellationToken)
     {
-        var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
+        var repository = _repositoryFactory.ForPassFiles(userContext.UserServerId);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -110,7 +110,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         IUserContext userContext,
         CancellationToken cancellationToken)
     {
-        var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
+        var repository = _repositoryFactory.ForPassFiles(userContext.UserServerId);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -157,7 +157,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         IUserContext userContext,
         CancellationToken cancellationToken)
     {
-        var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
+        var repository = _repositoryFactory.ForPassFiles(userContext.UserServerId);
         
         var fileName = PassFilePathHelper.GetPassFileContentName(passFileType, passFileId, version);
 
@@ -209,7 +209,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         IUserContext userContext,
         CancellationToken cancellationToken)
     {
-        var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
+        var repository = _repositoryFactory.ForPassFiles(userContext.UserServerId);
         
         var fileName = PassFilePathHelper.GetPassFileContentName(passFileType, passFileId, version);
 
@@ -257,7 +257,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         IUserContext userContext,
         CancellationToken cancellationToken)
     {
-        var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
+        var repository = _repositoryFactory.ForPassFiles(userContext.UserServerId);
 
         cancellationToken.ThrowIfCancellationRequested();
         
@@ -306,7 +306,7 @@ public class PassFileLocalStorage : IPassFileLocalStorage
         IUserContext userContext,
         CancellationToken cancellationToken)
     {
-        var repository = _repositoryFactory.ForLocalPassFiles(userContext.UserServerId);
+        var repository = _repositoryFactory.ForPassFiles(userContext.UserServerId);
 
         cancellationToken.ThrowIfCancellationRequested();
 

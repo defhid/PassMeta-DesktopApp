@@ -106,7 +106,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
 
                 _disposables = new[]
                 {
-                    AppConfig.CurrentObservable.Subscribe(x =>
+                    AppPaths.CurrentObservable.Subscribe(x =>
                     {
                         Logs.IsVisible = x.DevMode;
                     })

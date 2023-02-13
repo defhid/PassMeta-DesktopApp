@@ -5,8 +5,8 @@ using Avalonia.Controls;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
@@ -23,9 +23,9 @@ namespace PassMeta.DesktopApp.Ui.Services;
 public class PassFileMergeUiService : IPassFileMergeUiService
 {
     private readonly IDialogService _dialogService;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
-    public PassFileMergeUiService(IDialogService dialogService, ILogService logger)
+    public PassFileMergeUiService(IDialogService dialogService, ILogsWriter logger)
     {
         _dialogService = dialogService;
         _logger = logger;

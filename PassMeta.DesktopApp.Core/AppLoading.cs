@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Loading;
 using PassMeta.DesktopApp.Core.Utils.Loading;
 
@@ -8,22 +9,28 @@ namespace PassMeta.DesktopApp.Core;
 /// </summary>
 public static class AppLoading
 {
-    /// <summary>
-    /// General loading.
-    /// </summary>
-    public static readonly ILoadingManager General = new DefaultLoadingManager();
+    private static readonly List<ILoadingState> _loadingStates = new();
 
     /// <summary>
-    /// General background loading.
+    /// Begin tracking loading state.
     /// </summary>
-    public static readonly ILoadingManager GeneralBackground = new DefaultLoadingManager();
+    public static void Observe(ILoadingState loadingManager)
+    {
+        _loadingStates.Add(loadingManager);
+    }
+
+    /// <summary>
+    /// Finish tracking loading state.
+    /// </summary>
+    public static void Release(ILoadingState loadingManager)
+    {
+        _loadingStates.Remove(loadingManager);
+    }
+    
+    public static ILoadingState[] CurrentList { get; }
 
     /// <summary>
     /// Any loading.
     /// </summary>
-    public static ILoadingState Any => new CombinedLoadingState(new []
-    {
-        General,
-        GeneralBackground
-    });
+    public static ILoadingState Any => new CombinedLoadingState(_loadingStates);
 }

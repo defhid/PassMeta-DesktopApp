@@ -11,9 +11,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 using PassMeta.DesktopApp.Core.Extensions;
@@ -26,18 +27,22 @@ namespace PassMeta.DesktopApp.Core.Utils.Clients;
 public sealed class PassMetaClient : IPassMetaClient
 {
     private readonly BehaviorSubject<bool> _onlineSubject = new(false);
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
     private readonly IDialogService _dialogService;
     private readonly IOkBadService _okBadService;
     private readonly HttpClient _httpClient;
 
+    internal readonly IAppConfigProvider AppConfigProvider;
+
     /// <summary></summary>
     public PassMetaClient(
         IAppContextManager appContextManager,
-        ILogService logger,
+        IAppConfigProvider appConfigProvider,
+        ILogsWriter logger,
         IDialogService dialogService,
         IOkBadService okBadService)
     {
+        AppConfigProvider = appConfigProvider;
         _logger = logger;
         _dialogService = dialogService;
         _okBadService = okBadService;
@@ -64,14 +69,14 @@ public sealed class PassMetaClient : IPassMetaClient
     /// <inheritdoc />
     public async Task<bool> CheckConnectionAsync()
     {
-        if (AppConfig.Current.ServerUrl is null) return false;
+        if (AppConfigProvider.Current.ServerUrl is null) return false;
 
         var has = false;
         try
         {
             var requestBase = PassMetaApi.General.GetCheck();
                 
-            var request = new HttpRequestMessage(requestBase.Method, AppConfig.Current.ServerUrl + "/" + requestBase.Url);
+            var request = new HttpRequestMessage(requestBase.Method, AppConfigProvider.Current.ServerUrl + "/" + requestBase.Url);
             var response = await _httpClient.SendAsync(request);
 
             has = response.StatusCode is HttpStatusCode.OK;

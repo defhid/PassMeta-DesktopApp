@@ -1,5 +1,5 @@
 using System;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Services.Extensions;
@@ -10,10 +10,10 @@ namespace PassMeta.DesktopApp.Ui.App.Observers;
 public class OnlineObserver : IObserver<bool>
 {
     private readonly IPassMetaClient _passMetaClient;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
     private bool _prev;
 
-    public OnlineObserver(IPassMetaClient passMetaClient, ILogService logger)
+    public OnlineObserver(IPassMetaClient passMetaClient, ILogsWriter logger)
     {
         _passMetaClient = passMetaClient;
         _logger = logger;
@@ -33,7 +33,7 @@ public class OnlineObserver : IObserver<bool>
         {
             if (value && value != _prev && AppContext.Current.ServerVersion is null)
             {
-                await AppContext.RefreshCurrentAsync(AppConfig.Current, _passMetaClient);
+                await AppContext.RefreshCurrentAsync(AppPaths.Current, _passMetaClient);
             }
         }
         catch (Exception ex)

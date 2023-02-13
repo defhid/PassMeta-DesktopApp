@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Ui.Services;
@@ -12,10 +12,10 @@ namespace PassMeta.DesktopApp.Ui.Services;
 public class ClipboardService : IClipboardService
 {
     private readonly IDialogService _dialogService;
-    private readonly ILogService _logger;
+    private readonly ILogsWriter _logger;
 
     /// <summary></summary>
-    public ClipboardService(IDialogService dialogService, ILogService logger)
+    public ClipboardService(IDialogService dialogService, ILogsWriter logger)
     {
         _dialogService = dialogService;
         _logger = logger;

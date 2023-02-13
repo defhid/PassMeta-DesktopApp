@@ -8,12 +8,17 @@ using System;
 public interface ILoadingState
 {
     /// <summary>
+    /// Loading name.
+    /// </summary>
+    string Name { get; }
+
+    /// <summary>
     /// Loading is happening now.
     /// </summary>
-    bool Current { get; }
-        
+    bool Active { get; }
+
     /// <summary>
-    /// Represents <see cref="Current"/>.
+    /// Represents <see cref="Active"/>.
     /// </summary>
-    IObservable<bool> CurrentObservable { get; }
+    IObservable<bool> ActiveObservable { get; }
 }

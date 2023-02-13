@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -7,9 +8,9 @@ using Avalonia.Markup.Xaml;
 
 using Splat;
 using System.Threading.Tasks;
-
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
@@ -68,22 +69,23 @@ public class App : Application
 
         EnvironmentContainer.Initialize(Locator.Current);
 
-        var logService = EnvironmentContainer.Resolve<ILogService>();
+        var logManager = EnvironmentContainer.Resolve<ILogsManager>();
         var dialogService = EnvironmentContainer.Resolve<IDialogService>();
         var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
 
-        logService.InternalErrorOccured += (_, ev) => 
+        logManager.InternalErrorOccured += (_, ev) => 
             dialogService.ShowError(ev.Message, more: ev.Exception.ToString());
+        
+        EnvironmentContainer.Resolve<IAppConfigManager>().CurrentObservable
 
-        await StartUp.LoadConfigurationAsync();
-        await StartUp.LoadContextAsync();
+        await StartUp.LoadAsync();
 
-        _ = AppConfig.CurrentObservable.Subscribe(new AppConfigObserver(passMetaClient, logService));
-        _ = AppContext.CurrentObservable.Subscribe(new AppContextObserver(logService));
+        _ = AppPaths.CurrentObservable.Subscribe(new AppConfigObserver(passMetaClient, logManager));
+        _ = AppContext.CurrentObservable.Subscribe(new AppContextObserver(logManager));
             
-        _ = passMetaClient.OnlineObservable.Subscribe(new OnlineObserver(passMetaClient, logService));
+        _ = passMetaClient.OnlineObservable.Subscribe(new OnlineObserver(passMetaClient, logManager));
 
-        _ = Task.Run(StartUp.CheckSystem);
+        _ = Task.Run(StartUp.CleanUp);
     }
 
     private static MainWindow MakeWindow()

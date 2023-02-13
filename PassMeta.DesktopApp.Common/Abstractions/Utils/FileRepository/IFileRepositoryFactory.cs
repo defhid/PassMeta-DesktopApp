@@ -7,12 +7,12 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 public interface IFileRepositoryFactory
 {
     /// <summary>
-    /// Get a repository for local passfiles by user context.
+    /// Get a repository for passfiles by user context.
     /// </summary>
-    IFileRepository ForLocalPassFiles(string? serverId);
-    
+    IFileRepository ForPassFiles(string? serverId);
+
     /// <summary>
-    /// Get a repository for local system files.
+    /// Get a repository for application system files.
     /// </summary>
-    IFileRepository ForLocalSystemFiles();
+    IFileRepository ForSystemFiles();
 }

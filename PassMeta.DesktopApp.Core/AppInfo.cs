@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using PassMeta.DesktopApp.Common.Constants;
 
@@ -31,4 +32,9 @@ public static class AppInfo
     /// x64/x86.
     /// </summary>
     public static readonly string Bit = Environment.Is64BitProcess ? "64-bit" : "32-bit";
+    
+    /// <summary>
+    /// Application data root path.
+    /// </summary>
+    public static readonly string RootPath = Path.GetDirectoryName(Assembly.GetAssembly(typeof(AppInfo))!.Location)!;
 }

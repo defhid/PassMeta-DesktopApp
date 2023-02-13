@@ -1,10 +1,12 @@
 using System;
-using System.IO;
 using System.Reactive.Subjects;
 using System.Text.Json;
 using System.Threading.Tasks;
+using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
+using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Common.Models.Entities.Internal;
@@ -18,13 +20,18 @@ namespace PassMeta.DesktopApp.Core.Utils;
 /// <remarks>Singleton.</remarks>
 public sealed class AppContextManager : IAppContextManager, IUserContextProvider, IDisposable
 {
+    private const string CurrentContextFileName = ".context";
+    private const string PreviousContextFileName = ".context.old";
+
     private readonly BehaviorSubject<AppContextModel> _currentSubject = new(new AppContextModel(new AppContextDto()));
-    private readonly ILogService _logger;
+    private readonly IFileRepository _repository;
+    private readonly ILogsWriter _logger;
 
     /// <summary></summary>
-    public AppContextManager(ILogService logger)
+    public AppContextManager(ILogsWriter logger, IFileRepositoryFactory fileRepositoryFactory)
     {
         _logger = logger;
+        _repository = fileRepositoryFactory.ForSystemFiles();
     }
 
     /// <inheritdoc />
@@ -32,9 +39,9 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
 
     /// <inheritdoc />
     IObservable<IAppContext> IAppContextProvider.CurrentObservable => _currentSubject;
-    
+
     /// <inheritdoc />
-    IUserContext IUserContextProvider.Current 
+    IUserContext IUserContextProvider.Current
         => new UserContextModel(_currentSubject.Value.User?.Id, _currentSubject.Value.ServerId);
 
     /// <inheritdoc />
@@ -42,12 +49,12 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     {
         AppContextDto? data = null;
 
-        if (File.Exists(AppConfig.ContextFilePath))
+        if (await _repository.ExistsAsync(CurrentContextFileName))
         {
             try
             {
                 data = JsonSerializer.Deserialize<AppContextDto>(
-                    await File.ReadAllBytesAsync(AppConfig.ContextFilePath));
+                    await _repository.ReadAllBytesAsync(CurrentContextFileName));
             }
             catch (Exception ex)
             {
@@ -65,16 +72,16 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     }
 
     /// <inheritdoc />
-    public async Task RefreshFromAsync(PassMetaInfoDto passMetaInfoDto)
+    public async Task<IResult> RefreshFromAsync(PassMetaInfoDto passMetaInfoDto)
     {
         if (_currentSubject.Value.User?.Equals(passMetaInfoDto.User) is true &&
             _currentSubject.Value.ServerId?.Equals(passMetaInfoDto.AppId) is true &&
             _currentSubject.Value.ServerVersion?.Equals(passMetaInfoDto.AppVersion) is true)
         {
-            return;
+            return Result.Success();
         }
 
-        await ApplyAsync(appContext =>
+        return await ApplyAsync(appContext =>
         {
             appContext.User = passMetaInfoDto.User;
             appContext.ServerId = passMetaInfoDto.AppId;
@@ -83,15 +90,18 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     }
 
     /// <inheritdoc />
-    public async Task ApplyAsync(Action<AppContextModel> setup)
+    public async Task<IResult> ApplyAsync(Action<AppContextModel> setup)
     {
         var copy = _currentSubject.Value.Copy();
         setup(copy);
 
-        if (await SaveToFileAsync(copy.ToDto()))
+        if (!await SaveToFileAsync(copy.ToDto()))
         {
-            SetCurrent(copy);
+            return Result.Failure();
         }
+
+        SetCurrent(copy);
+        return Result.Success();
     }
 
     /// <inheritdoc />
@@ -104,29 +114,24 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     {
         try
         {
-            var path = AppConfig.ContextFilePath;
-            var oldPath = AppConfig.ContextFilePath + ".old";
-
-            var creatingNew = !File.Exists(path);
+            var creatingNew = !await _repository.ExistsAsync(CurrentContextFileName);
             if (creatingNew)
             {
                 _logger.Info("Creating a new context file...");
             }
             else
             {
-                File.SetAttributes(path, File.GetAttributes(path) & ~FileAttributes.Hidden);
-                if (File.Exists(oldPath))
+                if (await _repository.ExistsAsync(PreviousContextFileName))
                 {
-                    File.SetAttributes(path, File.GetAttributes(oldPath) & ~FileAttributes.Hidden);
+                    await _repository.DeleteAsync(PreviousContextFileName);
                 }
 
-                File.Move(path, oldPath, true);
-                File.SetAttributes(oldPath, FileAttributes.Hidden);
+                await _repository.RenameAsync(CurrentContextFileName, PreviousContextFileName);
             }
 
-            await File.WriteAllBytesAsync(path, JsonSerializer.SerializeToUtf8Bytes(dto));
+            await _repository.WriteAllBytesAsync(CurrentContextFileName, JsonSerializer.SerializeToUtf8Bytes(dto));
 
-            File.SetAttributes(path, FileAttributes.Hidden);
+            _logger.Debug("Context file saved");
 
             if (creatingNew)
                 _logger.Info("Context file created successfully");

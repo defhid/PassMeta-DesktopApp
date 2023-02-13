@@ -1,20 +1,15 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
-
 using System;
 using System.Collections.Generic;
-using Extra;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging.Extra;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
-/// <summary>
-/// Service for logging user messages and app errors.
-/// </summary>
-public interface ILogService : IDisposable
-{
-    /// <summary>
-    /// Write application log.
-    /// </summary>
-    void Write(Log log);
+namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 
+/// <summary>
+/// Application logs manager.
+/// </summary>
+public interface ILogsManager : ILogsWriter, IDisposable
+{
     /// <summary>
     /// Get application logs by period.
     /// </summary>

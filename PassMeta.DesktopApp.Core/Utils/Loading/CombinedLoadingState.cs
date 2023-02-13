@@ -24,19 +24,19 @@ internal class CombinedLoadingState : ILoadingState
         }
     }
 
-    public bool Current => _loadings.Any(x => x);
+    public bool Active => _loadings.Any(x => x);
 
-    public IObservable<bool> CurrentObservable => _subject;
+    public IObservable<bool> ActiveObservable => _subject;
 
     private void Subscribe(ILoadingState state, int index)
     {
-        state.CurrentObservable.Subscribe(x =>
+        state.ActiveObservable.Subscribe(x =>
         {
             lock (_loadings)
             {
                 _loadings[index] = x;
 
-                var current = Current;
+                var current = Active;
                 if (current != _subject.Value)
                 {
                     _subject.OnNext(current);
