@@ -18,7 +18,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
 
         public AppMode()
         {
-            var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
+            var passMetaClient = Locator.Current.Resolve<IPassMetaClient>();
 
             _text = passMetaClient.OnlineObservable.Select(online => online 
                     ? Resources.APP__ONLINE_MODE

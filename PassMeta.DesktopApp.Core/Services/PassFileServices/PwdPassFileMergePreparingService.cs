@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-    
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
@@ -13,7 +13,7 @@ using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFileMerge;
 
-namespace PassMeta.DesktopApp.Core.Services;
+namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 
 /// <inheritdoc />
 public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingService

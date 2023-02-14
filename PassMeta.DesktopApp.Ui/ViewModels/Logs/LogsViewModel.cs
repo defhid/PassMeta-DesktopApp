@@ -1,4 +1,5 @@
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
+using PassMeta.DesktopApp.Ui.App;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
 {
@@ -15,7 +16,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs
 
     public class LogsViewModel : PageViewModel
     {
-        private readonly ILogsWriter _logger = EnvironmentContainer.Resolve<ILogsWriter>();
+        private readonly ILogsWriter _logger = Locator.Current.Resolve<ILogsWriter>();
 
         private const int InitIntervalDays = 3;
         private const int MaxIntervalDays = 60;

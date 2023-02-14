@@ -9,6 +9,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
 
 using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Ui.App;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
 using AppContext = PassMeta.DesktopApp.Core.AppContext;
 
@@ -16,8 +17,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels;
 
 public class AccountViewModel : PageViewModel
 {
-    private static IAccountService AccountService => EnvironmentContainer.Resolve<IAccountService>();
-    private static IAuthService AuthService => EnvironmentContainer.Resolve<IAuthService>();
+    private static IAccountService AccountService => Locator.Current.Resolve<IAccountService>();
+    private static IAuthService AuthService => Locator.Current.Resolve<IAuthService>();
 
     public override ContentControl[] RightBarButtons => new ContentControl[]
     {

@@ -2,10 +2,9 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 
-namespace PassMeta.DesktopApp.Core.Services;
+namespace PassMeta.DesktopApp.Core.Services.PassMetaServices;
 
 /// <inheritdoc />
 public class PassMetaCryptoService : IPassMetaCryptoService

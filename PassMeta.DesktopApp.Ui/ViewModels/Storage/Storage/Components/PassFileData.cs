@@ -13,6 +13,7 @@ using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Ui.App;
 using PassMeta.DesktopApp.Ui.Utils.Comparers;
 using PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Models;
 
@@ -20,7 +21,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 {
     public class PassFileData : ReactiveObject
     {
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
         
         public IEnumerable<ContentControl> RightBarButtons => new ContentControl[]
         {

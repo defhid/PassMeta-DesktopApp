@@ -5,20 +5,11 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Loading;
 namespace PassMeta.DesktopApp.Core.Utils.Loading;
 
 /// <inheritdoc />
-internal class DefaultLoadingManager : ILoadingManager
+public class DefaultLoadingManager : ILoadingManager
 {
     private readonly object _lockObject = new();
     private readonly BehaviorSubject<bool> _subject = new(false);
-    private readonly Func<string> _nameGetter;
     private int _counter;
-
-    public DefaultLoadingManager(Func<string> nameGetter)
-    {
-        _nameGetter = nameGetter;
-    }
-
-    /// <inheritdoc />
-    public string Name => _nameGetter();
 
     /// <inheritdoc />
     public bool Active => _subject.Value;

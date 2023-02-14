@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Subjects;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
@@ -26,6 +27,7 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     private readonly BehaviorSubject<AppContextModel> _currentSubject = new(new AppContextModel(new AppContextDto()));
     private readonly IFileRepository _repository;
     private readonly ILogsWriter _logger;
+    private readonly SemaphoreSlim _semaphore = new(1);
 
     /// <summary></summary>
     public AppContextManager(ILogsWriter logger, IFileRepositoryFactory fileRepositoryFactory)
@@ -62,12 +64,20 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
             }
         }
 
-        var context = new AppContextModel(data ?? new AppContextDto());
-        SetCurrent(context);
-
-        if (data is null)
+        await _semaphore.WaitAsync();
+        try
         {
-            _ = await SaveToFileAsync(context.ToDto());
+            var context = new AppContextModel(data ?? new AppContextDto());
+            SetCurrent(context);
+
+            if (data is null)
+            {
+                _ = await SaveToFileAsync(context.ToDto());
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 
@@ -95,13 +105,21 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
         var copy = _currentSubject.Value.Copy();
         setup(copy);
 
-        if (!await SaveToFileAsync(copy.ToDto()))
+        await _semaphore.WaitAsync();
+        try
         {
-            return Result.Failure();
-        }
+            if (!await SaveToFileAsync(copy.ToDto()))
+            {
+                return Result.Failure();
+            }
 
-        SetCurrent(copy);
-        return Result.Success();
+            SetCurrent(copy);
+            return Result.Success();
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     /// <inheritdoc />

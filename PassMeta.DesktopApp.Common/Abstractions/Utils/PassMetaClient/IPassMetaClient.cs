@@ -32,5 +32,6 @@ public interface IPassMetaClient : IDisposable
     /// <summary>
     /// Does application have a connection to PassMeta server.
     /// </summary>
-    Task<bool> CheckConnectionAsync();
+    /// <param name="reset">Set <see cref="Online"/> to false, then check connection.</param>
+    Task<bool> CheckConnectionAsync(bool reset = false);
 }

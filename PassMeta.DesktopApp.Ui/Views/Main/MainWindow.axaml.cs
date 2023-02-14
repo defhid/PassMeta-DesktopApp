@@ -12,6 +12,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Ui.App;
 using AppContext = PassMeta.DesktopApp.Core.AppContext;
 
 using PassMeta.DesktopApp.Ui.Views.Base;
@@ -68,7 +69,7 @@ public class MainWindow : WinView<MainWindowViewModel>
     {
         using var preloader = AppLoading.General.Begin();
 
-        await EnvironmentContainer.Resolve<IPassMetaClient>().CheckConnectionAsync();
+        await Locator.Current.Resolve<IPassMetaClient>().CheckConnectionAsync();
 
         await DataContext!.Router.CurrentViewModel!.OfType<PageViewModel>()
             .FirstOrDefaultAsync()
@@ -103,7 +104,7 @@ public class MainWindow : WinView<MainWindowViewModel>
         }
 
         e.Cancel = true;
-        var dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        var dialogService = Locator.Current.Resolve<IDialogService>();
 
         var confirm = await dialogService.ConfirmAsync(Common.Resources.APP__CONFIRM_ROLLBACK_ON_QUIT);
         if (!confirm.Ok) return;

@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
-namespace PassMeta.DesktopApp.Core.Services;
+namespace PassMeta.DesktopApp.Core.Services.PassMetaServices;
 
 /// <inheritdoc />
 public class PassMetaRandomService : IPassMetaRandomService

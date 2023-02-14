@@ -19,7 +19,7 @@ using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
-namespace PassMeta.DesktopApp.Core.Services;
+namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 
 /// <inheritdoc />
 public class PassFileRemoteService : IPassFileRemoteService

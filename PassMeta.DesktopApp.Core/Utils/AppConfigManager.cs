@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Subjects;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
@@ -23,6 +24,7 @@ public class AppConfigManager : IAppConfigManager
     private readonly BehaviorSubject<AppConfigModel> _currentSubject = new(new AppConfigModel(new AppConfigDto()));
     private readonly IFileRepository _repository;
     private readonly ILogsWriter _logger;
+    private readonly SemaphoreSlim _semaphore = new(1);
 
     /// <summary></summary>
     public AppConfigManager(ILogsWriter logger, IFileRepositoryFactory fileRepositoryFactory)
@@ -54,13 +56,21 @@ public class AppConfigManager : IAppConfigManager
                 _logger.Error(ex, "Configuration file reading failed");
             }
         }
-
-        var config = new AppConfigModel(data ?? new AppConfigDto());
-        SetCurrent(config);
-
-        if (data is null)
+        
+        await _semaphore.WaitAsync();
+        try
         {
-            _ = await SaveToFileAsync(config.ToDto());
+            var config = new AppConfigModel(data ?? new AppConfigDto());
+            SetCurrent(config);
+
+            if (data is null)
+            {
+                _ = await SaveToFileAsync(config.ToDto());
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 
@@ -70,11 +80,19 @@ public class AppConfigManager : IAppConfigManager
         var copy = _currentSubject.Value.Copy();
         setup(copy);
 
-        var result = await SaveToFileAsync(copy.ToDto());
-        if (result.Bad) return result;
+        await _semaphore.WaitAsync();
+        try
+        {
+            var result = await SaveToFileAsync(copy.ToDto());
+            if (result.Bad) return result;
 
-        SetCurrent(copy);
-        return Result.Success();
+            SetCurrent(copy);
+            return Result.Success();
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     private async Task<IDetailedResult> SaveToFileAsync(AppConfigDto dto)

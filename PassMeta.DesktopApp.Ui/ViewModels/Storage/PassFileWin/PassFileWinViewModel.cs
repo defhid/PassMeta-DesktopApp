@@ -71,7 +71,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
         
         public readonly ViewElements ViewElements = new();
 
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
 
         public PassFileWinViewModel(PassFile passFile)
         {
@@ -255,7 +255,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
                 return Task.CompletedTask;
             }
 
-            var exportService = EnvironmentContainer.Resolve<IPassFileExportUiService>();
+            var exportService = Locator.Current.Resolve<IPassFileExportUiService>();
 
             return exportService.SelectAndExportAsync(PassFile, ViewElements.Window!);
         }
@@ -265,7 +265,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             var passFile = PassFile;
             if (passFile is null) return;
 
-            var restoreService = EnvironmentContainer.Resolve<IPassFileRestoreUiService>();
+            var restoreService = Locator.Current.Resolve<IPassFileRestoreUiService>();
 
             var result = await restoreService.SelectAndRestoreAsync(passFile, ViewElements.Window!);
             if (result.Bad) return;
@@ -280,7 +280,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
             var passFile = PassFile;
             if (passFile?.LocalDeleted is not false) return;
             
-            var mergeService = EnvironmentContainer.Resolve<IPassFileMergeUiService>();
+            var mergeService = Locator.Current.Resolve<IPassFileMergeUiService>();
 
             var result = await mergeService.LoadRemoteAndMergeAsync(passFile, ViewElements.Window!);
             if (result.Bad) return;

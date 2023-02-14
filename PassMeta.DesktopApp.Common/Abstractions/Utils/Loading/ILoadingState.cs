@@ -8,11 +8,6 @@ using System;
 public interface ILoadingState
 {
     /// <summary>
-    /// Loading name.
-    /// </summary>
-    string Name { get; }
-
-    /// <summary>
     /// Loading is happening now.
     /// </summary>
     bool Active { get; }

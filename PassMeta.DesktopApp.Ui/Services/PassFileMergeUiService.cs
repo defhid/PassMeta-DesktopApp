@@ -67,7 +67,7 @@ public class PassFileMergeUiService : IPassFileMergeUiService
 
     private static async Task<IResult> _ProcessPwdPassFile(PassFile passFile, Window currentWindow)
     {
-        var mergeService = EnvironmentContainer.Resolve<IPwdPassFileMergePreparingService>();
+        var mergeService = Locator.Current.Resolve<IPwdPassFileMergePreparingService>();
             
         var mergeResult = await mergeService.LoadAndPrepareMergeAsync(passFile);
         if (mergeResult.Bad)

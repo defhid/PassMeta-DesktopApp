@@ -5,6 +5,7 @@ using Avalonia.Controls;
     
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
@@ -70,7 +71,7 @@ public class PassFileRestoreUiService : IPassFileRestoreUiService
 
         if (pathResult is not null)
         {
-            var importService = EnvironmentContainer.Resolve<IPassFileImportService>(passFile.Type.ToString());
+            var importService = Locator.Current.Resolve<IPassFileImportService>(passFile.Type.ToString());
                 
             var importResult = await importService.ImportAsync(passFile, pathResult.Data!, passFile.PassPhrase);
             if (importResult.Bad)

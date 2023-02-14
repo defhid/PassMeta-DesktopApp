@@ -6,12 +6,13 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
 using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Ui.App;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     public class AuthViewModel : PageViewModel
     {
-        private static IAuthService AuthService => EnvironmentContainer.Resolve<IAuthService>();
+        private static IAuthService AuthService => Locator.Current.Resolve<IAuthService>();
 
         public string? Login { get; set; }
         

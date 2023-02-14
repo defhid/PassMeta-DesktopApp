@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
-namespace PassMeta.DesktopApp.Common.Abstractions.Utils;
+namespace PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 
 /// <summary>
 /// A context for working with passfiles via local storage.

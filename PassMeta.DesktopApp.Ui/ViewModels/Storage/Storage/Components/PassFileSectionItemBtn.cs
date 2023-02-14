@@ -16,8 +16,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components
 
     public class PassFileSectionItemBtn : ReactiveObject
     {
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
-        private readonly IClipboardService _clipboardService = EnvironmentContainer.Resolve<IClipboardService>();
+        private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
+        private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
         
         private readonly ObservableAsPropertyHelper<bool> _isReadOnly;
         public bool IsReadOnly => _isReadOnly.Value;

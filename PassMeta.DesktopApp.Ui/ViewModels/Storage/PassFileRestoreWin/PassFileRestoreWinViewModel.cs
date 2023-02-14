@@ -47,7 +47,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
         public ReactCommand DownloadCommand { get; }
         public ReactCommand CloseCommand { get; }
 
-        public static IObservable<bool> CanBeDownloaded => EnvironmentContainer.Resolve<IPassMetaClient>().OnlineObservable;
+        public static IObservable<bool> CanBeDownloaded => Locator.Current.Resolve<IPassMetaClient>().OnlineObservable;
 
         public readonly ViewElements ViewElements = new();
 
@@ -71,15 +71,15 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
         {
             FoundList.Clear();
             
-            var remoteVersions = await EnvironmentContainer.Resolve<IPassFileRemoteService>().GetVersionsAsync(_passFileId);
+            var remoteVersions = await Locator.Current.Resolve<IPassFileRemoteService>().GetVersionsAsync(_passFileId);
             
 
             var passfileExt = '.' + PassFileExternalFormat.Encrypted.Extension;
             var passFileList = PassFileManager.GetCurrentList(_passFileType);
             var descriptionParts = new Stack<string>();
 
-            var userContext = EnvironmentContainer.Resolve<IUserContextProvider>().Current;
-            var fileRepository = EnvironmentContainer.Resolve<IFileRepositoryFactory>().ForPassFiles(userContext.UserServerId);
+            var userContext = Locator.Current.Resolve<IUserContextProvider>().Current;
+            var fileRepository = Locator.Current.Resolve<IFileRepositoryFactory>().ForPassFiles(userContext.UserServerId);
             var files = await fileRepository.GetFilesAsync();
 
             foreach (var filePath in files.OrderBy(x => x))
@@ -140,7 +140,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 
         private async Task ImportForeignAsync()
         {
-            var importService = EnvironmentContainer.Resolve<IPassFileImportService>(_passFileType.ToString());
+            var importService = Locator.Current.Resolve<IPassFileImportService>(_passFileType.ToString());
             
             var fileDialog = new OpenFileDialog
             {
@@ -164,7 +164,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
 
         private async Task DownloadAsync()
         {
-            var remoteService = EnvironmentContainer.Resolve<IPassFileRemoteService>();
+            var remoteService = Locator.Current.Resolve<IPassFileRemoteService>();
 
             var infoResult = await remoteService.GetInfoAsync(_passFileId);
             if (infoResult.Bad)

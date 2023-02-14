@@ -3,26 +3,51 @@ using System.Globalization;
 using System.Threading;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
-using PassMeta.DesktopApp.Common.Abstractions.AppContext;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
-using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Constants;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Services.Extensions;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App.Observers;
 
 public class AppConfigObserver : IObserver<IAppConfig>
 {
-    private readonly IPassMetaInfoService _pmInfoService;
-    private readonly IAppContextManager _appContextManager;
-    private readonly ILogsWriter _logger;
+    private static IPassMetaClient PassMetaClient => Locator.Current.Resolve<IPassMetaClient>();
+    private static ILogsWriter LogsWriter => Locator.Current.Resolve<ILogsWriter>();
+
     private IAppConfig? _prev;
-        
-    public AppConfigObserver(IPassMetaInfoService pmInfoService, IAppContextManager appContextManager, ILogsWriter logger)
+
+    public async void OnNext(IAppConfig value)
     {
-        _pmInfoService = pmInfoService;
-        _appContextManager = appContextManager;
-        _logger = logger;
+        try
+        {
+            if (_prev is null)
+            {
+                SetCulture(value.Culture);
+                _prev = value;
+                return;
+            }
+
+            if (value.Culture != _prev.Culture)
+            {
+                SetCulture(value.Culture);
+            }
+
+            if (value.ServerUrl != _prev.ServerUrl)
+            {
+                using var loading = AppLoading.General.Begin();
+
+                await PassMetaClient.CheckConnectionAsync(reset: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            LogsWriter.Error(ex, "Processing of app-config-changing event failed");
+        }
+
+        _prev = value;
     }
 
     public void OnCompleted()
@@ -33,50 +58,19 @@ public class AppConfigObserver : IObserver<IAppConfig>
     {
     }
 
-    public async void OnNext(IAppConfig value)
+    private static void SetCulture(AppCulture culture)
     {
-        try
+        Resources.Culture = culture;
+
+        Thread.CurrentThread.CurrentCulture = Resources.Culture;
+        Thread.CurrentThread.CurrentUICulture = Resources.Culture;
+        CultureInfo.DefaultThreadCurrentCulture = Resources.Culture;
+        CultureInfo.DefaultThreadCurrentUICulture = Resources.Culture;
+
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
-            if (value.Culture != _prev?.Culture)
-            {
-                Resources.Culture = value.Culture;
-
-                Thread.CurrentThread.CurrentCulture = Resources.Culture;
-                Thread.CurrentThread.CurrentUICulture = Resources.Culture;
-                CultureInfo.DefaultThreadCurrentCulture = Resources.Culture;
-                CultureInfo.DefaultThreadCurrentUICulture = Resources.Culture;
-
-                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                {
-                    Thread.CurrentThread.CurrentCulture = Resources.Culture;
-                    Thread.CurrentThread.CurrentUICulture = Resources.Culture;
-                });
-            }
-
-            if (_prev is null)
-            {
-                _prev = value;
-                return;
-            }
-
-            if (value.ServerUrl != _prev.ServerUrl)
-            {
-                using var loading = AppLoading.General.Begin();
-
-                var result = await _pmInfoService.LoadAsync();
-                if (result.Ok)
-                {
-                    await _appContextManager.RefreshFromAsync(result.Data!);
-                }
-            }
-
-            
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Processing of app-config-changing event failed");
-        }
-
-        _prev = value;
+            Thread.CurrentThread.CurrentCulture = Resources.Culture;
+            Thread.CurrentThread.CurrentUICulture = Resources.Culture;
+        });
     }
 }

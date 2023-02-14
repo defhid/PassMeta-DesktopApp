@@ -10,6 +10,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
     
 using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Ui.App;
 using AppContext = PassMeta.DesktopApp.Core.AppContext;
 
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
@@ -68,7 +69,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Journal
             set => this.RaiseAndSetIfChanged(ref _records, value);
         }
 
-        private IPassMetaClient PassMetaClient => EnvironmentContainer.Resolve<IPassMetaClient>();
+        private IPassMetaClient PassMetaClient => Locator.Current.Resolve<IPassMetaClient>();
 
         public JournalViewModel(IScreen hostScreen) : base(hostScreen)
         {

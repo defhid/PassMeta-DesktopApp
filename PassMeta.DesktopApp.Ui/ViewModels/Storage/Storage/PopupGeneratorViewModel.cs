@@ -12,7 +12,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
     public class PopupGeneratorViewModel : ReactiveObject
     {
-        private readonly IPassMetaCryptoService _passMetaCryptoService = EnvironmentContainer.Resolve<IPassMetaCryptoService>();
+        private readonly IPassMetaCryptoService _passMetaCryptoService = Locator.Current.Resolve<IPassMetaCryptoService>();
 
         private int _length = PresetsCache.Generator.Length;
         public int Length

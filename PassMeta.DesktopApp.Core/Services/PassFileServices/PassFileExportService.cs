@@ -16,7 +16,7 @@ using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
-namespace PassMeta.DesktopApp.Core.Services;
+namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 
 /// <inheritdoc />
 public class PassFileExportService : IPassFileExportService

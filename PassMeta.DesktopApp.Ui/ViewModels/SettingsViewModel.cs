@@ -10,6 +10,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Ui.App;
 using PassMeta.DesktopApp.Ui.Views.Etc;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
 
@@ -17,7 +18,7 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 {
     public class SettingsViewModel : PageViewModel
     {
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
         private bool _devMode;
 
         public IReadOnlyList<AppCulture> Cultures => AppCulture.All;

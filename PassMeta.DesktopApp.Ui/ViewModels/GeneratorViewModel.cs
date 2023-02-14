@@ -16,9 +16,9 @@ namespace PassMeta.DesktopApp.Ui.ViewModels
 
     public class GeneratorViewModel : PageViewModel
     {
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
-        private readonly IPassMetaCryptoService _passMetaCryptoService = EnvironmentContainer.Resolve<IPassMetaCryptoService>();
-        private readonly IClipboardService _clipboardService = EnvironmentContainer.Resolve<IClipboardService>();
+        private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
+        private readonly IPassMetaCryptoService _passMetaCryptoService = Locator.Current.Resolve<IPassMetaCryptoService>();
+        private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
 
         public int Length
         {

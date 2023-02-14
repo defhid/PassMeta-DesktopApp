@@ -2,6 +2,7 @@ using Avalonia.Input;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Ui.App;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 {
@@ -87,8 +88,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage
 
         public readonly ViewElements ViewElements = new();
         
-        private readonly IPassFileSyncService _pfSyncService = EnvironmentContainer.Resolve<IPassFileSyncService>();
-        private readonly IDialogService _dialogService = EnvironmentContainer.Resolve<IDialogService>();
+        private readonly IPassFileSyncService _pfSyncService = Locator.Current.Resolve<IPassFileSyncService>();
+        private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
 
         public StorageViewModel(IScreen hostScreen) : base(hostScreen)
         {

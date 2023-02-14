@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -12,7 +11,7 @@ using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.App.Observers;
 using PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow;
@@ -43,7 +42,7 @@ public class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         MainWindow = MakeWindow();
-        EnvironmentContainer.Resolve<IDialogService>().Flush();
+        Locator.Current.Resolve<IDialogService>().Flush();
     }
 
     public static void ReopenMainWindow()
@@ -54,7 +53,7 @@ public class App : Application
         MainWindow?.Close();
         MainWindow = window;
 
-        EnvironmentContainer.Resolve<IDialogService>().Flush();
+        Locator.Current.Resolve<IDialogService>().Flush();
     }
 
     private static async Task BeforeLaunchAsync()
@@ -63,27 +62,22 @@ public class App : Application
 
         ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
 
-        DependencyInstaller.RegisterCoreServices();
-        DependencyInstaller.RegisterUiServices();
+        DependencyInstaller.RegisterServices();
         DependencyInstaller.RegisterViewsForViewModels();
 
-        EnvironmentContainer.Initialize(Locator.Current);
-
-        var logManager = EnvironmentContainer.Resolve<ILogsManager>();
-        var dialogService = EnvironmentContainer.Resolve<IDialogService>();
-        var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
+        var logManager = Locator.Current.Resolve<ILogsManager>();
+        var dialogService = Locator.Current.Resolve<IDialogService>();
 
         logManager.InternalErrorOccured += (_, ev) => 
             dialogService.ShowError(ev.Message, more: ev.Exception.ToString());
-        
-        EnvironmentContainer.Resolve<IAppConfigManager>().CurrentObservable
 
         await StartUp.LoadAsync();
 
-        _ = AppPaths.CurrentObservable.Subscribe(new AppConfigObserver(passMetaClient, logManager));
-        _ = AppContext.CurrentObservable.Subscribe(new AppContextObserver(logManager));
-            
-        _ = passMetaClient.OnlineObservable.Subscribe(new OnlineObserver(passMetaClient, logManager));
+        Locator.Current.Resolve<IAppConfigManager>()
+            .CurrentObservable.Subscribe(new AppConfigObserver());
+
+        Locator.Current.Resolve<IPassMetaClient>()
+            .OnlineObservable.Subscribe(new OnlineObserver());
 
         _ = Task.Run(StartUp.CleanUp);
     }

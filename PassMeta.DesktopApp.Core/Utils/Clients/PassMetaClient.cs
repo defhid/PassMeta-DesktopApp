@@ -48,7 +48,7 @@ public sealed class PassMetaClient : IPassMetaClient
         _okBadService = okBadService;
         _httpClient = CreateHttpClient(appContextManager);
     }
-        
+
     /// <inheritdoc />
     public bool Online => _onlineSubject.Value;
 
@@ -67,9 +67,18 @@ public sealed class PassMetaClient : IPassMetaClient
         => new RequestBuilder(httpRequestBase.Method, httpRequestBase.Url, this);
 
     /// <inheritdoc />
-    public async Task<bool> CheckConnectionAsync()
+    public async Task<bool> CheckConnectionAsync(bool reset = false)
     {
-        if (AppConfigProvider.Current.ServerUrl is null) return false;
+        if (AppConfigProvider.Current.ServerUrl is null)
+        {
+            SetOnline(false);
+            return false;
+        }
+
+        if (reset)
+        {
+            SetOnline(false);
+        }
 
         var has = false;
         try
@@ -89,7 +98,7 @@ public sealed class PassMetaClient : IPassMetaClient
             }
         }
 
-        RefreshOnline(has);
+        SetOnline(has);
 
         return Online;
     }
@@ -224,7 +233,7 @@ public sealed class PassMetaClient : IPassMetaClient
         }
         catch (HttpRequestException ex)
         {
-            RefreshOnline(false);
+            SetOnline(false);
             _logger.Error(ex, $"{message.GetShortInformation()} {Resources.API__CONNECTION_ERR} [{context}]");
             return (null, ResponseFactory.FakeOkBad(false, Resources.API__CONNECTION_ERR));
         }
@@ -301,7 +310,7 @@ public sealed class PassMetaClient : IPassMetaClient
         return okBad ?? throw new FormatException();
     }
 
-    private void RefreshOnline(bool isOnline)
+    private void SetOnline(bool isOnline)
     {
         if (Online == isOnline)
         {
