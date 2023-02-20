@@ -34,6 +34,9 @@ public sealed class PassMetaClient : IPassMetaClient
 
     internal readonly IAppConfigProvider AppConfigProvider;
 
+    static PassMetaClient()
+        => ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+
     /// <summary></summary>
     public PassMetaClient(
         IAppContextManager appContextManager,

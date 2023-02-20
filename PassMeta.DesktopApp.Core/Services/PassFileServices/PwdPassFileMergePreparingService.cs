@@ -6,7 +6,6 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
-using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
@@ -18,19 +17,19 @@ namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 /// <inheritdoc />
 public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingService
 {
-    private readonly IPassFileContext<PwdPassFile> _passFileContext;
+    private readonly IPassFileContextProvider _passFileContextProvider;
     private readonly IPassFileRemoteService _remoteService;
     private readonly IPassFileCryptoService _passFileCryptoService;
     private readonly IDialogService _dialogService;
 
     /// <summary></summary>
     public PwdPassFileMergePreparingService(
-        IPassFileContext<PwdPassFile> passFileContext,
+        IPassFileContextProvider passFileContextProvider,
         IPassFileRemoteService remoteService,
         IPassFileCryptoService passFileCryptoService,
         IDialogService dialogService)
     {
-        _passFileContext = passFileContext;
+        _passFileContextProvider = passFileContextProvider;
         _remoteService = remoteService;
         _passFileCryptoService = passFileCryptoService;
         _dialogService = dialogService;
@@ -43,7 +42,7 @@ public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingServic
         {
             if (localPassFile.Content.Encrypted is null)
             {
-                var result = await _passFileContext.LoadContentAsync(localPassFile);
+                var result = await _passFileContextProvider.PwdPassFileContext.LoadContentAsync(localPassFile);
                 if (result.Bad)
                 {
                     return Result.Failure<PwdPassFileMerge>();

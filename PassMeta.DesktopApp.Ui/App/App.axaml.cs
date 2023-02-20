@@ -1,4 +1,3 @@
-using System.Net;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
@@ -8,11 +7,11 @@ using Avalonia.Markup.Xaml;
 using Splat;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Core.Extensions;
-using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Ui.App.Observers;
 using PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow;
 using PassMeta.DesktopApp.Ui.Views.Main;
@@ -60,26 +59,30 @@ public class App : Application
     {
         using var loading = AppLoading.General.Begin();
 
-        ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
-
         DependencyInstaller.RegisterServices();
         DependencyInstaller.RegisterViewsForViewModels();
-
+        
         var logManager = Locator.Current.Resolve<ILogsManager>();
+        var appConfigManager = Locator.Current.Resolve<IAppConfigManager>();
+        var appContextManager = Locator.Current.Resolve<IAppContextManager>();
         var dialogService = Locator.Current.Resolve<IDialogService>();
+        var pmClient = Locator.Current.Resolve<IPassMetaClient>();
 
         logManager.InternalErrorOccured += (_, ev) => 
             dialogService.ShowError(ev.Message, more: ev.Exception.ToString());
+        
+        appConfigManager.CurrentObservable.Subscribe(new AppConfigObserver());
+        pmClient.OnlineObservable.Subscribe(new OnlineObserver());
 
-        await StartUp.LoadAsync();
+        await appConfigManager.LoadAsync();
+        await appContextManager.LoadAsync();
 
-        Locator.Current.Resolve<IAppConfigManager>()
-            .CurrentObservable.Subscribe(new AppConfigObserver());
+        if (!await pmClient.CheckConnectionAsync())
+        {
+            dialogService.ShowInfo(Common.Resources.API__CONNECTION_ERR);
+        }
 
-        Locator.Current.Resolve<IPassMetaClient>()
-            .OnlineObservable.Subscribe(new OnlineObserver());
-
-        _ = Task.Run(StartUp.CleanUp);
+        _ = Task.Run(logManager.CleanUp);
     }
 
     private static MainWindow MakeWindow()
@@ -89,7 +92,7 @@ public class App : Application
         win.Closed += (_, _) => win.DataContext.Dispose();
  
         DependencyInstaller.Unregister<INotificationManager>();
-        DependencyInstaller.RegisterSingleton<INotificationManager>(new WindowNotificationManager(win)
+        DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)
         {
             HorizontalAlignment = HorizontalAlignment.Right,
             VerticalAlignment = VerticalAlignment.Bottom,
