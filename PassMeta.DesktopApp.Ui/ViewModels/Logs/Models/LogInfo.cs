@@ -1,9 +1,9 @@
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Mapping.Values;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Logs.Models
 {
     using System;
-    using System.Linq;
     using Common.Models.Entities;
 
     public class LogInfo
@@ -13,8 +13,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Logs.Models
         public string CreatedOnShort => _log?.CreatedOn?.ToShortDateTimeString() ?? string.Empty;
         public string? CreatedOnFull => _log?.CreatedOn?.ToString("F").Capitalize();
 
-        public string SectionShort => Log.Sections.MappingShort.Map(_log?.Section, "?");
-        public string? SectionFull => Log.Sections.Mapping.Map(_log?.Section, _log?.Section);
+        public string SectionShort => LogSectionMapping.SectionToShortName.Map(_log?.Section, "?");
+        public string? SectionFull => LogSectionMapping.SectionToFullName.Map(_log?.Section, _log?.Section);
 
         public string TextShort
         {

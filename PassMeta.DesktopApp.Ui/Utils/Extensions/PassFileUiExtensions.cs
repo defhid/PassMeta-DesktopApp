@@ -1,3 +1,5 @@
+using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
@@ -127,6 +129,37 @@ namespace PassMeta.DesktopApp.Ui.Utils.Extensions
                 
             dialogService.ShowFailure(result.Message!);
             return Result.Failure();
+        }
+        
+        private static async Task<IResult> TryLoadIfRequiredAndDecryptAsync<TPassFile, TContent>(
+            this IPassFileContext<TPassFile> context, 
+            TPassFile passFile,
+            IPassFileCryptoService pfCryptoService,
+            IDialogService dialogService)
+            where TPassFile : PassFile<TContent>
+            where TContent : class, new()
+        {
+            if (passFile.Content.Decrypted is not null)
+            {
+                return Result.Success();
+            }
+
+            if (passFile.Content.Encrypted is null)
+            {
+                var loadResult = await context.LoadEncryptedContentAsync(passFile);
+                if (loadResult.Bad)
+                {
+                    return loadResult;
+                }
+            }
+
+            var decryptResult = pfCryptoService.Decrypt(passFile);
+            if (decryptResult.Bad)
+            {
+                dialogService.ShowError(decryptResult.Message!);
+            }
+
+            return decryptResult;
         }
     }
 }

@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 /// <summary>
 /// Service for logging user messages and application events.
 /// </summary>
+/// <remarks>Singleton.</remarks>
 public interface ILogsWriter
 {
     /// <inheritdoc cref="IAppConfigProvider"/>

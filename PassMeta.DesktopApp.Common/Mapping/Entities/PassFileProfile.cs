@@ -5,7 +5,7 @@ using PassMeta.DesktopApp.Common.Models.Dto.Request;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
-namespace PassMeta.DesktopApp.Common.Utils.EntityMapping;
+namespace PassMeta.DesktopApp.Common.Mapping.Entities;
 
 /// <inheritdoc />
 public class PassFileProfile : Profile

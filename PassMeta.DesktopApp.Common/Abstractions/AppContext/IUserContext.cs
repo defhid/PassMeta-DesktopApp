@@ -3,6 +3,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.AppContext;
 /// <summary>
 /// Application user context.
 /// </summary>
+/// <remarks>Scoped.</remarks>
 public interface IUserContext
 {
     /// <summary>

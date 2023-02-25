@@ -20,7 +20,6 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Utils.PassFileContext;
@@ -44,6 +43,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     private readonly IDialogService _dialogService;
     private readonly ILogsWriter _logger;
 
+    private bool _initialized;
     private Dictionary<long, PassFileState> _states = new();
 
     /// <summary></summary>
@@ -77,20 +77,28 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     public IObservable<bool> AnyChangedSource => _anyChangedSource;
 
     /// <inheritdoc />
-    public IEnumerable<TPassFile> CurrentList => _states.Values
-        .Select(x => x.Current)
-        .Where(x => x is not null)!;
+    public IEnumerable<TPassFile> CurrentList => (_initialized 
+        ? _states.Values
+            .Select(x => x.Current)
+            .Where(x => x is not null)
+        : throw new InvalidOperationException($"{nameof(CurrentList)} is accessed before loading!"))!;
 
     /// <inheritdoc />
     public async Task<IResult> LoadListAsync(CancellationToken cancellationToken = default)
     {
+        if (_initialized)
+        {
+            Rollback();
+            return Result.Success();
+        }
+
         var result = await _pfLocalStorage.LoadListAsync(_userContext, cancellationToken);
         if (result.Bad)
         {
             return UnexpectedError(result.Message!);
         }
 
-        _states = new Dictionary<long, PassFileState>();
+        var states = new Dictionary<long, PassFileState>();
 
         foreach (var dto in result.Data!.Where(x => x.Type == PassFileType))
         {
@@ -99,13 +107,15 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
                 _mapper.Map<PassFileLocalDto, TPassFile>(dto));
         }
 
+        _states = states;
+        _initialized = true;
         _anyChangedSource.OnNext(false);
 
         return Result.Success();
     }
 
     /// <inheritdoc />
-    public async Task<IResult> LoadContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
+    public async Task<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
     {
         if (!FindStateWhereCurrentIs(passFile, out var state))
         {
@@ -124,6 +134,26 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         state.Source!.Content = new PassFileContent<TContent>(result.Data!);
 
         return Result.Success();
+    }
+
+    /// <inheritdoc />
+    public async Task<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
+    {
+        if (passFile.Content.Decrypted is not null)
+        {
+            var result = _pfCryptoService.Encrypt(passFile);
+            if (result.Bad)
+            {
+                return UnexpectedError(result.Message!);
+            }
+        }
+
+        if (passFile.Content.Encrypted is not null)
+        {
+            return Result.Success();
+        }
+
+        return await LoadEncryptedContentAsync(passFile, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -285,7 +315,6 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         var toSaveInfo = new List<TPassFile>();
         var toSaveContent = new List<TPassFile>();
         var toDeleteContent = new List<(TPassFile passFile, int version)>();
-        var warnings = new List<string>();
 
         foreach (var state in _states.Values)
         {
@@ -316,7 +345,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
             var res = await _pfLocalStorage.GetVersionsAsync(passFile.Id, _userContext, CancellationToken.None);
             if (res.Bad)
             {
-                warnings.Add($"{passFile.GetIdentityString()}: {res.Message}");
+                UnexpectedError($"{passFile.GetIdentityString()}: {res.Message}", show: false);
                 continue;
             }
 
@@ -326,29 +355,13 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
                 .Select(x => (passFile, x)));
         }
 
-        var result = await CommitInternalAsync(toSaveInfo, toSaveContent, toDeleteContent, warnings);
-
-        if (warnings.Any())
-        {
-            foreach (var warn in warnings)
-            {
-                UnexpectedError(warn, show: false);
-            }
-
-            if (result.Ok)
-            {
-                _dialogService.ShowError(Resources.PASSCONTEXT__COMMIT_WARNING);
-            }
-        }
-
-        return result;
+        return await CommitInternalAsync(toSaveInfo, toSaveContent, toDeleteContent);
     }
 
     private async Task<IResult> CommitInternalAsync(
         ICollection<TPassFile> toSaveInfo,
         IEnumerable<TPassFile> toSaveContent,
-        IEnumerable<(TPassFile passFile, int version)> toDeleteContent,
-        ICollection<string> warnings)
+        IEnumerable<(TPassFile passFile, int version)> toDeleteContent)
     {
         foreach (var passFile in toSaveContent)
         {
@@ -369,7 +382,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
             if (res.Bad)
             {
-                warnings.Add($"{passFile.GetIdentityString()}: {res.Message}");
+                UnexpectedError($"{passFile.GetIdentityString()}: {res.Message}", show: false);
             }
         }
 
@@ -445,8 +458,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
     private IResult UnexpectedError(string log, bool show = true)
     {
-        log = GetType().Name + ": " + log;
-        _logger.Error(log);
+        _logger.Error(GetType().Name + ": " + log);
 
         if (show)
         {

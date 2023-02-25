@@ -5,10 +5,11 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
+using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
-using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
@@ -18,14 +19,7 @@ public class AccountService : IAccountService
     /// <summary>
     /// Requests bad mapping.
     /// </summary>
-    public static readonly ValuesMapper<string, string> WhatToStringValuesMapper = new MapToResource<string>[]
-    {
-        new("first_name", () => Resources.DICT_ACCOUNT__FIRST_NAME),
-        new("last_name", () => Resources.DICT_ACCOUNT__LAST_NAME),
-        new("login", () => Resources.DICT_ACCOUNT__LOGIN),
-        new("password", () => Resources.DICT_ACCOUNT__PASSWORD),
-        new("password_confirm", () => Resources.DICT_ACCOUNT__PASSWORD_CONFIRM)
-    };
+    public static readonly IValuesMapper<string, string> WhatToStringValuesMapper = UserFieldMapping.FieldToName;
 
     private readonly IPassMetaClient _passMetaClient;
     private readonly IAppContextManager _appContextManager;

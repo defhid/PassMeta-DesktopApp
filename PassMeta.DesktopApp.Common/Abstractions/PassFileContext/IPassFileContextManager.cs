@@ -6,5 +6,8 @@ namespace PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 /// <remarks>Singleton.</remarks>
 public interface IPassFileContextManager : IPassFileContextProvider
 {
-    
+    /// <summary>
+    /// Dispose current contexts and initialize new ones with actual user context.
+    /// </summary>
+    void Reload();
 }

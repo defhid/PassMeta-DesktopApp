@@ -9,7 +9,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core.Services.Extensions;
-using PassMeta.DesktopApp.Ui.Interfaces.UiServices;
+using PassMeta.DesktopApp.Ui.Interfaces.Services;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 

@@ -6,7 +6,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Utils;
 /// <summary>
 /// Counter.
 /// </summary>
-/// <remarks>Stateless.</remarks>
+/// <remarks>Singleton.</remarks>
 public interface ICounter
 {
     /// <summary>

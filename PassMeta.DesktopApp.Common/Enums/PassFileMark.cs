@@ -19,12 +19,12 @@ public enum PassFileMark : short
     /// <summary>
     /// Passfile needs merge with remote version.
     /// </summary>
-    NeedsMerge = 0b1,
+    NeedsMerge = 0b_1,
 
     /// <summary>
     /// Passfile is merged.
     /// </summary>
-    Merged = 0b10,
+    Merged = 0b_10,
 
     #endregion
 
@@ -33,35 +33,27 @@ public enum PassFileMark : short
     /// <summary>
     /// Passfile wasn't downloaded from the server because of some error.
     /// </summary>
-    DownloadingError = 0b100,
-        
+    DownloadingError = 0b_100,
+
     /// <summary>
     /// Passfile wasn't uploaded to the server because of some error.
     /// </summary>
-    UploadingError = 0b1000,
-        
+    UploadingError = 0b_1000,
+
     /// <summary>
     /// Passfile wasn't deleted from the server because of some error.
     /// </summary>
-    RemoteDeletingError = 0b10000,
-        
+    RemoteDeletingError = 0b_1000_0,
+
     /// <summary>
-    /// Other passfile problem.
+    /// Other passfile error.
     /// </summary>
-    OtherError = 0b100000,
+    OtherError = 0b_1000_00,
+
+    /// <summary>
+    /// All passfile error marks.
+    /// </summary>
+    AllErrors = DownloadingError | UploadingError | RemoteDeletingError | OtherError
 
     #endregion
-}
-
-public class Dict
-{
-    private static readonly ValuesMapper<PassFileMark, string> KindToName = new MapToResource<PassFileMark>[]
-    {
-        new(PassFileMark.NeedsMerge, () => Resources.PASSFILE_PROBLEM__NEEDS_MERGE),
-        new(PassFileMark.Merged, () => Resources.),
-        new(PassFileMark.DownloadingError, () => Resources.PASSFILE_PROBLEM__DOWNLOAD_ERR),
-        new(PassFileMark.UploadingError, () => Resources.PASSFILE_PROBLEM__UPLOAD_ERR),
-        new(PassFileMark.RemoteDeletingError, () => Resources.PASSFILE_PROBLEM__REMOTE_DELETING_ERR),
-        new(PassFileMark.OtherError, () => Resources.PASSFILE_PROBLEM__OTHER),
-    };
 }

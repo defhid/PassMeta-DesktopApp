@@ -51,12 +51,12 @@ public interface IPassFileRemoteService
     /// <summary>
     /// Save passfile content to remote and get actual information.
     /// </summary>
-    Task<IResult<TPassFile>> SaveEncryptedContentAsync<TPassFile, TContent>(TPassFile passFile)
-        where TPassFile : PassFile<TContent>
-        where TContent : class, new();
+    /// <remarks><see cref="PassFile.ContentEncrypted"/> must not be null!</remarks>
+    Task<IResult<TPassFile>> SaveEncryptedContentAsync<TPassFile>(TPassFile passFile)
+        where TPassFile : PassFile;
 
     /// <summary>
     /// Delete passfile from remote.
     /// </summary>
-    Task<IResult> DeleteAsync(PassFile passFile, string accountPassword);
+    Task<IResult> DeleteAsync(PassFile passFile);
 }

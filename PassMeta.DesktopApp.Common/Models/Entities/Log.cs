@@ -1,9 +1,6 @@
-using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
-using PassMeta.DesktopApp.Common.Utils.ValueMapping;
+using System;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities;
-
-using System;
 
 /// <summary>
 /// Application log object.
@@ -54,29 +51,5 @@ public class Log
         /// Unknown section.
         /// </summary>
         public const string Unknown = "UN";
-            
-        /// <summary>
-        /// Mapping for <see cref="Section"/> values.
-        /// </summary>
-        public static readonly IValuesMapper<string, string> Mapping = new ValuesMapper<string, string>(
-            new MapToResource<string>[]
-            {
-                new(Info, () => Resources.LOG_SECTION__INFO),
-                new(Warning, () => Resources.LOG_SECTION__WARN),
-                new(Error, () => Resources.LOG_SECTION__ERROR),
-                new(Unknown, () => Resources.LOG_SECTION__UNKNOWN),
-            });
-            
-        /// <summary>
-        /// Short mapping for <see cref="Section"/> values.
-        /// </summary>
-        public static readonly IValuesMapper<string, string> MappingShort = new ValuesMapper<string, string>(
-            new MapToResource<string>[]
-            {
-                new(Info, () => Resources.LOG_SECTION__INFO_SHORT),
-                new(Warning, () => Resources.LOG_SECTION__WARN_SHORT),
-                new(Error, () => Resources.LOG_SECTION__ERROR_SHORT),
-                new(Unknown, () => Resources.LOG_SECTION__UNKNOWN_SHORT),
-            });
     }
 }

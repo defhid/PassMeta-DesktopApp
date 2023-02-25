@@ -42,7 +42,7 @@ public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingServic
         {
             if (localPassFile.Content.Encrypted is null)
             {
-                var result = await _passFileContextProvider.PwdPassFileContext.LoadContentAsync(localPassFile);
+                var result = await _passFileContextProvider.For<PwdPassFile>().LoadEncryptedContentAsync(localPassFile);
                 if (result.Bad)
                 {
                     return Result.Failure<PwdPassFileMerge>();

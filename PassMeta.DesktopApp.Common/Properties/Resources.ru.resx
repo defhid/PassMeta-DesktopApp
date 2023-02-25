@@ -167,9 +167,6 @@
     <data name="PASSFILE__VALIDATION__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Неверная кодовая фраза</value>
     </data>
-    <data name="DICT_STORAGE__CHECK_PASSWORD" xml:space="preserve">
-        <value>пароль от аккаунта</value>
-    </data>
     <data name="STORAGE__ITEM_LABEL__WHAT" xml:space="preserve">
         <value>Логин</value>
     </data>
@@ -182,16 +179,16 @@
     <data name="STORAGE__ITEM_TOOLTIP__PASSWORD_COPY" xml:space="preserve">
         <value>Скопировать</value>
     </data>
-    <data name="PASSFILE_PROBLEM__NEEDS_MERGE" xml:space="preserve">
-        <value>Требуется слияние</value>
+    <data name="PASSFILE_MARK__NEEDS_MERGE" xml:space="preserve">
+        <value>Требуется решить конфликты</value>
     </data>
-    <data name="PASSFILE_PROBLEM__DOWNLOAD_ERR" xml:space="preserve">
+    <data name="DICT__PASSFILE_MARK__DOWNLOAD_ERR" xml:space="preserve">
         <value>Ошибка скачивания</value>
     </data>
-    <data name="PASSFILE_PROBLEM__UPLOAD_ERR" xml:space="preserve">
+    <data name="PASSFILE_MARK__UPLOAD_ERR" xml:space="preserve">
         <value>Ошибка выгрузки</value>
     </data>
-    <data name="PASSFILE_PROBLEM__OTHER" xml:space="preserve">
+    <data name="PASSFILE_MARK__OTHER_ERR" xml:space="preserve">
         <value>Ошибка</value>
     </data>
     <data name="GENERATOR__RESULT_COPIED" xml:space="preserve">
@@ -207,7 +204,7 @@
         <value>Логин '{0}' скопирован в буфер обмена</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">
-        <value>Пакет паролей {0}</value>
+        <value>Пакет {0}</value>
     </data>
     <data name="PASSFILE_COLOR__BLUE" xml:space="preserve">
         <value>Синий</value>
@@ -276,7 +273,7 @@
         <value>Новый (локальный)</value>
     </data>
     <data name="PASSFILE__TITLE_NEW" xml:space="preserve">
-        <value>Новый пакет паролей {0}</value>
+        <value>Новый пакет {0}</value>
     </data>
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Не удаётся зашифровать файл</value>
@@ -287,46 +284,40 @@
     <data name="PASSSTORAGE__ERR" xml:space="preserve">
         <value>Ошибка во время работы локального менеджера пакетов! (см. логи)</value>
     </data>
-    <data name="PASSCONTEXT__COMMIT_WARNING" xml:space="preserve">
-        <value>Пакеты сохранены локально с ошибками! (см. логи)</value>
-    </data>
-    <data name="PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE" xml:space="preserve">
-        <value>Пожалуйста, введите пароль от своего аккаунта для удаления пакета '{0}' с сервера (#{1}, удалён локально {2})</value>
-    </data>
-    <data name="PASSFILE_PROBLEM__REMOTE_DELETING_ERR" xml:space="preserve">
+    <data name="PASSFILE_MARK__REMOTE_DELETING_ERR" xml:space="preserve">
         <value>Ошибка удаления с сервера</value>
     </data>
     <data name="PASSFILE__TITLE_DELETED" xml:space="preserve">
-        <value>Удалённый локально пакет паролей {0}</value>
+        <value>Удалённый локально пакет {0}</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_CREATED_ON" xml:space="preserve">
+    <data name="DICT__PASSFILE__CREATED_ON" xml:space="preserve">
         <value>время создания пакета</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_COLOR" xml:space="preserve">
+    <data name="DICT__PASSFILE__COLOR" xml:space="preserve">
         <value>цвет пакета</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_ID" xml:space="preserve">
+    <data name="DICT__PASSFILE__ID" xml:space="preserve">
         <value>идентификатор пакета</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_NAME" xml:space="preserve">
+    <data name="DICT__PASSFILE__NAME" xml:space="preserve">
         <value>название пакета</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_SMTH" xml:space="preserve">
+    <data name="DICT__PASSFILE__CONTENT" xml:space="preserve">
         <value>данные пакета</value>
     </data>
-    <data name="DICT_ACCOUNT__FIRST_NAME" xml:space="preserve">
+    <data name="DICT__USER__FIRST_NAME" xml:space="preserve">
         <value>имя</value>
     </data>
-    <data name="DICT_ACCOUNT__LAST_NAME" xml:space="preserve">
+    <data name="DICT__USER__LAST_NAME" xml:space="preserve">
         <value>фамилия</value>
     </data>
-    <data name="DICT_ACCOUNT__LOGIN" xml:space="preserve">
+    <data name="DICT__USER__LOGIN" xml:space="preserve">
         <value>логин</value>
     </data>
-    <data name="DICT_ACCOUNT__PASSWORD" xml:space="preserve">
+    <data name="DICT__USER__PASSWORD" xml:space="preserve">
         <value>новый пароль</value>
     </data>
-    <data name="DICT_ACCOUNT__PASSWORD_CONFIRM" xml:space="preserve">
+    <data name="DICT__USER__PASSWORD_CONFIRM" xml:space="preserve">
         <value>старый пароль (подтверждение)</value>
     </data>
     <data name="APP__OFFLINE_MODE" xml:space="preserve">
@@ -335,10 +326,10 @@
     <data name="APP__ONLINE_MODE" xml:space="preserve">
         <value>Онлайн</value>
     </data>
-    <data name="DICT_AUTH__USER" xml:space="preserve">
+    <data name="DICT__USER" xml:space="preserve">
         <value>пользователь</value>
     </data>
-    <data name="PASSERVICE__INFO_COMMITED" xml:space="preserve">
+    <data name="PASSCONTEXT__INFO_COMMITED" xml:space="preserve">
         <value>Сохранено локально</value>
     </data>
     <data name="STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE" xml:space="preserve">
@@ -481,7 +472,7 @@
         <value>Выбрать</value>
     </data>
     <data name="PASSFILELIST__TITLE" xml:space="preserve">
-        <value>Выбор пакета паролей</value>
+        <value>Выбор пакета</value>
     </data>
     <data name="PASSFILELIST__BTN_IMPORT" xml:space="preserve">
         <value>Импортировать из...</value>
@@ -505,13 +496,13 @@
         <value>Ошибка буфера обмена! (см. логи)</value>
     </data>
     <data name="PASSFILELIST__FILTER_PASSFILES" xml:space="preserve">
-        <value>Пакеты паролей</value>
+        <value>Пакеты</value>
     </data>
     <data name="PASSFILE__BTN_EXPORT" xml:space="preserve">
         <value>Экспортировать...</value>
     </data>
     <data name="PASSFILE__EXPORT_PASSFILE" xml:space="preserve">
-        <value>Пакеты паролей</value>
+        <value>Пакеты</value>
     </data>
     <data name="PASSFILE__EXPORT_PASSFILE_OPEN" xml:space="preserve">
         <value>Открытые пакеты паролей</value>
@@ -586,7 +577,7 @@
         <value>Все</value>
     </data>
     <data name="PASSFILEMERGE__TITLE" xml:space="preserve">
-        <value>Слияние пакета паролей</value>
+        <value>Слияние пакета</value>
     </data>
     <data name="PASSFILE__INFO_MERGED" xml:space="preserve">
         <value>Пакет паролей успешно слит!</value>
@@ -673,6 +664,18 @@
         <value>Режим разработчика</value>
     </data>
     <data name="PASSCONTEXT_ERR" xml:space="preserve">
-        <value>Ошибка при работе контекстного менеджера пакетов паролей (см. логи)</value>
+        <value>Ошибка при работе контекстного менеджера пакетов (см. логи)</value>
+    </data>
+    <data name="DICT__PASSFILE" xml:space="preserve">
+        <value>пакет</value>
+    </data>
+    <data name="PASSFILE_MARK__MERGED" xml:space="preserve">
+        <value>Конфликты решены</value>
+    </data>
+    <data name="PASSERVICE__ERR" xml:space="preserve">
+        <value>Произошла неизвестная ошибка при работе сервиса пакетов (см. логи)</value>
+    </data>
+    <data name="PASSERVICE__WARN_SYNCHRONIZED" xml:space="preserve">
+        <value>Cинхронизировано с сервером. ВНИМАНИЕ: см. логи</value>
     </data>
 </root>

@@ -10,7 +10,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 /// <summary>
 /// A context for working with passfiles via local storage.
 /// </summary>
-/// <remarks>Stateful, user-scoped.</remarks>
+/// <remarks>Stateful. Scoped (by user).</remarks>
 public interface IPassFileContext : IDisposable
 {
     /// <summary>
@@ -31,6 +31,7 @@ public interface IPassFileContext : IDisposable
     /// <summary>
     /// Save all changes.
     /// </summary>
+    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
     Task<IResult> CommitAsync();
 
     /// <summary>
@@ -49,14 +50,24 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     IEnumerable<TPassFile> CurrentList { get; }
 
     /// <summary>
-    /// Load <see cref="CurrentList"/>.
+    /// Load <see cref="CurrentList"/> if it hasn't been loaded yet,
+    /// otherwise execute <see cref="IPassFileContext.Rollback"/>.
     /// </summary>
+    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
     Task<IResult> LoadListAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Load passfile content of its current version.
+    /// Load passfile encrypted content of its current version.
     /// </summary>
-    Task<IResult> LoadContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
+    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
+    Task<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Load passfile encrypted content of its current version
+    /// or encrypt current decrypted content.
+    /// </summary>
+    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
+    Task<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Create a new passfile with local id, add it to <see cref="CurrentList"/>.
@@ -68,27 +79,36 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     /// remove <paramref name="replacePassFile"/> from <see cref="CurrentList"/>
     /// and reassign contents to the origin passfile.
     /// </summary>
+    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
     IResult Add(TPassFile originPassFile, TPassFile? replacePassFile);
 
     /// <summary>
     /// Mark passfile as information-changed.
     /// </summary>
-    /// <remarks>Parameter <paramref name="passFile"/> must be from <see cref="CurrentList"/>.</remarks>
+    /// <remarks>
+    /// Parameter <paramref name="passFile"/> must be from <see cref="CurrentList"/>.
+    /// If result is bad, message will be shown by dialog service.
+    /// </remarks>
     IResult UpdateInfo(TPassFile passFile, bool fromOrigin);
 
     /// <summary>
     /// Mark passfile as version-changed.
     /// </summary>
-    /// <remarks>Parameter <paramref name="passFile"/> must be from <see cref="CurrentList"/>.</remarks>
+    /// <remarks>
+    /// Parameter <paramref name="passFile"/> must be from <see cref="CurrentList"/>.
+    /// If result is bad, message will be shown by dialog service.
+    /// </remarks>
     IResult UpdateContent(TPassFile passFile, bool fromOrigin);
 
     /// <summary>
     /// Mark passfile as deleted.
     /// </summary>
+    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
     IResult Delete(TPassFile passFile, bool fromOrigin);
 
     /// <summary>
     /// Mark passfile as restored after local deletion.
     /// </summary>
+    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
     IResult Restore(TPassFile passFile);
 }

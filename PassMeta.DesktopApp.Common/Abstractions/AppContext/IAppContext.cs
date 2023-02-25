@@ -7,6 +7,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.AppContext;
 /// <summary>
 /// Application context: cookies, user, etc.
 /// </summary>
+/// <remarks>Scoped.</remarks>
 public interface IAppContext
 {
     /// <summary>

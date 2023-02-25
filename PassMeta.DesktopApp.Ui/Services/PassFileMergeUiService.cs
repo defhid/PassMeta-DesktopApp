@@ -13,8 +13,7 @@ using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Core.Services.Extensions;
-    
-using PassMeta.DesktopApp.Ui.Interfaces.UiServices;
+using PassMeta.DesktopApp.Ui.Interfaces.Services;
 using PassMeta.DesktopApp.Ui.Views.Storage;
 
 namespace PassMeta.DesktopApp.Ui.Services;

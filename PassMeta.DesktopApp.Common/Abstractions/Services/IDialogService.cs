@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services;
 /// <summary>
 /// Service for communication with app user.
 /// </summary>
+/// <remarks>Singleton.</remarks>
 public interface IDialogService
 {
     /// <summary>

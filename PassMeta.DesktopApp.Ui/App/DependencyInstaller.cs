@@ -12,7 +12,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Utils.EntityMapping;
+using PassMeta.DesktopApp.Common.Mapping.Entities;
 using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Services;
 using PassMeta.DesktopApp.Core.Services.PassFileServices;
@@ -21,7 +21,7 @@ using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Core.Utils.Clients;
 using PassMeta.DesktopApp.Core.Utils.FileRepository;
 using PassMeta.DesktopApp.Core.Utils.PassFileContentSerializer;
-using PassMeta.DesktopApp.Ui.Interfaces.UiServices;
+using PassMeta.DesktopApp.Ui.Interfaces.Services;
 using PassMeta.DesktopApp.Ui.Services;
 using ReactiveUI;
 using Splat;
@@ -77,7 +77,6 @@ public static class DependencyInstaller
 
         Register<IPassFileRemoteService>(new PassFileRemoteService(
             Resolve<IPassMetaClient>(),
-            Resolve<IPassFileCryptoService>(),
             Resolve<IMapper>(),
             Resolve<IDialogService>(),
             Resolve<ILogsWriter>()));
@@ -97,10 +96,9 @@ public static class DependencyInstaller
             Resolve<IDialogService>()));
 
         Register<IPassFileSyncService>(new PassFileSyncService(
+            Resolve<IPassFileContextProvider>(),
             Resolve<IPassFileRemoteService>(),
-            Resolve<IPassMetaClient>(),
-            Resolve<IDialogService>(),
-            Resolve<ILogsWriter>()));
+            Resolve<IDialogService>()));
 
         Register<IPassFileImportService>(new PassFileImportService(
             Resolve<IPassMetaCryptoService>(),

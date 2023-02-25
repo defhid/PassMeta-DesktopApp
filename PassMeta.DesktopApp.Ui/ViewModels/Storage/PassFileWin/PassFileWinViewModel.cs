@@ -1,3 +1,5 @@
+using PassMeta.DesktopApp.Ui.Interfaces.Services;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
 {
     using System;
@@ -12,7 +14,6 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin
     using Constants;
     using Core;
     using Core.Utils;
-    using Interfaces.UiServices;
     using Models;
     using ReactiveUI;
 

@@ -5,6 +5,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 /// <summary>
 /// Application mutable configuration.
 /// </summary>
+/// <remarks>Scoped.</remarks>
 public interface IAppConfig
 {
     /// <summary>

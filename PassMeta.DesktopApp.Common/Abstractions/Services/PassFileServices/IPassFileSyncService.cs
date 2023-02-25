@@ -1,24 +1,17 @@
 using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 
 /// <summary>
-/// Service for working with passfiles.
+/// Service for synchronizing local and remote passfiles.
 /// </summary>
 public interface IPassFileSyncService
 {
     /// <summary>
-    /// Refresh passfiles from remote and get result list from local storage.
+    /// Commit current local changes and synchronize them with the remote.
     /// </summary>
-    /// <remarks>Automatic errors showing.</remarks>
-    /// <returns>Actual current passfile list.</returns>
-    Task RefreshLocalPassFilesAsync(PassFileType passFileType);
-
-    /// <summary>
-    /// Apply changes from local manager and commit locally.
-    /// </summary>
-    /// <remarks>Automatic errors showing.</remarks>
-    /// <returns>Actual current passfile list.</returns>
-    Task ApplyPassFileLocalChangesAsync(PassFileType passFileType);
+    /// <remarks>Results will always be showed by dialog service.</remarks>
+    Task SynchronizeAsync<TPassFile>()
+        where TPassFile : PassFile;
 }

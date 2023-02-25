@@ -8,6 +8,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 /// <summary>
 /// Application logs manager.
 /// </summary>
+/// <remarks>Singleton.</remarks>
 public interface ILogsManager : ILogsWriter, IDisposable
 {
     /// <summary>

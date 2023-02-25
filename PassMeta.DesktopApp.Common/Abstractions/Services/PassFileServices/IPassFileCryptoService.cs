@@ -5,6 +5,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 /// <summary>
 /// Service for passfile encryption and decryption.
 /// </summary>
+/// <remarks>Singleton.</remarks>
 public interface IPassFileCryptoService
 {
     /// <summary>

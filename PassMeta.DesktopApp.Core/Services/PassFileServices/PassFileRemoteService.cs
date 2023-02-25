@@ -9,14 +9,15 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
 using PassMeta.DesktopApp.Common.Conventions;
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Common.Utils.ValueMapping;
-using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
@@ -24,17 +25,8 @@ namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 /// <inheritdoc />
 public class PassFileRemoteService : IPassFileRemoteService
 {
-    private static readonly ValuesMapper<string, string> WhatToStringValuesMapper = new MapToResource<string>[]
-    {
-        new("passfile_id", () => Resources.DICT_STORAGE__PASSFILE_ID),
-        new("name", () => Resources.DICT_STORAGE__PASSFILE_NAME),
-        new("color", () => Resources.DICT_STORAGE__PASSFILE_COLOR),
-        new("created_on", () => Resources.DICT_STORAGE__PASSFILE_CREATED_ON),
-        new("check_password", () => Resources.DICT_STORAGE__CHECK_PASSWORD)
-    };
-
+    private static readonly IValuesMapper<string, string> WhatToStringValuesMapper = PassFileFieldMapping.FieldToName;
     private readonly IPassMetaClient _pmClient;
-    private readonly IPassFileCryptoService _pfCryptoService;
     private readonly IMapper _mapper;
     private readonly IDialogService _dialogService;
     private readonly ILogsWriter _logger;
@@ -42,13 +34,11 @@ public class PassFileRemoteService : IPassFileRemoteService
     /// <summary></summary>
     public PassFileRemoteService(
         IPassMetaClient pmClient,
-        IPassFileCryptoService pfCryptoService,
         IMapper mapper,
         IDialogService dialogService,
         ILogsWriter logger)
     {
         _pmClient = pmClient;
-        _pfCryptoService = pfCryptoService;
         _mapper = mapper;
         _dialogService = dialogService;
         _logger = logger;
@@ -169,22 +159,18 @@ public class PassFileRemoteService : IPassFileRemoteService
     }
 
     /// <inheritdoc />
-    public async Task<IResult<TPassFile>> SaveEncryptedContentAsync<TPassFile, TContent>(TPassFile passFile)
-        where TPassFile : PassFile<TContent>
-        where TContent : class, new()
+    public async Task<IResult<TPassFile>> SaveEncryptedContentAsync<TPassFile>(TPassFile passFile)
+        where TPassFile : PassFile
     {
-        if (passFile.Content.Encrypted is null)
+        if (passFile.ContentEncrypted is null)
         {
-            var result = _pfCryptoService.Encrypt(passFile);
-            if (result.Bad)
-            {
-                _dialogService.ShowError(result.Message!);
-                return Result.Failure<TPassFile>();
-            }
+            _logger.Error($"Saving passfile #{passFile.Id} content failed because of null encrypted content!");
+            _dialogService.ShowError(Resources.PASSERVICE__ERR);
+            return Result.Failure<TPassFile>();
         }
 
         var request = _pmClient.Begin(PassMetaApi.PassFile.PostVersion(passFile.Id))
-            .WithFormBody(new { smth = passFile.Content.Encrypted })
+            .WithFormBody(new { smth = passFile.ContentEncrypted })
             .WithContext(passFile.GetTitle())
             .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling();
@@ -200,10 +186,9 @@ public class PassFileRemoteService : IPassFileRemoteService
     }
 
     /// <inheritdoc />
-    public async Task<IResult> DeleteAsync(PassFile passFile, string accountPassword)
+    public async Task<IResult> DeleteAsync(PassFile passFile)
     {
         var request = _pmClient.Begin(PassMetaApi.PassFile.Delete(passFile.Id))
-            .WithJsonBody(new PassFileDeleteData { CheckPassword = accountPassword })
             .WithContext(passFile.GetTitle())
             .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling();

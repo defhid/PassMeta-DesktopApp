@@ -69,6 +69,11 @@ public abstract class PassFile : IPassFileChangeStamps
     /// </summary>
     public PassFileMark Mark { get; set; }
 
+    /// <summary>
+    /// Encrypted content.
+    /// </summary>
+    public abstract byte[]? ContentEncrypted { get; set; }
+
     /// <inheritdoc />
     public override string ToString()
         => $"<Passfile Id='{Id}', Name='{Name.Replace("'", "\"")}'>";
@@ -80,6 +85,16 @@ public abstract class PassFile : IPassFileChangeStamps
 public abstract class PassFile<TContent> : PassFile
     where TContent : class
 {
+    /// <inheritdoc />
+    public override byte[]? ContentEncrypted
+    {
+        get => Content.Encrypted;
+        set => Content = value is null 
+            ? default 
+            : new PassFileContent<TContent>(value);
+    }
+
     /// <inheritdoc cref="PassFileContent{TData}"/>
+    /// <remarks>Affects and is affected by <see cref="ContentEncrypted"/>.</remarks>
     public PassFileContent<TContent> Content { get; set; }
 }

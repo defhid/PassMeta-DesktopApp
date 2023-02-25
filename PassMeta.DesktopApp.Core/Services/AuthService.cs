@@ -7,20 +7,18 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
+using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
-using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
 /// <inheritdoc />
 public class AuthService : IAuthService
 {
-    private static readonly ValuesMapper<string, string> WhatToStringValuesMapper = AccountService.WhatToStringValuesMapper + new MapToResource<string>[]
-    {
-        new("user", () => Resources.DICT_AUTH__USER),
-    };
+    private static readonly IValuesMapper<string, string> WhatToStringValuesMapper = UserFieldMapping.FieldToName;
         
     private readonly IPassMetaClient _passMetaClient;
     private readonly IAppContextManager _appContextManager;
