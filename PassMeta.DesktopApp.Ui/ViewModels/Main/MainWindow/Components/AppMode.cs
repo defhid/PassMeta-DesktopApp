@@ -6,29 +6,28 @@ using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Core;
 
-namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components
+namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components;
+
+public class AppMode : ReactiveObject
 {
-    public class AppMode : ReactiveObject
+    private readonly ObservableAsPropertyHelper<string> _text;
+    public string Text => _text.Value;
+
+    private readonly ObservableAsPropertyHelper<ISolidColorBrush> _foreground;
+    public ISolidColorBrush Foreground => _foreground.Value;
+
+    public AppMode()
     {
-        private readonly ObservableAsPropertyHelper<string> _text;
-        public string Text => _text.Value;
+        var passMetaClient = Locator.Current.Resolve<IPassMetaClient>();
 
-        private readonly ObservableAsPropertyHelper<ISolidColorBrush> _foreground;
-        public ISolidColorBrush Foreground => _foreground.Value;
+        _text = passMetaClient.OnlineObservable.Select(online => online 
+                ? Resources.APP__ONLINE_MODE
+                : Resources.APP__OFFLINE_MODE)
+            .ToProperty(this, nameof(Text));
 
-        public AppMode()
-        {
-            var passMetaClient = Locator.Current.Resolve<IPassMetaClient>();
-
-            _text = passMetaClient.OnlineObservable.Select(online => online 
-                    ? Resources.APP__ONLINE_MODE
-                    : Resources.APP__OFFLINE_MODE)
-                .ToProperty(this, nameof(Text));
-
-            _foreground = passMetaClient.OnlineObservable.Select(online => online 
-                    ? Brushes.Green 
-                    : Brushes.SlateGray)
-                .ToProperty(this, nameof(Foreground));
-        }
+        _foreground = passMetaClient.OnlineObservable.Select(online => online 
+                ? Brushes.Green 
+                : Brushes.SlateGray)
+            .ToProperty(this, nameof(Foreground));
     }
 }

@@ -1,14 +1,13 @@
-namespace PassMeta.DesktopApp.Ui.Views
-{
-    using ViewModels;
-    using Base;
-    using Avalonia.Markup.Xaml;
+namespace PassMeta.DesktopApp.Ui.Views;
+
+using ViewModels;
+using Base;
+using Avalonia.Markup.Xaml;
     
-    public class AuthRequiredView : PageView<AuthRequiredViewModel>
+public class AuthRequiredView : PageView<AuthRequiredViewModel>
+{
+    public AuthRequiredView()
     {
-        public AuthRequiredView()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        AvaloniaXamlLoader.Load(this);
     }
 }

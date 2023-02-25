@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using ReactiveUI;
-
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Core;
-using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Ui.App;
-using AppContext = PassMeta.DesktopApp.Core.AppContext;
-
 using PassMeta.DesktopApp.Ui.Views.Base;
 using PassMeta.DesktopApp.Ui.ViewModels;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
@@ -22,6 +21,7 @@ using PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow;
 using PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage;
 using PassMeta.DesktopApp.Ui.ViewModels.Journal;
 using PassMeta.DesktopApp.Ui.ViewModels.Logs;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Views.Main;
 
@@ -38,23 +38,23 @@ public class MainWindow : WinView<MainWindowViewModel>
         AvaloniaXamlLoader.Load(this);
     }
 
-    private void AccountBtn_OnClick(object? sender, RoutedEventArgs e) 
-        => MenuBtnClick(sender, () => new AccountViewModel(DataContext!).TryNavigate());
+    private void AccountBtn_OnClick(object? sender, RoutedEventArgs e)
+        => MenuBtnClick(sender, () => new AccountViewModel(ViewModel!).TryNavigate());
 
     private void StorageBtn_OnClick(object? sender, RoutedEventArgs e)
-        => MenuBtnClick(sender, () => new StorageViewModel(DataContext!).TryNavigate());
+        => MenuBtnClick(sender, () => new StorageViewModel(ViewModel!).TryNavigate());
 
     private void GeneratorBtn_OnClick(object? sender, RoutedEventArgs e)
-        => MenuBtnClick(sender, () => new GeneratorViewModel(DataContext!).TryNavigate());
-        
+        => MenuBtnClick(sender, () => new GeneratorViewModel(ViewModel!).TryNavigate());
+
     private void JournalBtn_OnClick(object? sender, RoutedEventArgs e)
-        => MenuBtnClick(sender, () => new JournalViewModel(DataContext!).TryNavigate());
+        => MenuBtnClick(sender, () => new JournalViewModel(ViewModel!).TryNavigate());
 
     private void LogsBtn_OnClick(object? sender, RoutedEventArgs e)
-        => MenuBtnClick(sender, () => new LogsViewModel(DataContext!).TryNavigate());
+        => MenuBtnClick(sender, () => new LogsViewModel(ViewModel!).TryNavigate());
 
     private void SettingsBtn_OnClick(object? sender, RoutedEventArgs e)
-        => MenuBtnClick(sender, () => new SettingsViewModel(DataContext!).TryNavigate());
+        => MenuBtnClick(sender, () => new SettingsViewModel(ViewModel!).TryNavigate());
 
     private static void MenuBtnClick(object? sender, Action action)
     {
@@ -71,7 +71,7 @@ public class MainWindow : WinView<MainWindowViewModel>
 
         await Locator.Current.Resolve<IPassMetaClient>().CheckConnectionAsync();
 
-        await DataContext!.Router.CurrentViewModel!.OfType<PageViewModel>()
+        await ViewModel!.Router.CurrentViewModel!.OfType<PageViewModel>()
             .FirstOrDefaultAsync()
             .Select(vm => vm?.RefreshAsync());
     }
@@ -79,27 +79,32 @@ public class MainWindow : WinView<MainWindowViewModel>
     private void OnOpened(object? sender, EventArgs e)
     {
         _disposables.Add(
-            AppLoading.General.CurrentObservable.Subscribe(HandleGeneralLoading));
+            AppLoading.General.ActiveObservable.Subscribe(HandleGeneralLoading));
 
         _disposables.Add(
-            DataContext!.Router.CurrentViewModel.Subscribe(HandleNavigate));
+            ViewModel!.Router.CurrentViewModel.Subscribe(HandleNavigate));
 
-        if (AppContext.Current.User is null)
-            new AuthViewModel(DataContext!).TryNavigate();
+        var userContext = Locator.Current.Resolve<IUserContextProvider>();
+
+        if (userContext.Current.UserId is null)
+            new AuthViewModel(ViewModel!).TryNavigate();
         else
-            new StorageViewModel(DataContext!).TryNavigate();
-            
-        DataContext!.PreloaderEnabled = false;
+            new StorageViewModel(ViewModel!).TryNavigate();
+
+        ViewModel!.PreloaderEnabled = false;
     }
 
     private async void OnClosing(object? sender, CancelEventArgs e)
     {
-        if (_closingConfirmed || !PassFileManager.AnyCurrentChanged)
+        var pfcManager = Locator.Current.Resolve<IPassFileContextManager>();
+        
+        if (_closingConfirmed || pfcManager.Contexts.All(x => !x.AnyChanged))
         {
             foreach (var disposable in _disposables)
             {
                 disposable.Dispose();
             }
+
             return;
         }
 
@@ -115,7 +120,7 @@ public class MainWindow : WinView<MainWindowViewModel>
 
     private void HandleNavigate(IRoutableViewModel? viewModel)
     {
-        var mainPaneButtons = DataContext!.MainPane.Buttons;
+        var mainPaneButtons = ViewModel!.MainPane.Buttons;
         mainPaneButtons.CurrentActive = viewModel switch
         {
             AuthViewModel => mainPaneButtons.Account,
@@ -127,12 +132,12 @@ public class MainWindow : WinView<MainWindowViewModel>
             SettingsViewModel => mainPaneButtons.Settings,
             _ => mainPaneButtons.CurrentActive
         };
-        DataContext.MainPane.IsOpened = false;
-        DataContext.RightBarButtons = (viewModel as PageViewModel)?.RightBarButtons;
+        ViewModel.MainPane.IsOpened = false;
+        ViewModel.RightBarButtons = (viewModel as PageViewModel)?.RightBarButtons;
     }
 
     private void HandleGeneralLoading(bool isLoading)
     {
-        Dispatcher.UIThread.InvokeAsync(() => DataContext!.PreloaderEnabled = isLoading);
+        Dispatcher.UIThread.InvokeAsync(() => ViewModel!.PreloaderEnabled = isLoading);
     }
 }

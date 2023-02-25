@@ -75,7 +75,7 @@ public class AppConfigManager : IAppConfigManager
     }
 
     /// <inheritdoc />
-    public async Task<IResult> ApplyAsync(Action<AppConfigModel> setup)
+    public async Task<IDetailedResult> ApplyAsync(Action<AppConfigModel> setup)
     {
         var copy = _currentSubject.Value.Copy();
         setup(copy);

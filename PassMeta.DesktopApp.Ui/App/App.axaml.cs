@@ -87,9 +87,9 @@ public class App : Application
 
     private static MainWindow MakeWindow()
     {
-        var win = new MainWindow { DataContext = new MainWindowViewModel() };
+        var win = new MainWindow();
 
-        win.Closed += (_, _) => win.DataContext.Dispose();
+        win.Closed += (_, _) => win.ViewModel!.Dispose();
  
         DependencyInstaller.Unregister<INotificationManager>();
         DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)

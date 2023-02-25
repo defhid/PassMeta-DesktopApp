@@ -1,18 +1,18 @@
-namespace PassMeta.DesktopApp.Ui.Views.Etc
-{
-    using Avalonia.Markup.Xaml;
-    using Base;
-    using Utils.Extensions;
-    using ViewModels.Etc;
+using PassMeta.DesktopApp.Ui.Extensions;
 
-    public class ApplicationInfoWin : WinView<ApplicationInfoViewModel>
+namespace PassMeta.DesktopApp.Ui.Views.Etc;
+
+using Avalonia.Markup.Xaml;
+using Base;
+using ViewModels.Etc;
+
+public class ApplicationInfoWin : WinView<ApplicationInfoViewModel>
+{
+    public ApplicationInfoWin()
     {
-        public ApplicationInfoWin()
-        {
-            AvaloniaXamlLoader.Load(this);
-            this.CorrectMainWindowFocusWhileOpened();
+        AvaloniaXamlLoader.Load(this);
+        this.CorrectMainWindowFocusWhileOpened();
             
-            DataContext = new ApplicationInfoViewModel();
-        }
+        DataContext = new ApplicationInfoViewModel();
     }
 }

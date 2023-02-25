@@ -1,8 +1,7 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin.Models
-{
-    using Base;
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileWin.Models;
 
-    public class ViewElements : WinViewElements
-    {
-    }
+using Base;
+
+public class ViewElements : WinViewElements
+{
 }

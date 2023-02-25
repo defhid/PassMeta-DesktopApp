@@ -25,166 +25,165 @@ using PassMeta.DesktopApp.Core.Utils;
 
 using PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin.Models;
 
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileRestoreWin;
+
+public class PassFileRestoreWinViewModel : ReactiveObject
 {
-    public class PassFileRestoreWinViewModel : ReactiveObject
+    private readonly long _passFileId;
+    private readonly PassFileType _passFileType;
+    private readonly bool _ignoreCurrentPath;
+        
+    public ObservableCollection<DataFile> FoundList { get; } = new();
+
+    private DataFile? _selectedFile;
+    public DataFile? SelectedFile
     {
-        private readonly long _passFileId;
-        private readonly PassFileType _passFileType;
-        private readonly bool _ignoreCurrentPath;
-        
-        public ObservableCollection<DataFile> FoundList { get; } = new();
+        get => _selectedFile;
+        set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
+    }
 
-        private DataFile? _selectedFile;
-        public DataFile? SelectedFile
+    public ReactCommand SelectCommand { get; }
+    public ReactCommand ImportCommand { get; }
+    public ReactCommand DownloadCommand { get; }
+    public ReactCommand CloseCommand { get; }
+
+    public static IObservable<bool> CanBeDownloaded => Locator.Current.Resolve<IPassMetaClient>().OnlineObservable;
+
+    public readonly ViewElements ViewElements = new();
+
+    public PassFileRestoreWinViewModel(PassFile currentPassFile)
+    {
+        _passFileId = currentPassFile.Id;
+        _passFileType = currentPassFile.Type;
+        _ignoreCurrentPath = !currentPassFile.IsLocalDeleted();
+
+        SelectCommand = ReactiveCommand.Create(Select, 
+            this.WhenAnyValue(vm => vm.SelectedFile).Select(file => file is not null));
+            
+        ImportCommand = ReactiveCommand.CreateFromTask(ImportForeignAsync);
+            
+        DownloadCommand = ReactiveCommand.CreateFromTask(DownloadAsync);
+            
+        CloseCommand = ReactiveCommand.Create(Close);
+    }
+
+    public async Task LoadAsync()
+    {
+        FoundList.Clear();
+            
+        var remoteVersions = await Locator.Current.Resolve<IPassFileRemoteService>().GetVersionsAsync(_passFileId);
+            
+
+        var passfileExt = '.' + PassFileExternalFormat.Encrypted.Extension;
+        var passFileList = PassFileManager.GetCurrentList(_passFileType);
+        var descriptionParts = new Stack<string>();
+
+        var userContext = Locator.Current.Resolve<IUserContextProvider>().Current;
+        var fileRepository = Locator.Current.Resolve<IFileRepositoryFactory>().ForPassFiles(userContext.UserServerId);
+        var files = await fileRepository.GetFilesAsync();
+
+        foreach (var filePath in files.OrderBy(x => x))
         {
-            get => _selectedFile;
-            set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
-        }
+            var fileName = Path.GetFileName(filePath);
+            var isOld = fileName.EndsWith(".old");
+            descriptionParts.Clear();
 
-        public ReactCommand SelectCommand { get; }
-        public ReactCommand ImportCommand { get; }
-        public ReactCommand DownloadCommand { get; }
-        public ReactCommand CloseCommand { get; }
-
-        public static IObservable<bool> CanBeDownloaded => Locator.Current.Resolve<IPassMetaClient>().OnlineObservable;
-
-        public readonly ViewElements ViewElements = new();
-
-        public PassFileRestoreWinViewModel(PassFile currentPassFile)
-        {
-            _passFileId = currentPassFile.Id;
-            _passFileType = currentPassFile.Type;
-            _ignoreCurrentPath = !currentPassFile.IsLocalDeleted();
-
-            SelectCommand = ReactiveCommand.Create(Select, 
-                this.WhenAnyValue(vm => vm.SelectedFile).Select(file => file is not null));
-            
-            ImportCommand = ReactiveCommand.CreateFromTask(ImportForeignAsync);
-            
-            DownloadCommand = ReactiveCommand.CreateFromTask(DownloadAsync);
-            
-            CloseCommand = ReactiveCommand.Create(Close);
-        }
-
-        public async Task LoadAsync()
-        {
-            FoundList.Clear();
-            
-            var remoteVersions = await Locator.Current.Resolve<IPassFileRemoteService>().GetVersionsAsync(_passFileId);
-            
-
-            var passfileExt = '.' + PassFileExternalFormat.Encrypted.Extension;
-            var passFileList = PassFileManager.GetCurrentList(_passFileType);
-            var descriptionParts = new Stack<string>();
-
-            var userContext = Locator.Current.Resolve<IUserContextProvider>().Current;
-            var fileRepository = Locator.Current.Resolve<IFileRepositoryFactory>().ForPassFiles(userContext.UserServerId);
-            var files = await fileRepository.GetFilesAsync();
-
-            foreach (var filePath in files.OrderBy(x => x))
+            if (isOld)
             {
-                var fileName = Path.GetFileName(filePath);
-                var isOld = fileName.EndsWith(".old");
-                descriptionParts.Clear();
-
-                if (isOld)
-                {
-                    if (!fileName.EndsWith(passfileExt + ".old"))
-                    {
-                        continue;
-                    }
-
-                    descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_OLD_VERSION);
-                }
-                else if (!fileName.EndsWith(passfileExt))
+                if (!fileName.EndsWith(passfileExt + ".old"))
                 {
                     continue;
                 }
 
-                if (!int.TryParse(fileName.Split('.').First(), out var passFileId))
-                {
-                    continue;
-                }
+                descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_OLD_VERSION);
+            }
+            else if (!fileName.EndsWith(passfileExt))
+            {
+                continue;
+            }
 
-                if (passFileId == _passFileId)
-                {
-                    if (!isOld && _ignoreCurrentPath) continue;
-                    descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_CURRENT);
-                }
+            if (!int.TryParse(fileName.Split('.').First(), out var passFileId))
+            {
+                continue;
+            }
 
-                var passFileName = passFileList.FirstOrDefault(pf => pf.Id == passFileId)?.Name;
+            if (passFileId == _passFileId)
+            {
+                if (!isOld && _ignoreCurrentPath) continue;
+                descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_CURRENT);
+            }
 
-                descriptionParts.Push(passFileName is null ? Resources.PASSFILELIST__DESCRIPTION_UNKNOWN : $"'{passFileName}'");
+            var passFileName = passFileList.FirstOrDefault(pf => pf.Id == passFileId)?.Name;
+
+            descriptionParts.Push(passFileName is null ? Resources.PASSFILELIST__DESCRIPTION_UNKNOWN : $"'{passFileName}'");
                 
-                FoundList.Add(new DataFile(filePath)
-                {
-                    Name = fileName,
-                    Description = string.Join(", ", descriptionParts),
-                });
+            FoundList.Add(new DataFile(filePath)
+            {
+                Name = fileName,
+                Description = string.Join(", ", descriptionParts),
+            });
                 
-                if (passFileId == _passFileId)
+            if (passFileId == _passFileId)
+            {
+                SelectedFile = FoundList.Last();
+                ViewElements.DataGrid!.ScrollIntoView(SelectedFile, ViewElements.DataGrid.Columns.First());
+            }
+        }
+    }
+
+    private void Select()
+    {
+        if (SelectedFile is null) return;
+
+        ViewElements.Window!.Close(Result.Success(SelectedFile.FilePath));
+    }
+
+    private async Task ImportForeignAsync()
+    {
+        var importService = Locator.Current.Resolve<IPassFileImportService>(_passFileType.ToString());
+            
+        var fileDialog = new OpenFileDialog
+        {
+            AllowMultiple = false,
+            Filters = new List<FileDialogFilter>
+            {
+                new()
                 {
-                    SelectedFile = FoundList.Last();
-                    ViewElements.DataGrid!.ScrollIntoView(SelectedFile, ViewElements.DataGrid.Columns.First());
+                    Name = Resources.PASSFILELIST__FILTER_PASSFILES,
+                    Extensions = importService.SupportedFormats.Select(format => format.Extension).ToList()
                 }
             }
-        }
-
-        private void Select()
-        {
-            if (SelectedFile is null) return;
-
-            ViewElements.Window!.Close(Result.Success(SelectedFile.FilePath));
-        }
-
-        private async Task ImportForeignAsync()
-        {
-            var importService = Locator.Current.Resolve<IPassFileImportService>(_passFileType.ToString());
+        };
             
-            var fileDialog = new OpenFileDialog
-            {
-                AllowMultiple = false,
-                Filters = new List<FileDialogFilter>
-                {
-                    new()
-                    {
-                        Name = Resources.PASSFILELIST__FILTER_PASSFILES,
-                        Extensions = importService.SupportedFormats.Select(format => format.Extension).ToList()
-                    }
-                }
-            };
-            
-            var result = await fileDialog.ShowAsync(App.App.MainWindow!);
-            if (result?.Any() is true)
-            {
-                ViewElements.Window!.Close(Result.Success(result.First()));
-            }
-        }
-
-        private async Task DownloadAsync()
+        var result = await fileDialog.ShowAsync(App.App.MainWindow!);
+        if (result?.Any() is true)
         {
-            var remoteService = Locator.Current.Resolve<IPassFileRemoteService>();
-
-            var infoResult = await remoteService.GetInfoAsync(_passFileId);
-            if (infoResult.Bad)
-            {
-                return;
-            }
-
-            var passFile = infoResult.Data!;
-            passFile.DataEncrypted = await remoteService.GetEncryptedContentAsync(_passFileId, infoResult.Data!.Version);
-
-            if (passFile.DataEncrypted is not null)
-            {
-                ViewElements.Window!.Close(Result.Success(passFile));
-            }
+            ViewElements.Window!.Close(Result.Success(result.First()));
         }
+    }
+
+    private async Task DownloadAsync()
+    {
+        var remoteService = Locator.Current.Resolve<IPassFileRemoteService>();
+
+        var infoResult = await remoteService.GetInfoAsync(_passFileId);
+        if (infoResult.Bad)
+        {
+            return;
+        }
+
+        var passFile = infoResult.Data!;
+        passFile.DataEncrypted = await remoteService.GetEncryptedContentAsync(_passFileId, infoResult.Data!.Version);
+
+        if (passFile.DataEncrypted is not null)
+        {
+            ViewElements.Window!.Close(Result.Success(passFile));
+        }
+    }
         
-        private void Close() => ViewElements.Window!.Close(Result.Failure<string?>());
+    private void Close() => ViewElements.Window!.Close(Result.Failure<string?>());
         
 #pragma warning disable 8618
-        public PassFileRestoreWinViewModel() {}
+    public PassFileRestoreWinViewModel() {}
 #pragma warning restore 8618
-    }
 }

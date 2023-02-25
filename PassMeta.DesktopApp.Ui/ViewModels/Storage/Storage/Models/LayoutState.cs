@@ -1,11 +1,10 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Models
-{
-    using Avalonia;
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Models;
 
-    public class LayoutState
-    {
-        public double PassFilesPaneWidth { get; init; }
+using Avalonia;
+
+public class LayoutState
+{
+    public double PassFilesPaneWidth { get; init; }
         
-        public Thickness SectionsListMargin { get; init; }
-    }
+    public Thickness SectionsListMargin { get; init; }
 }

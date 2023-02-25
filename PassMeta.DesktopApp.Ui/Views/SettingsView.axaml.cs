@@ -1,15 +1,14 @@
-namespace PassMeta.DesktopApp.Ui.Views
+namespace PassMeta.DesktopApp.Ui.Views;
+
+using ViewModels;
+using Base;
+    
+using Avalonia.Markup.Xaml;
+    
+public class SettingsView : PageView<SettingsViewModel>
 {
-    using ViewModels;
-    using Base;
-    
-    using Avalonia.Markup.Xaml;
-    
-    public class SettingsView : PageView<SettingsViewModel>
+    public SettingsView()
     {
-        public SettingsView()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        AvaloniaXamlLoader.Load(this);
     }
 }

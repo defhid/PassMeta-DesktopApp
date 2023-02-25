@@ -18,5 +18,5 @@ public interface IAppConfigManager : IAppConfigProvider
     /// <summary>
     /// Edit current config model and flush changes.
     /// </summary>
-    Task<IResult> ApplyAsync(Action<AppConfigModel> setup);
+    Task<IDetailedResult> ApplyAsync(Action<AppConfigModel> setup);
 }

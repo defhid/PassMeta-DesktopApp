@@ -1,70 +1,69 @@
-namespace PassMeta.DesktopApp.Ui.Views.Main
+namespace PassMeta.DesktopApp.Ui.Views.Main;
+
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
+using Base;
+using Common.Enums;
+using ViewModels.Main.DialogWindow;
+
+public class DialogWindow : WinView<object>
 {
-    using Avalonia;
-    using Avalonia.Controls;
-    using Avalonia.Input;
-    using Avalonia.Interactivity;
-    using Avalonia.Markup.Xaml;
-    using Base;
-    using Common.Enums;
-    using ViewModels.Main.DialogWindow;
+    public DialogButton ResultButton { get; private set; }
 
-    public class DialogWindow : WinView<object>
+    private bool _focused;
+
+    public DialogWindow()
     {
-        public DialogButton ResultButton { get; private set; }
-
-        private bool _focused;
-
-        public DialogWindow()
-        {
-            AvaloniaXamlLoader.Load(this);
-            ResultButton = DialogButton.Close;
-        }
+        AvaloniaXamlLoader.Load(this);
+        ResultButton = DialogButton.Close;
+    }
         
-        private void Button_OnClick(object? sender, RoutedEventArgs e)
+    private void Button_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var buttonKind = ((Button)sender!).Tag!;
+        ResultButton = (DialogButton)buttonKind;
+        Close();
+    }
+
+    private void Input_OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter) return;
+        var dataContext = (DialogWindowViewModel)DataContext!;
+
+        if (dataContext.BtnOk.IsVisible)
         {
-            var buttonKind = ((Button)sender!).Tag!;
-            ResultButton = (DialogButton)buttonKind;
+            ResultButton = DialogButton.Ok;
             Close();
         }
-
-        private void Input_OnKeyDown(object? sender, KeyEventArgs e)
+        else if (dataContext.BtnYes.IsVisible)
         {
-            if (e.Key != Key.Enter) return;
-            var dataContext = (DialogWindowViewModel)DataContext!;
-
-            if (dataContext.BtnOk.IsVisible)
-            {
-                ResultButton = DialogButton.Ok;
-                Close();
-            }
-            else if (dataContext.BtnYes.IsVisible)
-            {
-                ResultButton = DialogButton.Yes;
-                Close();
-            }
+            ResultButton = DialogButton.Yes;
+            Close();
         }
+    }
 
-        private void Button_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    private void Button_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (_focused) return;
+        var btn = (Button)sender!;
+        if ((DialogButton)btn.Tag! == ((DialogWindowViewModel)DataContext!).BtnFocused)
         {
-            if (_focused) return;
-            var btn = (Button)sender!;
-            if ((DialogButton)btn.Tag! == ((DialogWindowViewModel)DataContext!).BtnFocused)
-            {
-                btn.Focus();
-            }
+            btn.Focus();
         }
+    }
 
-        private void Input_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    private void Input_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (_focused) return;
+        var dataContext = (DialogWindowViewModel)DataContext!;
+
+        if (dataContext.WindowTextInputBox.Visible || dataContext.WindowNumericInputBox.Visible)
         {
-            if (_focused) return;
-            var dataContext = (DialogWindowViewModel)DataContext!;
-
-            if (dataContext.WindowTextInputBox.Visible || dataContext.WindowNumericInputBox.Visible)
-            {
-                ((Control)sender!).Focus();
-                _focused = true;
-            }
+            ((Control)sender!).Focus();
+            _focused = true;
         }
     }
 }

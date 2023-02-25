@@ -1,8 +1,7 @@
-namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Models
-{
-    using Base;
+namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Models;
 
-    public class ViewElements : WinViewElements
-    {
-    }
+using Base;
+
+public class ViewElements : WinViewElements
+{
 }

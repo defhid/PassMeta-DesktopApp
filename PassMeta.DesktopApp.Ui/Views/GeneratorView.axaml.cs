@@ -1,14 +1,13 @@
-namespace PassMeta.DesktopApp.Ui.Views
-{
-    using ViewModels;
-    using Base;
-    using Avalonia.Markup.Xaml;
+namespace PassMeta.DesktopApp.Ui.Views;
+
+using ViewModels;
+using Base;
+using Avalonia.Markup.Xaml;
     
-    public class GeneratorView : PageView<GeneratorViewModel>
+public class GeneratorView : PageView<GeneratorViewModel>
+{
+    public GeneratorView()
     {
-        public GeneratorView()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        AvaloniaXamlLoader.Load(this);
     }
 }

@@ -1,15 +1,14 @@
-namespace PassMeta.DesktopApp.Ui.Views
-{
-    using Base;
-    
-    using Avalonia.Markup.Xaml;
-    using ViewModels.Journal;
+namespace PassMeta.DesktopApp.Ui.Views;
 
-    public class JournalView : PageView<JournalViewModel>
+using Base;
+    
+using Avalonia.Markup.Xaml;
+using ViewModels.Journal;
+
+public class JournalView : PageView<JournalViewModel>
+{
+    public JournalView()
     {
-        public JournalView()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        AvaloniaXamlLoader.Load(this);
     }
 }

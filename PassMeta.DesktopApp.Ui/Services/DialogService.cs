@@ -14,7 +14,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Core.Services.Extensions;
 
 using PassMeta.DesktopApp.Ui.Constants;
-using PassMeta.DesktopApp.Ui.Utils.Extensions;
+using PassMeta.DesktopApp.Ui.Extensions;
 using PassMeta.DesktopApp.Ui.Views.Main;
 using PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow;
 using PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components;

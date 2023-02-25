@@ -1,15 +1,14 @@
-namespace PassMeta.DesktopApp.Ui.Views
-{
-    using Base;
-    
-    using Avalonia.Markup.Xaml;
-    using ViewModels.Logs;
+namespace PassMeta.DesktopApp.Ui.Views;
 
-    public class LogsView : PageView<LogsViewModel>
+using Base;
+    
+using Avalonia.Markup.Xaml;
+using ViewModels.Logs;
+
+public class LogsView : PageView<LogsViewModel>
+{
+    public LogsView()
     {
-        public LogsView()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        AvaloniaXamlLoader.Load(this);
     }
 }

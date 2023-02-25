@@ -1,96 +1,96 @@
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
+using PassMeta.DesktopApp.Core.Extensions;
+using Splat;
 
-namespace PassMeta.DesktopApp.Ui.ViewModels
-{
-    using Core;
-    using Common;
-    using Base;
+namespace PassMeta.DesktopApp.Ui.ViewModels;
+
+using Common;
+using Base;
     
-    using System;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
-    using Common.Abstractions.Services;
-    using ReactiveUI;
-    using Utils;
+using System;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Common.Abstractions.Services;
+using ReactiveUI;
+using Utils;
 
-    public class GeneratorViewModel : PageViewModel
+public class GeneratorViewModel : PageViewModel
+{
+    private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
+    private readonly IPassMetaRandomService _pmRandomService = Locator.Current.Resolve<IPassMetaRandomService>();
+    private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
+
+    public int Length
     {
-        private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
-        private readonly IPassMetaCryptoService _passMetaCryptoService = Locator.Current.Resolve<IPassMetaCryptoService>();
-        private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
+        get => PresetsCache.Generator.Length;
+        set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.Length, value);
+    }
 
-        public int Length
-        {
-            get => PresetsCache.Generator.Length;
-            set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.Length, value);
-        }
+    public bool IncludeDigits
+    {
+        get => PresetsCache.Generator.IncludeDigits;
+        set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeDigits, value);
+    }
 
-        public bool IncludeDigits
-        {
-            get => PresetsCache.Generator.IncludeDigits;
-            set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeDigits, value);
-        }
+    public bool IncludeLowercase
+    {
+        get =>  PresetsCache.Generator.IncludeLowercase;
+        set => this.RaiseAndSetIfChanged(ref  PresetsCache.Generator.IncludeLowercase, value);
+    }
 
-        public bool IncludeLowercase
-        {
-            get =>  PresetsCache.Generator.IncludeLowercase;
-            set => this.RaiseAndSetIfChanged(ref  PresetsCache.Generator.IncludeLowercase, value);
-        }
+    public bool IncludeUppercase
+    {
+        get => PresetsCache.Generator.IncludeUppercase;
+        set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeUppercase, value);
+    }
 
-        public bool IncludeUppercase
-        {
-            get => PresetsCache.Generator.IncludeUppercase;
-            set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeUppercase, value);
-        }
+    public bool IncludeSpecial
+    {
+        get => PresetsCache.Generator.IncludeSpecial;
+        set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeSpecial, value);
+    }
 
-        public bool IncludeSpecial
-        {
-            get => PresetsCache.Generator.IncludeSpecial;
-            set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeSpecial, value);
-        }
+    private static string _result = string.Empty;
+    public string Result
+    {
+        get => _result;
+        set => this.RaiseAndSetIfChanged(ref _result, value);
+    }
 
-        private static string _result = string.Empty;
-        public string Result
-        {
-            get => _result;
-            set => this.RaiseAndSetIfChanged(ref _result, value);
-        }
-
-        public IObservable<bool> Generated { get; }
+    public IObservable<bool> Generated { get; }
         
-        public ICommand GenerateCommand { get; }
+    public ICommand GenerateCommand { get; }
         
-        public ICommand CopyCommand { get; }
+    public ICommand CopyCommand { get; }
 
-        public GeneratorViewModel(IScreen hostScreen) : base(hostScreen)
-        {
-            _result = _passMetaCryptoService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
+    public GeneratorViewModel(IScreen hostScreen) : base(hostScreen)
+    {
+        _result = _pmRandomService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
 
-            GenerateCommand = ReactiveCommand.Create(_Generate);
-            CopyCommand = ReactiveCommand.Create(_CopyResultAsync);
+        GenerateCommand = ReactiveCommand.Create(_Generate);
+        CopyCommand = ReactiveCommand.Create(_CopyResultAsync);
             
-            Generated = this.WhenAnyValue(vm => vm.Result)
-                .Select(res => res != string.Empty);
-        }
+        Generated = this.WhenAnyValue(vm => vm.Result)
+            .Select(res => res != string.Empty);
+    }
 
-        public override Task RefreshAsync()
-        {
-            Result = string.Empty;
-            return Task.CompletedTask;
-        }
+    public override Task RefreshAsync()
+    {
+        Result = string.Empty;
+        return Task.CompletedTask;
+    }
         
-        private void _Generate()
-        {
-            Result = _passMetaCryptoService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
-        }
+    private void _Generate()
+    {
+        Result = _pmRandomService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
+    }
 
-        private async Task _CopyResultAsync()
+    private async Task _CopyResultAsync()
+    {
+        if (await _clipboardService.TrySetTextAsync(Result))
         {
-            if (await _clipboardService.TrySetTextAsync(Result))
-            {
-                _dialogService.ShowInfo(Resources.GENERATOR__RESULT_COPIED);
-            }
+            _dialogService.ShowInfo(Resources.GENERATOR__RESULT_COPIED);
         }
     }
 }

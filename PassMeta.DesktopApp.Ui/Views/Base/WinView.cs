@@ -1,21 +1,17 @@
-namespace PassMeta.DesktopApp.Ui.Views.Base
+using Avalonia.ReactiveUI;
+using Avalonia;
+
+namespace PassMeta.DesktopApp.Ui.Views.Base;
+
+public abstract class WinView<TViewModel> : ReactiveWindow<TViewModel>
+    where TViewModel : class, new()
 {
-    using Avalonia;
-    using Avalonia.Controls;
-
-    public abstract class WinView<TViewModel> : Window
+    protected WinView()
     {
-        public new TViewModel? DataContext
-        {
-            get => (TViewModel?)base.DataContext;
-            init => base.DataContext = value;
-        }
+        ViewModel = new TViewModel(); // TODO: need?
 
-        protected WinView()
-        {
 #if DEBUG
-            this.AttachDevTools();
+        this.AttachDevTools();
 #endif
-        }
     }
 }
