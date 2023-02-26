@@ -2,7 +2,6 @@ namespace PassMeta.DesktopApp.Ui.Utils;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
@@ -10,7 +9,7 @@ using Avalonia.Platform;
     
 public class ImageConverter : IValueConverter
 {
-    private static readonly string AssemblyName = Assembly.GetEntryAssembly()!.GetName().Name!;
+    private static readonly string AssemblyName = typeof(ImageConverter).Assembly.GetName().Name!;
         
     public static Bitmap GetAvaloniaResourceBitMap(string relativePath)
     {

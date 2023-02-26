@@ -25,8 +25,10 @@ public class App : Application
         get => _mainWindow;
         private set
         {
-            var desktop = (IClassicDesktopStyleApplicationLifetime)Current!.ApplicationLifetime!;
-            desktop.MainWindow = value;
+            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.MainWindow = value;
+            }
             _mainWindow = value;
         }
     }
