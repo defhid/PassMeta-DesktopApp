@@ -1,4 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using AutoMapper;
 using Avalonia.Controls.Notifications;
 using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
@@ -9,6 +11,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Helpers;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
@@ -20,6 +23,7 @@ using PassMeta.DesktopApp.Core.Services.PassMetaServices;
 using PassMeta.DesktopApp.Core.Utils;
 using PassMeta.DesktopApp.Core.Utils.Clients;
 using PassMeta.DesktopApp.Core.Utils.FileRepository;
+using PassMeta.DesktopApp.Core.Utils.Helpers;
 using PassMeta.DesktopApp.Core.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Ui.Interfaces.Services;
 using PassMeta.DesktopApp.Ui.Services;
@@ -74,6 +78,13 @@ public static class DependencyInstaller
             Resolve<IPassMetaCryptoService>(),
             Resolve<IPassFileContentSerializerFactory>(),
             Resolve<ILogsWriter>()));
+        
+        Register<IPassPhraseAskHelper>(new PassPhraseAskHelper(
+            Resolve<IDialogService>()));
+        
+        Register<IPassFileDecryptionHelper>(new PassFileDecryptionHelper(
+            Resolve<IPassFileCryptoService>(), 
+            Resolve<IPassPhraseAskHelper>()));
 
         Register<IPassFileRemoteService>(new PassFileRemoteService(
             Resolve<IPassMetaClient>(),
@@ -96,13 +107,13 @@ public static class DependencyInstaller
             Resolve<IDialogService>()));
 
         Register<IPassFileSyncService>(new PassFileSyncService(
-            Resolve<IPassFileContextProvider>(),
             Resolve<IPassFileRemoteService>(),
             Resolve<IDialogService>()));
 
         Register<IPassFileImportService>(new PassFileImportService(
             Resolve<IPassMetaCryptoService>(),
             Resolve<IPassFileContentSerializerFactory>(),
+            Resolve<IPassPhraseAskHelper>(),
             Resolve<IDialogService>(),
             Resolve<ILogsWriter>()));
 
@@ -111,6 +122,7 @@ public static class DependencyInstaller
             Resolve<IPassFileCryptoService>(),
             Resolve<IPassFileLocalStorage>(),
             Resolve<IUserContextProvider>(),
+            Resolve<IPassPhraseAskHelper>(),
             Resolve<IDialogService>(), 
             Resolve<ILogsWriter>()));
 
@@ -126,6 +138,7 @@ public static class DependencyInstaller
             Resolve<ILogsWriter>()));
 
         Register<IPassFileMergeUiService>(new PassFileMergeUiService(
+            Resolve<IPwdPassFileMergePreparingService>(),
             Resolve<IDialogService>(),
             Resolve<ILogsWriter>()));
 
@@ -139,11 +152,15 @@ public static class DependencyInstaller
         Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
     public static void Register<TContract>(TContract impl, string? contractName = null)
     {
         Locator.CurrentMutable.RegisterConstant<TContract>(impl, contractName);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
     public static void Register<TContract1, TContract2>(TContract2 impl, string? contractName = null)
         where TContract2 : TContract1
     {
@@ -156,6 +173,7 @@ public static class DependencyInstaller
         Locator.CurrentMutable.UnregisterCurrent<TContract>(contractName);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static TContract Resolve<TContract>()
         where TContract : class
         => Locator.Current.Resolve<TContract>();

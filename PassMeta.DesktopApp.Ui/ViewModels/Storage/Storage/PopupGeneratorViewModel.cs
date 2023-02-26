@@ -1,10 +1,11 @@
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
+using PassMeta.DesktopApp.Core.Extensions;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage;
 
 using System;
-using Common.Abstractions.Services;
-using Core;
 using Utils;
 using ReactiveUI;
 
@@ -12,9 +13,9 @@ using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Rea
 
 public class PopupGeneratorViewModel : ReactiveObject
 {
-    private readonly IPassMetaCryptoService _passMetaCryptoService = Locator.Current.Resolve<IPassMetaCryptoService>();
+    private readonly IPassMetaRandomService _pmRandomService = Locator.Current.Resolve<IPassMetaRandomService>();
 
-    private int _length = PresetsCache.Generator.Length;
+    private int _length = Locator.Current.Resolve<IAppConfigProvider>().Current.DefaultPasswordLength;
     public int Length
     {
         get => _length;
@@ -34,7 +35,7 @@ public class PopupGeneratorViewModel : ReactiveObject
         IsOpen = isOpen;
             
         ResultApplyCommand = ReactiveCommand.Create(() => 
-            apply(_passMetaCryptoService.GeneratePassword(
+            apply(_pmRandomService.GeneratePassword(
                 Length, IncludeDigits, IncludeLetters, IncludeLetters, IncludeSpecial)));
     }
 }

@@ -1,4 +1,7 @@
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+using PassMeta.DesktopApp.Core.Extensions;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components;
 
@@ -9,7 +12,6 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Common;
 using Common.Abstractions.Services;
-using Core;
 using ReactiveUI;
     
 using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
@@ -18,6 +20,7 @@ public class PassFileSectionItemBtn : ReactiveObject
 {
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
     private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
+    private readonly IAppConfigProvider _appConfig = Locator.Current.Resolve<IAppConfigProvider>();
         
     private readonly ObservableAsPropertyHelper<bool> _isReadOnly;
     public bool IsReadOnly => _isReadOnly.Value;
@@ -66,7 +69,7 @@ public class PassFileSectionItemBtn : ReactiveObject
             .Select(isReadOnly => !isReadOnly);
 
         PasswordChar = this.WhenAnyValue(btn => btn.IsReadOnly)
-            .Select(isReadOnly => isReadOnly && AppPaths.Current.HidePasswords ? '*' : (char?)null);
+            .Select(isReadOnly => isReadOnly && _appConfig.Current.HidePasswords ? '*' : (char?)null);
 
         PopupGeneratorCanBeOpened = this.WhenAnyValue(
                 btn => btn.IsReadOnly,

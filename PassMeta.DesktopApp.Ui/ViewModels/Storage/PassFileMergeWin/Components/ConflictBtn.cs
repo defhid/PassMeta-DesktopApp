@@ -1,4 +1,3 @@
-using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFileMerge;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.PassFileMergeWin.Components;

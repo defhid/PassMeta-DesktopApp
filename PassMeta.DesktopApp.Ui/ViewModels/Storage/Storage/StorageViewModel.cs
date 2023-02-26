@@ -1,9 +1,15 @@
+using System.Collections.Generic;
 using Avalonia.Input;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Helpers;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Ui.App;
-using PassMeta.DesktopApp.Ui.Extensions;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage;
 
@@ -17,11 +23,8 @@ using Avalonia.Controls;
 using Base;
 using Common;
 using Common.Abstractions.Services;
-using Common.Enums;
 using Components;
 using Constants;
-using Core;
-using Core.Utils;
 using Models;
 using ReactiveUI;
 using Utils.Comparers;
@@ -41,7 +44,9 @@ public class StorageViewModel : PageViewModel
             [!Visual.IsVisibleProperty] = SelectedData.Edit.WhenAnyValue(vm => vm.Mode)
                 .Select(editMode => !editMode)
                 .ToBinding(),
-            [!InputElement.IsEnabledProperty] = PassFileManager.AnyCurrentChangedSource
+            [!InputElement.IsEnabledProperty] = Locator.Current.Resolve<IPassFileContextProvider>()
+                .For<PwdPassFile>()
+                .AnyChangedSource
                 .Select(state => state)
                 .ToBinding(),
             [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__SAVE,
@@ -73,7 +78,7 @@ public class StorageViewModel : PageViewModel
     public PassFileBtn? SelectedPassFileBtn =>
         _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex];
 
-    public PassFile? SelectedPassFile =>
+    public PwdPassFile? SelectedPassFile =>
         _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex].PassFile;
 
     #endregion
@@ -90,6 +95,11 @@ public class StorageViewModel : PageViewModel
         
     private readonly IPassFileSyncService _pfSyncService = Locator.Current.Resolve<IPassFileSyncService>();
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
+    private readonly IUserContext _userContext = Locator.Current.Resolve<IUserContextProvider>().Current;
+    private readonly IPassFileContext<PwdPassFile> _pfContext =
+        Locator.Current.Resolve<IPassFileContextProvider>().For<PwdPassFile>();
+    private readonly IPassFileDecryptionHelper _pfDecryptionHelper =
+        Locator.Current.Resolve<IPassFileDecryptionHelper>();
 
     public StorageViewModel(IScreen hostScreen) : base(hostScreen)
     {
@@ -122,8 +132,7 @@ public class StorageViewModel : PageViewModel
         var lastItemPath = LastItemPath.Copy();
 
         SelectedData = new PassFileData(ViewElements, LastItemPath, PassFileBarExpander);
-        SelectedData.PassFileCanBeChanged += (_, _) => SelectedPassFileBtn?.RefreshState();
-            
+
         SelectedData.WhenAnyValue(vm => vm.SelectedSectionIndex)
             .Subscribe(index => PassFileBarExpander.TryExecuteAutoExpanding(index == -1));
             
@@ -147,12 +156,13 @@ public class StorageViewModel : PageViewModel
             });
 
         this.WhenNavigatedToObservable()
-            .InvokeCommand(ReactiveCommand.CreateFromTask(() => LoadPassFilesAsync(lastItemPath)));
+            .InvokeCommand(ReactiveCommand.Create(() => 
+                _pfContext.AnyChangedSource.Subscribe(_ => LoadPassFilesAsync(lastItemPath))));
     }
 
     public override void TryNavigate()
     {
-        if (Core.AppContext.Current.User is null)
+        if (_userContext.UserId is null)
         {
             TryNavigateTo<AuthRequiredViewModel>();
         }
@@ -171,34 +181,25 @@ public class StorageViewModel : PageViewModel
 
     public override async Task RefreshAsync()
     {
-        if (Core.AppContext.Current.User is null)
+        if (_userContext.UserId is null)
         {
             TryNavigateTo<AuthRequiredViewModel>();
         }
 
-        if (PassFileManager.AnyCurrentChanged)
+        if (_pfContext.AnyChanged)
         {
             var confirm = await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_ROLLBACK);
             if (confirm.Bad) return;
                 
-            PassFileManager.Rollback();
+            _pfContext.Rollback();
         }
 
         _loaded = false;
         await LoadPassFilesAsync(LastItemPath.Copy());
     }
 
-    private PassFileBtn _MakePassFileBtn(PassFile passFile)
-    {
-        var passFileBtn = new PassFileBtn(passFile, PassFileBarExpander.ShortModeObservable);
-        passFileBtn.PassFileChanged += (sender, ev) =>
-        {
-            if (ev.PassFileNew != null) return;
-            
-            PassFileList.Remove((PassFileBtn)sender!);
-        };
-        return passFileBtn;
-    }
+    private PassFileBtn _MakePassFileBtn(PwdPassFile passFile) 
+        => new(passFile, PassFileBarExpander.ShortModeObservable);
 
     private async Task LoadPassFilesAsync(PassFileItemPath lastItemPath)
     {
@@ -206,7 +207,7 @@ public class StorageViewModel : PageViewModel
 
         if (!_loaded)
         {
-            await _pfSyncService.RefreshLocalPassFilesAsync(PassFileType.Pwd);
+            await _pfSyncService.SynchronizeAsync(_pfContext);
             _loaded = true;
         }
 
@@ -217,7 +218,7 @@ public class StorageViewModel : PageViewModel
             var index = _passFileList.FindIndex(btn => btn.PassFile!.Id == lastItemPath.PassFileId.Value);
             if (index >= 0)
             {
-                if (_passFileList[index].PassFile?.PassPhrase is not null)
+                if (_passFileList[index].PassFile?.Content.PassPhrase is not null)
                 {
                     PassFilesSelectedIndex = index;
                     if (lastItemPath.PassFileSectionId is not null)
@@ -234,16 +235,15 @@ public class StorageViewModel : PageViewModel
 
     private void UpdatePassFileList()
     {
-        var list = PassFileManager.GetCurrentList(PassFileType.Pwd);
-        list.Sort(new PassFileComparer());
-
-        PassFileList = new ObservableCollection<PassFileBtn>(list.Select(_MakePassFileBtn));
+        PassFileList = new ObservableCollection<PassFileBtn>(_pfContext.CurrentList
+            .OrderBy(x => x, PassFileComparer.Instance)
+            .Select(_MakePassFileBtn));
     }
 
     private async Task DecryptIfRequiredAndSetSectionsAsync(int _)
     {
         var passFile = SelectedPassFile;
-        if (passFile is null || passFile.PwdData is not null)
+        if (passFile is null || passFile.Content.Encrypted is not null)
         {
             SelectedData.PassFile = passFile;
             return;
@@ -253,7 +253,7 @@ public class StorageViewModel : PageViewModel
         {
             using var preloader = AppLoading.General.Begin();
 
-            var result = await passFile.LoadIfRequiredAndDecryptAsync(_dialogService);
+            var result = await _pfDecryptionHelper.ProvideDecryptedContentAsync(passFile, _pfContext);
             if (result.Ok)
             {
                 SelectedData.PassFile = passFile;
@@ -268,7 +268,7 @@ public class StorageViewModel : PageViewModel
     {
         using (AppLoading.General.Begin())
         {
-            await _pfSyncService.ApplyPassFileLocalChangesAsync(PassFileType.Pwd);
+            await _pfSyncService.SynchronizeAsync(_pfContext);
         }
 
         await LoadPassFilesAsync(LastItemPath.Copy());
@@ -281,7 +281,9 @@ public class StorageViewModel : PageViewModel
         var askPassPhrase = await _dialogService.AskPasswordAsync(Resources.STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE);
         if (askPassPhrase.Bad || askPassPhrase.Data == string.Empty) return;
             
-        var passFile = PassFileManager.CreateNew(PassFileType.Pwd, askPassPhrase.Data!);
+        var passFile = await _pfContext.CreateAsync();
+        passFile.Content = new PassFileContent<List<PwdSection>>(new List<PwdSection>(), askPassPhrase.Data!);
+
         var passFileBtn = _MakePassFileBtn(passFile);
             
         PassFileList.Insert(0, passFileBtn);

@@ -1,5 +1,4 @@
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFileMerge;
 
@@ -40,8 +39,8 @@ public class PassFileMergeWinViewModel : ReactiveObject
     public IObservable<string> LocalSectionName { get; }
     public IObservable<string> RemoteSectionName { get; }
         
-    public string LocalVersion => $"v{_passFileMerge.Versions.Splitting}..{_passFileMerge.Versions.Local}";
-    public string RemoteVersion => $"v{_passFileMerge.Versions.Splitting}..{_passFileMerge.Versions.Remote}";
+    public string LocalVersion => $"v{_passFileMerge.Versions.Branching}..{_passFileMerge.Versions.Local}";
+    public string RemoteVersion => $"v{_passFileMerge.Versions.Branching}..{_passFileMerge.Versions.Remote}";
 
     public string LocalVersionDate => _passFileMerge.VersionsChangedOn.Local.ToShortDateTimeString();
     public string RemoteVersionDate => _passFileMerge.VersionsChangedOn.Remote.ToShortDateTimeString();
@@ -80,9 +79,9 @@ public class PassFileMergeWinViewModel : ReactiveObject
         var conflictBtn = SelectedConflictBtn!;
         var conflict = conflictBtn.Conflict;
             
-        _passFileMerge.ResultSections.Add(new PwdSection
+        _passFileMerge.Result.Add(new PwdSection
         {
-            Id = (conflict.Local?.Id ?? conflict.Remote?.Id)!,
+            Id = (conflict.Local?.Id ?? conflict.Remote?.Id)!.Value,
             Name = (conflict.Local?.Name ?? conflict.Remote?.Name)!,
             Items = items.Select(btn => btn.ToItem()).ToList()
         });
@@ -133,7 +132,7 @@ public class PassFileMergeWinViewModel : ReactiveObject
                 {
                     list.Move(index, index + direction);
                 }
-            };
+            }
                 
             Move(LocalItems);
             Move(RemoteItems);

@@ -54,25 +54,25 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     /// otherwise execute <see cref="IPassFileContext.Rollback"/>.
     /// </summary>
     /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
-    Task<IResult> LoadListAsync(CancellationToken cancellationToken = default);
+    ValueTask<IResult> LoadListAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Load passfile encrypted content of its current version.
     /// </summary>
     /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
-    Task<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
+    ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Load passfile encrypted content of its current version
     /// or encrypt current decrypted content.
     /// </summary>
     /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
-    Task<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
+    ValueTask<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Create a new passfile with local id, add it to <see cref="CurrentList"/>.
     /// </summary>
-    Task<TPassFile> CreateAsync(CancellationToken cancellationToken = default);
+    ValueTask<TPassFile> CreateAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Add <see cref="originPassFile"/> to <see cref="CurrentList"/>,
@@ -89,7 +89,7 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     /// Parameter <paramref name="passFile"/> must be from <see cref="CurrentList"/>.
     /// If result is bad, message will be shown by dialog service.
     /// </remarks>
-    IResult UpdateInfo(TPassFile passFile, bool fromOrigin);
+    IResult UpdateInfo(TPassFile passFile, bool fromOrigin = false);
 
     /// <summary>
     /// Mark passfile as version-changed.
@@ -98,13 +98,13 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     /// Parameter <paramref name="passFile"/> must be from <see cref="CurrentList"/>.
     /// If result is bad, message will be shown by dialog service.
     /// </remarks>
-    IResult UpdateContent(TPassFile passFile, bool fromOrigin);
+    IResult UpdateContent(TPassFile passFile, bool fromOrigin = false);
 
     /// <summary>
     /// Mark passfile as deleted.
     /// </summary>
     /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
-    IResult Delete(TPassFile passFile, bool fromOrigin);
+    IResult Delete(TPassFile passFile, bool fromOrigin = false);
 
     /// <summary>
     /// Mark passfile as restored after local deletion.

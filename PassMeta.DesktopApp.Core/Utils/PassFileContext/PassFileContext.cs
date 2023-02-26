@@ -20,7 +20,6 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Utils.PassFileContext;
 
@@ -84,7 +83,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         : throw new InvalidOperationException($"{nameof(CurrentList)} is accessed before loading!"))!;
 
     /// <inheritdoc />
-    public async Task<IResult> LoadListAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<IResult> LoadListAsync(CancellationToken cancellationToken = default)
     {
         if (_initialized)
         {
@@ -115,7 +114,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     }
 
     /// <inheritdoc />
-    public async Task<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
+    public async ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
     {
         if (!FindStateWhereCurrentIs(passFile, out var state))
         {
@@ -137,7 +136,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     }
 
     /// <inheritdoc />
-    public async Task<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
+    public async ValueTask<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
     {
         if (passFile.Content.Decrypted is not null)
         {
@@ -157,7 +156,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     }
 
     /// <inheritdoc />
-    public async Task<TPassFile> CreateAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<TPassFile> CreateAsync(CancellationToken cancellationToken = default)
     {
         const string idSequenceName = "pfid";
 

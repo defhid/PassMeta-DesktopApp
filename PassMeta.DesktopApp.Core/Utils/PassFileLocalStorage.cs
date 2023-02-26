@@ -15,7 +15,6 @@ using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
-using PassMeta.DesktopApp.Core.Services.Extensions;
 using PassMeta.DesktopApp.Core.Utils.Helpers;
 
 namespace PassMeta.DesktopApp.Core.Utils;

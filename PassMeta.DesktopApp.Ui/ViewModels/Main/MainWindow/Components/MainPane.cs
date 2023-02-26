@@ -1,3 +1,7 @@
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
+using PassMeta.DesktopApp.Core.Extensions;
+using Splat;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components;
 
 using System;
@@ -8,7 +12,6 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Common;
 using Constants;
-using Core;
 using ReactiveUI;
 
 public sealed class MainPane : ReactiveObject, IDisposable
@@ -106,7 +109,7 @@ public sealed class MainPane : ReactiveObject, IDisposable
 
             _disposables = new[]
             {
-                AppPaths.CurrentObservable.Subscribe(x =>
+                Locator.Current.Resolve<IAppConfigProvider>().CurrentObservable.Subscribe(x =>
                 {
                     Logs.IsVisible = x.DevMode;
                 })

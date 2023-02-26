@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -8,15 +9,15 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
-using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Core;
-using PassMeta.DesktopApp.Core.Services.Extensions;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Ui.Interfaces.Services;
 using PassMeta.DesktopApp.Ui.Views.Storage;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 
@@ -33,12 +34,7 @@ public class PassFileRestoreUiService : IPassFileRestoreUiService
     }
 
     /// <inheritdoc />
-    public async Task<IResult> SelectAndRestoreAsync<TPassFile, TContent>(
-        IPassFileContext<TPassFile> pfContext,
-        TPassFile passFile,
-        Window currentWindow)
-        where TPassFile : PassFile<TContent>
-        where TContent : class, new()
+    public async Task<IResult> SelectAndRestoreAsync(PwdPassFile passFile, IPassFileContext<PwdPassFile> pfContext, Window currentWindow)
     {
         try
         {
@@ -53,7 +49,7 @@ public class PassFileRestoreUiService : IPassFileRestoreUiService
                 return pfContext.Restore(passFile);
             }
 
-            return await RestoreInternalAsync(passFile, selectResult);
+            return await RestoreInternalAsync(passFile, pfContext, selectResult);
         }
         catch (Exception ex)
         {
@@ -63,38 +59,32 @@ public class PassFileRestoreUiService : IPassFileRestoreUiService
         }
     }
 
-    private async Task<IResult> RestoreInternalAsync(PassFile passFile, IResult selectResult)
+    private async Task<IResult> RestoreInternalAsync(PwdPassFile passFile, IPassFileContext<PwdPassFile> pfContext, IResult selectResult)
     {
         var pathResult = selectResult as IResult<string>;
-        var pfResult = selectResult as IResult<PassFile>;
 
         if (pathResult is not null)
         {
-            var importService = Locator.Current.Resolve<IPassFileImportService>(passFile.Type.ToString());
+            var importService = Locator.Current.Resolve<IPassFileImportService>();
                 
-            var importResult = await importService.ImportAsync(passFile, pathResult.Data!, passFile.PassPhrase);
+            var importResult = await importService.ImportAsync(passFile, pathResult.Data!);
             if (importResult.Bad)
             {
                 return importResult;
             }
         }
-        else if (pfResult is not null)
+        else if (selectResult is IResult<PwdPassFile> pfResult)
         {
-            passFile.ContentEncrypted = pfResult.Data!.ContentEncrypted;
-            passFile.PassPhrase = null;
+            passFile.Content = new PassFileContent<List<PwdSection>>(pfResult.Data!.Content.Encrypted!, passFile.Content.PassPhrase!);
         }
         else return Result.Failure();
 
-        var updateResult = PassFileManager.UpdateData(passFile, pfResult is not null);
+        var updateResult = pfContext.UpdateContent(passFile);
         if (updateResult.Ok)
         {
             _dialogService.ShowInfo(pathResult is null 
                 ? string.Format(Resources.PASSFILE__SUCCESS_RESTORE_FROM_SERVER, passFile.Name)
                 : string.Format(Resources.PASSFILE__SUCCESS_RESTORE_FROM_FILE, passFile.Name, Path.GetFileName(pathResult.Data)));
-        }
-        else
-        {
-            _dialogService.ShowError(updateResult.Message!);
         }
 
         return updateResult;

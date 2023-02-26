@@ -13,7 +13,6 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Ui.App.Observers;
-using PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow;
 using PassMeta.DesktopApp.Ui.Views.Main;
 
 namespace PassMeta.DesktopApp.Ui.App;

@@ -10,12 +10,16 @@ using Avalonia.Controls;
 using ReactiveUI;
     
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Core;
-using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Ui.App;
 using PassMeta.DesktopApp.Ui.Utils.Comparers;
 using PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Models;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components;
 
@@ -68,8 +72,8 @@ public class PassFileData : ReactiveObject
         },
     };
         
-    private PassFile? _passFile;
-    public PassFile? PassFile
+    private PwdPassFile? _passFile;
+    public PwdPassFile? PassFile
     {
         get => _passFile;
         set
@@ -122,8 +126,6 @@ public class PassFileData : ReactiveObject
 
     public PassFileDataEdit Edit { get; }
 
-    public event EventHandler<EventArgs>? PassFileCanBeChanged;
-
     private readonly IObservable<bool> _editModeObservable;
 
     private int _searching;
@@ -135,6 +137,9 @@ public class PassFileData : ReactiveObject
     private readonly PassFileItemPath _lastPassFileItemPath;
 
     private readonly ViewElements _viewElements;
+
+    private readonly IPassFileContext<PwdPassFile> _pfContext =
+        Locator.Current.Resolve<IPassFileContextProvider>().For<PwdPassFile>();
 
     public PassFileData(ViewElements viewElements, PassFileItemPath lastPassFileItemPath, PassFileBarExpander passFileBarExpander)
     {
@@ -177,23 +182,25 @@ public class PassFileData : ReactiveObject
                 
         if (!string.IsNullOrWhiteSpace(text))
         {
-            text = text.Trim();
-            for (var i = _sectionsList.Count - 1; i >= 0; --i)
-            {
-                var sectionBtn = _sectionsList[i];
-                if (sectionBtn.Section.Search.Contains(text))
-                {
-                    continue;
-                }
-                if (sectionBtn.Section.Items.Any(item => item.Search.Contains(text)))
-                {
-                    continue;
-                }
-                if (searching == _searching)
-                {
-                    _sectionsList.RemoveAt(i);
-                }
-            }
+            throw new NotImplementedException("Search is not implemented");
+            
+            // text = text.Trim();
+            // for (var i = _sectionsList.Count - 1; i >= 0; --i)
+            // {
+            //     var sectionBtn = _sectionsList[i];
+            //     if (sectionBtn.Section.Search.Contains(text))
+            //     {
+            //         continue;
+            //     }
+            //     if (sectionBtn.Section.Items.Any(item => item.Search.Contains(text)))
+            //     {
+            //         continue;
+            //     }
+            //     if (searching == _searching)
+            //     {
+            //         _sectionsList.RemoveAt(i);
+            //     }
+            // }
         }
     }
 
@@ -217,7 +224,7 @@ public class PassFileData : ReactiveObject
             SearchText = null;
         }
             
-        var list = PassFile?.PwdData;
+        var list = PassFile?.Content.Decrypted;
         if (list is not null)
         {
             list.Sort(new PassFileSectionComparer());
@@ -280,9 +287,9 @@ public class PassFileData : ReactiveObject
 
         using var preloader = AppLoading.General.Begin();
 
-        var result = PassFileManager.UpdatePwdDataSelectively(passFile, data => 
-            data.RemoveAll(s => s.Id == section.Id));
+        passFile.Content.Decrypted!.RemoveAll(s => s.Id == section.Id);
 
+        var result = _pfContext.UpdateContent(passFile);
         if (result.Ok)
         {
             var index = SelectedSectionIndex;
@@ -293,12 +300,6 @@ public class PassFileData : ReactiveObject
                 SelectedSectionIndex = Math.Min(index, _sectionsList.Count - 1);
             }
         }
-        else
-        {
-            _dialogService.ShowError(result.Message!);
-        }
-
-        PassFileCanBeChanged?.Invoke(this, EventArgs.Empty);
     }
         
     #endregion
@@ -319,19 +320,13 @@ public class PassFileData : ReactiveObject
 
         if (_addingSectionMode)
         {
-            var res = PassFileManager.UpdatePwdDataSelectively(passFile, data => 
-                data.Add(section.Copy()));
-
-            if (res.Bad)
-            {
-                _dialogService.ShowError(res.Message!);
-                return;
-            }
+            passFile.Content.Decrypted!.Add(section.Copy());
+            
+            var res = _pfContext.UpdateContent(passFile);
+            if (res.Bad) return;
 
             _addingSectionMode = false;
         }
-
-        PassFileCanBeChanged?.Invoke(this, EventArgs.Empty);
 
         var items = _sectionItemsList.Select(btn => btn.ToItem()).ToList();
         var sectionName = Edit.SectionName?.Trim();
@@ -346,14 +341,13 @@ public class PassFileData : ReactiveObject
             Edit.Mode = false;
             return;
         }
+        
+        
+        var lSection = passFile.Content.Decrypted!.First(s => s.Id == section.Id);
+        lSection.Name = sectionName;
+        lSection.Items = items.Select(i => i.Copy()).ToList();
             
-        var result = PassFileManager.UpdatePwdDataSelectively(passFile, data =>
-        {
-            var lSection = data.First(s => s.Id == section.Id);
-            lSection.Name = sectionName;
-            lSection.Items = items.Select(i => i.Copy()).ToList();
-        });
-
+        var result = _pfContext.UpdateContent(passFile);
         if (result.Ok)
         {
             using (_passFileBarExpander.DisableAutoExpandingScoped())
@@ -364,10 +358,6 @@ public class PassFileData : ReactiveObject
             }
                 
             Edit.Mode = false;
-        }
-        else
-        {
-            _dialogService.ShowError(result.Message!);
         }
     }
 

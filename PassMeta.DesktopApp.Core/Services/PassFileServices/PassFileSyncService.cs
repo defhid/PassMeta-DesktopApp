@@ -14,29 +14,23 @@ namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 /// <inheritdoc />
 public class PassFileSyncService : IPassFileSyncService
 {
-    private readonly IPassFileContextProvider _pfContextProvider;
     private readonly IPassFileRemoteService _pfRemoteService;
     private readonly IDialogService _dialogService;
 
     /// <summary></summary>
-    public PassFileSyncService(
-        IPassFileContextProvider pfContextProvider,
-        IPassFileRemoteService pfRemoteService,
-        IDialogService dialogService)
+    public PassFileSyncService(IPassFileRemoteService pfRemoteService, IDialogService dialogService)
     {
-        _pfContextProvider = pfContextProvider;
         _pfRemoteService = pfRemoteService;
         _dialogService = dialogService;
     }
 
     /// <inheritdoc />
-    public async Task SynchronizeAsync<TPassFile>()
+    public async Task SynchronizeAsync<TPassFile>(IPassFileContext<TPassFile> context)
         where TPassFile : PassFile
     {
         var committed = false;
         var synced = false;
         var syncWarning = false;
-        var context = _pfContextProvider.For<TPassFile>();
 
         if (context.AnyChanged)
         {

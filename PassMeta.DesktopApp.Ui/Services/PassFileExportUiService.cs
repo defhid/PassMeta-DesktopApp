@@ -7,8 +7,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Constants;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Core.Services.Extensions;
 using PassMeta.DesktopApp.Ui.Interfaces.Services;
 
 namespace PassMeta.DesktopApp.Ui.Services;

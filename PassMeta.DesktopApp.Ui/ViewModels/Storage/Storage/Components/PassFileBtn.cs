@@ -13,8 +13,8 @@ namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Components;
 
 public class PassFileBtn : ReactiveObject
 {
-    private PassFile? _passFile;
-    public PassFile? PassFile
+    private PwdPassFile? _passFile;
+    public PwdPassFile? PassFile
     {
         get => _passFile;
         private set => this.RaiseAndSetIfChanged(ref _passFile, value);
@@ -33,7 +33,7 @@ public class PassFileBtn : ReactiveObject
     private readonly ObservableAsPropertyHelper<bool> _shortMode;
     private bool ShortMode => _shortMode.Value;
 
-    public PassFileBtn(PassFile passFile, IObservable<bool> shortModeObservable)
+    public PassFileBtn(PwdPassFile passFile, IObservable<bool> shortModeObservable)
     {
         _passFile = passFile;
         _shortMode = shortModeObservable.ToProperty(this, nameof(ShortMode));

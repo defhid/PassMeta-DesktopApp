@@ -5,7 +5,7 @@ using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
-namespace PassMeta.DesktopApp.Core.Extensions;
+namespace PassMeta.DesktopApp.Common.Extensions;
 
 /// <summary>
 /// Extension methods for <see cref="IPassFileLocalStorage"/>.

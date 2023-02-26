@@ -685,4 +685,7 @@ try another keywords...</value>
     <data name="PASSERVICE__WARN_SYNCHRONIZED" xml:space="preserve">
         <value>Synchronized with the server. WARNING: see logs</value>
     </data>
+    <data name="PASSFILE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Wrong passphrase, try input again</value>
+    </data>
 </root>

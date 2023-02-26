@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
-using PassMeta.DesktopApp.Core.Services.Extensions;
+using PassMeta.DesktopApp.Common.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services.PassMetaServices;
 

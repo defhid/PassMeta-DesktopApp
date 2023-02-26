@@ -1,5 +1,4 @@
 using System;
-using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 
 namespace PassMeta.DesktopApp.Common.Enums;
 

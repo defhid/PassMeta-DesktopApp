@@ -10,11 +10,10 @@ using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Constants;
+using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Core.Extensions;
-using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 
@@ -23,6 +22,7 @@ public class PassFileImportService : IPassFileImportService
 {
     private readonly IPassMetaCryptoService _passMetaCryptoService;
     private readonly IPassFileContentSerializerFactory _contentSerializerFactory;
+    private readonly IPassPhraseAskHelper _passPhraseAskHelper;
     private readonly IDialogService _dialogService;
     private readonly ILogsWriter _logger;
 
@@ -30,17 +30,19 @@ public class PassFileImportService : IPassFileImportService
     public PassFileImportService(
         IPassMetaCryptoService passMetaCryptoService,
         IPassFileContentSerializerFactory contentSerializerFactory,
+        IPassPhraseAskHelper passPhraseAskHelper,
         IDialogService dialogService,
         ILogsWriter logger)
     {
         _passMetaCryptoService = passMetaCryptoService;
         _contentSerializerFactory = contentSerializerFactory;
+        _passPhraseAskHelper = passPhraseAskHelper;
         _dialogService = dialogService;
         _logger = logger;
     }
 
     /// <inheritdoc />
-    public IEnumerable<PassFileExternalFormat> SupportedFormats { get; } = new[]
+    public IEnumerable<PassFileExternalFormat> GetSupportedFormats(PassFileType passFileType) => new[]
     {
         PassFileExternalFormat.Encrypted,
         PassFileExternalFormat.Decrypted,
@@ -90,38 +92,42 @@ public class PassFileImportService : IPassFileImportService
         string path)
         where TContent : class, new()
     {
-        var i = 0;
-        while (true)
+        byte[]? contentBytes = null;
+
+        var passPhrase = await TryAskPassPhraseAsync(
+            Resources.PASSIMPORT__ASK_PASSPHRASE,
+            Resources.PASSIMPORT__ASK_PASSPHRASE_AGAIN, path, x => 
+            {
+                try
+                {
+                    contentBytes = _passMetaCryptoService.Decrypt(fileBytes, x);
+                    return true;
+                }
+                catch
+                {
+                    LogWarning($"Passfile '{path}' decryption failed, wrong passphrase");
+                    return false;
+                }
+            });
+
+        if (passPhrase is null || contentBytes is null)
         {
-            var passPhrase = await TryAskPassPhraseAsync(Path.GetFileName(path), again: ++i > 1);
-            if (passPhrase is null)
-                return Result.Failure();
-
-            byte[] contentBytes;
-            try
-            {
-                contentBytes = _passMetaCryptoService.Decrypt(fileBytes, passPhrase);
-            }
-            catch
-            {
-                LogWarning($"Passfile '{path}' decryption failed, wrong passphrase");
-                continue;
-            }
-
-            try
-            {
-                var contentRaw = _contentSerializerFactory.For<TContent>().Deserialize(contentBytes);
-                passFile.Content = new PassFileContent<TContent>(contentRaw, passPhrase);
-            }
-            catch (Exception ex)
-            {
-                LogError("Decrypted content deserializing failed", ex);
-                throw;
-            }
-
-            LogWarning($"{passFile.GetIdentityString()} content imported from encrypted '{path}'");
-            return Result.Success();
+            return Result.Failure();
         }
+
+        try
+        {
+            var contentRaw = _contentSerializerFactory.For<TContent>().Deserialize(contentBytes);
+            passFile.Content = new PassFileContent<TContent>(contentRaw, passPhrase);
+        }
+        catch (Exception ex)
+        {
+            LogError("Decrypted content deserializing failed", ex);
+            throw;
+        }
+
+        LogWarning($"{passFile.GetIdentityString()} content imported from encrypted '{path}'");
+        return Result.Success();
     }
 
     private async Task<IResult> ImportPassfileDecryptedAsync<TContent>(
@@ -141,7 +147,10 @@ public class PassFileImportService : IPassFileImportService
             throw;
         }
 
-        var passPhrase = await TryAskPassPhraseAsync(Path.GetFileName(path), askNew: true);
+        var passPhrase = await TryAskPassPhraseAsync(
+            Resources.PASSIMPORT__ASK_PASSPHRASE_NEW,
+            Resources.PASSIMPORT__ASK_PASSPHRASE_NEW_AGAIN, path);
+
         if (passPhrase is null)
             return Result.Failure();
 
@@ -151,22 +160,16 @@ public class PassFileImportService : IPassFileImportService
         return Result.Success();
     }
 
-    private async Task<string?> TryAskPassPhraseAsync(string fileName, bool again = false, bool askNew = false)
+    private async Task<string?> TryAskPassPhraseAsync(string question, string repeatQuestion, string path,
+        Func<string, bool>? validator = null)
     {
-        var passPhrase = await _dialogService.AskPasswordAsync(string.Format(again
-            ? Resources.PASSIMPORT__ASK_PASSPHRASE_AGAIN
-            : askNew
-                ? Resources.PASSIMPORT__ASK_PASSPHRASE_NEW
-                : Resources.PASSIMPORT__ASK_PASSPHRASE, fileName));
+        question = string.Format(question, Path.GetFileName(path));
+        repeatQuestion = string.Format(repeatQuestion, Path.GetFileName(path));
 
-        while (passPhrase is { Ok: true, Data: "" })
-        {
-            passPhrase = await _dialogService.AskPasswordAsync(string.Format(askNew
-                ? Resources.PASSIMPORT__ASK_PASSPHRASE_NEW_AGAIN
-                : Resources.PASSIMPORT__ASK_PASSPHRASE_AGAIN, fileName));
-        }
+        var result = await _passPhraseAskHelper.AskLoopedAsync(question, repeatQuestion,
+            x => Task.FromResult(validator?.Invoke(x) ?? true));
 
-        return passPhrase.Ok ? passPhrase.Data! : null;
+        return result.Data;
     }
 
     private void LogError(string log, Exception? ex = null)

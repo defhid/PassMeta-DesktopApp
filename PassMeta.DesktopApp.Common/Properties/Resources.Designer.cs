@@ -996,6 +996,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wrong passphrase, try input again.
+        /// </summary>
+        public static string PASSFILE__ASK_PASSPHRASE_AGAIN {
+            get {
+                return ResourceManager.GetString("PASSFILE__ASK_PASSPHRASE_AGAIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input NEW passphrase.
         /// </summary>
         public static string PASSFILE__ASK_PASSPHRASE_NEW {

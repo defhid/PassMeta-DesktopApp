@@ -678,4 +678,7 @@
     <data name="PASSERVICE__WARN_SYNCHRONIZED" xml:space="preserve">
         <value>Cинхронизировано с сервером. ВНИМАНИЕ: см. логи</value>
     </data>
+    <data name="PASSFILE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Неверная кодовая фраза, попробуйте ввести заново</value>
+    </data>
 </root>

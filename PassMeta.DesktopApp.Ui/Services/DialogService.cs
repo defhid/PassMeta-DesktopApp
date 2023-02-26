@@ -11,8 +11,7 @@ using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
-using PassMeta.DesktopApp.Core.Services.Extensions;
-
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.Constants;
 using PassMeta.DesktopApp.Ui.Extensions;
 using PassMeta.DesktopApp.Ui.Views.Main;
@@ -37,6 +36,7 @@ public class DialogService : IDialogService
 
     private INotificationManager? NotificationManager => _notificationManagerResolver();
 
+    /// <inheritdoc />
     public void Flush()
     {
         if (App.App.MainWindow is null)

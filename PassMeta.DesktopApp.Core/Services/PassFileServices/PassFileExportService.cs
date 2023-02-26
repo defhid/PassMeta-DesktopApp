@@ -14,8 +14,6 @@ using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Core.Extensions;
-using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 
@@ -26,6 +24,7 @@ public class PassFileExportService : IPassFileExportService
     private readonly IPassFileCryptoService _passFileCryptoService;
     private readonly IPassFileLocalStorage _passFileLocalStorage;
     private readonly IUserContextProvider _userContextProvider;
+    private readonly IPassPhraseAskHelper _passPhraseAskHelper;
     private readonly IDialogService _dialogService;
     private readonly ILogsWriter _logger;
 
@@ -35,6 +34,7 @@ public class PassFileExportService : IPassFileExportService
         IPassFileCryptoService passFileCryptoService,
         IPassFileLocalStorage passFileLocalStorage,
         IUserContextProvider userContextProvider,
+        IPassPhraseAskHelper passPhraseAskHelper,
         IDialogService dialogService,
         ILogsWriter logger)
     {
@@ -42,6 +42,7 @@ public class PassFileExportService : IPassFileExportService
         _passFileCryptoService = passFileCryptoService;
         _passFileLocalStorage = passFileLocalStorage;
         _userContextProvider = userContextProvider;
+        _passPhraseAskHelper = passPhraseAskHelper;
         _dialogService = dialogService;
         _logger = logger;
     }
@@ -160,16 +161,11 @@ public class PassFileExportService : IPassFileExportService
     private async Task<bool> TryDecryptAsync<TContent>(PassFile<TContent> passFile)
         where TContent : class, new()
     {
-        var passPhrase = await _dialogService.AskPasswordAsync(
-            string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE, passFile.Name));
-
-        while (passPhrase.Ok && (
-                   passPhrase.Data == string.Empty ||
-                   _passFileCryptoService.Decrypt(passFile, passPhrase.Data!).Bad))
-        {
-            passPhrase = await _dialogService.AskPasswordAsync(
-                string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name));
-        }
+        var question = string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE, passFile.Name);
+        var repeatQuestion = string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name);
+        
+        await _passPhraseAskHelper.AskLoopedAsync(question, repeatQuestion,
+            x => Task.FromResult(_passFileCryptoService.Decrypt(passFile, x).Bad));
 
         return passFile.Content.Decrypted is not null;
     }

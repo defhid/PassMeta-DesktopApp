@@ -21,11 +21,13 @@ public class PassFileWin : WinView<PassFileWinViewModel>
         this.CorrectMainWindowFocusWhileOpened();
     }
 
-    public PassFileWin(PassFile passFile) : this()
+    public PassFileWin(PwdPassFile passFile) : this()
     {
         PassFile = passFile;
-        DataContext = new PassFileWinViewModel(passFile);
-        DataContext.ViewElements.Window = this;
+        ViewModel = new PassFileWinViewModel(passFile)
+        {
+            ViewElements = { Window = this }
+        };
 
         _changeNameAdvice = PassFile!.Name.Trim() == Common.Resources.PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME;
     }

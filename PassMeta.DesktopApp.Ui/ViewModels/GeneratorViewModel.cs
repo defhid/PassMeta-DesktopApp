@@ -1,3 +1,4 @@
+using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Core.Extensions;
 using Splat;
@@ -21,10 +22,11 @@ public class GeneratorViewModel : PageViewModel
     private readonly IPassMetaRandomService _pmRandomService = Locator.Current.Resolve<IPassMetaRandomService>();
     private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
 
+    private int _length = Locator.Current.Resolve<IAppConfigProvider>().Current.DefaultPasswordLength;
     public int Length
     {
-        get => PresetsCache.Generator.Length;
-        set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.Length, value);
+        get => _length;
+        set => this.RaiseAndSetIfChanged(ref _length, value);
     }
 
     public bool IncludeDigits

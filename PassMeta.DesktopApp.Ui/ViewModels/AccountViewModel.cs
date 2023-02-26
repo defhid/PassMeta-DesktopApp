@@ -5,13 +5,14 @@ using Avalonia.Controls;
 using ReactiveUI;
 
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
 
-using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Ui.App;
 using PassMeta.DesktopApp.Ui.ViewModels.Base;
-using AppContext = PassMeta.DesktopApp.Core.AppContext;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels;
 
@@ -19,6 +20,7 @@ public class AccountViewModel : PageViewModel
 {
     private static IAccountService AccountService => Locator.Current.Resolve<IAccountService>();
     private static IAuthService AuthService => Locator.Current.Resolve<IAuthService>();
+    private static IAppContextProvider AppContext => Locator.Current.Resolve<IAppContextProvider>();
 
     public override ContentControl[] RightBarButtons => new ContentControl[]
     {

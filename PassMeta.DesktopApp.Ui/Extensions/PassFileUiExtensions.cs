@@ -1,16 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Avalonia.Media;
-using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Abstractions;
-using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
-using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Constants;
 
@@ -93,69 +86,5 @@ public static class PassFileUiExtensions
         }
 
         return string.Join(" - ", dates.Distinct().Select(d => d.ToShortDateTimeString()));
-    }
-
-    /// <summary>
-    /// Ask user for passphrase (if required), load and decode data.
-    /// </summary>
-    /// <remarks>Automatic show failure.</remarks>
-    public static async Task<IResult> LoadIfRequiredAndDecryptAsync(this PassFile passFile, IDialogService dialogService, bool askOld = false)
-    {
-        passFile.PassPhrase ??= PassFileManager.GetPassPhrase(passFile.Id);
-            
-        if (passFile.PassPhrase is null)
-        {
-            var passPhrase = await dialogService.AskPasswordAsync(askOld 
-                ? Resources.PASSFILE__ASK_PASSPHRASE_OLD
-                : Resources.PASSFILE__ASK_PASSPHRASE);
-
-            if (passPhrase.Bad || passPhrase.Data == string.Empty)
-            {
-                return Result.Failure();
-            }
-
-            passFile.PassPhrase = passPhrase.Data!;
-            PassFileManager.TrySetPassPhrase(passFile.Id, passPhrase.Data!);
-        }
-
-        var result = await PassFileManager.TryLoadIfRequiredAndDecryptAsync(passFile);
-        if (result.Ok) return result;
-
-        passFile.PassPhrase = null;
-        PassFileManager.TrySetPassPhrase(passFile.Id, null);
-                
-        dialogService.ShowFailure(result.Message!);
-        return Result.Failure();
-    }
-        
-    private static async Task<IResult> TryLoadIfRequiredAndDecryptAsync<TPassFile, TContent>(
-        this IPassFileContext<TPassFile> context, 
-        TPassFile passFile,
-        IPassFileCryptoService pfCryptoService,
-        IDialogService dialogService)
-        where TPassFile : PassFile<TContent>
-        where TContent : class, new()
-    {
-        if (passFile.Content.Decrypted is not null)
-        {
-            return Result.Success();
-        }
-
-        if (passFile.Content.Encrypted is null)
-        {
-            var loadResult = await context.LoadEncryptedContentAsync(passFile);
-            if (loadResult.Bad)
-            {
-                return loadResult;
-            }
-        }
-
-        var decryptResult = pfCryptoService.Decrypt(passFile);
-        if (decryptResult.Bad)
-        {
-            dialogService.ShowError(decryptResult.Message!);
-        }
-
-        return decryptResult;
     }
 }

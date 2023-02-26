@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
-using PassMeta.DesktopApp.Core.Services.Extensions;
+using PassMeta.DesktopApp.Common.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Utils;
 

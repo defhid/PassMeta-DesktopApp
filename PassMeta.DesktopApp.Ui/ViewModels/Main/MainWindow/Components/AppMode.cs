@@ -4,7 +4,8 @@ using ReactiveUI;
 
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Core;
+using PassMeta.DesktopApp.Core.Extensions;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow.Components;
 

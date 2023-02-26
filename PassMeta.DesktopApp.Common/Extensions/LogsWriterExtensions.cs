@@ -3,12 +3,12 @@ using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
-namespace PassMeta.DesktopApp.Core.Services.Extensions;
+namespace PassMeta.DesktopApp.Common.Extensions;
 
 /// <summary>
 /// Extension methods for <see cref="ILogsWriter"/>.
 /// </summary>
-public static class LogServiceExtensions
+public static class LogsWriterExtensions
 {
     /// <summary>
     /// Log debug text, if logger config

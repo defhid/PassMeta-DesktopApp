@@ -1,9 +1,11 @@
+using System;
+
 namespace PassMeta.DesktopApp.Ui.ViewModels.Storage.Storage.Models;
 
 public class PassFileItemPath
 {
-    private int? _passFileId;
-    public int? PassFileId
+    private long? _passFileId;
+    public long? PassFileId
     {
         get => _passFileId;
         set
@@ -13,7 +15,7 @@ public class PassFileItemPath
         }
     }
 
-    public string? PassFileSectionId { get; set; }
+    public Guid? PassFileSectionId { get; set; }
 
     public PassFileItemPath Copy() => (PassFileItemPath)MemberwiseClone();
 }

@@ -17,7 +17,7 @@ public class PassFileRestoreWin : WinView<PassFileRestoreWinViewModel>
         this.CorrectMainWindowFocusWhileOpened();
     }
 
-    public PassFileRestoreWin(PassFile currentPassFile) : this()
+    public PassFileRestoreWin(PwdPassFile currentPassFile) : this()
     {
         ViewModel = new PassFileRestoreWinViewModel(currentPassFile)
         {

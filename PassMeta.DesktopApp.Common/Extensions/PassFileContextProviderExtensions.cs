@@ -1,7 +1,6 @@
 using System;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Enums;
-using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
 namespace PassMeta.DesktopApp.Common.Extensions;
 
@@ -32,7 +31,7 @@ public static class PassFileContextProviderExtensions
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">If <typeparamref name="TPassFile"/> is not supported.</exception>
     public static IPassFileContext<TPassFile> For<TPassFile>(this IPassFileContextProvider provider)
-        where TPassFile : PassFile
+        where TPassFile : Models.Entities.PassFile.PassFile
     {
         foreach (var context in provider.Contexts)
         {

@@ -7,11 +7,11 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.AppContext;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Common.Models.Entities.Internal;
-using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Utils;
 

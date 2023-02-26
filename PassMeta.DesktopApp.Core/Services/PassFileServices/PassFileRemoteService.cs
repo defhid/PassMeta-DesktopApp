@@ -7,6 +7,7 @@ using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Helpers;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
@@ -18,7 +19,6 @@ using PassMeta.DesktopApp.Common.Models.Dto.Request;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Core.Services.Extensions;
 
 namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 
