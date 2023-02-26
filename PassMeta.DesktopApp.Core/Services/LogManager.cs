@@ -62,7 +62,7 @@ public class LogsManager : ILogsManager
     }
 
     /// <inheritdoc />
-    public IAppConfigProvider AppConfigProvider { get; set; }
+    public IAppConfigProvider? AppConfigProvider { get; set; }
 
     /// <inheritdoc />
     public List<Log> Read(DateTime dateFrom, DateTime dateTo)

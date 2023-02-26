@@ -311,7 +311,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     /// <inheritdoc />
     public async Task<IResult> CommitAsync()
     {
-        var toSaveInfo = new List<TPassFile>();
+        var toSaveList = new List<TPassFile>();
         var toSaveContent = new List<TPassFile>();
         var toDeleteContent = new List<(TPassFile passFile, int version)>();
 
@@ -324,19 +324,13 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
             if (state.Current.VersionChangedOn != state.Source?.VersionChangedOn)
             {
-                if (state.Current.Content.Encrypted is null)
-                {
-                    var res = _pfCryptoService.Encrypt(state.Current);
-                    if (res.Bad)
-                    {
-                        return UnexpectedError(res.Message!);
-                    }
-                }
+                var res = await ProvideEncryptedContentAsync(state.Current);
+                if (res.Bad) return res;
 
                 toSaveContent.Add(state.Current);
             }
 
-            toSaveInfo.Add(state.Current);
+            toSaveList.Add(state.Current);
         }
 
         foreach (var passFile in toSaveContent)
@@ -354,11 +348,11 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
                 .Select(x => (passFile, x)));
         }
 
-        return await CommitInternalAsync(toSaveInfo, toSaveContent, toDeleteContent);
+        return await CommitInternalAsync(toSaveList, toSaveContent, toDeleteContent);
     }
 
     private async Task<IResult> CommitInternalAsync(
-        ICollection<TPassFile> toSaveInfo,
+        ICollection<TPassFile> toSaveList,
         IEnumerable<TPassFile> toSaveContent,
         IEnumerable<(TPassFile passFile, int version)> toDeleteContent)
     {
@@ -385,7 +379,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
             }
         }
 
-        var dtoList = toSaveInfo.Select(_mapper.Map<PassFile, PassFileLocalDto>);
+        var dtoList = toSaveList.Select(_mapper.Map<PassFile, PassFileLocalDto>);
 
         var result = await _pfLocalStorage.SaveListAsync(dtoList, _userContext, CancellationToken.None);
         if (result.Bad)
@@ -393,10 +387,10 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
             return UnexpectedError(result.Message!);
         }
 
-        var states = new Dictionary<long, PassFileState>(toSaveInfo.Count);
-        foreach (var source in toSaveInfo)
+        var states = new Dictionary<long, PassFileState>(toSaveList.Count + 1);
+        foreach (var source in toSaveList)
         {
-            _states[source.Id] = new PassFileState(source, _mapper.Map<TPassFile, TPassFile>(source));
+            _states[source.Id] = new PassFileState(_mapper.Map<TPassFile, TPassFile>(source), source);
         }
 
         _states = states;

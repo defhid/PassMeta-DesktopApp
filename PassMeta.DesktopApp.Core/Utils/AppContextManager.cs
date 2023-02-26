@@ -30,10 +30,10 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     private readonly SemaphoreSlim _semaphore = new(1);
 
     /// <summary></summary>
-    public AppContextManager(ILogsWriter logger, IFileRepositoryFactory fileRepositoryFactory)
+    public AppContextManager(ILogsWriter logger, IFileRepository fileRepository)
     {
         _logger = logger;
-        _repository = fileRepositoryFactory.ForSystemFiles();
+        _repository = fileRepository;
     }
 
     /// <inheritdoc />

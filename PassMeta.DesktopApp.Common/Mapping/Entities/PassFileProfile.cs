@@ -13,24 +13,35 @@ public class PassFileProfile : Profile
     /// <inheritdoc />
     public PassFileProfile()
     {
-        CreateMap<PassFile, PassFile>()
+        AddClone<PwdPassFile>();
+        AddClone<TxtPassFile>();
+
+        AddLocalDto<PassFile>();
+        AddLocalDto<PwdPassFile>();
+        AddLocalDto<TxtPassFile>();
+
+        AddRemoteDto<PassFile>();
+        AddRemoteDto<PwdPassFile>();
+        AddRemoteDto<TxtPassFile>();
+    }
+
+    private void AddClone<TPassFile>()
+        where TPassFile : PassFile
+    {
+        CreateMap<TPassFile, TPassFile>()
             .ForMember(x => x.OriginChangeStamps, opt => opt
                 .MapFrom(x => new PassFileChangeStamps
                 {
                     InfoChangedOn = x.InfoChangedOn,
                     VersionChangedOn = x.VersionChangedOn,
                     Version = x.Version
-                }))
-            .Include<PwdPassFile, PwdPassFile>()
-            .Include<TxtPassFile, TxtPassFile>();
-
-        AddLocalDto();
-        AddRemoteDto();
+                }));
     }
 
-    private void AddLocalDto()
+    private void AddLocalDto<TPassFile>()
+        where TPassFile : PassFile
     {
-        CreateMap<PassFile, PassFileLocalDto>()
+        CreateMap<TPassFile, PassFileLocalDto>()
             .ForMember(dto => dto.OriginChangeStamps, opt => opt
                 .MapFrom(x => x == null
                     ? null
@@ -39,11 +50,9 @@ public class PassFileProfile : Profile
                         InfoChangedOn = x.InfoChangedOn,
                         VersionChangedOn = x.VersionChangedOn,
                         Version = x.Version
-                    }))
-            .Include<PwdPassFile, PassFileLocalDto>()
-            .Include<TxtPassFile, PassFileLocalDto>();
+                    }));
 
-        CreateMap<PassFileLocalDto, PassFile>()
+        CreateMap<TPassFile, PassFile>()
             .ForMember(x => x.OriginChangeStamps, opt => opt
                 .MapFrom(dto => dto == null
                     ? null
@@ -52,23 +61,20 @@ public class PassFileProfile : Profile
                         InfoChangedOn = dto.InfoChangedOn,
                         VersionChangedOn = dto.VersionChangedOn,
                         Version = dto.Version
-                    }))
-            .Include<PassFileLocalDto, PwdPassFile>()
-            .Include<PassFileLocalDto, TxtPassFile>();
+                    }));
     }
 
-    private void AddRemoteDto()
+    private void AddRemoteDto<TPassFile>()
+        where TPassFile : PassFile
     {
-        CreateMap<PassFileInfoDto, PassFile>()
+        CreateMap<PassFileInfoDto, TPassFile>()
             .ForMember(x => x.Type, opt => opt
-                .MapFrom(dto => (PassFileType) dto.TypeId))
-            .Include<PassFileInfoDto, PwdPassFile>()
-            .Include<PassFileInfoDto, TxtPassFile>();
+                .MapFrom(dto => (PassFileType) dto.TypeId));
 
-        CreateMap<PassFile, PassFilePostData>()
+        CreateMap<TPassFile, PassFilePostData>()
             .ForMember(dto => dto.TypeId, opt => opt
                 .MapFrom(x => (int) x.Type));
         
-        CreateMap<PassFile, PassFileInfoPatchData>();
+        CreateMap<TPassFile, PassFileInfoPatchData>();
     }
 }

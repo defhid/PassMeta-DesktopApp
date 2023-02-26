@@ -75,7 +75,7 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     ValueTask<TPassFile> CreateAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Add <see cref="originPassFile"/> to <see cref="CurrentList"/>,
+    /// Add <paramref name="originPassFile"/> to <see cref="CurrentList"/>,
     /// remove <paramref name="replacePassFile"/> from <see cref="CurrentList"/>
     /// and reassign contents to the origin passfile.
     /// </summary>

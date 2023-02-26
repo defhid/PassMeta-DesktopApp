@@ -34,7 +34,7 @@
                            Margin="35 4 0 0"
                            FontSize="12"
                            Opacity="0.7"
-                           Text="{Binding ServerInfo}"/>
+                           Text="{Binding ServerInfo^}"/>
             
                 <TextBox Grid.Row="1"
                           VerticalAlignment="Top"

@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using AutoMapper;
@@ -25,6 +24,7 @@ using PassMeta.DesktopApp.Core.Utils.Clients;
 using PassMeta.DesktopApp.Core.Utils.FileRepository;
 using PassMeta.DesktopApp.Core.Utils.Helpers;
 using PassMeta.DesktopApp.Core.Utils.PassFileContentSerializer;
+using PassMeta.DesktopApp.Core.Utils.PassFileContext;
 using PassMeta.DesktopApp.Ui.Interfaces.Services;
 using PassMeta.DesktopApp.Ui.Services;
 using ReactiveUI;
@@ -48,13 +48,17 @@ public static class DependencyInstaller
         Register<IFileRepositoryFactory>(new FileRepositoryFactory(
             Resolve<ILogsWriter>()));
 
+        Register<ICounter>(new Counter(
+            Resolve<IFileRepositoryFactory>().ForSystemFiles(),
+            Resolve<ILogsWriter>()));
+
         Register<IAppConfigProvider, IAppConfigManager>(new AppConfigManager(
             Resolve<ILogsWriter>(),
-            Resolve<IFileRepositoryFactory>()));
+            Resolve<IFileRepositoryFactory>().ForSystemFiles()));
 
-        Register<IAppContextProvider, IAppContextManager>(new AppContextManager(
+        Register<IUserContextProvider, IAppContextProvider, IAppContextManager>(new AppContextManager(
             Resolve<ILogsWriter>(),
-            Resolve<IFileRepositoryFactory>()));
+            Resolve<IFileRepositoryFactory>().ForSystemFiles()));
 
         Register<IOkBadService>(new OkBadService(
             Resolve<IDialogService>()));
@@ -79,6 +83,14 @@ public static class DependencyInstaller
             Resolve<IPassFileContentSerializerFactory>(),
             Resolve<ILogsWriter>()));
         
+        Register<IPassFileContextProvider, IPassFileContextManager>(new PassFileContextManager(
+            Resolve<IPassFileLocalStorage>(),
+            Resolve<IPassFileCryptoService>(),
+            Resolve<ICounter>(),
+            Resolve<IMapper>(),
+            Resolve<IDialogService>(),
+            Resolve<ILogsWriter>()));
+
         Register<IPassPhraseAskHelper>(new PassPhraseAskHelper(
             Resolve<IDialogService>()));
         
@@ -145,6 +157,8 @@ public static class DependencyInstaller
         Register<IPassFileRestoreUiService>(new PassFileRestoreUiService(
             Resolve<IDialogService>(),
             Resolve<ILogsWriter>()));
+
+        Resolve<ILogsWriter>().AppConfigProvider = Resolve<IAppConfigProvider>();
     }
 
     public static void RegisterViewsForViewModels()
@@ -153,19 +167,24 @@ public static class DependencyInstaller
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
     public static void Register<TContract>(TContract impl, string? contractName = null)
     {
-        Locator.CurrentMutable.RegisterConstant<TContract>(impl, contractName);
+        Locator.CurrentMutable.RegisterConstant(impl, typeof(TContract), contractName);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
     public static void Register<TContract1, TContract2>(TContract2 impl, string? contractName = null)
-        where TContract2 : TContract1
     {
-        Locator.CurrentMutable.RegisterConstant<TContract1>(impl, contractName);
-        Locator.CurrentMutable.RegisterConstant<TContract2>(impl, contractName);
+        Locator.CurrentMutable.RegisterConstant(impl, typeof(TContract1), contractName);
+        Locator.CurrentMutable.RegisterConstant(impl, typeof(TContract2), contractName);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Register<TContract1, TContract2, TContract3>(TContract3 impl, string? contractName = null)
+    {
+        Locator.CurrentMutable.RegisterConstant(impl, typeof(TContract1), contractName);
+        Locator.CurrentMutable.RegisterConstant(impl, typeof(TContract2), contractName);
+        Locator.CurrentMutable.RegisterConstant(impl, typeof(TContract3), contractName);
     }
 
     public static void Unregister<TContract>(string? contractName = null)

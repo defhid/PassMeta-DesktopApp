@@ -27,10 +27,10 @@ public class AppConfigManager : IAppConfigManager
     private readonly SemaphoreSlim _semaphore = new(1);
 
     /// <summary></summary>
-    public AppConfigManager(ILogsWriter logger, IFileRepositoryFactory fileRepositoryFactory)
+    public AppConfigManager(ILogsWriter logger, IFileRepository fileRepository)
     {
         _logger = logger;
-        _repository = fileRepositoryFactory.ForSystemFiles();
+        _repository = fileRepository;
     }
 
     /// <inheritdoc />

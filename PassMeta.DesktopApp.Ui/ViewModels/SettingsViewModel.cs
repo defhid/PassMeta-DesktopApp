@@ -131,5 +131,5 @@ public class SettingsViewModel : PageViewModel
         this.RaisePropertyChanged(nameof(ServerInfo));
     }
 
-    private static bool IsValidServerUrl(string url) => url.StartsWith("https://") && url.Length > 11;
+    private bool IsValidServerUrl(string url) => url.StartsWith("https://") && url.Length > 11 || _devMode;
 }

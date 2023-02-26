@@ -40,7 +40,6 @@ public class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         MainWindow = MakeWindow();
-        Locator.Current.Resolve<IDialogService>().Flush();
     }
 
     public static void ReopenMainWindow()
@@ -50,8 +49,6 @@ public class App : Application
 
         MainWindow?.Close();
         MainWindow = window;
-
-        Locator.Current.Resolve<IDialogService>().Flush();
     }
 
     private static async Task BeforeLaunchAsync()
@@ -88,8 +85,9 @@ public class App : Application
     {
         var win = new MainWindow();
 
+        win.Activated += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
         win.Closed += (_, _) => win.ViewModel!.Dispose();
- 
+
         DependencyInstaller.Unregister<INotificationManager>();
         DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)
         {

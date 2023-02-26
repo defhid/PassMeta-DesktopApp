@@ -9,28 +9,42 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
-using PassMeta.DesktopApp.Core.Extensions;
-using Splat;
 
 namespace PassMeta.DesktopApp.Core.Utils.PassFileContext;
 
 /// <inheritdoc />
 public class PassFileContextManager : IPassFileContextManager
 {
-    private readonly IReadonlyDependencyResolver _dependencyResolver;
+    private readonly IPassFileLocalStorage _pfLocalStorage;
+    private readonly IPassFileCryptoService _pfCryptoService;
+    private readonly ICounter _counter;
+    private readonly IMapper _mapper;
+    private readonly IDialogService _dialogService;
+    private readonly ILogsWriter _logger;
     private IPassFileContext[] _contexts = Array.Empty<IPassFileContext>();
 
     /// <summary></summary>
-    public PassFileContextManager(IReadonlyDependencyResolver dependencyResolver)
+    public PassFileContextManager(
+        IPassFileLocalStorage pfLocalStorage,
+        IPassFileCryptoService pfCryptoService,
+        ICounter counter,
+        IMapper mapper,
+        IDialogService dialogService,
+        ILogsWriter logger)
     {
-        _dependencyResolver = dependencyResolver;
+        _pfLocalStorage = pfLocalStorage;
+        _pfCryptoService = pfCryptoService;
+        _counter = counter;
+        _mapper = mapper;
+        _dialogService = dialogService;
+        _logger = logger;
     }
 
     /// <inheritdoc />
     public IEnumerable<IPassFileContext> Contexts => _contexts;
 
     /// <inheritdoc />
-    public void Reload()
+    public void Reload(IUserContext userContext)
     {
         foreach (var context in _contexts)
         {
@@ -39,20 +53,14 @@ public class PassFileContextManager : IPassFileContextManager
 
         _contexts = new[]
         {
-            CreateContext<PwdPassFile, List<PwdSection>>(),
-            CreateContext<TxtPassFile, List<TxtSection>>(),
+            CreateContext<PwdPassFile, List<PwdSection>>(userContext),
+            CreateContext<TxtPassFile, List<TxtSection>>(userContext),
         };
     }
 
-    private IPassFileContext CreateContext<TPassFile, TContent>()
+    private IPassFileContext CreateContext<TPassFile, TContent>(IUserContext userContext)
         where TPassFile : PassFile<TContent>
         where TContent : class, new() 
         => new PassFileContext<TPassFile, TContent>(
-            _dependencyResolver.Resolve<IPassFileLocalStorage>(),
-            _dependencyResolver.Resolve<IPassFileCryptoService>(),
-            _dependencyResolver.Resolve<ICounter>(),
-            _dependencyResolver.Resolve<IMapper>(),
-            _dependencyResolver.Resolve<IUserContext>(),
-            _dependencyResolver.Resolve<IDialogService>(),
-            _dependencyResolver.Resolve<ILogsWriter>());
+            _pfLocalStorage, _pfCryptoService, _counter, _mapper, userContext, _dialogService, _logger);
 }
