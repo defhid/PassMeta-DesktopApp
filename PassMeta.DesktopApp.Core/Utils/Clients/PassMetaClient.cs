@@ -11,8 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
-using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;

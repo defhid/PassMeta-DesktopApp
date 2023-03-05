@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text.Json.Serialization;
-using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
 namespace PassMeta.DesktopApp.Common.Models.Dto.Internal;

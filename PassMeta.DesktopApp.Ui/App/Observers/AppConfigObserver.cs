@@ -2,12 +2,15 @@ using System;
 using System.Globalization;
 using System.Threading;
 using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Extensions;
+using PassMeta.DesktopApp.Ui.Models;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App.Observers;
@@ -37,7 +40,7 @@ public class AppConfigObserver : IObserver<IAppConfig>
 
             if (value.ServerUrl != _prev.ServerUrl)
             {
-                using var loading = AppLoading.General.Begin();
+                using var loading = Locator.Current.Resolve<AppLoading>().General.Begin();
 
                 await PassMetaClient.CheckConnectionAsync(reset: true);
             }

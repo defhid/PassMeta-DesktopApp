@@ -1,18 +1,15 @@
+using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Ui.Extensions;
+using PassMeta.DesktopApp.Ui.Models.Etc;
 
 namespace PassMeta.DesktopApp.Ui.Views.Etc;
 
-using Avalonia.Markup.Xaml;
-using Base;
-using ViewModels.Etc;
-
-public class ApplicationInfoWin : WinView<ApplicationInfoViewModel>
+public class ApplicationInfoWin : ReactiveWindow<ApplicationInfoViewModel>
 {
     public ApplicationInfoWin()
     {
         AvaloniaXamlLoader.Load(this);
         this.CorrectMainWindowFocusWhileOpened();
-            
-        DataContext = new ApplicationInfoViewModel();
     }
 }

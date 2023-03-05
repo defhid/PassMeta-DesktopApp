@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.Internal;
 

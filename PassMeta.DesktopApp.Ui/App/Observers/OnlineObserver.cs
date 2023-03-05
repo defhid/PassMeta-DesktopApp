@@ -1,9 +1,12 @@
 using System;
-using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Extensions;
+using PassMeta.DesktopApp.Ui.Models;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App.Observers;
@@ -20,7 +23,7 @@ public class OnlineObserver : IObserver<bool>
         {
             if (value)
             {
-                using var loading = AppLoading.General.Begin();
+                using var loading = Locator.Current.Resolve<AppLoading>().General.Begin();
 
                 var result = await PmInfoService.LoadAsync();
                 if (result.Ok)

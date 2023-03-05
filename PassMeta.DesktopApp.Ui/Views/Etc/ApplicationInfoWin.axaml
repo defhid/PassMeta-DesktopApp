@@ -3,8 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-        xmlns:win="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels.Etc"
         xmlns:utils="clr-namespace:PassMeta.DesktopApp.Ui.Utils"
+        xmlns:etc="clr-namespace:PassMeta.DesktopApp.Ui.Models.Etc;assembly=PassMeta.DesktopApp.Ui.Models"
         x:Class="PassMeta.DesktopApp.Ui.Views.Etc.ApplicationInfoWin"
         mc:Ignorable="d"
         Width="400"
@@ -15,7 +15,7 @@
         WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
-        <win:ApplicationInfoViewModel></win:ApplicationInfoViewModel>
+        <etc:ApplicationInfoViewModel></etc:ApplicationInfoViewModel>
     </Design.DataContext>
     
     <Window.Resources>

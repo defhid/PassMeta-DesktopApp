@@ -13,11 +13,7 @@ public static class Program
 
     public static void Main(string[] args)
     {
-#if DEBUG
-        Logger.Sink = new AppLogSink();
-#else
-        Logger.Sink = new TraceLogSink(LogEventLevel.Warning);
-#endif
+        Logger.Sink = new AppLogSink(LogEventLevel.Error);
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

@@ -2,14 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
              xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-             xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
+             xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+             xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Common.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+             xmlns:models="clr-namespace:PassMeta.DesktopApp.Ui.Models;assembly=PassMeta.DesktopApp.Ui.Models"
              x:Class="PassMeta.DesktopApp.Ui.Views.GeneratorView"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             d:DataContext="{d:DesignInstance viewModels:GeneratorViewModel}">
+             d:DataContext="{d:DesignInstance models:GeneratorModel}">
     <Grid>
         <TextBlock VerticalAlignment="Top" 
                    HorizontalAlignment="Center" 
@@ -102,7 +103,7 @@
                             Margin="0 0 15 0"
                             Padding="8 8 8 8"
                             FontSize="26"
-                            FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
+                            FontFamily="{x:Static constants:FontFamilies.SegoeMdl2}"
                             Content="&#xE8C8;"
                             IsVisible="{Binding Generated^}"
                             Command="{Binding CopyCommand}"/>
@@ -111,7 +112,7 @@
                             ToolTip.Tip="{x:Static com:Resources.GENERATOR__BTN}"
                             Padding="8 8 8 8"
                             FontSize="26"
-                            FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
+                            FontFamily="{x:Static constants:FontFamilies.SegoeMdl2}"
                             Content="&#xE8D7;"
                             Command="{Binding GenerateCommand}"/>
                 </Grid>

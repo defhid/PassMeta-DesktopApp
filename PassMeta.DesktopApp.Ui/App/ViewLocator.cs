@@ -1,7 +1,7 @@
+using PassMeta.DesktopApp.Ui.Models.Base;
+
 namespace PassMeta.DesktopApp.Ui.App;
 
-using ViewModels.Base;
-    
 using Avalonia.Controls.Templates;
 using Avalonia.Controls;
 using System;

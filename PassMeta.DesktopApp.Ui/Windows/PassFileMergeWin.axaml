@@ -1,0 +1,335 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+        xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+        xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Common.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+        xmlns:passFileMergeWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.PassFileMergeWin;assembly=PassMeta.DesktopApp.Ui.Models"
+        x:Class="PassMeta.DesktopApp.Ui.Windows.PassFileMergeWin"
+        mc:Ignorable="d"
+        Width="900"
+        MinWidth="700"
+        Height="500"
+        MinHeight="300"
+        Icon="/Assets/AvaRes/PassMeta.ico"
+        Title="{x:Static com:Resources.PASSFILEMERGE__TITLE}"
+        WindowStartupLocation="CenterOwner">
+    
+    <Design.DataContext>
+        <passFileMergeWin:PassFileMergeWinViewModel></passFileMergeWin:PassFileMergeWinViewModel>
+    </Design.DataContext>
+    
+    <Grid ColumnDefinitions="2*,*,2*">
+        <Grid.Styles>
+            <Style Selector="Grid.itemButtons > Button">
+                <Setter Property="Height" Value="26"/>
+                <Setter Property="Width" Value="26"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="FontFamily" Value="{x:Static constants:FontFamilies.SegoeMdl2}"/>
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="IsTabStop" Value="False"/>
+            </Style>
+        </Grid.Styles>
+        
+        <Grid Grid.Column="0"
+              RowDefinitions="30,*,35">
+            <Grid Grid.Row="0"
+                  ColumnDefinitions="Auto,Auto,*"
+                  Margin="7 10 7 0">
+                <TextBlock Grid.Column="0"
+                           Margin="0 0 10 0"
+                           FontWeight="Bold"
+                           Text="{Binding LocalVersionDate}"/>
+                
+                <TextBlock Grid.Column="1"
+                           Margin="0 0 10 0"
+                           FontWeight="Bold"
+                           Text="{Binding LocalVersion}"/>
+                
+                <TextBlock Grid.Column="2"
+                           FontWeight="Bold"
+                           FontStyle="Italic"
+                           Text="{Binding LocalSectionName^}"/>
+            </Grid>
+            
+            <ScrollViewer Grid.Row="1"
+                          Margin="0 7">
+                <ItemsControl Items="{Binding LocalItems}"
+                              Margin="10 0">
+                    <ItemsControl.Styles>
+                        <Style Selector="ItemsPresenter">
+                            <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue"/>
+                        </Style>
+                    </ItemsControl.Styles>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid RowDefinitions="Auto,Auto,Auto">
+                                <Grid Grid.Row="0"
+                                      Classes="itemButtons"
+                                      Margin="0 0 0 7"
+                                      ColumnDefinitions="*,30,30,30,30">
+                                    <TextBox Grid.Column="0"
+                                             Padding="6 2"
+                                             MinHeight="26"
+                                             Height="26"
+                                             FontSize="13"
+                                             VerticalContentAlignment="Center"
+                                             Text="{Binding Comment}"/>
+                                    
+                                    <Button Grid.Column="1"
+                                            Content="&#xE974;"
+                                            Command="{Binding TransferCommand}"
+                                            ToolTip.Tip="{x:Static com:Resources.PASSMERGE__ITEM_TOOLTIP__TRANSFER}"
+                                            ToolTip.Placement="Bottom"/>
+                                    
+                                    <Button Grid.Column="2"
+                                            Content="&#xE74A;"
+                                            Command="{Binding UpCommand}"
+                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__MOVE_UP}"
+                                            ToolTip.Placement="Bottom"/>
+                                    
+                                    <Button Grid.Column="3"
+                                            Content="&#xE74B;"
+                                            Command="{Binding DownCommand}"
+                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__MOVE_DOWN}"
+                                            ToolTip.Placement="Bottom"/>
+                                    
+                                    <Button Grid.Column="4"
+                                            Content="&#xE74D;"
+                                            Command="{Binding DeleteCommand}"
+                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__DELETE}"
+                                            ToolTip.Placement="Bottom"/>
+                                </Grid>
+                                
+                                <Grid Grid.Row="1"
+                                      ColumnDefinitions="Auto,*"
+                                      RowDefinitions="*,*">
+                                    <TextBlock Grid.Row="0"
+                                               Grid.Column="0"
+                                               Opacity="0.7"
+                                               Margin="2 5 12 0"
+                                               VerticalAlignment="Top"
+                                               Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__WHAT}"/>
+                                    
+                                    <TextBox Grid.Row="0"
+                                             Grid.Column="1"
+                                             Padding="4"
+                                             MinHeight="45"
+                                             FontSize="15"
+                                             VerticalContentAlignment="Top"
+                                             AcceptsReturn="True"
+                                             TextWrapping="Wrap"
+                                             Text="{Binding What}"/>
+                                    
+                                    <TextBlock Grid.Row="1"
+                                               Grid.Column="0"
+                                               Opacity="0.7"
+                                               Margin="2 15 12 0"
+                                               VerticalAlignment="Top"
+                                               Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__PASSWORD}"/>
+                                    
+                                    <TextBox Grid.Row="1"
+                                             Grid.Column="1"
+                                             Margin="0 10 0 20"
+                                             Padding="4"
+                                             Height="30"
+                                             MinHeight="30"
+                                             MaxHeight="30"
+                                             FontSize="15"
+                                             VerticalContentAlignment="Center"
+                                             Text="{Binding Password}"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            
+            <Grid Grid.Row="2"
+                  ColumnDefinitions="Auto,*"
+                  Margin="7 0 7 7">
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Opacity="0.7"
+                           FontStyle="Italic"
+                           Text="{x:Static com:Resources.PASSMERGE__LABEL_LOCAL}"/>
+                
+                <Button Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        FontFamily="{x:Static constants:FontFamilies.SegoeMdl2}"
+                        Content="&#xE8FB;"
+                        Command="{Binding AcceptLocalCommand}"
+                        ToolTip.Tip="{x:Static com:Resources.PASSMERGE__BTN_TOOLTIP_APPLY}"/>
+            </Grid>
+        </Grid>
+        
+        <ListBox Grid.Column="1"
+                 MinWidth="150"
+                 Items="{Binding ConflictButtons}"
+                 SelectedItem="{Binding SelectedConflictBtn}"
+                 SelectionMode="Single,Toggle">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,30"
+                          Margin="0 2 0 0">
+                        <TextBlock Grid.Column="0"
+                                   FontSize="16"
+                                   Text="{Binding Name}"/>
+                        
+                        <Button Grid.Column="1"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Padding="0 0 0 0"
+                                Height="22" Width="22"
+                                FontSize="16"
+                                FontFamily="{x:Static constants:FontFamilies.SegoeMdl2}"
+                                Content="&#xE74D;"
+                                Command="{Binding DeleteCommand}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <Grid Grid.Column="2"
+              RowDefinitions="30,*,35">
+            <Grid Grid.Row="0"
+                  ColumnDefinitions="Auto,Auto,*"
+                  Margin="7 10 7 0">
+                <TextBlock Grid.Column="2"
+                           Margin="0 0 10 0"
+                           FontWeight="Bold"
+                           FontStyle="Italic"
+                           Text="{Binding RemoteSectionName^}"/>
+                
+                <TextBlock Grid.Column="1"
+                           Margin="0 0 10 0"
+                           FontWeight="Bold"
+                           Text="{Binding RemoteVersion}"/>
+                
+                <TextBlock Grid.Column="0"
+                           FontWeight="Bold"
+                           Text="{Binding RemoteVersionDate}"/>
+            </Grid>
+            
+            <ScrollViewer Grid.Row="1"
+                          Margin="0 7">
+                <ItemsControl Items="{Binding RemoteItems}"
+                              Margin="10 0">
+                    <ItemsControl.Styles>
+                        <Style Selector="ItemsPresenter">
+                            <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue"/>
+                        </Style>
+                    </ItemsControl.Styles>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid RowDefinitions="Auto,Auto,Auto">
+                                <Grid Grid.Row="0"
+                                      Classes="itemButtons"
+                                      Margin="0 0 0 7"
+                                      ColumnDefinitions="*,30,30,30,30">
+                                    <TextBox Grid.Column="0"
+                                             Padding="6 2"
+                                             MinHeight="26"
+                                             Height="26"
+                                             FontSize="13"
+                                             VerticalContentAlignment="Center"
+                                             Text="{Binding Comment}"/>
+                                    
+                                    <Button Grid.Column="1"
+                                            Content="&#xE973;"
+                                            Command="{Binding TransferCommand}"
+                                            ToolTip.Tip="{x:Static com:Resources.PASSMERGE__ITEM_TOOLTIP__TRANSFER}"
+                                            ToolTip.Placement="Bottom"/>
+                                    
+                                    <Button Grid.Column="2"
+                                            Content="&#xE74A;"
+                                            IsTabStop="False"
+                                            Command="{Binding UpCommand}"
+                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__MOVE_UP}"
+                                            ToolTip.Placement="Bottom"/>
+                                    
+                                    <Button Grid.Column="3"
+                                            Content="&#xE74B;"
+                                            Command="{Binding DownCommand}"
+                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__MOVE_DOWN}"
+                                            ToolTip.Placement="Bottom"/>
+                                    
+                                    <Button Grid.Column="4"
+                                            Content="&#xE74D;"
+                                            Command="{Binding DeleteCommand}"
+                                            ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__DELETE}"
+                                            ToolTip.Placement="Bottom"/>
+                                </Grid>
+                                
+                                <Grid Grid.Row="1"
+                                      ColumnDefinitions="Auto,*"
+                                      RowDefinitions="*,*">
+                                    <TextBlock Grid.Row="0"
+                                               Grid.Column="0"
+                                               Opacity="0.7"
+                                               Margin="2 5 12 0"
+                                               VerticalAlignment="Top"
+                                               Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__WHAT}"/>
+                                    
+                                    <TextBox Grid.Row="0"
+                                             Grid.Column="1"
+                                             Padding="4"
+                                             MinHeight="45"
+                                             FontSize="15"
+                                             VerticalContentAlignment="Top"
+                                             AcceptsReturn="True"
+                                             TextWrapping="Wrap"
+                                             Text="{Binding What}"/>
+                                    
+                                    <TextBlock Grid.Row="1"
+                                               Grid.Column="0"
+                                               Opacity="0.7"
+                                               Margin="2 15 12 0"
+                                               VerticalAlignment="Top"
+                                               Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__PASSWORD}"/>
+                                    
+                                    <TextBox Grid.Row="1"
+                                             Grid.Column="1"
+                                             Margin="0 10 0 20"
+                                             Padding="4"
+                                             Height="30"
+                                             MinHeight="30"
+                                             MaxHeight="30"
+                                             FontSize="15"
+                                             VerticalContentAlignment="Center"
+                                             Text="{Binding Password}"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            
+            <Grid Grid.Row="2"
+                  ColumnDefinitions="*,Auto"
+                  Margin="7 0 7 7">
+                <Button Grid.Column="0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        FontFamily="{x:Static constants:FontFamilies.SegoeMdl2}"
+                        Content="&#xE8FB;"
+                        Command="{Binding AcceptRemoteCommand}"
+                        ToolTip.Tip="{x:Static com:Resources.PASSMERGE__BTN_TOOLTIP_APPLY}"/>
+                
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Opacity="0.7"
+                           FontStyle="Italic"
+                           Text="{x:Static com:Resources.PASSMERGE__LABEL_REMOTE}"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

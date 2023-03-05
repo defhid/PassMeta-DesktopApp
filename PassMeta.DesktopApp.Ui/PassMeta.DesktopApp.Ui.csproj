@@ -29,16 +29,8 @@
             <DependentUpon>SettingsView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Main\MainWindow.axaml.cs">
-            <DependentUpon>MainWindow.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\AuthView.axaml.cs">
             <DependentUpon>SignInView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Storage\PassFileWin.axaml.cs">
-            <DependentUpon>DialogWindow.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="App\App.axaml.cs">
@@ -49,28 +41,24 @@
             <DependentUpon>LogsView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Storage\PassFileRestoreWin.axaml.cs">
-            <DependentUpon>PassFileLocalList'Win.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\JournalView.axaml.cs">
             <DependentUpon>JournalView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Storage\PassFileMergeWin.axaml.cs">
-            <DependentUpon>PassFileMergeWin.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Storage\Storage\StorageView.axaml.cs">
-            <DependentUpon>StorageView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Storage\Storage\PopupGeneratorView.axaml.cs">
-            <DependentUpon>PopupGeneratorView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\Etc\ApplicationInfoWin.axaml.cs">
           <DependentUpon>PassFileMergeWin.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Storage\PopupGeneratorView.axaml.cs">
+          <DependentUpon>PopupGeneratorView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Storage\StorageView.axaml.cs">
+          <DependentUpon>StorageView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Windows\DialogWindow.axaml.cs">
+          <DependentUpon>DialogWindow.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
@@ -78,6 +66,7 @@
     <ItemGroup>
         <ProjectReference Include="..\AvaloniaGif\AvaloniaGif.csproj" />
         <ProjectReference Include="..\PassMeta.DesktopApp.Core\PassMeta.DesktopApp.Core.csproj" />
+        <ProjectReference Include="..\PassMeta.DesktopApp.Ui.Models\PassMeta.DesktopApp.Ui.Models.csproj" />
     </ItemGroup>
     
     <ItemGroup>

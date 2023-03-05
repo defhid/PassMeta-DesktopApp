@@ -8,21 +8,23 @@ namespace PassMeta.DesktopApp.Core.Utils.FileRepository;
 /// <inheritdoc />
 public class FileRepositoryFactory : IFileRepositoryFactory
 {
+    private readonly string _rootPath;
     private readonly ILogsWriter _logger;
 
     /// <summary></summary>
-    public FileRepositoryFactory(ILogsWriter logger)
+    public FileRepositoryFactory(string rootPath, ILogsWriter logger)
     {
+        _rootPath = rootPath;
         _logger = logger;
     }
 
     /// <inheritdoc />
     public IFileRepository ForPassFiles(string? serverId)
-        => CreateLocalRepository(Path.Combine(AppInfo.RootPath, ".passfiles", "s_" + (serverId ?? "_undefined")));
+        => CreateLocalRepository(Path.Combine(_rootPath, ".passfiles", "s_" + (serverId ?? "_undefined")));
 
     /// <inheritdoc />
     public IFileRepository ForSystemFiles()
-        => CreateLocalRepository(Path.Combine(AppInfo.RootPath, ".app"));
+        => CreateLocalRepository(Path.Combine(_rootPath, ".app"));
 
     private IFileRepository CreateLocalRepository(string rootPath)
     {

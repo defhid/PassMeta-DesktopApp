@@ -2,8 +2,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Avalonia.Controls.Notifications;
-using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
-using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
@@ -14,8 +13,10 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Helpers;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Mapping.Entities;
-using PassMeta.DesktopApp.Core.Extensions;
+using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Services;
 using PassMeta.DesktopApp.Core.Services.PassFileServices;
 using PassMeta.DesktopApp.Core.Services.PassMetaServices;
@@ -25,7 +26,7 @@ using PassMeta.DesktopApp.Core.Utils.FileRepository;
 using PassMeta.DesktopApp.Core.Utils.Helpers;
 using PassMeta.DesktopApp.Core.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Core.Utils.PassFileContext;
-using PassMeta.DesktopApp.Ui.Interfaces.Services;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 using PassMeta.DesktopApp.Ui.Services;
 using ReactiveUI;
 using Splat;
@@ -39,13 +40,20 @@ public static class DependencyInstaller
         Register<IMapper>(new Mapper(new MapperConfiguration(config => config
             .AddProfile<PassFileProfile>())));
 
-        Register<ILogsWriter, ILogsManager>(new LogsManager());
+        Register(AppInfoSource.Get());
+        Register(AppLoadingFactory.Create());
+
+        Register<ILogsWriter, ILogsManager>(new LogsManager(
+            Resolve<AppInfo>().RootPath));
 
         Register<IDialogService>(new DialogService(
             ResolveOrDefault<INotificationManager>,
             Resolve<ILogsWriter>()));
 
+        Register<IFileDialogService>(new FileDialogService());
+
         Register<IFileRepositoryFactory>(new FileRepositoryFactory(
+            Resolve<AppInfo>().RootPath,
             Resolve<ILogsWriter>()));
 
         Register<ICounter>(new Counter(
@@ -82,7 +90,7 @@ public static class DependencyInstaller
             Resolve<IPassMetaCryptoService>(),
             Resolve<IPassFileContentSerializerFactory>(),
             Resolve<ILogsWriter>()));
-        
+
         Register<IPassFileContextProvider, IPassFileContextManager>(new PassFileContextManager(
             Resolve<IPassFileLocalStorage>(),
             Resolve<IPassFileCryptoService>(),
@@ -93,9 +101,9 @@ public static class DependencyInstaller
 
         Register<IPassPhraseAskHelper>(new PassPhraseAskHelper(
             Resolve<IDialogService>()));
-        
+
         Register<IPassFileDecryptionHelper>(new PassFileDecryptionHelper(
-            Resolve<IPassFileCryptoService>(), 
+            Resolve<IPassFileCryptoService>(),
             Resolve<IPassPhraseAskHelper>()));
 
         Register<IPassFileRemoteService>(new PassFileRemoteService(
@@ -118,6 +126,9 @@ public static class DependencyInstaller
             Resolve<IAppContextManager>(),
             Resolve<IDialogService>()));
 
+        Register<IHistoryService>(new HistoryService(
+            Resolve<IPassMetaClient>()));
+
         Register<IPassFileSyncService>(new PassFileSyncService(
             Resolve<IPassFileRemoteService>(),
             Resolve<IDialogService>()));
@@ -135,7 +146,7 @@ public static class DependencyInstaller
             Resolve<IPassFileLocalStorage>(),
             Resolve<IUserContextProvider>(),
             Resolve<IPassPhraseAskHelper>(),
-            Resolve<IDialogService>(), 
+            Resolve<IDialogService>(),
             Resolve<ILogsWriter>()));
 
         Register<IPwdPassFileMergePreparingService>(new PwdPassFileMergePreparingService(
@@ -178,7 +189,7 @@ public static class DependencyInstaller
         Locator.CurrentMutable.RegisterConstant(impl, typeof(TContract1), contractName);
         Locator.CurrentMutable.RegisterConstant(impl, typeof(TContract2), contractName);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Register<TContract1, TContract2, TContract3>(TContract3 impl, string? contractName = null)
     {

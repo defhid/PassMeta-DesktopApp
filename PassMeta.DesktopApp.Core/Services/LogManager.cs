@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging.Extra;
 using PassMeta.DesktopApp.Common.Models.Entities;
@@ -14,7 +14,7 @@ namespace PassMeta.DesktopApp.Core.Services;
 /// <inheritdoc />
 public class LogsManager : ILogsManager
 {
-    private static readonly string LogsDirectory = Path.Combine(AppInfo.RootPath, ".logs");
+    private readonly string _logsDirectory;
     private readonly object _lockObject = new();
 
     private const char Separator = '|';
@@ -23,6 +23,12 @@ public class LogsManager : ILogsManager
 
     private FileStream? _fileStream;
     private DateTime? _fileStreamDateOpened;
+
+    /// <summary></summary>
+    public LogsManager(string rootPath)
+    {
+        _logsDirectory = Path.Combine(rootPath, ".logs");
+    }
 
     /// <inheritdoc />
     public void Write(Log log)
@@ -136,7 +142,7 @@ public class LogsManager : ILogsManager
     {
         try
         {
-            var logFiles = Directory.EnumerateFiles(LogsDirectory).ToList();
+            var logFiles = Directory.EnumerateFiles(_logsDirectory).ToList();
 
             for (var i = logFiles.Count - 1; i >= 0; --i)
             {

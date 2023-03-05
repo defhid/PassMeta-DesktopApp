@@ -1,11 +1,10 @@
+using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
+using PassMeta.DesktopApp.Ui.Models.Journal;
+
 namespace PassMeta.DesktopApp.Ui.Views;
 
-using Base;
-    
-using Avalonia.Markup.Xaml;
-using ViewModels.Journal;
-
-public class JournalView : PageView<JournalViewModel>
+public class JournalView : ReactiveUserControl<JournalModel>
 {
     public JournalView()
     {

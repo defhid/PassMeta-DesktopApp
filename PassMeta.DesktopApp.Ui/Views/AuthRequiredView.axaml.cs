@@ -1,10 +1,10 @@
+using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
+using PassMeta.DesktopApp.Ui.Models;
+
 namespace PassMeta.DesktopApp.Ui.Views;
 
-using ViewModels;
-using Base;
-using Avalonia.Markup.Xaml;
-    
-public class AuthRequiredView : PageView<AuthRequiredViewModel>
+public class AuthRequiredView : ReactiveUserControl<AuthRequiredModel>
 {
     public AuthRequiredView()
     {

@@ -5,7 +5,7 @@ using PassMeta.DesktopApp.Common.Utils.ValueMapping;
 namespace PassMeta.DesktopApp.Common.Mapping.Values;
 
 /// <summary>
-/// Mappers for <see cref="PassFileMark"/>
+/// Mappers for <see cref="PassFileMark"/>.
 /// </summary>
 public static class PassFileMarkMapping
 {

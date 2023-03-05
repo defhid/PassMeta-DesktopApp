@@ -14,9 +14,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.Constants;
 using PassMeta.DesktopApp.Ui.Extensions;
-using PassMeta.DesktopApp.Ui.Views.Main;
-using PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow;
-using PassMeta.DesktopApp.Ui.ViewModels.Main.DialogWindow.Components;
+using PassMeta.DesktopApp.Ui.Models.DialogWindowModels;
+using PassMeta.DesktopApp.Ui.Windows;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 
@@ -154,7 +153,7 @@ public class DialogService : IDialogService
             DialogWindowIcon.Confirm,
             null));
 
-        return Result.From(dialog.ResultButton is DialogButton.Yes);
+        return Result.From(dialog.ViewModel!.Result is DialogButton.Yes);
     }
 
     /// <inheritdoc />
@@ -171,9 +170,9 @@ public class DialogService : IDialogService
             null,
             new TextInputBox(true, "", defaultValue, null)));
 
-        var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextInputBox.Value?.Trim();
+        var value = ((DialogWindowViewModel)dialog.DataContext!).TextInputBox.Value?.Trim();
 
-        return Result.From(dialog.ResultButton is DialogButton.Ok, value ?? string.Empty);
+        return Result.From(dialog.ViewModel!.Result is DialogButton.Ok, value ?? string.Empty);
     }
         
     /// <inheritdoc />
@@ -190,9 +189,9 @@ public class DialogService : IDialogService
             null,
             new TextInputBox(true, "", "", '*')));
 
-        var value = ((DialogWindowViewModel)dialog.DataContext!).WindowTextInputBox.Value;
+        var value = ((DialogWindowViewModel)dialog.DataContext!).TextInputBox.Value;
             
-        return Result.From(dialog.ResultButton is DialogButton.Ok, value ?? string.Empty);
+        return Result.From(dialog.ViewModel!.Result is DialogButton.Ok, value ?? string.Empty);
     }
 
     private void CallOrDeffer(Action shower)
@@ -254,7 +253,7 @@ public class DialogService : IDialogService
         {
             _logger.Error(ex, "Dialog window showing failed");
         }
-            
+
         return dialog;
     }
 

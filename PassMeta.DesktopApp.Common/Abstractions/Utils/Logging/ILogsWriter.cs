@@ -1,4 +1,4 @@
-using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;

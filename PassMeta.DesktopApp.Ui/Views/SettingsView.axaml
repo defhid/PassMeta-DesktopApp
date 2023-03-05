@@ -2,13 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:PassMeta.DesktopApp.Ui.ViewModels"
              xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+             xmlns:models="clr-namespace:PassMeta.DesktopApp.Ui.Models;assembly=PassMeta.DesktopApp.Ui.Models"
              x:Class="PassMeta.DesktopApp.Ui.Views.SettingsView"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             d:DataContext="{d:DesignInstance viewModels:SettingsViewModel}">
+             d:DataContext="{d:DesignInstance models:SettingsViewModel}">
     <Grid>
         <TextBlock VerticalAlignment="Top" 
                    HorizontalAlignment="Center" 

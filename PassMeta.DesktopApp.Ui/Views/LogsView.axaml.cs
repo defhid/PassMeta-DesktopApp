@@ -1,11 +1,10 @@
+using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
+using PassMeta.DesktopApp.Ui.Models.Logs;
+
 namespace PassMeta.DesktopApp.Ui.Views;
 
-using Base;
-    
-using Avalonia.Markup.Xaml;
-using ViewModels.Logs;
-
-public class LogsView : PageView<LogsViewModel>
+public class LogsView : ReactiveUserControl<LogsModel>
 {
     public LogsView()
     {

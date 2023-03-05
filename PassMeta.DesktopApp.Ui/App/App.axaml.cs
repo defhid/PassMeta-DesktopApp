@@ -6,14 +6,14 @@ using Avalonia.Markup.Xaml;
 
 using Splat;
 using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Abstractions.AppConfig;
-using PassMeta.DesktopApp.Common.Abstractions.AppContext;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Core.Extensions;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.App.Observers;
-using PassMeta.DesktopApp.Ui.Views.Main;
+using PassMeta.DesktopApp.Ui.Models.MainWin;
+using PassMeta.DesktopApp.Ui.Windows;
 
 namespace PassMeta.DesktopApp.Ui.App;
 
@@ -55,8 +55,6 @@ public class App : Application
 
     private static async Task BeforeLaunchAsync()
     {
-        using var loading = AppLoading.General.Begin();
-
         DependencyInstaller.RegisterServices();
         DependencyInstaller.RegisterViewsForViewModels();
         
@@ -85,7 +83,7 @@ public class App : Application
 
     private static MainWindow MakeWindow()
     {
-        var win = new MainWindow();
+        var win = new MainWindow { ViewModel = new MainWinViewModel() };
 
         win.Activated += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
         win.Closed += (_, _) => win.ViewModel!.Dispose();
