@@ -16,8 +16,7 @@ using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
-using PassMeta.DesktopApp.Ui.Views.Storage;
-using PassMeta.DesktopApp.Ui.Windows;
+using PassMeta.DesktopApp.Ui.Views.Windows;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 

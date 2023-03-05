@@ -8,7 +8,6 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.10.18" />
         <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
         <PackageReference Include="Avalonia.Diagnostics" Version="0.10.18" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.18" />
@@ -17,48 +16,36 @@
     </ItemGroup>
     
     <ItemGroup>
-        <Compile Update="Views\AccountView.axaml.cs">
-            <DependentUpon>AccountView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\GeneratorView.axaml.cs">
-            <DependentUpon>GeneratorView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\SettingsView.axaml.cs">
-            <DependentUpon>SettingsView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\AuthView.axaml.cs">
-            <DependentUpon>SignInView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="App\App.axaml.cs">
             <DependentUpon>App.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\LogsView.axaml.cs">
-            <DependentUpon>LogsView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\JournalView.axaml.cs">
-            <DependentUpon>JournalView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Etc\ApplicationInfoWin.axaml.cs">
-          <DependentUpon>PassFileMergeWin.axaml</DependentUpon>
+        <Compile Update="Views\Pages\AuthRequiredView.axaml.cs">
+          <DependentUpon>AuthRequiredView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Storage\PopupGeneratorView.axaml.cs">
-          <DependentUpon>PopupGeneratorView.axaml</DependentUpon>
+        <Compile Update="Views\Pages\Account\AccountView.axaml.cs">
+          <DependentUpon>AccountView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Storage\StorageView.axaml.cs">
-          <DependentUpon>StorageView.axaml</DependentUpon>
+        <Compile Update="Views\Pages\Account\AuthView.axaml.cs">
+          <DependentUpon>AuthView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Windows\DialogWindow.axaml.cs">
-          <DependentUpon>DialogWindow.axaml</DependentUpon>
+        <Compile Update="Views\Pages\GeneratorView.axaml.cs">
+          <DependentUpon>GeneratorView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Pages\JournalView.axaml.cs">
+          <DependentUpon>JournalView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Pages\LogsView.axaml.cs">
+          <DependentUpon>LogsView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Pages\SettingsView.axaml.cs">
+          <DependentUpon>SettingsView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>

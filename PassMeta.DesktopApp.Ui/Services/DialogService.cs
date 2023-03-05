@@ -14,8 +14,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.Constants;
 using PassMeta.DesktopApp.Ui.Extensions;
-using PassMeta.DesktopApp.Ui.Models.DialogWindowModels;
-using PassMeta.DesktopApp.Ui.Windows;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.DialogWin;
+using PassMeta.DesktopApp.Ui.Views.Windows;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 
@@ -74,7 +74,7 @@ public class DialogService : IDialogService
             }
             else
             {
-                ShowDialog(new DialogWindowViewModel(
+                ShowDialog(new DialogWinModel(
                     title ?? Resources.DIALOG__DEFAULT_INFO_TITLE,
                     message,
                     more,
@@ -101,7 +101,7 @@ public class DialogService : IDialogService
             }
             else
             {
-                ShowDialog(new DialogWindowViewModel(
+                ShowDialog(new DialogWinModel(
                     title ?? Resources.DIALOG__DEFAULT_ERROR_TITLE,
                     message,
                     more,
@@ -128,7 +128,7 @@ public class DialogService : IDialogService
             }
             else
             {
-                ShowDialog(new DialogWindowViewModel(
+                ShowDialog(new DialogWinModel(
                     title ?? Resources.DIALOG__DEFAULT_FAILURE_TITLE,
                     message,
                     more,
@@ -145,7 +145,7 @@ public class DialogService : IDialogService
     {
         if (App.App.MainWindow is null) return Result.Failure();
 
-        var dialog = await ShowDialogAndWaitAsync(new DialogWindowViewModel(
+        var dialog = await ShowDialogAndWaitAsync(new DialogWinModel(
             title ?? Resources.DIALOG__DEFAULT_CONFIRM_TITLE,
             message,
             null,
@@ -162,7 +162,7 @@ public class DialogService : IDialogService
     {
         if (App.App.MainWindow is null) return Result.Failure<string>();
 
-        var dialog = await ShowDialogAndWaitAsync(new DialogWindowViewModel(
+        var dialog = await ShowDialogAndWaitAsync(new DialogWinModel(
             title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
             message,
             null,
@@ -170,7 +170,7 @@ public class DialogService : IDialogService
             null,
             new TextInputBox(true, "", defaultValue, null)));
 
-        var value = ((DialogWindowViewModel)dialog.DataContext!).TextInputBox.Value?.Trim();
+        var value = ((DialogWinModel)dialog.DataContext!).TextInputBox.Value?.Trim();
 
         return Result.From(dialog.ViewModel!.Result is DialogButton.Ok, value ?? string.Empty);
     }
@@ -181,7 +181,7 @@ public class DialogService : IDialogService
     {
         if (App.App.MainWindow is null) return Result.Failure<string>();
 
-        var dialog = await ShowDialogAndWaitAsync(new DialogWindowViewModel(
+        var dialog = await ShowDialogAndWaitAsync(new DialogWinModel(
             title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
             message,
             null,
@@ -189,7 +189,7 @@ public class DialogService : IDialogService
             null,
             new TextInputBox(true, "", "", '*')));
 
-        var value = ((DialogWindowViewModel)dialog.DataContext!).TextInputBox.Value;
+        var value = ((DialogWinModel)dialog.DataContext!).TextInputBox.Value;
             
         return Result.From(dialog.ViewModel!.Result is DialogButton.Ok, value ?? string.Empty);
     }
@@ -221,7 +221,7 @@ public class DialogService : IDialogService
         NotificationManager!.Show(context);
     }
 
-    private void ShowDialog(DialogWindowViewModel context)
+    private void ShowDialog(DialogWinModel context)
     {
         var dialog = new DialogWindow { DataContext = context };
             
@@ -241,7 +241,7 @@ public class DialogService : IDialogService
         }
     }
         
-    private async Task<DialogWindow> ShowDialogAndWaitAsync(DialogWindowViewModel context)
+    private async Task<DialogWindow> ShowDialogAndWaitAsync(DialogWinModel context)
     {
         var dialog = new DialogWindow { DataContext = context };
 

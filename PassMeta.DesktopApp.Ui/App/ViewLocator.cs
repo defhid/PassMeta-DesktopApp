@@ -1,4 +1,4 @@
-using PassMeta.DesktopApp.Ui.Models.Base;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 
 namespace PassMeta.DesktopApp.Ui.App;
 

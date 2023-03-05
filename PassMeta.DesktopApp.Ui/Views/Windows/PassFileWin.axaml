@@ -1,0 +1,159 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+        xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+        xmlns:passFileWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;assembly=PassMeta.DesktopApp.Ui.Models"
+        xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+        mc:Ignorable="d"
+        Width="540"
+        MinWidth="540"
+        MaxWidth="540"
+        SizeToContent="Height"
+        CanResize="False"
+        x:Class="PassMeta.DesktopApp.Ui.Views.Windows.PassFileWin"
+        Icon="/Assets/AvaRes/PassMeta.ico"
+        Title="{Binding Title^}"
+        WindowStartupLocation="CenterOwner">
+    
+    <Design.DataContext>
+        <passFileWin:PassFileWinViewModel/>
+    </Design.DataContext>
+    
+    <Grid Margin="7 7 10 10"
+          Background="Transparent"
+          PointerPressed="{x:Static constants:EventHandlers.FocusElementOnPointerPressed}"
+          RowDefinitions="Auto,*">
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*"
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                       Margin="0 0 20 10"
+                       VerticalAlignment="Center"
+                       Opacity="0.7"
+                       Text="{x:Static com:Resources.PASSFILE__LABEL_NAME}"/>
+            
+            <TextBox Grid.Row="0" Grid.Column="1"
+                     Margin="0 0 0 10"
+                     Text="{Binding Name}"
+                     IsReadOnly="{Binding ReadOnly^}"
+                     Focusable="{Binding !ReadOnly^}"
+                     AttachedToVisualTree="NameTextBox__OnAttachedToVisualTree"/>
+            
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                       Margin="0 0 20 10"
+                       VerticalAlignment="Center"
+                       Opacity="0.7"
+                       Text="{x:Static com:Resources.PASSFILE__LABEL_COLOR}"/>
+            
+            <ComboBox Grid.Row="1" Grid.Column="1" 
+                      Margin="0 0 0 10"
+                      Width="180"
+                      FontWeight="Bold"
+                      FontStyle="Italic"
+                      SelectedIndex="{Binding SelectedColorIndex}"
+                      Items="{x:Static constants:PassFileColor.List}"
+                      IsEnabled="{Binding !ReadOnly^}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" 
+                                   Foreground="{Binding Brush}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                       Margin="0 0 20 10"
+                       Opacity="0.7"
+                       Text="{x:Static com:Resources.PASSFILE__LABEL_CREATED_ON}"/>
+            
+            <TextBlock Grid.Row="2" Grid.Column="1"
+                       Margin="0 0 0 10"
+                       Text="{Binding CreatedOn^}"/>
+            
+            <TextBlock Grid.Row="3" Grid.Column="0"
+                       Margin="0 0 20 10"
+                       Opacity="0.7"
+                       Text="{x:Static com:Resources.PASSFILE__LABEL_CHANGED_ON}"/>
+            
+            <TextBlock Grid.Row="3" Grid.Column="1"
+                       Margin="0 0 0 10"
+                       Text="{Binding ChangedOn^}"/>
+            
+            <TextBlock Grid.Row="4" Grid.Column="0"
+                       Margin="0 0 20 10"
+                       Opacity="0.7"
+                       Text="{x:Static com:Resources.PASSFILE__LABEL_STATE}"/>
+            
+            <Grid Grid.Row="4" Grid.Column="1"
+                  ColumnDefinitions="Auto,*">
+                <Ellipse Grid.Column="0" 
+                         Width="8" Height="8"
+                         Margin="0 0 6 18"
+                         VerticalAlignment="Center"
+                         Fill="{Binding StateColor^}"/>  
+                
+                <TextBlock Grid.Column="1"
+                           x:Name="StateBlock"
+                           Margin="0 0 0 20"
+                           TextWrapping="Wrap"
+                           LineHeight="18"
+                           Text="{Binding State^}"/>
+            </Grid>
+        </Grid>
+        
+        <Grid Grid.Row="1"
+              ColumnDefinitions="Auto,*"
+              VerticalAlignment="Bottom">
+            <Button Grid.Column="0" 
+                    Margin="0 0 10 0"
+                    MinWidth="50"
+                    VerticalAlignment="Bottom"
+                    HorizontalContentAlignment="Center"
+                    Content="{Binding OkBtn.Content}"
+                    Command="{Binding OkBtn.Command}"
+                    AttachedToVisualTree="OkBtn__OnAttachedToVisualTree"/>
+            
+            <Grid Grid.Column="1"
+                  RowDefinitions="Auto,Auto">
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <Button Margin="12 0 0 0"
+                            Content="{x:Static com:Resources.PASSFILE__BTN_MERGE}"
+                            IsVisible="{Binding MergeBtn.IsVisible}"
+                            Command="{Binding MergeBtn.Command}"/>
+                    
+                    <Button Margin="12 0 0 0"
+                            Content="{x:Static com:Resources.PASSFILE__BTN_CHANGE_PWD}"
+                            IsVisible="{Binding ChangePasswordBtn.IsVisible}"
+                            Command="{Binding ChangePasswordBtn.Command}"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0 8 0 0">
+                    <Button Margin="12 0 0 0"
+                            Opacity="0.9"
+                            Content="{x:Static com:Resources.PASSFILE__BTN_EXPORT}"
+                            IsVisible="{Binding ExportBtn.IsVisible}"
+                            Command="{Binding ExportBtn.Command}"/>
+                    
+                    <Button Margin="12 0 0 0"
+                            Opacity="0.9"
+                            Content="{x:Static com:Resources.PASSFILE__BTN_RESTORE}"
+                            IsVisible="{Binding RestoreBtn.IsVisible}"
+                            Command="{Binding RestoreBtn.Command}"/>
+            
+                    <Button Margin="12 0 0 0"
+                            Opacity="0.8"
+                            Content="{x:Static com:Resources.PASSFILE__BTN_DELETE}"
+                            IsVisible="{Binding DeleteBtn.IsVisible}"
+                            Command="{Binding DeleteBtn.Command}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

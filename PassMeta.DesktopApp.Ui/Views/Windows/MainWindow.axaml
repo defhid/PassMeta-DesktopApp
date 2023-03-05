@@ -1,0 +1,220 @@
+<Window
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:reactiveUi="http://reactiveui.net"
+  xmlns:avaloniaGif="clr-namespace:AvaloniaGif;assembly=AvaloniaGif"
+  xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:const1="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:mainWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+  mc:Ignorable="d"
+  d:DesignWidth="800"
+  d:DesignHeight="500"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWindow"
+  Icon="/Assets/AvaRes/PassMeta.ico"
+  Title="PassMeta"
+  MinWidth="800"
+  MinHeight="500"
+  Width="900"
+  Height="540"
+  WindowStartupLocation="CenterScreen">
+
+  <Design.DataContext>
+    <mainWin:MainWinModel />
+  </Design.DataContext>
+
+  <Grid>
+    <Grid.Styles>
+      <Style Selector="avaloniaGif|GifImage">
+        <Setter Property="SourceUri" Value="{x:Static const1:ManifestResourcePaths.GifPreloader}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Stretch" Value="Uniform" />
+        <Setter Property="StretchDirection" Value="Both" />
+        <Setter Property="Width" Value="50" />
+        <Setter Property="Height" Value="50" />
+      </Style>
+    </Grid.Styles>
+
+    <SplitView
+      x:Name="MainSplitView"
+      IsPaneOpen="{Binding MainPane.IsOpened}"
+      DisplayMode="CompactInline"
+      OpenPaneLength="188"
+      CompactPaneLength="48">
+      <SplitView.Pane>
+        <Grid IsEnabled="{Binding !PreloaderEnabled}">
+          <Grid.Styles>
+            <Style Selector="Button">
+              <Setter Property="Height" Value="40" />
+              <Setter Property="Margin" Value="4 0 4 0" />
+              <Setter Property="VerticalAlignment" Value="Top" />
+              <Setter Property="VerticalContentAlignment" Value="Center" />
+              <Setter Property="Padding" Value="{Binding MainPane.BtnPadding^}" />
+              <Setter Property="Width" Value="{Binding MainPane.BtnWidth^}" />
+              <Setter Property="FontSize" Value="{Binding MainPane.BtnFontSize^}" />
+              <Setter Property="HorizontalContentAlignment" Value="{Binding MainPane.BtnHorizontalContentAlignment^}" />
+              <Setter Property="FontFamily" Value="{Binding MainPane.BtnFontFamily^}" />
+            </Style>
+
+            <Style Selector="Button.active">
+              <Setter Property="Template">
+                <ControlTemplate>
+                  <ContentPresenter
+                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                    Content="{TemplateBinding Content}"
+                    Padding="0"
+                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                    HorizontalContentAlignment="Left"
+                    Margin="6 0 0 0"
+                    TextBlock.Foreground="{StaticResource SystemAccentColorLight2}"
+                    TextBlock.FontWeight="Bold" />
+                </ControlTemplate>
+              </Setter>
+            </Style>
+          </Grid.Styles>
+
+          <ToggleButton
+            IsChecked="{Binding MainPane.IsOpened}"
+            VerticalAlignment="Top"
+            Margin="4 5 4 4"
+            Padding="0 0 0 0"
+            Width="{Binding MainPane.BtnWidth^}"
+            Height="40"
+            FontSize="24"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            FontFamily="{x:Static constants:FontFamilies.SegoeMdl2}"
+            Content="&#xE700;" />
+
+          <StackPanel
+            Spacing="8"
+            Margin="0 57 0 0"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left">
+            <Button
+              Click="AccountBtn_OnClick"
+              Classes.active="{Binding MainPane.Buttons.Account.IsActive}"
+              Content="{Binding MainPane.Buttons.Account.Content^}" />
+
+            <Button
+              Click="StorageBtn_OnClick"
+              Classes.active="{Binding MainPane.Buttons.Storage.IsActive}"
+              Content="{Binding MainPane.Buttons.Storage.Content^}" />
+
+            <Button
+              Click="GeneratorBtn_OnClick"
+              Classes.active="{Binding MainPane.Buttons.Generator.IsActive}"
+              Content="{Binding MainPane.Buttons.Generator.Content^}" />
+
+            <Button
+              Click="JournalBtn_OnClick"
+              Classes.active="{Binding MainPane.Buttons.Journal.IsActive}"
+              Content="{Binding MainPane.Buttons.Journal.Content^}" />
+          </StackPanel>
+
+          <Button
+            Click="LogsBtn_OnClick"
+            Classes.active="{Binding MainPane.Buttons.Logs.IsActive}"
+            Content="{Binding MainPane.Buttons.Logs.Content^}"
+            IsVisible="{Binding MainPane.Buttons.Logs.IsVisible}"
+            VerticalAlignment="Bottom"
+            Margin="4 4 4 50"
+            Opacity="0.65" />
+
+          <Button
+            Click="SettingsBtn_OnClick"
+            Classes.active="{Binding MainPane.Buttons.Settings.IsActive}"
+            Content="{Binding MainPane.Buttons.Settings.Content^}"
+            VerticalAlignment="Bottom"
+            Margin="4 4 4 5"
+            Opacity="0.8" />
+        </Grid>
+      </SplitView.Pane>
+
+      <Grid ColumnDefinitions="*,48">
+        <reactiveUi:RoutedViewHost
+          Grid.Column="0"
+          Router="{Binding Router}">
+          <reactiveUi:RoutedViewHost.DefaultContent>
+            <avaloniaGif:GifImage
+              SourceUri="{x:Static const1:ManifestResourcePaths.GifPreloader}" />
+          </reactiveUi:RoutedViewHost.DefaultContent>
+        </reactiveUi:RoutedViewHost>
+
+        <Grid
+          Grid.Column="0"
+          IsVisible="{Binding PreloaderEnabled}"
+          Background="Black"
+          Opacity="0.2" />
+
+        <Grid
+          Grid.Column="1"
+          RowDefinitions="*,69"
+          IsEnabled="{Binding !PreloaderEnabled}"
+          Background="{Binding #MainSplitView.PaneBackground}">
+          <ItemsControl
+            Grid.Row="0"
+            Items="{Binding RightBarButtons}">
+            <ItemsControl.Styles>
+              <Style Selector="ItemsPresenter">
+                <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
+              </Style>
+            </ItemsControl.Styles>
+
+            <ItemsControl.Styles>
+              <Style Selector="Button,ToggleButton">
+                <Setter Property="Width" Value="40" />
+                <Setter Property="Height" Value="40" />
+                <Setter Property="FontFamily" Value="{x:Static constants:FontFamilies.SegoeMdl2}" />
+                <Setter Property="FontSize" Value="26" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="4 4 4 1" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+              </Style>
+            </ItemsControl.Styles>
+          </ItemsControl>
+
+          <TextBlock
+            Grid.Row="1"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            Margin="5 0 5 50"
+            Width="38"
+            MaxWidth="38"
+            TextAlignment="Center"
+            FontSize="9.5"
+            FontWeight="Bold"
+            Text="{Binding Mode.Text}"
+            Foreground="{Binding Mode.Foreground}" />
+
+          <Button
+            Grid.Row="1"
+            Click="RefreshBtn_OnClick"
+            VerticalAlignment="Bottom"
+            Margin="4 0 4 5"
+            Padding="0"
+            Width="40"
+            Height="40"
+            FontSize="26"
+            Content="&#xE72C;"
+            FontFamily="{x:Static constants:FontFamilies.SegoeMdl2}"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            ToolTip.Tip="{x:Static com:Resources.APP__RIGHT_BAR_BTN__REFRESH}"
+            ToolTip.Placement="Left"
+            ToolTip.VerticalOffset="0"
+            ToolTip.HorizontalOffset="-5" />
+        </Grid>
+      </Grid>
+    </SplitView>
+
+    <avaloniaGif:GifImage
+      IsVisible="{Binding PreloaderEnabled}"
+      SourceUri="{x:Static const1:ManifestResourcePaths.GifPreloader}" />
+  </Grid>
+</Window>
