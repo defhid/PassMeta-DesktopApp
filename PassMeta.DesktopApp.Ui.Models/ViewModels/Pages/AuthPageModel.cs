@@ -11,61 +11,71 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 
+/// <summary>
+/// Authorization page ViewModel.
+/// </summary>
 public class AuthPageModel : PageViewModel
 {
-    private static IAuthService AuthService => Locator.Current.Resolve<IAuthService>();
+    private readonly IAuthService _authService = Locator.Current.Resolve<IAuthService>();
+    private readonly IUserContextProvider _userContext = Locator.Current.Resolve<IUserContextProvider>();
 
-    public string? Login { get; set; }
-        
-    public string? Password { get; set; }
-
-    public ICommand SignInCommand { get; }
-        
-    public ICommand SignUpCommand { get; }
-
+    /// <summary></summary>
     public AuthPageModel(IScreen hostScreen) : base(hostScreen)
     {
-        SignInCommand = ReactiveCommand.CreateFromTask(_SignInAsync);
-        SignUpCommand = ReactiveCommand.CreateFromTask(_SignUpAsync);
     }
-        
-    public override void TryNavigate()
+
+    /// <summary></summary>
+    public string? Login { get; set; }
+
+    /// <summary></summary>
+    public string? Password { get; set; }
+
+    /// <summary>
+    /// Log in to an existing account.
+    /// </summary>
+    public ICommand LogInCommand => ReactiveCommand.CreateFromTask(LogInAsync);
+
+    /// <summary>
+    /// Register a new account.
+    /// </summary>
+    public ICommand RegisterCommand => ReactiveCommand.CreateFromTask(RegisterAsync);
+
+    /// <inheritdoc />
+    public override async Task RefreshAsync()
     {
-        var userContext = Locator.Current.Resolve<IUserContextProvider>();
-            
-        if (userContext.Current.UserId is not null)
+        if (_userContext.Current.UserId is not null)
         {
-            TryNavigateTo<AccountPageModel>();
+            await new AccountPageModel(HostScreen).TryNavigateAsync();
+            return;
         }
-        else
+
+        Login = "";
+        Password = "";
+    }
+
+    private async Task LogInAsync()
+    {
+        using var loading = Locator.Current.Resolve<AppLoading>().General.Begin();
+
+        var data = new SignInPostData(Login?.Trim() ?? "", Password ?? "");
+
+        var result = await _authService.LogInAsync(data);
+        if (result.Ok)
         {
-            base.TryNavigate();
+            await RefreshAsync();
         }
     }
 
-    public override Task RefreshAsync()
-    {
-        TryNavigate();
-        return Task.CompletedTask;
-    }
-        
-    private async Task _SignInAsync()
+    private async Task RegisterAsync()
     {
         using var loading = Locator.Current.Resolve<AppLoading>().General.Begin();
-            
-        var data = new SignInPostData(Login?.Trim() ?? "", Password ?? "");
-        var result = await AuthService.SignInAsync(data);
-        if (result.Ok)
-            TryNavigateTo<AccountPageModel>();
-    }
-        
-    private async Task _SignUpAsync()
-    {
-        using var loading = Locator.Current.Resolve<AppLoading>().General.Begin();
-            
+
         var data = new SignUpPostData(Login?.Trim() ?? "", Password ?? "", "Unknown");
-        var result = await AuthService.SignUpAsync(data);
+
+        var result = await _authService.RegisterAsync(data);
         if (result.Ok)
-            TryNavigateTo<AccountPageModel>();
+        {
+            await RefreshAsync();
+        }
     }
 }

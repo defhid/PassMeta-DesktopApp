@@ -36,7 +36,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc />
-    public async Task<IResult<User>> SignInAsync(SignInPostData data)
+    public async Task<IResult<User>> LogInAsync(SignInPostData data)
     {
         if (!_Validate(data).Ok)
         {
@@ -44,7 +44,7 @@ public class AuthService : IAuthService
             return Result.Failure<User>();
         }
             
-        var response = await _passMetaClient.Begin(PassMetaApi.Auth.PostSignIn())
+        var response = await _passMetaClient.Begin(PassMetaApi.Auth.PostLogIn())
             .WithJsonBody(data)
             .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling()
@@ -59,7 +59,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc />
-    public async Task SignOutAsync()
+    public async Task LogOutAsync()
     {
         var answer = await _dialogService.ConfirmAsync(Resources.ACCOUNT__SIGN_OUT_CONFIRM);
         if (answer.Bad) return;
@@ -88,7 +88,7 @@ public class AuthService : IAuthService
     }
 
     /// <inheritdoc />
-    public async Task<IResult> SignUpAsync(SignUpPostData data)
+    public async Task<IResult> RegisterAsync(SignUpPostData data)
     {
         if (!_Validate(data).Ok)
         {

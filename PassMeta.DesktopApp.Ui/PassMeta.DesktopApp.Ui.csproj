@@ -20,10 +20,6 @@
             <DependentUpon>App.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Pages\AuthRequiredView.axaml.cs">
-          <DependentUpon>AuthRequiredView.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\Pages\Account\AccountView.axaml.cs">
           <DependentUpon>AccountView.axaml</DependentUpon>
           <SubType>Code</SubType>

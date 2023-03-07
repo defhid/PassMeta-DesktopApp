@@ -51,7 +51,7 @@ public static class PassMetaApi
     {
         /// Sign in.
         /// 
-        public static IHttpRequestWithBodySupportBase PostSignIn() => _Post("auth/sign-in");
+        public static IHttpRequestWithBodySupportBase PostLogIn() => _Post("auth/sign-in");
 
         /// Reset all current user sessions.
         /// 

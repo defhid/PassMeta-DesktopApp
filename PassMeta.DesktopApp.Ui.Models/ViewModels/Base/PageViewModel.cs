@@ -1,61 +1,66 @@
 ﻿using System;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Models;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 
-public abstract class PageViewModel : ReactiveObject, IRoutableViewModel
+/// <summary>
+/// Base page ViewModel.
+/// </summary>
+public abstract class PageViewModel : ReactiveObject, IActivatableViewModel, IRoutableViewModel
 {
-    public string? UrlPathSegment { get; }
-        
-    public IScreen HostScreen { get; }
-
-    public virtual ContentControl[] RightBarButtons { get; } = Array.Empty<ContentControl>();
-
+    /// <summary></summary>
     protected PageViewModel(IScreen hostScreen)
     {
-        HostScreen = hostScreen;
+        Activator = new ViewModelActivator();
         UrlPathSegment = GetType().Name;
-    }
-        
-    protected void TryNavigateTo<TViewModel>(params object?[]? args) 
-        where TViewModel : PageViewModel
-    {
-        args ??= Array.Empty<object>();
-        var vm = (TViewModel)Activator.CreateInstance(typeof(TViewModel), new object[] {HostScreen}.Concat(args).ToArray())!;
-        vm.TryNavigate();
-    }
-        
-    protected void TryNavigateTo(Type viewModelType)
-    {
-        var vm = (PageViewModel)Activator.CreateInstance(viewModelType, HostScreen)!;
-        vm.TryNavigate();
+        HostScreen = hostScreen;
     }
 
+    /// <inheritdoc />
+    public ViewModelActivator Activator { get; }
+
+    /// <inheritdoc />
+    public string? UrlPathSegment { get; }
+        
+    /// <inheritdoc />
+    public IScreen HostScreen { get; }
+
     /// <summary>
-    /// Refresh page.
+    /// Action buttons to display on the right bar.
     /// </summary>
-    /// <remarks>Invokes with preloader.</remarks>
+    public virtual ContentControl[] RightBarButtons { get; } = Array.Empty<ContentControl>();
+
+    /// <summary>
+    /// Refresh page data.
+    /// </summary>
     public abstract Task RefreshAsync();
 
     /// <summary>
-    /// Allow page closing.
+    /// Is it allowed to leave this ViewModel.
     /// </summary>
-    protected virtual Task<bool> OnCloseAsync() => Task.FromResult(true);
+    protected virtual ValueTask<IResult> CanLeaveAsync() => ValueTask.FromResult<IResult>(Result.Success());
 
-    public virtual void TryNavigate()
+    /// <summary>
+    /// Try to navigate to this ViewModel.
+    /// </summary>
+    public async Task<bool> TryNavigateAsync()
     {
-        var navigateCommand = ReactiveCommand.CreateFromTask(async (Task<bool> allow) =>
+        var current = await HostScreen.Router.CurrentViewModel;
+        if (current is PageViewModel page)
         {
-            if (!await allow) return;
-            await HostScreen.Router.Navigate.Execute(this);
-        });
-            
-        HostScreen.Router.CurrentViewModel.FirstOrDefaultAsync()
-            .Select(async vm => vm is not PageViewModel page || await page.OnCloseAsync())
-            .InvokeCommand(navigateCommand);
+            var canLeaveResult = await page.CanLeaveAsync();
+            if (canLeaveResult.Bad)
+            {
+                return false;
+            }
+        }
+
+        await HostScreen.Router.Navigate.Execute(this);
+        return true;
     }
 }

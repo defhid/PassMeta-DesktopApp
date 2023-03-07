@@ -7,8 +7,14 @@ namespace PassMeta.DesktopApp.Common.Models.App;
 /// </summary>
 public class AppLoading
 {
+    /// <summary></summary>
+    public AppLoading(ILoadingManager general)
+    {
+        General = general;
+    }
+
     /// <summary>
     /// General loading manager.
     /// </summary>
-    public ILoadingManager General { get; init; }
+    public ILoadingManager General { get; }
 }

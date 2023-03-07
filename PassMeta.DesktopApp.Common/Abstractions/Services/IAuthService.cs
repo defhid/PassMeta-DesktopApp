@@ -12,12 +12,12 @@ public interface IAuthService
     /// <summary>
     /// Logging in.
     /// </summary>
-    Task<IResult<User>> SignInAsync(SignInPostData data);
+    Task<IResult<User>> LogInAsync(SignInPostData data);
         
     /// <summary>
     /// Logging out.
     /// </summary>
-    Task SignOutAsync();
+    Task LogOutAsync();
                 
     /// <summary>
     /// Reset all sessions.
@@ -27,5 +27,5 @@ public interface IAuthService
     /// <summary>
     /// Registration.
     /// </summary>
-    Task<IResult> SignUpAsync(SignUpPostData data);
+    Task<IResult> RegisterAsync(SignUpPostData data);
 }

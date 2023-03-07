@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
@@ -14,12 +15,53 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 
+/// <summary>
+/// Account page ViewModel.
+/// </summary>
 public class AccountPageModel : PageViewModel
 {
-    private static IAccountService AccountService => Locator.Current.Resolve<IAccountService>();
-    private static IAuthService AuthService => Locator.Current.Resolve<IAuthService>();
-    private static IAppContextProvider AppContext => Locator.Current.Resolve<IAppContextProvider>();
+    private readonly IAccountService _accountService = Locator.Current.Resolve<IAccountService>();
+    private readonly IAuthService _authService = Locator.Current.Resolve<IAuthService>();
+    private readonly IAppContextProvider _appContext = Locator.Current.Resolve<IAppContextProvider>();
 
+    private string? _fullName;
+    private string? _login;
+    private string? _password;
+    private string? _passwordConfirm;
+    private bool _isPasswordConfirmVisible;
+    private bool _isBtnSaveVisible;
+
+    /// <summary></summary>
+    public AccountPageModel(IScreen hostScreen) : base(hostScreen) => 
+        this.WhenActivated(disposables => 
+        {
+            _appContext.CurrentObservable
+                .Subscribe(_ => RefreshFields())
+                .DisposeWith(disposables);
+
+            this.WhenAnyValue(
+                    vm => vm.FullName,
+                    vm => vm.Login,
+                    vm => vm.Password,
+                    vm => vm.PasswordConfirm)
+                .Subscribe(data =>
+                {
+                    var user = _appContext.Current.User;
+                    if (user is null)
+                    {
+                        return;
+                    }
+
+                    var passwordConfirmNeed = data.Item2 != user.Login || !string.IsNullOrEmpty(data.Item3);
+                    var changed = passwordConfirmNeed || data.Item1 != user.FullName;
+
+                    IsPasswordConfirmVisible = passwordConfirmNeed;
+                    IsBtnSaveVisible = changed && (!passwordConfirmNeed || !string.IsNullOrEmpty(data.Item4));
+                })
+                .DisposeWith(disposables);
+        });
+
+    /// <inheritdoc />
     public override ContentControl[] RightBarButtons => new ContentControl[]
     {
         new Button
@@ -40,112 +82,89 @@ public class AccountPageModel : PageViewModel
         }
     };
 
-    private string? _fullName;
+    /// <summary></summary>
     public string? FullName
     {
         get => _fullName;
         set => this.RaiseAndSetIfChanged(ref _fullName, value);
     }
 
-    private string? _login;
+    /// <summary></summary>
     public string? Login
     {
         get => _login;
         set => this.RaiseAndSetIfChanged(ref _login, value);
     }
 
-    private string? _password;
+    /// <summary></summary>
     public string? Password
     {
         get => _password;
         set => this.RaiseAndSetIfChanged(ref _password, value);
     }
 
-    private string? _passwordConfirm;
+    /// <summary></summary>
     public string? PasswordConfirm
     {
         get => _passwordConfirm;
         set => this.RaiseAndSetIfChanged(ref _passwordConfirm, value);
     }
 
-    private bool _isPasswordConfirmVisible;
+    /// <summary></summary>
     public bool IsPasswordConfirmVisible
     {
         get => _isPasswordConfirmVisible;
         set => this.RaiseAndSetIfChanged(ref _isPasswordConfirmVisible, value);
     }
 
-    private bool _isBtnSaveVisible;
+    /// <summary></summary>
     public bool IsBtnSaveVisible
     {
         get => _isBtnSaveVisible;
         private set => this.RaiseAndSetIfChanged(ref _isBtnSaveVisible, value);
     }
 
-    public ICommand SignOutCommand => ReactiveCommand.CreateFromTask(_SignOutAsync);
+    /// <summary>
+    /// Reset current session.
+    /// </summary>
+    private ICommand SignOutCommand => ReactiveCommand.CreateFromTask(SignOutAsync);
 
-    public ICommand ResetSessionsCommand => ReactiveCommand.CreateFromTask(_ResetSessionsAsync);
+    /// <summary>
+    /// Reset all user sessions except current.
+    /// </summary>
+    private ICommand ResetSessionsCommand => ReactiveCommand.CreateFromTask(ResetSessionsAsync);
 
-    public ICommand SaveCommand => ReactiveCommand.CreateFromTask(_SaveAsync);
-        
-    public AccountPageModel(IScreen hostScreen) : base(hostScreen)
-    {
-        if (AppContext.Current.User is null) return;
-            
-        _Refresh();
-        this.WhenAnyValue(
-                vm => vm.FullName,
-                vm => vm.Login,
-                vm => vm.Password,
-                vm => vm.PasswordConfirm)
-            .Subscribe(data =>
-            {
-                var user = AppContext.Current.User;
+    /// <summary>
+    /// Save changed user info.
+    /// </summary>
+    public ICommand SaveCommand => ReactiveCommand.CreateFromTask(SaveAsync);
 
-                var passwordConfirmNeed = data.Item2 != user.Login || !string.IsNullOrEmpty(data.Item3);
-                var changed = passwordConfirmNeed || data.Item1 != user.FullName;
-
-                IsPasswordConfirmVisible = passwordConfirmNeed;
-                IsBtnSaveVisible = changed && (!passwordConfirmNeed || !string.IsNullOrEmpty(data.Item4));
-            });
-    }
-
-    public override void TryNavigate()
-    {
-        if (AppContext.Current.User is null)
-        {
-            TryNavigateTo<AuthPageModel>();
-        }
-        else
-        {
-            base.TryNavigate();
-        }
-    }
-
+    /// <inheritdoc />
     public override async Task RefreshAsync()
     {
-        if (AppContext.Current.User is null)
+        if (_appContext.Current.User is null)
         {
-            TryNavigateTo<AuthPageModel>();
+            await new AuthPageModel(HostScreen).TryNavigateAsync();
+            return;
         }
 
-        await AccountService.RefreshUserDataAsync();
+        await _accountService.RefreshUserDataAsync();
 
-        _Refresh();
+        RefreshFields();
     }
 
-    private void _Refresh()
+    private void RefreshFields()
     {
-        FullName = AppContext.Current.User?.FullName;
-        Login = AppContext.Current.User?.Login;
+        FullName = _appContext.Current.User?.FullName;
+        Login = _appContext.Current.User?.Login;
         Password = "";
         PasswordConfirm = "";
     }
 
-    private async Task _SaveAsync()
+    private async Task SaveAsync()
     {
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
-            
+
         var data = new UserPatchData
         {
             FullName = FullName?.Trim() ?? "",
@@ -154,23 +173,28 @@ public class AccountPageModel : PageViewModel
             PasswordConfirm = PasswordConfirm ?? "",
         };
 
-        var result = await AccountService.UpdateUserDataAsync(data);
-
-        if (result.Ok) await RefreshAsync();
+        var result = await _accountService.UpdateUserDataAsync(data);
+        if (result.Ok)
+        {
+            await RefreshAsync();
+        }
     }
 
-    private async Task _SignOutAsync()
+    private async Task SignOutAsync()
     {
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
-            
-        await AuthService.SignOutAsync();
-        TryNavigateTo<AuthPageModel>();
+
+        await _authService.LogOutAsync();
+
+        await RefreshAsync();
     }
+
+    private async Task ResetSessionsAsync()
+    {
+        using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
+
+        await _authService.ResetAllExceptMeAsync();
         
-    private static async Task _ResetSessionsAsync()
-    {
-        using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
-
-        await AuthService.ResetAllExceptMeAsync();
+        await RefreshAsync();
     }
 }

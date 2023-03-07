@@ -48,7 +48,7 @@
                         MinWidth="75"
                         FontSize="16"
                         Content="{x:Static com:Resources.AUTH__SIGN_IN_BTN}"
-                        Command="{Binding SignInCommand}"/>
+                        Command="{Binding LogInCommand}"/>
             
                 <Button HorizontalAlignment="Right"
                         HorizontalContentAlignment="Center"
@@ -56,7 +56,7 @@
                         MinWidth="150"
                         FontSize="16"
                         Content="{x:Static com:Resources.AUTH__SIGN_UP_BTN}"
-                        Command="{Binding SignUpCommand}"/>
+                        Command="{Binding RegisterCommand}"/>
             </Grid>
         </Grid>
     </Grid>

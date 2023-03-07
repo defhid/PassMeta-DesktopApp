@@ -5,7 +5,6 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:reactiveUi="http://reactiveui.net"
   xmlns:avaloniaGif="clr-namespace:AvaloniaGif;assembly=AvaloniaGif"
-  xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:const1="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:mainWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;assembly=PassMeta.DesktopApp.Ui.Models"
@@ -96,28 +95,28 @@
             VerticalAlignment="Top"
             HorizontalAlignment="Left">
             <Button
-              Click="AccountBtn_OnClick"
+              Command="{Binding MainPane.Buttons.Account.Command}"
               Classes.active="{Binding MainPane.Buttons.Account.IsActive}"
               Content="{Binding MainPane.Buttons.Account.Content^}" />
 
             <Button
-              Click="StorageBtn_OnClick"
+              Command="{Binding MainPane.Buttons.Storage.Command}"
               Classes.active="{Binding MainPane.Buttons.Storage.IsActive}"
               Content="{Binding MainPane.Buttons.Storage.Content^}" />
 
             <Button
-              Click="GeneratorBtn_OnClick"
+              Command="{Binding MainPane.Buttons.Generator.Command}"
               Classes.active="{Binding MainPane.Buttons.Generator.IsActive}"
               Content="{Binding MainPane.Buttons.Generator.Content^}" />
 
             <Button
-              Click="JournalBtn_OnClick"
+              Command="{Binding MainPane.Buttons.Journal.Command}"
               Classes.active="{Binding MainPane.Buttons.Journal.IsActive}"
               Content="{Binding MainPane.Buttons.Journal.Content^}" />
           </StackPanel>
 
           <Button
-            Click="LogsBtn_OnClick"
+            Command="{Binding MainPane.Buttons.Logs.Command}"
             Classes.active="{Binding MainPane.Buttons.Logs.IsActive}"
             Content="{Binding MainPane.Buttons.Logs.Content^}"
             IsVisible="{Binding MainPane.Buttons.Logs.IsVisible}"
@@ -126,7 +125,7 @@
             Opacity="0.65" />
 
           <Button
-            Click="SettingsBtn_OnClick"
+            Command="{Binding MainPane.Buttons.Settings.Command}"
             Classes.active="{Binding MainPane.Buttons.Settings.IsActive}"
             Content="{Binding MainPane.Buttons.Settings.Content^}"
             VerticalAlignment="Bottom"
@@ -158,7 +157,7 @@
           Background="{Binding #MainSplitView.PaneBackground}">
           <ItemsControl
             Grid.Row="0"
-            Items="{Binding RightBarButtons}">
+            Items="{Binding RightBarButtons^}">
             <ItemsControl.Styles>
               <Style Selector="ItemsPresenter">
                 <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />

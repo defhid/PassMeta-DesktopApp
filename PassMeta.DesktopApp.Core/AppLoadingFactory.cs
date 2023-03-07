@@ -11,8 +11,5 @@ public static class AppLoadingFactory
     /// <summary>
     /// Create a new <see cref="AppLoading"/>.
     /// </summary>
-    public static AppLoading Create() => new()
-    {
-        General = new DefaultLoadingManager(),
-    };
+    public static AppLoading Create() => new(new DefaultLoadingManager());
 }

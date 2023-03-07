@@ -8,6 +8,7 @@ using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.Models.Constants;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 using ReactiveUI;
 using Splat;
 
@@ -34,7 +35,7 @@ public sealed class MainPane : ReactiveObject, IDisposable
         
     public ButtonCollection Buttons { get; }
 
-    public MainPane()
+    public MainPane(IScreen hostScreen)
     {
         var modeChanged = this.WhenAnyValue(pane => pane.IsOpened).Select(isOpened => !isOpened);
 
@@ -95,9 +96,13 @@ public sealed class MainPane : ReactiveObject, IDisposable
             
         public MainPaneBtn Settings { get; }
             
-        public ButtonCollection(IObservable<bool> modeChanged)
+        public ButtonCollection(IScreen hostScreen, IObservable<bool> modeChanged)
         {
-            Account = new MainPaneBtn(Resources.APP__MENU_BTN__ACCOUNT, "\uE77b", modeChanged);
+            Account = new MainPaneBtn(Resources.APP__MENU_BTN__ACCOUNT, "\uE77b", modeChanged,
+                ReactiveCommand.CreateFromTask(() => new AccountPageModel(hostScreen).TryNavigateAsync()));
+
+            Locator.Current.Resolve<IAppContextProvider>().CurrentObservable.Select(x => x.User is not null);
+            
             Storage = new MainPaneBtn(Resources.APP__MENU_BTN__STORAGE, "\uE8F1", modeChanged);
             Generator = new MainPaneBtn(Resources.APP__MENU_BTN__GENERATOR, "\uEA80", modeChanged);
             Journal = new MainPaneBtn(Resources.APP__MENU_BTN__JOURNAL, "\uE823", modeChanged);

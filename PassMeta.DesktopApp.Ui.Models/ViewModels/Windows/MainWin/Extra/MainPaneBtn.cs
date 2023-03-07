@@ -1,5 +1,6 @@
 using System;
 using System.Reactive.Linq;
+using System.Windows.Input;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
@@ -19,12 +20,15 @@ public class MainPaneBtn : ReactiveObject
         get => _isVisibl;
         set => this.RaiseAndSetIfChanged(ref _isVisibl, value);
     }
+    
+    public ICommand Command { get; }
 
     public IObservable<string> Content { get; }
 
-    public MainPaneBtn(string text, string icon, IObservable<bool> shortModeObservable)
+    public MainPaneBtn(string text, string icon, IObservable<bool> shortModeObservable, ICommand command)
     {
         Content = shortModeObservable.Select(isShort => isShort ? icon : text);
         IsVisible = true;
+        Command = command;
     }
 }

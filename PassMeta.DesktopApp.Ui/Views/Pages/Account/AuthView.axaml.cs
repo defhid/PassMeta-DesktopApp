@@ -18,7 +18,7 @@ public class AuthView : ReactiveUserControl<AuthPageModel>
     private void Input_OnKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
-            ViewModel!.SignInCommand.Execute(null);
+            ViewModel!.LogInCommand.Execute(null);
     }
 
     private void LoginTextBox__OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
