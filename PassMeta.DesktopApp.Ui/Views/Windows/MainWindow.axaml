@@ -157,7 +157,7 @@
           Background="{Binding #MainSplitView.PaneBackground}">
           <ItemsControl
             Grid.Row="0"
-            Items="{Binding RightBarButtons^}">
+            Items="{Binding RightBarButtons}">
             <ItemsControl.Styles>
               <Style Selector="ItemsPresenter">
                 <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />

@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
@@ -15,8 +14,6 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.JournalPage;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 using ReactiveUI;
@@ -39,17 +36,7 @@ public class MainWindow : ReactiveWindow<MainWinModel>
         {
             d(Locator.Current.Resolve<AppLoading>().General.ActiveObservable.Subscribe(HandleGeneralLoading));
 
-            d(ViewModel!.Router.CurrentViewModel.Subscribe(HandleNavigate));
         });
-    }
-
-    private static void MenuBtnClick(object? sender, Action action)
-    {
-        var btn = (Button)sender!;
-        if (!btn.Classes.Contains("active"))
-        {
-            action();
-        }
     }
 
     private async void RefreshBtn_OnClick(object? sender, RoutedEventArgs e)
@@ -58,9 +45,10 @@ public class MainWindow : ReactiveWindow<MainWinModel>
 
         await Locator.Current.Resolve<IPassMetaClient>().CheckConnectionAsync();
 
-        await ViewModel!.Router.CurrentViewModel!.OfType<PageViewModel>()
-            .FirstOrDefaultAsync()
-            .Select(vm => vm?.RefreshAsync());
+        if (await ViewModel!.Router.CurrentViewModel is PageViewModel pvm)
+        {
+            await pvm.RefreshAsync();
+        }
     }
 
     private async void OnOpened(object? sender, EventArgs e)
@@ -91,23 +79,6 @@ public class MainWindow : ReactiveWindow<MainWinModel>
 
         _closingConfirmed = true;
         Close();
-    }
-
-    private void HandleNavigate(IRoutableViewModel? viewModel)
-    {
-        var mainPaneButtons = ViewModel!.MainPane.Buttons;
-        mainPaneButtons.CurrentActive = viewModel switch
-        {
-            AuthPageModel => mainPaneButtons.Account,
-            AccountPageModel => mainPaneButtons.Account,
-            StoragePageModel => mainPaneButtons.Storage,
-            GeneratorPageModel => mainPaneButtons.Generator,
-            JournalPageModel => mainPaneButtons.Journal,
-            LogsPageModel => mainPaneButtons.Logs,
-            SettingsPageModel => mainPaneButtons.Settings,
-            _ => mainPaneButtons.CurrentActive
-        };
-        ViewModel.MainPane.IsOpened = false;
     }
 
     private void HandleGeneralLoading(bool isLoading)
