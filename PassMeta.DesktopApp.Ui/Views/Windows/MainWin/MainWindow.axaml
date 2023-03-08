@@ -4,15 +4,11 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:reactiveUi="http://reactiveui.net"
-  xmlns:avaloniaGif="clr-namespace:AvaloniaGif;assembly=AvaloniaGif"
-  xmlns:const1="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:mainWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:extra="clr-namespace:PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra"
-  mc:Ignorable="d"
-  d:DesignWidth="800"
-  d:DesignHeight="500"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
   x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.MainWindow"
   Icon="/Assets/AvaRes/PassMeta.ico"
   Title="PassMeta"
@@ -27,18 +23,6 @@
   </Design.DataContext>   
 
   <Grid>
-    <Grid.Styles>
-      <Style Selector="avaloniaGif|GifImage">
-        <Setter Property="SourceUri" Value="{x:Static const1:ManifestResourcePaths.GifPreloader}" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Stretch" Value="Uniform" />
-        <Setter Property="StretchDirection" Value="Both" />
-        <Setter Property="Width" Value="50" />
-        <Setter Property="Height" Value="50" />
-      </Style>
-    </Grid.Styles>
-
     <SplitView
       x:Name="MainSplitView"
       IsPaneOpen="{Binding MainPane.IsOpened}"
@@ -96,7 +80,7 @@
       <Grid ColumnDefinitions="*,48">
         <reactiveUi:RoutedViewHost Grid.Column="0" Router="{Binding Router}">
           <reactiveUi:RoutedViewHost.DefaultContent>
-            <avaloniaGif:GifImage SourceUri="{x:Static const1:ManifestResourcePaths.GifPreloader}" />
+            <extra:MainPreloader IsVisible="{Binding PreloaderEnabled}" />
           </reactiveUi:RoutedViewHost.DefaultContent>
         </reactiveUi:RoutedViewHost>
 
@@ -147,7 +131,7 @@
 
           <Button
             Grid.Row="1"
-            Click="RefreshBtn_OnClick"
+            Command="{Binding RefreshCurrentPageCommand}"
             VerticalAlignment="Bottom"
             Margin="4 0 4 5"
             Content="&#xE72C;"
@@ -159,8 +143,7 @@
       </Grid>
     </SplitView>
 
-    <avaloniaGif:GifImage
-      IsVisible="{Binding PreloaderEnabled}"
-      SourceUri="{x:Static const1:ManifestResourcePaths.GifPreloader}" />
+    <extra:MainPreloader IsVisible="{Binding PreloaderEnabled}" />
   </Grid>
+
 </Window>

@@ -2,9 +2,13 @@
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
 using ReactiveUI;
@@ -17,10 +21,12 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 /// </summary>
 public sealed class MainWinModel : ReactiveObject, IScreen, IActivatableViewModel
 {
+    private readonly AppLoading _appLoading = Locator.Current.Resolve<AppLoading>();
     private readonly BehaviorSubject<bool> _isOnlineSource = new(false);
+
     private ObservableAsPropertyHelper<ContentControl[]?>? _rightBarButtons;
     private bool _preloaderEnabled = true;
-    
+
     /// <summary></summary>
     public MainWinModel()
     {
@@ -39,6 +45,12 @@ public sealed class MainWinModel : ReactiveObject, IScreen, IActivatableViewMode
                 .Subscribe(_isOnlineSource.OnNext)
                 .DisposeWith(disposables);
 
+            _appLoading.General.ActiveObservable
+                .Subscribe(isLoading => Dispatcher.UIThread.InvokeAsync(
+                    () => PreloaderEnabled = isLoading,
+                    isLoading ? DispatcherPriority.MaxValue : DispatcherPriority.Normal))
+                .DisposeWith(disposables);
+
             MainPane.Activator.Activate().DisposeWith(disposables);
         });
     }
@@ -48,7 +60,7 @@ public sealed class MainWinModel : ReactiveObject, IScreen, IActivatableViewMode
 
     /// <inheritdoc />
     public RoutingState Router { get; } = new();
-    
+
     /// <summary></summary>
     public AppMode Mode { get; }
 
@@ -59,9 +71,24 @@ public sealed class MainWinModel : ReactiveObject, IScreen, IActivatableViewMode
     public ContentControl[] RightBarButtons => _rightBarButtons?.Value ?? Array.Empty<ContentControl>();
 
     /// <summary></summary>
+    public ICommand RefreshCurrentPageCommand => ReactiveCommand.CreateFromTask(RefreshCurrentPageAsync);
+
+    /// <summary></summary>
     public bool PreloaderEnabled
     {
         get => _preloaderEnabled;
         set => this.RaiseAndSetIfChanged(ref _preloaderEnabled, value);
+    }
+
+    private async Task RefreshCurrentPageAsync()
+    {
+        using var preloader = _appLoading.General.Begin();
+
+        await Locator.Current.Resolve<IPassMetaClient>().CheckConnectionAsync();
+
+        if (await Router.CurrentViewModel.FirstAsync() is PageViewModel pvm)
+        {
+            await pvm.RefreshAsync();
+        }
     }
 }
