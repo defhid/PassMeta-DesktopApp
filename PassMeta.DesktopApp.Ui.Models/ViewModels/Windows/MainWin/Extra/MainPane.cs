@@ -1,131 +1,154 @@
 using System;
-using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Avalonia;
-using Avalonia.Layout;
-using Avalonia.Media;
+using System.Reactive.Subjects;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Ui.Models.Constants;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.JournalPage;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;
 using ReactiveUI;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
 
-public sealed class MainPane : ReactiveObject, IDisposable
+/// <summary>
+/// Main pane.
+/// </summary>
+public sealed class MainPane : ReactiveObject, IActivatableViewModel
 {
+    private readonly BehaviorSubject<bool> _devModeSource = new(false);
+    private readonly BehaviorSubject<bool> _authSource = new(false);
+    private readonly BehaviorSubject<MainPaneButtonModel?> _activeBtnSource = new(null);
     private bool _isOpened;
+
+    /// <summary></summary>
+    public MainPane(IScreen hostScreen)
+    {
+        var userContext = Locator.Current.Resolve<IUserContextProvider>();
+        var appConfig = Locator.Current.Resolve<IAppConfigProvider>();
+
+        this.WhenActivated(disposables =>
+        {
+            userContext.CurrentObservable
+                .Subscribe(x => _authSource.OnNext(x.UserId is not null))
+                .DisposeWith(disposables);
+
+            appConfig.CurrentObservable
+                .Subscribe(x => _devModeSource.OnNext(x.DevMode))
+                .DisposeWith(disposables);
+
+            hostScreen.Router.CurrentViewModel
+                .Subscribe(vm => _activeBtnSource.OnNext(vm switch
+                {
+                    AuthPageModel => Account,
+                    AccountPageModel => Account,
+                    StoragePageModel => Storage,
+                    GeneratorPageModel => Generator,
+                    JournalPageModel => Journal,
+                    LogsPageModel => Logs,
+                    SettingsPageModel => Settings,
+                    _ => null
+                }))
+                .DisposeWith(disposables);
+        });
+
+        var createButton = BuildButtonFactory();
+
+        Account = createButton(
+            Resources.APP__MENU_BTN__ACCOUNT,
+            "\uE77b",
+            Observable.Return(true),
+            () => userContext.Current.UserId is null
+                ? new AuthPageModel(hostScreen)
+                : new AccountPageModel(hostScreen));
+
+        Storage = createButton(
+            Resources.APP__MENU_BTN__STORAGE,
+            "\uE8F1",
+            _authSource,
+            () => new StoragePageModel(hostScreen));
+
+        Generator = createButton(
+            Resources.APP__MENU_BTN__GENERATOR,
+            "\uEA80",
+            Observable.Return(true),
+            () => new GeneratorPageModel(hostScreen));
+
+        Journal = createButton(
+            Resources.APP__MENU_BTN__JOURNAL,
+            "\uE823",
+            _authSource,
+            () => new JournalPageModel(hostScreen));
+
+        Logs = createButton(
+            Resources.APP__MENU_BTN__LOGS,
+            "\uE9D9",
+            _devModeSource,
+            () => new LogsPageModel(hostScreen));
+
+        Settings = createButton(
+            Resources.APP__MENU_BTN__SETTINGS,
+            "\uE713",
+            Observable.Return(true),
+            () => new SettingsPageModel(hostScreen));
+    }
+
+    /// <summary></summary>
     public bool IsOpened
     {
         get => _isOpened;
         set => this.RaiseAndSetIfChanged(ref _isOpened, value);
     }
 
-    public IObservable<int> BtnWidth { get; }
+    /// <inheritdoc />
+    public ViewModelActivator Activator { get; } = new();
 
-    public IObservable<Thickness> BtnPadding { get; }
-        
-    public IObservable<HorizontalAlignment> BtnHorizontalContentAlignment { get; }
-        
-    public IObservable<FontFamily> BtnFontFamily { get; }
-        
-    public IObservable<int> BtnFontSize { get; }
-        
-    public ButtonCollection Buttons { get; }
+    /// <summary></summary>
+    public MainPaneButtonModel Account { get; }
 
-    public MainPane(IScreen hostScreen)
+    /// <summary></summary>
+    public MainPaneButtonModel Storage { get; }
+
+    /// <summary></summary>
+    public MainPaneButtonModel Generator { get; }
+
+    /// <summary></summary>
+    public MainPaneButtonModel Journal { get; }
+
+    /// <summary></summary>
+    public MainPaneButtonModel Logs { get; }
+
+    /// <summary></summary>
+    public MainPaneButtonModel Settings { get; }
+
+    private MainPaneButtonModelFactory BuildButtonFactory()
     {
-        var modeChanged = this.WhenAnyValue(pane => pane.IsOpened).Select(isOpened => !isOpened);
+        var shortMode = this.WhenAnyValue(pane => pane.IsOpened).Select(isOpened => !isOpened);
 
-        BtnWidth = modeChanged.Select(isShort => isShort 
-            ? 40 
-            : 180);
-            
-        BtnPadding = modeChanged.Select(isShort => isShort 
-            ? Thickness.Parse("0 0 0 0") 
-            : Thickness.Parse("10 0 5 4"));
-            
-        BtnHorizontalContentAlignment = modeChanged.Select(isShort => isShort 
-            ? HorizontalAlignment.Center 
-            : HorizontalAlignment.Left);
-            
-        BtnFontFamily = modeChanged.Select(isShort => isShort 
-            ? FontFamilies.SegoeMdl2 
-            : FontFamilies.Default);
-            
-        BtnFontSize = modeChanged.Select(isShort => isShort
-            ? 28 
-            : 20);
-
-        Buttons = new ButtonCollection(modeChanged);
-    }
-
-    public void Dispose()
-    {
-        Buttons.Dispose();
-    }
-
-    public sealed class ButtonCollection : IDisposable
-    {
-        private readonly MainPaneBtn[] _all;
-        private readonly IDisposable[] _disposables;
-
-        public MainPaneBtn? CurrentActive 
-        { 
-            get => _all.FirstOrDefault(btn => btn.IsActive);
-            set
-            {
-                foreach (var btn in _all)
-                {
-                    btn.IsActive = ReferenceEquals(btn, value);
-                }
-            }
-        }
-
-        public MainPaneBtn Account { get; }
-
-        public MainPaneBtn Storage { get; }
-            
-        public MainPaneBtn Generator { get; }
-            
-        public MainPaneBtn Journal { get; }
-            
-        public MainPaneBtn Logs { get; }
-            
-        public MainPaneBtn Settings { get; }
-            
-        public ButtonCollection(IScreen hostScreen, IObservable<bool> modeChanged)
+        return (text, icon, isVisible, pageFactory) =>
         {
-            Account = new MainPaneBtn(Resources.APP__MENU_BTN__ACCOUNT, "\uE77b", modeChanged,
-                ReactiveCommand.CreateFromTask(() => new AccountPageModel(hostScreen).TryNavigateAsync()));
-
-            Locator.Current.Resolve<IAppContextProvider>().CurrentObservable.Select(x => x.User is not null);
-            
-            Storage = new MainPaneBtn(Resources.APP__MENU_BTN__STORAGE, "\uE8F1", modeChanged);
-            Generator = new MainPaneBtn(Resources.APP__MENU_BTN__GENERATOR, "\uEA80", modeChanged);
-            Journal = new MainPaneBtn(Resources.APP__MENU_BTN__JOURNAL, "\uE823", modeChanged);
-            Logs = new MainPaneBtn(Resources.APP__MENU_BTN__LOGS, "\uE9D9", modeChanged) { IsVisible = false };
-            Settings = new MainPaneBtn(Resources.APP__MENU_BTN__SETTINGS, "\uE713", modeChanged);
-                
-            _all = new[] { Account, Storage, Generator, Journal, Logs, Settings };
-
-            _disposables = new[]
+            var btn = new MainPaneButtonModel(text, icon, shortMode)
             {
-                Locator.Current.Resolve<IAppConfigProvider>().CurrentObservable.Subscribe(x =>
+                IsVisible = isVisible,
+                Command = ReactiveCommand.CreateFromTask(async () =>
                 {
-                    Logs.IsVisible = x.DevMode;
+                    var pvm = pageFactory();
+                    await pvm.TryNavigateAsync();
+                    IsOpened = false;
                 })
             };
-        }
-
-        public void Dispose()
-        {
-            foreach (var disposable in _disposables)
-            {
-                disposable.Dispose();
-            }
-        }
+            btn.IsActive = _activeBtnSource.Select(x => ReferenceEquals(x, btn));
+            return btn;
+        };
     }
+
+    private delegate MainPaneButtonModel MainPaneButtonModelFactory(
+        string text,
+        string icon,
+        IObservable<bool> isVisible,
+        Func<PageViewModel> pageFactory);
 }

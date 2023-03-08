@@ -140,7 +140,7 @@ public class AccountPageModel : PageViewModel
     public ICommand SaveCommand => ReactiveCommand.CreateFromTask(SaveAsync);
 
     /// <inheritdoc />
-    public override async Task RefreshAsync()
+    public override async ValueTask RefreshAsync()
     {
         if (_appContext.Current.User is null)
         {

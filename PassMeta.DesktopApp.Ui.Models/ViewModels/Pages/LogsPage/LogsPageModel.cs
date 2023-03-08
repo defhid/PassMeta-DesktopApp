@@ -75,10 +75,11 @@ public class LogsPageModel : PageViewModel
             .Select(_ => (FromDate, ToDate)).InvokeCommand(loadCommand);
     }
 
-    public override Task RefreshAsync()
+    /// <inheritdoc />
+    public override ValueTask RefreshAsync()
     {
         LoadLogs((FromDate, ToDate));
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
     private void LoadLogs((DateTimeOffset from, DateTimeOffset to) period)

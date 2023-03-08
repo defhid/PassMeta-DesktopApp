@@ -9,12 +9,14 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Helpers;
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
@@ -162,30 +164,21 @@ public class StoragePageModel : PageViewModel
                 _pfContext.AnyChangedSource.Subscribe(_ => LoadPassFilesAsync(lastItemPath))));
     }
 
-    public override void TryNavigate()
+    /// <inheritdoc />
+    protected override async ValueTask<IResult> CanLeaveAsync()
     {
-        if (_userContext.UserId is null)
-        {
-            TryNavigateTo<AuthRequiredPageModel>();
-        }
-        else
-        {
-            base.TryNavigate();
-        }
-    }
-        
-    protected override async Task<bool> OnCloseAsync()
-    {
-        if (!SelectedData.Edit.Mode) return true;
-        var confirm = await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_SECTION_RESET);
-        return confirm.Ok;
+        return SelectedData.Edit.Mode
+            ? await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_SECTION_RESET)
+            : Result.Failure();
     }
 
-    public override async Task RefreshAsync()
+    /// <inheritdoc />
+    public override async ValueTask RefreshAsync()
     {
         if (_userContext.UserId is null)
         {
-            TryNavigateTo<AuthRequiredPageModel>();
+            await new AuthPageModel(HostScreen).TryNavigateAsync();
+            return;
         }
 
         if (_pfContext.AnyChanged)

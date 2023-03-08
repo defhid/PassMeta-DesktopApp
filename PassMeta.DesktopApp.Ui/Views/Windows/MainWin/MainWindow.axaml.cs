@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using Avalonia;
+using Avalonia.Controls.Mixins;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
@@ -19,7 +21,7 @@ using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 using ReactiveUI;
 using Splat;
 
-namespace PassMeta.DesktopApp.Ui.Views.Windows;
+namespace PassMeta.DesktopApp.Ui.Views.Windows.MainWin;
 
 public class MainWindow : ReactiveWindow<MainWinModel>
 {
@@ -30,13 +32,22 @@ public class MainWindow : ReactiveWindow<MainWinModel>
         Opened += OnOpened;
         Closing += OnClosing;
 
-        AvaloniaXamlLoader.Load(this);
-
-        this.WhenActivated(d =>
+        this.WhenActivated(disposables =>
         {
-            d(Locator.Current.Resolve<AppLoading>().General.ActiveObservable.Subscribe(HandleGeneralLoading));
-
+            Locator.Current.Resolve<AppLoading>().General
+                .ActiveObservable
+                .Subscribe(isLoading => 
+                    Dispatcher.UIThread.InvokeAsync(
+                        () => ViewModel!.PreloaderEnabled = isLoading,
+                        isLoading ? DispatcherPriority.MaxValue : DispatcherPriority.Normal))
+                .DisposeWith(disposables);
         });
+
+        AvaloniaXamlLoader.Load(this);
+        
+#if DEBUG
+        this.AttachDevTools();
+#endif
     }
 
     private async void RefreshBtn_OnClick(object? sender, RoutedEventArgs e)
@@ -45,7 +56,7 @@ public class MainWindow : ReactiveWindow<MainWinModel>
 
         await Locator.Current.Resolve<IPassMetaClient>().CheckConnectionAsync();
 
-        if (await ViewModel!.Router.CurrentViewModel is PageViewModel pvm)
+        if (await ViewModel!.Router.CurrentViewModel.FirstAsync() is PageViewModel pvm)
         {
             await pvm.RefreshAsync();
         }
@@ -79,10 +90,5 @@ public class MainWindow : ReactiveWindow<MainWinModel>
 
         _closingConfirmed = true;
         Close();
-    }
-
-    private void HandleGeneralLoading(bool isLoading)
-    {
-        Dispatcher.UIThread.InvokeAsync(() => ViewModel!.PreloaderEnabled = isLoading);
     }
 }

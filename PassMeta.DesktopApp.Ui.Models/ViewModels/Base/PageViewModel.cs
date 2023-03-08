@@ -38,7 +38,7 @@ public abstract class PageViewModel : ReactiveObject, IActivatableViewModel, IRo
     /// <summary>
     /// Refresh page data.
     /// </summary>
-    public abstract Task RefreshAsync();
+    public abstract ValueTask RefreshAsync();
 
     /// <summary>
     /// Is it allowed to leave this ViewModel.
@@ -48,9 +48,9 @@ public abstract class PageViewModel : ReactiveObject, IActivatableViewModel, IRo
     /// <summary>
     /// Try to navigate to this ViewModel.
     /// </summary>
-    public async Task<bool> TryNavigateAsync()
+    public async ValueTask<bool> TryNavigateAsync()
     {
-        var current = await HostScreen.Router.CurrentViewModel;
+        var current = await HostScreen.Router.CurrentViewModel.FirstAsync();
         if (current is PageViewModel page)
         {
             var canLeaveResult = await page.CanLeaveAsync();

@@ -70,7 +70,7 @@ public class SettingsPageModel : PageViewModel
         SaveCommand = ReactiveCommand.CreateFromTask(_SaveAsync);
     }
 
-    public override Task RefreshAsync()
+    public override ValueTask RefreshAsync()
     {
         FillFromAppConfig();
 
@@ -79,7 +79,7 @@ public class SettingsPageModel : PageViewModel
         this.RaisePropertyChanged(nameof(HidePasswords));
         this.RaisePropertyChanged(nameof(ServerInfo));
 
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
     private void FillFromAppConfig()

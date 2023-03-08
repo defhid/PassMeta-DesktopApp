@@ -1,33 +1,30 @@
+using System;
 using System.Reactive.Linq;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Extensions;
-using ReactiveUI;
-using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
 
-public class AppMode : ReactiveObject
+/// <summary>
+/// Application mode.
+/// </summary>
+public class AppMode
 {
-    private readonly ObservableAsPropertyHelper<string> _text;
-    public string Text => _text.Value;
+    /// <summary></summary>
+    public IObservable<string> Text { get; }
 
-    private readonly ObservableAsPropertyHelper<ISolidColorBrush> _foreground;
-    public ISolidColorBrush Foreground => _foreground.Value;
+    /// <summary></summary>
+    public IObservable<ISolidColorBrush> Foreground { get; }
 
-    public AppMode()
+    /// <summary></summary>
+    public AppMode(IObservable<bool> isOnline)
     {
-        var passMetaClient = Locator.Current.Resolve<IPassMetaClient>();
+        Text = isOnline.Select(online => online 
+            ? Resources.APP__ONLINE_MODE
+            : Resources.APP__OFFLINE_MODE);
 
-        _text = passMetaClient.OnlineObservable.Select(online => online 
-                ? Resources.APP__ONLINE_MODE
-                : Resources.APP__OFFLINE_MODE)
-            .ToProperty(this, nameof(Text));
-
-        _foreground = passMetaClient.OnlineObservable.Select(online => online 
-                ? Brushes.Green 
-                : Brushes.SlateGray)
-            .ToProperty(this, nameof(Foreground));
+        Foreground = isOnline.Select(online => online 
+            ? Brushes.Green 
+            : Brushes.SlateGray);
     }
 }

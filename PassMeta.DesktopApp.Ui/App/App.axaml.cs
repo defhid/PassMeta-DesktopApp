@@ -13,7 +13,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.App.Observers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
-using PassMeta.DesktopApp.Ui.Views.Windows;
+using PassMeta.DesktopApp.Ui.Views.Windows.MainWin;
 
 namespace PassMeta.DesktopApp.Ui.App;
 
@@ -86,7 +86,6 @@ public class App : Application
         var win = new MainWindow { ViewModel = new MainWinModel() };
 
         win.Activated += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
-        win.Closed += (_, _) => win.ViewModel!.Dispose();
 
         DependencyInstaller.Unregister<INotificationManager>();
         DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)

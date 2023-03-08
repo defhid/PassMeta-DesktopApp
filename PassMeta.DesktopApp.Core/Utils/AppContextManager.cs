@@ -24,7 +24,8 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     private const string CurrentContextFileName = ".context";
     private const string PreviousContextFileName = ".context.old";
 
-    private readonly BehaviorSubject<AppContextModel> _currentSubject = new(new AppContextModel(new AppContextDto()));
+    private readonly BehaviorSubject<AppContextModel> _currAppSubject = new(new AppContextModel(new AppContextDto()));
+    private readonly BehaviorSubject<UserContextModel> _currUserSubject = new(new UserContextModel(null, null));
     private readonly IFileRepository _repository;
     private readonly ILogsWriter _logger;
     private readonly SemaphoreSlim _semaphore = new(1);
@@ -37,14 +38,16 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     }
 
     /// <inheritdoc />
-    IAppContext IAppContextProvider.Current => _currentSubject.Value;
+    IAppContext IAppContextProvider.Current => _currAppSubject.Value;
 
     /// <inheritdoc />
-    IObservable<IAppContext> IAppContextProvider.CurrentObservable => _currentSubject;
+    IObservable<IAppContext> IAppContextProvider.CurrentObservable => _currAppSubject;
 
     /// <inheritdoc />
-    IUserContext IUserContextProvider.Current
-        => new UserContextModel(_currentSubject.Value.User?.Id, _currentSubject.Value.ServerId);
+    IUserContext IUserContextProvider.Current => _currUserSubject.Value;
+
+    /// <inheritdoc />
+    IObservable<IUserContext> IUserContextProvider.CurrentObservable => _currUserSubject;
 
     /// <inheritdoc />
     public async Task LoadAsync()
@@ -84,9 +87,9 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     /// <inheritdoc />
     public async Task<IResult> RefreshFromAsync(PassMetaInfoDto passMetaInfoDto)
     {
-        if (_currentSubject.Value.User?.Equals(passMetaInfoDto.User) is true &&
-            _currentSubject.Value.ServerId?.Equals(passMetaInfoDto.AppId) is true &&
-            _currentSubject.Value.ServerVersion?.Equals(passMetaInfoDto.AppVersion) is true)
+        if (_currAppSubject.Value.User?.Equals(passMetaInfoDto.User) is true &&
+            _currAppSubject.Value.ServerId?.Equals(passMetaInfoDto.AppId) is true &&
+            _currAppSubject.Value.ServerVersion?.Equals(passMetaInfoDto.AppVersion) is true)
         {
             return Result.Success();
         }
@@ -102,7 +105,7 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     /// <inheritdoc />
     public async Task<IResult> ApplyAsync(Action<AppContextModel> setup)
     {
-        var copy = _currentSubject.Value.Copy();
+        var copy = _currAppSubject.Value.Copy();
         setup(copy);
 
         await _semaphore.WaitAsync();
@@ -125,7 +128,7 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
     /// <inheritdoc />
     public void Dispose()
     {
-        _currentSubject.Dispose();
+        _currAppSubject.Dispose();
     }
 
     private async Task<bool> SaveToFileAsync(AppContextDto dto)
@@ -163,5 +166,14 @@ public sealed class AppContextManager : IAppContextManager, IUserContextProvider
         }
     }
 
-    private void SetCurrent(AppContextModel appContext) => _currentSubject.OnNext(appContext);
+    private void SetCurrent(AppContextModel appContext)
+    {
+        _currAppSubject.OnNext(appContext);
+
+        var userContext = new UserContextModel(appContext.User?.Id, appContext.ServerId);
+        if (userContext.UniqueId != _currUserSubject.Value.UniqueId)
+        {
+            _currUserSubject.OnNext(userContext);
+        }
+    }
 }

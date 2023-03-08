@@ -74,10 +74,11 @@ public class GeneratorPageModel : PageViewModel
             .Select(res => res != string.Empty);
     }
 
-    public override Task RefreshAsync()
+    /// <inheritdoc />
+    public override ValueTask RefreshAsync()
     {
         Result = string.Empty;
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
         
     private void _Generate()

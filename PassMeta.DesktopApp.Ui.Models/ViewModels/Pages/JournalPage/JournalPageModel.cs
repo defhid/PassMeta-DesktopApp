@@ -87,20 +87,18 @@ public class JournalPageModel : PageViewModel
         this.WhenNavigatedToObservable()
             .InvokeCommand(ReactiveCommand.CreateFromTask(InitLoadAsync));
     }
-        
-    public override void TryNavigate()
+
+    /// <inheritdoc />
+    public override async ValueTask RefreshAsync()
     {
         if (_userContextProvider.Current.UserId is null)
         {
-            TryNavigateTo<AuthRequiredPageModel>();
+            await new AuthPageModel(HostScreen).TryNavigateAsync();
+            return;
         }
-        else
-        {
-            base.TryNavigate();
-        }
-    }
 
-    public override Task RefreshAsync() => LoadRecordsAsync(SelectedPageIndex);
+        await LoadRecordsAsync(SelectedPageIndex);
+    }
 
     private async Task LoadRecordsAsync(int pageIndex)
     {

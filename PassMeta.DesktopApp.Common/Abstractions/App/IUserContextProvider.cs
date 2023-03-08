@@ -1,3 +1,5 @@
+using System;
+
 namespace PassMeta.DesktopApp.Common.Abstractions.App;
 
 /// <summary>
@@ -10,4 +12,9 @@ public interface IUserContextProvider
     /// Current user context.
     /// </summary>
     IUserContext Current { get; }
+    
+    /// <summary>
+    /// Represents <see cref="Current"/>.
+    /// </summary>
+    IObservable<IUserContext> CurrentObservable { get; }
 }

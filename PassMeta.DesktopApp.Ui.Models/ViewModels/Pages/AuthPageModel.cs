@@ -41,7 +41,7 @@ public class AuthPageModel : PageViewModel
     public ICommand RegisterCommand => ReactiveCommand.CreateFromTask(RegisterAsync);
 
     /// <inheritdoc />
-    public override async Task RefreshAsync()
+    public override async ValueTask RefreshAsync()
     {
         if (_userContext.Current.UserId is not null)
         {

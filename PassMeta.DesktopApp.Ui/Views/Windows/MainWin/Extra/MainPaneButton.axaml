@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:extra="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;assembly=PassMeta.DesktopApp.Ui.Models"
+             mc:Ignorable="d"
+             x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra.MainPaneButton"
+             IsVisible="{Binding IsVisible^}">
+  <Design.DataContext>
+    <extra:MainPaneButtonModel />
+  </Design.DataContext>
+  
+  <Grid Height="40">
+    <Button
+      IsVisible="{Binding !IsActive^}"
+      Command="{Binding Command}"
+      Content="{Binding Content^}"
+      Padding="{Binding ButtonPadding^}"
+      Width="{Binding Width^}"
+      HorizontalContentAlignment="{Binding HorizontalContentAlignment^}"
+      FontSize="{Binding FontSize^}"
+      FontFamily="{Binding FontFamily^}"
+      VerticalContentAlignment="Center"
+      VerticalAlignment="Stretch"
+      Margin="4 0 4 0"
+      Opacity="0.65" />
+
+    <TextBlock
+      IsVisible="{Binding IsActive^}"
+      Text="{Binding Content^}"
+      Padding="{Binding ButtonPadding^}"
+      Margin="4 6 4 0"
+      Width="{Binding Width^}"
+      Foreground="{StaticResource SystemAccentColorLight2}"
+      FontWeight="Bold"
+      FontSize="{Binding FontSize^}"
+      FontFamily="{Binding FontFamily^}"
+      TextAlignment="{Binding HorizontalTextAlignment^}"
+      VerticalAlignment="Stretch"/>
+  </Grid>
+</UserControl>
