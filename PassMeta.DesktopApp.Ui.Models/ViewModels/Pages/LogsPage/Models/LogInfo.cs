@@ -1,21 +1,35 @@
-using System;
-using System.Linq;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage.Models;
 
+/// <summary>
+/// Log information.
+/// </summary>
 public class LogInfo
 {
-    private readonly Log? _log;
+    private readonly Log? _log;    
 
+    /// <summary></summary>
+    public LogInfo(Log? log)
+    {
+        _log = log;
+    }
+
+    /// <summary></summary>
     public string CreatedOnShort => _log?.CreatedOn?.ToShortDateTimeString() ?? string.Empty;
+    
+    /// <summary></summary>
     public string? CreatedOnFull => _log?.CreatedOn?.ToString("F").Capitalize();
 
+    /// <summary></summary>
     public string SectionShort => LogSectionMapping.SectionToShortName.Map(_log?.Section, "?");
+
+    /// <summary></summary>
     public string? SectionFull => LogSectionMapping.SectionToFullName.Map(_log?.Section, _log?.Section);
 
+    /// <summary></summary>
     public string TextShort
     {
         get
@@ -26,21 +40,7 @@ public class LogInfo
                 : text[..60] + "...";
         }
     }
-    public string? TextFull => _log?.Text;
-        
-    public LogInfo(Log? log)
-    {
-        _log = log;
-    }
-        
-    public static double DateWidth { get; private set; }
-    public static double SectionWidth { get; private set; }
 
-    public static void RefreshStatics()
-    {
-        DateWidth = new DateTime(2222, 12, 22).ToShortDateTimeString().Length * 7.55;
-        SectionWidth = LogSectionMapping.SectionToShortName
-            .GetMappings()
-            .Max(map => map.To.TrimEnd('.').Length) * 14;
-    }
+    /// <summary></summary>
+    public string? TextFull => _log?.Text;
 }

@@ -14,54 +14,63 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage;
 
+/// <summary>
+/// Logs page ViewModel.
+/// </summary>
 public class LogsPageModel : PageViewModel
 {
     private readonly ILogsManager _logsManager = Locator.Current.Resolve<ILogsManager>();
 
+    private DateTimeOffset _fromDate = DateTime.Now.Date.AddDays(-InitIntervalDays);
+    private DateTimeOffset _toDate = DateTime.Now.Date;
+    private IReadOnlyList<LogInfo> _logs = new List<LogInfo>();
+    private int _selectedLogIndex = -1;
+    private string? _foundText;
+
     private const int InitIntervalDays = 3;
     private const int MaxIntervalDays = 60;
 
-    private DateTimeOffset _fromDate = DateTime.Now.Date.AddDays(-InitIntervalDays);
+    /// <summary></summary>
     public DateTimeOffset FromDate
     {
         get => _fromDate;
         set => this.RaiseAndSetIfChanged(ref _fromDate, value);
     }
-        
-    private DateTimeOffset _toDate = DateTime.Now.Date;
+
+    /// <summary></summary>
     public DateTimeOffset ToDate
     {
         get => _toDate;
         set => this.RaiseAndSetIfChanged(ref _toDate, value);
     }
 
-    private IReadOnlyList<LogInfo> _logs = new List<LogInfo>();
+    /// <summary></summary>
     public IReadOnlyList<LogInfo> Logs
     {
         get => _logs;
         set => this.RaiseAndSetIfChanged(ref _logs, value);
     }
 
-    private int _selectedLogIndex = -1;
+    /// <summary></summary>
     public int SelectedLogIndex
     {
         get => _selectedLogIndex;
         set => this.RaiseAndSetIfChanged(ref _selectedLogIndex, value);
     }
-        
+
+    /// <summary></summary>
     public IObservable<LogInfo> SelectedLog { get; }
 
-    private string? _foundText;
+    /// <summary></summary>
     public string? FoundText
     {
         get => _foundText;
         set => this.RaiseAndSetIfChanged(ref _foundText, value);
     }
 
+    /// <summary></summary>
     public LogsPageModel(IScreen hostScreen) : base(hostScreen)
     {
-        LogInfo.RefreshStatics();
-            
         var loadCommand = ReactiveCommand.Create<(DateTimeOffset, DateTimeOffset)>(LoadLogs);
 
         SelectedLog = this.WhenAnyValue(vm => vm.SelectedLogIndex)
@@ -73,6 +82,12 @@ public class LogsPageModel : PageViewModel
 
         this.WhenNavigatedToObservable()
             .Select(_ => (FromDate, ToDate)).InvokeCommand(loadCommand);
+    }
+
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public LogsPageModel() : this(null!)
+    {
     }
 
     /// <inheritdoc />
@@ -87,7 +102,7 @@ public class LogsPageModel : PageViewModel
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
 
         var (fromDate, toDate) = (period.from.Date, period.to.Date);
-            
+
         if ((toDate - fromDate).Days > MaxIntervalDays || fromDate > toDate)
         {
             FoundText = Resources.LOGS__INCORRECT_PERIOD_LABEL;

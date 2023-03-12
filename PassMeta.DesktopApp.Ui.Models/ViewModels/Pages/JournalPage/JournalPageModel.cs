@@ -72,8 +72,6 @@ public class JournalPageModel : PageViewModel
 
     public JournalPageModel(IScreen hostScreen) : base(hostScreen)
     {
-        LogInfo.RefreshStatics();
-
         const int skipInitChanges = 3;
             
         this.WhenAnyValue(

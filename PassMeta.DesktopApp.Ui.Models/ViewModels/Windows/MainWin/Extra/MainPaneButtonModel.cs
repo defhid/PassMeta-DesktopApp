@@ -77,7 +77,8 @@ public sealed class MainPaneButtonModel
             : 20);
     }
 
-    /// <summary>DEV constructor.</summary>
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
     public MainPaneButtonModel() : this("Button", "P", Observable.Return(true))
     {
         IsActive = Observable.Return(false);

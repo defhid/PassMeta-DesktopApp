@@ -49,7 +49,8 @@ public class PassFileRestoreWinModel : ReactiveObject
 
     public readonly ViewElements ViewElements = new();
     
-    /// <summary>DEV constructor.</summary>
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
     public PassFileRestoreWinModel()
     {
     }
