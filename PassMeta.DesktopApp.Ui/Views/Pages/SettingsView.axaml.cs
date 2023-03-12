@@ -2,7 +2,6 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using PassMeta.DesktopApp.Ui.Models;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows;
 using PassMeta.DesktopApp.Ui.Views.Windows;

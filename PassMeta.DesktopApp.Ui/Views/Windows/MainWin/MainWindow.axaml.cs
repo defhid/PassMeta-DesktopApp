@@ -38,7 +38,8 @@ public class MainWindow : ReactiveWindow<MainWinModel>
 
         var vm = userContext.Current.UserId is null
             ? new AuthPageModel(ViewModel!)
-            : new StoragePageModel(ViewModel!) as PageViewModel;
+            : new AccountPageModel(ViewModel!) as PageViewModel;
+            //TODO : new StoragePageModel(ViewModel!) as PageViewModel;
 
         await vm.TryNavigateAsync();
     }

@@ -20,9 +20,10 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 /// </summary>
 public class AccountPageModel : PageViewModel
 {
+    private readonly IAppContextProvider _appContext = Locator.Current.Resolve<IAppContextProvider>();
     private readonly IAccountService _accountService = Locator.Current.Resolve<IAccountService>();
     private readonly IAuthService _authService = Locator.Current.Resolve<IAuthService>();
-    private readonly IAppContextProvider _appContext = Locator.Current.Resolve<IAppContextProvider>();
+    private readonly AppLoading _appLoading = Locator.Current.Resolve<AppLoading>();
 
     private string? _fullName;
     private string? _login;
@@ -60,6 +61,12 @@ public class AccountPageModel : PageViewModel
                 })
                 .DisposeWith(disposables);
         });
+
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public AccountPageModel() : this(null!)
+    {
+    }
 
     /// <inheritdoc />
     public override ContentControl[] RightBarButtons => new ContentControl[]
@@ -163,7 +170,7 @@ public class AccountPageModel : PageViewModel
 
     private async Task SaveAsync()
     {
-        using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
+        using var preloader = _appLoading.General.Begin();
 
         var data = new UserPatchData
         {
@@ -182,7 +189,7 @@ public class AccountPageModel : PageViewModel
 
     private async Task SignOutAsync()
     {
-        using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
+        using var preloader = _appLoading.General.Begin();
 
         await _authService.LogOutAsync();
 
@@ -191,7 +198,7 @@ public class AccountPageModel : PageViewModel
 
     private async Task ResetSessionsAsync()
     {
-        using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
+        using var preloader = _appLoading.General.Begin();
 
         await _authService.ResetAllExceptMeAsync();
         

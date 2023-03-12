@@ -8,8 +8,10 @@
   xmlns:mainWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:extra="clr-namespace:PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra"
-  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
   x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.MainWindow"
+  mc:Ignorable="d"
+  d:DesignWidth="800"
+  d:DesignHeight="500"
   Icon="/Assets/AvaRes/PassMeta.ico"
   Title="PassMeta"
   MinWidth="800"
@@ -145,5 +147,4 @@
 
     <extra:MainPreloader IsVisible="{Binding PreloaderEnabled}" />
   </Grid>
-
 </Window>

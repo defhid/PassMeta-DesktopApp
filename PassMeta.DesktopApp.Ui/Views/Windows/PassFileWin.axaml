@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-        xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
         xmlns:passFileWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;assembly=PassMeta.DesktopApp.Ui.Models"
         xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
         mc:Ignorable="d"
@@ -21,10 +20,7 @@
         <passFileWin:PassFileWinViewModel/>
     </Design.DataContext>
     
-    <Grid Margin="7 7 10 10"
-          Background="Transparent"
-          PointerPressed="{x:Static constants:EventHandlers.FocusElementOnPointerPressed}"
-          RowDefinitions="Auto,*">
+    <Grid Margin="7 7 10 10" RowDefinitions="Auto,*">
         <Grid Grid.Row="0"
               ColumnDefinitions="Auto,*"
               RowDefinitions="Auto,Auto,Auto,Auto,Auto">

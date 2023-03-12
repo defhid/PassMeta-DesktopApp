@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using PassMeta.DesktopApp.Ui.Views.Windows;
 using PassMeta.DesktopApp.Ui.Views.Windows.MainWin;
 
 namespace PassMeta.DesktopApp.Ui.Extensions;

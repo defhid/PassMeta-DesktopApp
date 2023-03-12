@@ -16,16 +16,20 @@ public class SnakeCaseNamingPolicy : JsonNamingPolicy
     /// <inheritdoc />
     public override string ConvertName(string name)
     {
-        var builder = new StringBuilder(name.Length);
+        var builder = new StringBuilder(name.Length + 4);
         var isUpperFound = false;
 
         for (var i = 0; i < name.Length; ++i)
         {
             var ch = name[i];
-            
-            if (i > 0 && char.IsUpper(ch))
+
+            if (char.IsUpper(ch))
             {
-                builder.Append('_');
+                if (i > 0)
+                {
+                    builder.Append('_');
+                }
+
                 builder.Append(char.ToLower(ch));
                 isUpperFound = true;
             }

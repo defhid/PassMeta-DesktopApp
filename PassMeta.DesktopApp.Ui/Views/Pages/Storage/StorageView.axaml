@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-             xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
              xmlns:storage="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage"
              xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
              xmlns:storagePage="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;assembly=PassMeta.DesktopApp.Ui.Models"
@@ -12,8 +11,7 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              d:DataContext="{d:DesignInstance storagePage:StoragePageModel}">
-    <Grid Background="Transparent"
-          PointerPressed="{x:Static constants:EventHandlers.FocusElementOnPointerPressed}">
+    <Grid>
         <Grid.Styles>
             <Style Selector="Button.list_add">
                 <Setter Property="Content" Value="&#xE710;"/>

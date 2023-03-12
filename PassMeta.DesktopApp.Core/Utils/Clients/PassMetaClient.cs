@@ -215,10 +215,12 @@ public sealed class PassMetaClient : IPassMetaClient
             {
                 case HttpStatusCode.OK:
                 {
+                    SetOnline(true);
                     return (await handleResponseAsync(response.Content), null);
                 }
                 case HttpStatusCode.RequestTimeout or HttpStatusCode.GatewayTimeout:
                 {
+                    SetOnline(false);
                     _logger.Error(message.GetShortInformation() + $"{Resources.API__CONNECTION_TIMEOUT_ERR} [{context}]");
                     return (null, ResponseFactory.FakeOkBad(false, Resources.API__CONNECTION_TIMEOUT_ERR));
                 }
@@ -227,6 +229,7 @@ public sealed class PassMetaClient : IPassMetaClient
                     var responseBody = await response.Content.ReadAsByteArrayAsync(cancellationToken);
                     var okBadResponse = ParseOkBadResponse<object>(responseBody);
 
+                    SetOnline(true);
                     _logger.Warning($"{message.GetShortInformation()} {response.StatusCode} [{context}] {Encoding.UTF8.GetString(responseBody)}");
 
                     return (null, okBadResponse);

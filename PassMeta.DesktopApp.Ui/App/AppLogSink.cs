@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Avalonia.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Core.Extensions;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App;

@@ -11,5 +11,5 @@ public interface IPassMetaInfoService
     /// <summary>
     /// Load current server information.
     /// </summary>
-    Task<IResult<PassMetaInfoDto>> LoadAsync();
+    Task<IDetailedResult<PassMetaInfoDto>> LoadAsync();
 }

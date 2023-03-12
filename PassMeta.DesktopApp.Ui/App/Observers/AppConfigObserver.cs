@@ -8,9 +8,6 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.App;
-using PassMeta.DesktopApp.Core;
-using PassMeta.DesktopApp.Core.Extensions;
-using PassMeta.DesktopApp.Ui.Models;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App.Observers;

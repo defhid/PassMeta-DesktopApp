@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using PassMeta.DesktopApp.Common.Abstractions.App;
@@ -16,11 +17,18 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 /// </summary>
 public class AuthPageModel : PageViewModel
 {
-    private readonly IAuthService _authService = Locator.Current.Resolve<IAuthService>();
     private readonly IUserContextProvider _userContext = Locator.Current.Resolve<IUserContextProvider>();
+    private readonly IAuthService _authService = Locator.Current.Resolve<IAuthService>();
+    private readonly AppLoading _appLoading = Locator.Current.Resolve<AppLoading>();
 
     /// <summary></summary>
     public AuthPageModel(IScreen hostScreen) : base(hostScreen)
+    {
+    }
+
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public AuthPageModel() : this(null!)
     {
     }
 
@@ -51,11 +59,14 @@ public class AuthPageModel : PageViewModel
 
         Login = "";
         Password = "";
+
+        this.RaisePropertyChanged(nameof(Login));
+        this.RaisePropertyChanged(nameof(Password));
     }
 
     private async Task LogInAsync()
     {
-        using var loading = Locator.Current.Resolve<AppLoading>().General.Begin();
+        using var loading = _appLoading.General.Begin();
 
         var data = new SignInPostData(Login?.Trim() ?? "", Password ?? "");
 
@@ -68,7 +79,7 @@ public class AuthPageModel : PageViewModel
 
     private async Task RegisterAsync()
     {
-        using var loading = Locator.Current.Resolve<AppLoading>().General.Begin();
+        using var loading = _appLoading.General.Begin();
 
         var data = new SignUpPostData(Login?.Trim() ?? "", Password ?? "", "Unknown");
 

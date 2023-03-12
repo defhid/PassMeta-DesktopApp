@@ -80,6 +80,12 @@ public static class DependencyInstaller
 
         Register<IPassMetaCryptoService>(new PassMetaCryptoService());
 
+        Register<IPassMetaRandomService>(new PassMetaRandomService(
+            Resolve<ILogsWriter>()));
+
+        Register<IPassMetaInfoService>(new PassMetaInfoService(
+            Resolve<IPassMetaClient>()));
+
         Register<IPassFileContentSerializerFactory>(new PassFileContentSerializerFactory());
 
         Register<IPassFileLocalStorage>(new PassFileLocalStorage(

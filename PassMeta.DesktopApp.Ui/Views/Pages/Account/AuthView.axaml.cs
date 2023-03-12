@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using PassMeta.DesktopApp.Ui.Models;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 
 namespace PassMeta.DesktopApp.Ui.Views.Pages.Account;

@@ -19,15 +19,9 @@ public class PassMetaInfoService : IPassMetaInfoService
     }
 
     /// <inheritdoc />
-    public async Task<IResult<PassMetaInfoDto>> LoadAsync()
+    public async Task<IDetailedResult<PassMetaInfoDto>> LoadAsync()
     {
-        if (!_passMetaClient.Online)
-        {
-            return Result.Failure<PassMetaInfoDto>();
-        }
-
         var response = await _passMetaClient.Begin(PassMetaApi.General.GetInfo())
-            .WithBadHandling()
             .ExecuteAsync<PassMetaInfoDto>();
 
         return Result.FromResponse(response);

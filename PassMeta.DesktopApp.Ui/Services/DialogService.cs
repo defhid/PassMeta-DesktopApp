@@ -12,7 +12,6 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Ui.Constants;
 using PassMeta.DesktopApp.Ui.Extensions;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.DialogWin;
 using PassMeta.DesktopApp.Ui.Views.Windows;

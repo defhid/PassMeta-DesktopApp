@@ -8,6 +8,7 @@ using Splat;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
@@ -20,6 +21,41 @@ namespace PassMeta.DesktopApp.Ui.App;
 public class App : Application
 {
     private static MainWindow? _mainWindow;
+    private Task? _beforeLaunchTask;
+
+    /// <inheritdoc />
+    public override void RegisterServices()
+    {
+        base.RegisterServices();
+        DependencyInstaller.RegisterServices();
+        DependencyInstaller.RegisterViewsForViewModels();
+    }
+
+    /// <inheritdoc />
+    public override void Initialize()
+    {
+        _beforeLaunchTask = Task.Run(BeforeLaunchAsync);
+        _beforeLaunchTask.ConfigureAwait(false);
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    /// <inheritdoc />
+    public override void OnFrameworkInitializationCompleted()
+    {
+        _beforeLaunchTask!.GetAwaiter().GetResult();
+        MainWindow = MakeWindow();
+    }
+
+    /// <summary></summary>
+    public static void ReopenMainWindow()
+    {
+        var window = MakeWindow();
+        window.Show();
+
+        MainWindow?.Close();
+        MainWindow = window;
+    }
+    /// <summary></summary>
     public static MainWindow? MainWindow
     {
         get => _mainWindow;
@@ -33,50 +69,34 @@ public class App : Application
         }
     }
 
-    public override void Initialize()
-    {
-        Task.Run(BeforeLaunchAsync).GetAwaiter().GetResult();
-        AvaloniaXamlLoader.Load(this);
-    }
-
-    public override void OnFrameworkInitializationCompleted()
-    {
-        MainWindow = MakeWindow();
-    }
-
-    public static void ReopenMainWindow()
-    {
-        var window = MakeWindow();
-        window.Show();
-
-        MainWindow?.Close();
-        MainWindow = window;
-    }
-
     private static async Task BeforeLaunchAsync()
     {
-        DependencyInstaller.RegisterServices();
-        DependencyInstaller.RegisterViewsForViewModels();
-        
         var logManager = Locator.Current.Resolve<ILogsManager>();
         var appConfigManager = Locator.Current.Resolve<IAppConfigManager>();
         var appContextManager = Locator.Current.Resolve<IAppContextManager>();
         var dialogService = Locator.Current.Resolve<IDialogService>();
         var pmClient = Locator.Current.Resolve<IPassMetaClient>();
+        var pmInfoService = Locator.Current.Resolve<IPassMetaInfoService>();
 
         logManager.InternalErrorOccured += (_, ev) => 
             dialogService.ShowError(ev.Message, more: ev.Exception.ToString());
-        
-        appConfigManager.CurrentObservable.Subscribe(new AppConfigObserver());
-        pmClient.OnlineObservable.Subscribe(new OnlineObserver());
 
         await appConfigManager.LoadAsync();
         await appContextManager.LoadAsync();
+        
+        var result = await pmInfoService.LoadAsync();
+        if (result.Ok)
+        {
+            await appContextManager.RefreshFromAsync(result.Data!);
+        }
 
-        if (!await pmClient.CheckConnectionAsync())
+        if (!pmClient.Online)
         {
             dialogService.ShowInfo(Common.Resources.API__CONNECTION_ERR);
         }
+
+        appConfigManager.CurrentObservable.Subscribe(new AppConfigObserver());
+        pmClient.OnlineObservable.Subscribe(new OnlineObserver());
 
         _ = Task.Run(logManager.CleanUp);
     }
@@ -85,7 +105,7 @@ public class App : Application
     {
         var win = new MainWindow { ViewModel = new MainWinModel() };
 
-        win.Activated += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
+        win.GotFocus += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
 
         DependencyInstaller.Unregister<INotificationManager>();
         DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)
