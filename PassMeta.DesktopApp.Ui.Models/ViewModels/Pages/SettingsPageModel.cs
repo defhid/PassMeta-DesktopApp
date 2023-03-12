@@ -19,6 +19,9 @@ using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Rea
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 
+/// <summary>
+/// Settings page ViewModel.
+/// </summary>
 public class SettingsPageModel : PageViewModel
 {
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
@@ -27,58 +30,70 @@ public class SettingsPageModel : PageViewModel
     private readonly IPassFileContextProvider _pfContextProvider = Locator.Current.Resolve<IPassFileContextProvider>();
     private bool _devMode;
 
-    public Interaction<AppInfoWinModel, Unit> ShowInfo = new();
+    /// <summary></summary>
+    public readonly Interaction<AppInfoWinModel, Unit> ShowInfo = new();
 
-    public IReadOnlyList<AppCulture> Cultures => AppCulture.All;
-
-    public string? ServerUrl { get; set; }
-
-    public AppCulture? SelectedCulture { get; set; }
-
-    public bool HidePasswords { get; set; }
-
-    public bool DevMode
-    {
-        get => _devMode;
-        set
-        {
-            _devMode = value;
-            this.RaisePropertyChanged(nameof(DevModeOpacity));
-        }
-    }
-
-    public float DevModeOpacity => DevMode ? 1f : 0.5f;
-
-    public IObservable<string> ServerInfo => _appContextProvider.CurrentObservable
-        .Select(x => x.ServerVersion is null 
-            ? string.Empty 
-            : $"v{x.ServerVersion}, #{x.ServerId ?? "?"}");  // TODO: dispose?
-
-    public static string AppInfo => $"v{Locator.Current.Resolve<AppInfo>().Version}";
-        
-    public ReactCommand AppInfoCommand { get; }
-        
-    public ReactCommand SaveCommand { get; }
-
+    /// <summary></summary>
     public SettingsPageModel(IScreen hostScreen) : base(hostScreen)
     {
         FillFromAppConfig();
 
+        DevModeOpacity = this.WhenAnyValue(x => x.DevMode)
+            .Select(devMode => devMode ? 1f : 0.5f);
+
         AppInfoCommand = ReactiveCommand.CreateFromTask(
             async () => await ShowInfo.Handle(new AppInfoWinModel()));
 
-        SaveCommand = ReactiveCommand.CreateFromTask(_SaveAsync);
+        SaveCommand = ReactiveCommand.CreateFromTask(SaveAsync);
     }
 
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public SettingsPageModel() : this(null!)
+    {
+    }
+
+    /// <summary></summary>
+    public IReadOnlyList<AppCulture> Cultures => AppCulture.All;
+
+    /// <summary></summary>
+    public string? ServerUrl { get; set; }
+
+    /// <summary></summary>
+    public AppCulture? SelectedCulture { get; set; }
+
+    /// <summary></summary>
+    public bool HidePasswords { get; set; }
+
+    /// <summary></summary>
+    public bool DevMode
+    {
+        get => _devMode;
+        set => this.RaiseAndSetIfChanged(ref _devMode, value);
+    }
+
+    /// <summary></summary>
+    public IObservable<float> DevModeOpacity { get; }
+
+    /// <summary></summary>
+    public IObservable<string> ServerInfo => _appContextProvider.CurrentObservable
+        .Select(x => x.ServerVersion is null
+            ? string.Empty
+            : $"v{x.ServerVersion}, #{x.ServerId ?? "?"}");
+
+    /// <summary></summary>
+    public static string AppInfo => $"v{Locator.Current.Resolve<AppInfo>().Version}";
+
+    /// <summary></summary>
+    public ReactCommand AppInfoCommand { get; }
+
+    /// <summary></summary>
+    public ReactCommand SaveCommand { get; }
+
+    /// <inheritdoc />
     public override ValueTask RefreshAsync()
     {
         FillFromAppConfig();
-
-        this.RaisePropertyChanged(nameof(ServerUrl));
-        this.RaisePropertyChanged(nameof(SelectedCulture));
-        this.RaisePropertyChanged(nameof(HidePasswords));
-        this.RaisePropertyChanged(nameof(ServerInfo));
-
         return ValueTask.CompletedTask;
     }
 
@@ -94,12 +109,17 @@ public class SettingsPageModel : PageViewModel
 
         HidePasswords = appConfig.HidePasswords;
         DevMode = appConfig.DevMode;
+        
+        this.RaisePropertyChanged(nameof(ServerUrl));
+        this.RaisePropertyChanged(nameof(SelectedCulture));
+        this.RaisePropertyChanged(nameof(HidePasswords));
+        this.RaisePropertyChanged(nameof(ServerInfo));
     }
 
-    private async Task _SaveAsync()
+    private async Task SaveAsync()
     {
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
-            
+
         var serverUrl = ServerUrl?.Trim() ?? "";
 
         if (serverUrl.Length > 0 && !IsValidServerUrl(serverUrl))
@@ -108,7 +128,7 @@ public class SettingsPageModel : PageViewModel
             return;
         }
 
-        if (serverUrl != _appConfigManager.Current.ServerUrl && 
+        if (serverUrl != _appConfigManager.Current.ServerUrl &&
             _pfContextProvider.Contexts.Any(x => x.AnyChanged))
         {
             var confirm = await _dialogService.ConfirmAsync(Resources.SETTINGS__CONFIRM_SERVER_CHANGE);
@@ -127,8 +147,6 @@ public class SettingsPageModel : PageViewModel
             _dialogService.ShowInfo(Resources.SETTINGS__INFO_SAVE_SUCCESS);
         else
             _dialogService.ShowError(result.Message!);
-
-        this.RaisePropertyChanged(nameof(ServerInfo));
     }
 
     private bool IsValidServerUrl(string url) => url.StartsWith("https://") && url.Length > 11 || _devMode;

@@ -27,6 +27,7 @@ using PassMeta.DesktopApp.Core.Utils.Helpers;
 using PassMeta.DesktopApp.Core.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Core.Utils.PassFileContext;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
+using PassMeta.DesktopApp.Ui.Models.Cache;
 using PassMeta.DesktopApp.Ui.Services;
 using ReactiveUI;
 using Splat;
@@ -42,6 +43,8 @@ public static class DependencyInstaller
 
         Register(AppInfoSource.Get());
         Register(AppLoadingFactory.Create());
+
+        Register(new GeneratorPresetsCache());
 
         Register<ILogsWriter, ILogsManager>(new LogsManager(
             Resolve<AppInfo>().RootPath));

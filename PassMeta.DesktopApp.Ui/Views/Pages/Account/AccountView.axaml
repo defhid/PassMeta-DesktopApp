@@ -13,15 +13,15 @@
   <Design.DataContext>
     <pages:AccountPageModel />
   </Design.DataContext>
-  
+
   <Grid>
     <TextBlock
-      VerticalAlignment="Top" 
-      HorizontalAlignment="Center" 
+      VerticalAlignment="Top"
+      HorizontalAlignment="Center"
       Margin="0 40 0 0"
-      FontSize="30" 
-      Text="{x:Static com:Resources.ACCOUNT__TITLE}"/>
-    
+      FontSize="30"
+      Text="{x:Static com:Resources.ACCOUNT__TITLE}" />
+
     <Grid RowDefinitions="Auto,Auto">
       <Grid
         Grid.Row="0"
@@ -30,55 +30,55 @@
         Margin="0 100 0 0">
         <Grid.Styles>
           <Style Selector="TextBlock">
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontSize" Value="16" />
           </Style>
           <Style Selector="TextBox">
             <Setter Property="Margin" Value="0 20 0 0" />
-            <Setter Property="Width" Value="300"/>
+            <Setter Property="Width" Value="300" />
           </Style>
         </Grid.Styles>
-      
-        <TextBlock
-          Grid.Row="0" Grid.Column="0" 
-          Margin="40 27 30 0" 
-          Text="{x:Static com:Resources.ACCOUNT__FULL_NAME_LABEL}"/>
-        <TextBox
-          Grid.Row="0" Grid.Column="1"
-          Text="{Binding FullName}"/>
-      
-        <TextBlock
-          Grid.Row="1" Grid.Column="0" 
-          Margin="40 27 30 0" 
-          Text="{x:Static com:Resources.ACCOUNT__LOGIN_LABEL}"/>
-        <TextBox
-          Grid.Row="1" Grid.Column="1"
-          Text="{Binding Login}"/>
 
         <TextBlock
-          Grid.Row="2" Grid.Column="0" 
-          Margin="40 27 30 0" 
-          Text="{x:Static com:Resources.ACCOUNT__PASSWORD_LABEL}"/>
+          Grid.Row="0" Grid.Column="0"
+          Margin="40 27 30 0"
+          Text="{x:Static com:Resources.ACCOUNT__FULL_NAME_LABEL}" />
         <TextBox
-          Grid.Row="2" Grid.Column="1" 
-          PasswordChar="*" 
-          Text="{Binding Password}"/>
-      
+          Grid.Row="0" Grid.Column="1"
+          Text="{Binding FullName}" />
+
         <TextBlock
-          Grid.Row="3" Grid.Column="0" 
-          Margin="40 -40 30 0" 
+          Grid.Row="1" Grid.Column="0"
+          Margin="40 27 30 0"
+          Text="{x:Static com:Resources.ACCOUNT__LOGIN_LABEL}" />
+        <TextBox
+          Grid.Row="1" Grid.Column="1"
+          Text="{Binding Login}" />
+
+        <TextBlock
+          Grid.Row="2" Grid.Column="0"
+          Margin="40 27 30 0"
+          Text="{x:Static com:Resources.ACCOUNT__PASSWORD_LABEL}" />
+        <TextBox
+          Grid.Row="2" Grid.Column="1"
+          PasswordChar="*"
+          Text="{Binding Password}" />
+
+        <TextBlock
+          Grid.Row="3" Grid.Column="0"
+          Margin="40 -40 30 0"
           Opacity="0"
-          Text="{x:Static com:Resources.ACCOUNT__PASSWORD_CONFIRM_LABEL}"/>
+          Text="{x:Static com:Resources.ACCOUNT__PASSWORD_CONFIRM_LABEL}" />
         <TextBlock
-          Grid.Row="3" Grid.Column="0" 
-          Margin="40 27 30 0" 
+          Grid.Row="3" Grid.Column="0"
+          Margin="40 27 30 0"
           Foreground="LightSkyBlue"
           IsVisible="{Binding IsPasswordConfirmVisible}"
-          Text="{x:Static com:Resources.ACCOUNT__PASSWORD_CONFIRM_LABEL}"/>
+          Text="{x:Static com:Resources.ACCOUNT__PASSWORD_CONFIRM_LABEL}" />
         <TextBox
-          Grid.Row="3" Grid.Column="1" 
+          Grid.Row="3" Grid.Column="1"
           PasswordChar="*"
           IsVisible="{Binding IsPasswordConfirmVisible}"
-          Text="{Binding PasswordConfirm}"/>
+          Text="{Binding PasswordConfirm}" />
       </Grid>
 
       <Button
@@ -86,7 +86,7 @@
         Margin="40 30 0 0"
         Content="{x:Static com:Resources.ACCOUNT__SAVE_BTN}"
         IsVisible="{Binding IsBtnSaveVisible}"
-        Command="{Binding SaveCommand}"/>
+        Command="{Binding SaveCommand}" />
     </Grid>
   </Grid>
 

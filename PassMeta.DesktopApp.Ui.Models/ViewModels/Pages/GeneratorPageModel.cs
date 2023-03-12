@@ -7,72 +7,96 @@ using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Ui.Models.Cache;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using ReactiveUI;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 
+/// <summary>
+/// Generator page ViewModel.
+/// </summary>
 public class GeneratorPageModel : PageViewModel
 {
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
     private readonly IPassMetaRandomService _pmRandomService = Locator.Current.Resolve<IPassMetaRandomService>();
     private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
+    private readonly IAppConfigProvider _appConfig = Locator.Current.Resolve<IAppConfigProvider>();
+    private readonly GeneratorPresetsCache _presetsCache = Locator.Current.Resolve<GeneratorPresetsCache>();
 
-    private int _length = Locator.Current.Resolve<IAppConfigProvider>().Current.DefaultPasswordLength;
+    private string _result = string.Empty;
+    private int _length;
+
+    /// <summary></summary>
+    public GeneratorPageModel(IScreen hostScreen) : base(hostScreen)
+    {
+        _length = _appConfig.Current.DefaultPasswordLength;
+        Generate();
+
+        GenerateCommand = ReactiveCommand.Create(Generate);
+        CopyCommand = ReactiveCommand.Create(CopyResultAsync);
+
+        Generated = this.WhenAnyValue(vm => vm.Result)
+            .Select(res => res != string.Empty);
+    }
+
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public GeneratorPageModel() : this(null!)
+    {
+    }
+
+    /// <summary></summary>
     public int Length
     {
         get => _length;
         set => this.RaiseAndSetIfChanged(ref _length, value);
     }
 
+    /// <summary></summary>
     public bool IncludeDigits
     {
-        get => PresetsCache.Generator.IncludeDigits;
-        set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeDigits, value);
+        get => _presetsCache.IncludeDigits;
+        set => _presetsCache.IncludeDigits = value;
     }
 
+    /// <summary></summary>
     public bool IncludeLowercase
     {
-        get =>  PresetsCache.Generator.IncludeLowercase;
-        set => this.RaiseAndSetIfChanged(ref  PresetsCache.Generator.IncludeLowercase, value);
+        get => _presetsCache.IncludeLowercase;
+        set => _presetsCache.IncludeLowercase = value;
     }
 
+    /// <summary></summary>
     public bool IncludeUppercase
     {
-        get => PresetsCache.Generator.IncludeUppercase;
-        set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeUppercase, value);
+        get => _presetsCache.IncludeUppercase;
+        set => _presetsCache.IncludeUppercase = value;
     }
 
+    /// <summary></summary>
     public bool IncludeSpecial
     {
-        get => PresetsCache.Generator.IncludeSpecial;
-        set => this.RaiseAndSetIfChanged(ref PresetsCache.Generator.IncludeSpecial, value);
+        get => _presetsCache.IncludeSpecial;
+        set => _presetsCache.IncludeSpecial = value;
     }
 
-    private static string _result = string.Empty;
+    /// <summary></summary>
     public string Result
     {
         get => _result;
         set => this.RaiseAndSetIfChanged(ref _result, value);
     }
 
+    /// <summary></summary>
     public IObservable<bool> Generated { get; }
-        
+
+    /// <summary></summary>
     public ICommand GenerateCommand { get; }
-        
+
+    /// <summary></summary>
     public ICommand CopyCommand { get; }
-
-    public GeneratorPageModel(IScreen hostScreen) : base(hostScreen)
-    {
-        _result = _pmRandomService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
-
-        GenerateCommand = ReactiveCommand.Create(_Generate);
-        CopyCommand = ReactiveCommand.Create(_CopyResultAsync);
-            
-        Generated = this.WhenAnyValue(vm => vm.Result)
-            .Select(res => res != string.Empty);
-    }
 
     /// <inheritdoc />
     public override ValueTask RefreshAsync()
@@ -80,13 +104,14 @@ public class GeneratorPageModel : PageViewModel
         Result = string.Empty;
         return ValueTask.CompletedTask;
     }
-        
-    private void _Generate()
+
+    private void Generate()
     {
-        Result = _pmRandomService.GeneratePassword(Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
+        Result = _pmRandomService.GeneratePassword(
+            Length, IncludeDigits, IncludeLowercase, IncludeUppercase, IncludeSpecial);
     }
 
-    private async Task _CopyResultAsync()
+    private async Task CopyResultAsync()
     {
         if (await _clipboardService.TrySetTextAsync(Result))
         {

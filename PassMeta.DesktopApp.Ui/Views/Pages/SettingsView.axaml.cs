@@ -18,7 +18,7 @@ public class SettingsView : ReactiveUserControl<SettingsPageModel>
         this.WhenActivated(d => d(ViewModel!.ShowInfo.RegisterHandler(ShowInfoAsync)));
     }
 
-    private async Task ShowInfoAsync(InteractionContext<AppInfoWinModel, Unit> interaction)
+    private static async Task ShowInfoAsync(InteractionContext<AppInfoWinModel, Unit> interaction)
     {
         var window = new ApplicationInfoWindow { ViewModel = interaction.Input };
         

@@ -11,79 +11,96 @@ using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.JournalPage.Extra;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage.Models;
 using ReactiveUI;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.JournalPage;
 
+/// <summary>
+/// Journal page ViewModel.
+/// </summary>
 public class JournalPageModel : PageViewModel
 {
-    private static int _pageSize = 50;
-        
-    #region Filters
+    private readonly IHistoryService _historyService = Locator.Current.Resolve<IHistoryService>();
+    private readonly IUserContextProvider _userContextProvider = Locator.Current.Resolve<IUserContextProvider>();
 
-    private List<int> _pageList = new() { 1 };
-    public List<int> PageList
+    private static int _pageSize = 50;
+    private int _selectedPageIndex;
+    private int _selectedKindIndex;
+    private DateTimeOffset _selectedMonth = DateTime.Today;
+
+    private IReadOnlyList<JournalRecordKindDto> _kinds = new List<JournalRecordKindDto>
+    {
+        new() { Id = -1, Name = Resources.JOURNAL__ALL_KINDS }
+    };
+    private IReadOnlyList<int> _pageList = new List<int> { 1 };
+    private IReadOnlyList<JournalRecordInfo> _records = new List<JournalRecordInfo>();
+    
+    /// <summary></summary>
+    public JournalPageModel(IScreen hostScreen) : base(hostScreen)
+    {
+        this.WhenNavigatedToObservable()
+            .InvokeCommand(ReactiveCommand.CreateFromTask(async () =>
+            {
+                await LoadKindsAsync();
+
+                await LoadRecordsAsync(SelectedPageIndex);
+
+                this.WhenAnyValue(
+                        vm => vm.SelectedPageIndex,
+                        vm => vm.SelectedMonth,
+                        vm => vm.SelectedKindIndex)
+                    .Select(x => x.Item1)
+                    .InvokeCommand(ReactiveCommand.CreateFromTask<int>(LoadRecordsAsync));
+            }));
+    }
+
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public JournalPageModel() : base(null!)
+    {
+    }
+
+    /// <summary></summary>
+    public IReadOnlyList<int> PageList
     {
         get => _pageList;
         set => this.RaiseAndSetIfChanged(ref _pageList, value);
     }
-        
-    private int _selectedPageIndex;
+
+    /// <summary></summary>
     public int SelectedPageIndex
     {
         get => _selectedPageIndex;
         set => this.RaiseAndSetIfChanged(ref _selectedPageIndex, value);
     }
-        
-    private DateTimeOffset _selectedMonth = DateTime.Today;
+
+    /// <summary></summary>
     public DateTimeOffset SelectedMonth
     {
         get => _selectedMonth;
         set => this.RaiseAndSetIfChanged(ref _selectedMonth, value);
     }
 
-    private List<JournalRecordKindDto> _kinds = new();
-    public List<JournalRecordKindDto> Kinds
+    /// <summary></summary>
+    public IReadOnlyList<JournalRecordKindDto> Kinds
     {
-        get => _kinds; 
+        get => _kinds;
         private set => this.RaiseAndSetIfChanged(ref _kinds, value);
     }
 
-    private JournalRecordKindDto? _selectedKind;
-    public JournalRecordKindDto? SelectedKind
+    /// <summary></summary>
+    public int SelectedKindIndex
     {
-        get => _selectedKind;
-        set => this.RaiseAndSetIfChanged(ref _selectedKind, value);
+        get => _selectedKindIndex;
+        set => this.RaiseAndSetIfChanged(ref _selectedKindIndex, value);
     }
-        
-    #endregion
 
-    private IReadOnlyList<JournalRecordInfo> _records = new List<JournalRecordInfo>();
+    /// <summary></summary>
     public IReadOnlyList<JournalRecordInfo> Records
     {
         get => _records;
         set => this.RaiseAndSetIfChanged(ref _records, value);
-    }
-
-    private readonly IHistoryService _historyService = Locator.Current.Resolve<IHistoryService>();
-    private readonly IUserContextProvider _userContextProvider = Locator.Current.Resolve<IUserContextProvider>();
-
-    public JournalPageModel(IScreen hostScreen) : base(hostScreen)
-    {
-        const int skipInitChanges = 3;
-            
-        this.WhenAnyValue(
-                vm => vm.SelectedPageIndex, 
-                vm => vm.SelectedMonth,
-                vm => vm.SelectedKind)
-            .Select(x => x.Item1)
-            .Skip(skipInitChanges)
-            .InvokeCommand(ReactiveCommand.CreateFromTask<int>(LoadRecordsAsync));
-
-        this.WhenNavigatedToObservable()
-            .InvokeCommand(ReactiveCommand.CreateFromTask(InitLoadAsync));
     }
 
     /// <inheritdoc />
@@ -98,14 +115,27 @@ public class JournalPageModel : PageViewModel
         await LoadRecordsAsync(SelectedPageIndex);
     }
 
+    private async Task LoadKindsAsync()
+    {
+        using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
+
+        var result = await _historyService.GetKindsAsync();
+        if (result.Ok)
+        {
+            Kinds = Kinds
+                .Concat(result.Data!.OrderBy(info => info.Name))
+                .ToList();
+        }
+    }
+
     private async Task LoadRecordsAsync(int pageIndex)
     {
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
 
         if (pageIndex < 0) return;
 
-        var result = await _historyService.GetListAsync(_pageSize, pageIndex, _selectedMonth.Date, SelectedKind?.Id > 0
-            ? new[] { SelectedKind.Id }
+        var result = await _historyService.GetListAsync(_pageSize, pageIndex, _selectedMonth.Date, SelectedKindIndex > 0
+            ? new[] { Kinds[SelectedKindIndex].Id }
             : null);
 
         if (result.Bad) return;
@@ -122,27 +152,5 @@ public class JournalPageModel : PageViewModel
         SelectedPageIndex = result.Data.PageIndex;
 
         Records = result.Data.List.Select(rec => new JournalRecordInfo(rec)).ToList();
-    }
-
-    private async Task InitLoadAsync()
-    {
-        var defaultKind = new JournalRecordKindDto { Id = -1, Name = Resources.JOURNAL__ALL_KINDS};
-
-        if (!Kinds.Any())
-        {
-            using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
-                
-            var result = await _historyService.GetKindsAsync();
-            if (result.Bad) return;
-
-            Kinds = result.Data!
-                .OrderBy(info => info.Name)
-                .Prepend(defaultKind)
-                .ToList();
-        }
-
-        SelectedKind = defaultKind;
-
-        await LoadRecordsAsync(SelectedPageIndex);
     }
 }

@@ -22,7 +22,7 @@
 
   <Design.DataContext>
     <mainWin:MainWinModel />
-  </Design.DataContext>   
+  </Design.DataContext>
 
   <Grid>
     <SplitView
@@ -55,7 +55,7 @@
             <extra:MainPaneButton
               DataContext="{Binding MainPane.Storage}"
               Margin="0 0 0 8" />
-            
+
             <extra:MainPaneButton
               DataContext="{Binding MainPane.Generator}"
               Margin="0 0 0 8" />

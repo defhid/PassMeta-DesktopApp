@@ -16,11 +16,11 @@
 
   <Grid>
     <TextBlock
-      VerticalAlignment="Top" 
-      HorizontalAlignment="Center" 
+      VerticalAlignment="Top"
+      HorizontalAlignment="Center"
       Margin="0 40 0 0"
-      FontSize="30" 
-      Text="{x:Static com:Resources.AUTH__TITLE}"/>
+      FontSize="30"
+      Text="{x:Static com:Resources.AUTH__TITLE}" />
 
     <Grid Margin="0 40 0 0">
       <TextBox
@@ -31,7 +31,7 @@
         Watermark="{x:Static com:Resources.AUTH__LOGIN_PLACEHOLDER}"
         Text="{Binding Login}"
         KeyDown="Input_OnKeyDown"
-        AttachedToVisualTree="LoginTextBox__OnAttachedToVisualTree"/>
+        AttachedToVisualTree="LoginTextBox__OnAttachedToVisualTree" />
 
       <TextBox
         VerticalAlignment="Center"
@@ -41,7 +41,7 @@
         Width="300"
         Watermark="{x:Static com:Resources.AUTH__PASSWORD_PLACEHOLDER}"
         Text="{Binding Password}"
-        KeyDown="Input_OnKeyDown"/>
+        KeyDown="Input_OnKeyDown" />
 
       <Grid
         VerticalAlignment="Center"
@@ -54,7 +54,7 @@
           MinWidth="75"
           FontSize="16"
           Content="{x:Static com:Resources.AUTH__SIGN_IN_BTN}"
-          Command="{Binding LogInCommand}"/>
+          Command="{Binding LogInCommand}" />
 
         <Button
           HorizontalAlignment="Right"
@@ -63,7 +63,7 @@
           MinWidth="150"
           FontSize="16"
           Content="{x:Static com:Resources.AUTH__SIGN_UP_BTN}"
-          Command="{Binding RegisterCommand}"/>
+          Command="{Binding RegisterCommand}" />
       </Grid>
     </Grid>
   </Grid>

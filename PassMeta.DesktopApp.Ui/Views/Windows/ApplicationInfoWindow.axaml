@@ -13,36 +13,40 @@
         Icon="/Assets/AvaRes/PassMeta.ico"
         Title="{x:Static com:Resources.APP_INFO__TITLE}"
         WindowStartupLocation="CenterOwner">
-    
-    <Design.DataContext>
-        <windows:AppInfoWinModel></windows:AppInfoWinModel>
-    </Design.DataContext>
-    
-    <Window.Resources>
-        <utils:ImageConverter x:Key="ImageConverter"/>
-    </Window.Resources>
-    
-    <Grid Margin="20">
-        <Grid ColumnDefinitions="Auto,*"
-              RowDefinitions="Auto">
-            <TextBlock Grid.Row="0" Grid.Column="0"
-                       Margin="0 0 15 0"
-                       Text="{x:Static com:Resources.APP_INFO__VERSION}"/>
-        
-            <TextBlock Grid.Row="0" Grid.Column="1"
-                       Text="{Binding Version}"/>
-        </Grid>
-        
-        <Image Grid.Column="0"
-               Source="{Binding PassMetaIcon, Converter={StaticResource ImageConverter}}"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Margin="10 -10 0 0"
-               Width="70"
-               Height="70"/>
-        
-        <TextBlock VerticalAlignment="Bottom"
-                   Margin="0 15 0 0"
-                   Text="{Binding Copyright}"/>
+
+  <Design.DataContext>
+    <windows:AppInfoWinModel />
+  </Design.DataContext>
+
+  <Window.Resources>
+    <utils:ImageConverter x:Key="ImageConverter" />
+  </Window.Resources>
+
+  <Grid Margin="20">
+    <Grid ColumnDefinitions="Auto,*"
+          RowDefinitions="Auto">
+      <TextBlock
+        Grid.Row="0" Grid.Column="0"
+        Margin="0 0 15 0"
+        Text="{x:Static com:Resources.APP_INFO__VERSION}" />
+
+      <TextBlock
+        Grid.Row="0" Grid.Column="1"
+        Text="{Binding Version}" />
     </Grid>
+
+    <Image
+      Grid.Column="0"
+      Source="{Binding PassMetaIcon, Converter={StaticResource ImageConverter}}"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Top"
+      Margin="10 -10 0 0"
+      Width="70"
+      Height="70" />
+
+    <TextBlock
+      VerticalAlignment="Bottom"
+      Margin="0 15 0 0"
+      Text="{Binding Copyright}" />
+  </Grid>
 </Window>

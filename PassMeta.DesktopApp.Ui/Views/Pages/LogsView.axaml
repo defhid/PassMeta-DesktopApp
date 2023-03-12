@@ -20,17 +20,17 @@
       ColumnDefinitions="Auto,Auto"
       Margin="5">
       <DatePicker
-        Grid.Column="0" 
+        Grid.Column="0"
         HorizontalAlignment="Left"
         SelectedDate="{Binding FromDate}"
-        ToolTip.Tip="{x:Static com:Resources.LOGS__TOOLTIP_DATE_FROM}"/>
-    
+        ToolTip.Tip="{x:Static com:Resources.LOGS__TOOLTIP_DATE_FROM}" />
+
       <DatePicker
         Grid.Column="1"
         HorizontalAlignment="Left"
         Margin="20 0 0 0"
         SelectedDate="{Binding ToDate}"
-        ToolTip.Tip="{x:Static com:Resources.LOGS__TOOLTIP_DATE_TO}"/>
+        ToolTip.Tip="{x:Static com:Resources.LOGS__TOOLTIP_DATE_TO}" />
     </Grid>
 
     <Grid
@@ -51,7 +51,7 @@
           <DataGridTextColumn Binding="{Binding CreatedOnShort}" />
           <DataGridTextColumn Binding="{Binding SectionShort}" />
           <DataGridTextColumn Binding="{Binding TextShort}" />
-        </DataGrid.Columns>     
+        </DataGrid.Columns>
       </DataGrid>
 
       <TextBlock
@@ -59,7 +59,7 @@
         Opacity="0.7"
         VerticalAlignment="Center"
         HorizontalAlignment="Center"
-        Text="{Binding FoundText}"/>
+        Text="{Binding FoundText}" />
 
       <ScrollViewer
         Grid.Column="1"
@@ -69,17 +69,17 @@
           <TextBlock
             TextWrapping="Wrap"
             FontWeight="Bold"
-            Text="{Binding SelectedLog^.CreatedOnFull}"/>
-        
+            Text="{Binding SelectedLog^.CreatedOnFull}" />
+
           <TextBlock
             Margin="0 4 0 6"
             TextWrapping="Wrap"
             FontWeight="Bold"
-            Text="{Binding SelectedLog^.SectionFull}"/>
+            Text="{Binding SelectedLog^.SectionFull}" />
 
           <TextBlock
             TextWrapping="Wrap"
-            Text="{Binding SelectedLog^.TextFull}"/>
+            Text="{Binding SelectedLog^.TextFull}" />
         </StackPanel>
       </ScrollViewer>
     </Grid>
