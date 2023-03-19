@@ -2,7 +2,7 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
-namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage.Models;
+namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage.Extra;
 
 /// <summary>
 /// Log information.

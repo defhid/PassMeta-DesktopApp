@@ -32,18 +32,22 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;
 
+/// <summary>
+/// Passfile storage page ViewModel.
+/// </summary>
 public class StoragePageModel : PageViewModel
 {
     private static bool _loaded;
     private static readonly PassFileItemPath LastItemPath = new();
 
     public readonly Interaction<PassFileWinViewModel, Unit> ShowPassFile = new();
-        
+
+    /// <inheritdoc />
     public override ContentControl[] RightBarButtons => new ContentControl[]
     {
         new Button
         {
-            Content = "\uE74E", 
+            Content = "\uE74E",
             Command = ReactiveCommand.CreateFromTask(SaveAsync),
             [!Visual.IsVisibleProperty] = SelectedData.Edit.WhenAnyValue(vm => vm.Mode)
                 .Select(editMode => !editMode)
@@ -61,6 +65,7 @@ public class StoragePageModel : PageViewModel
     #region Passfile list
 
     private ObservableCollection<PassFileBtn> _passFileList = new();
+
     public ObservableCollection<PassFileBtn> PassFileList
     {
         get => _passFileList;
@@ -69,6 +74,7 @@ public class StoragePageModel : PageViewModel
 
     private int _passFilesSelectedIndex = -1;
     private int _passFilesPrevSelectedIndex = -1;
+
     public int PassFilesSelectedIndex
     {
         get => _passFilesSelectedIndex;
@@ -78,7 +84,7 @@ public class StoragePageModel : PageViewModel
             this.RaiseAndSetIfChanged(ref _passFilesSelectedIndex, value);
         }
     }
-        
+
     public PassFileBtn? SelectedPassFileBtn =>
         _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex];
 
@@ -90,38 +96,41 @@ public class StoragePageModel : PageViewModel
     public PassFileData SelectedData { get; }
 
     public PassFileBarExpander PassFileBarExpander { get; }
-        
+
     public BtnState PassFilesBarBtn { get; }
-        
+
     public IObservable<LayoutState> LayoutState { get; }
 
     public readonly ViewElements ViewElements = new();
-        
+
     private readonly IPassFileSyncService _pfSyncService = Locator.Current.Resolve<IPassFileSyncService>();
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
     private readonly IUserContext _userContext = Locator.Current.Resolve<IUserContextProvider>().Current;
+
     private readonly IPassFileContext<PwdPassFile> _pfContext =
         Locator.Current.Resolve<IPassFileContextProvider>().For<PwdPassFile>();
+
     private readonly IPassFileDecryptionHelper _pfDecryptionHelper =
         Locator.Current.Resolve<IPassFileDecryptionHelper>();
 
+    /// <summary></summary>
     public StoragePageModel(IScreen hostScreen) : base(hostScreen)
     {
         PassFileBarExpander = new PassFileBarExpander();
-            
+
         PassFilesBarBtn = new BtnState
         {
-            ContentObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
-                ? Resources.STORAGE__TITLE 
+            ContentObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened
+                ? Resources.STORAGE__TITLE
                 : "\uE92D"),
-            FontFamilyObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
-                ? FontFamilies.Default 
+            FontFamilyObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened
+                ? FontFamilies.Default
                 : FontFamilies.SegoeMdl2),
-            FontSizeObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
-                ? 18d 
+            FontSizeObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened
+                ? 18d
                 : 22d),
-            RotationAngleObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened 
-                ? 0 
+            RotationAngleObservable = PassFileBarExpander.IsOpenedObservable.Select(isOpened => isOpened
+                ? 0
                 : 45),
         };
 
@@ -139,10 +148,10 @@ public class StoragePageModel : PageViewModel
 
         SelectedData.WhenAnyValue(vm => vm.SelectedSectionIndex)
             .Subscribe(index => PassFileBarExpander.TryExecuteAutoExpanding(index == -1));
-            
+
         this.WhenAnyValue(vm => vm.PassFileList)
             .Subscribe(_ => SelectedData.PassFile = null);
-            
+
         this.WhenAnyValue(vm => vm.PassFilesSelectedIndex)
             .InvokeCommand(ReactiveCommand.CreateFromTask<int>(DecryptIfRequiredAndSetSectionsAsync));
 
@@ -160,8 +169,14 @@ public class StoragePageModel : PageViewModel
             });
 
         this.WhenNavigatedToObservable()
-            .InvokeCommand(ReactiveCommand.Create(() => 
+            .InvokeCommand(ReactiveCommand.Create(() =>
                 _pfContext.AnyChangedSource.Subscribe(_ => LoadPassFilesAsync(lastItemPath))));
+    }
+
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public StoragePageModel() : this(null!)
+    {
     }
 
     /// <inheritdoc />
@@ -185,7 +200,7 @@ public class StoragePageModel : PageViewModel
         {
             var confirm = await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_ROLLBACK);
             if (confirm.Bad) return;
-                
+
             _pfContext.Rollback();
         }
 
@@ -193,7 +208,7 @@ public class StoragePageModel : PageViewModel
         await LoadPassFilesAsync(LastItemPath.Copy());
     }
 
-    private PassFileBtn _MakePassFileBtn(PwdPassFile passFile) 
+    private PassFileBtn _MakePassFileBtn(PwdPassFile passFile)
         => new(passFile, ShowPassFile, PassFileBarExpander.ShortModeObservable);
 
     private async Task LoadPassFilesAsync(PassFileItemPath lastItemPath)
@@ -219,7 +234,8 @@ public class StoragePageModel : PageViewModel
                     if (lastItemPath.PassFileSectionId is not null)
                     {
                         SelectedData.SelectedSectionIndex =
-                            SelectedData.SectionsList!.FindIndex(btn => btn.Section.Id == lastItemPath.PassFileSectionId);
+                            SelectedData.SectionsList!.FindIndex(
+                                btn => btn.Section.Id == lastItemPath.PassFileSectionId);
                     }
                 }
             }
@@ -272,18 +288,18 @@ public class StoragePageModel : PageViewModel
     public async Task PassFileAddAsync()
     {
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
-            
+
         var askPassPhrase = await _dialogService.AskPasswordAsync(Resources.STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE);
         if (askPassPhrase.Bad || askPassPhrase.Data == string.Empty) return;
-            
+
         var passFile = await _pfContext.CreateAsync();
         passFile.Content = new PassFileContent<List<PwdSection>>(new List<PwdSection>(), askPassPhrase.Data!);
 
         var passFileBtn = _MakePassFileBtn(passFile);
-            
+
         PassFileList.Insert(0, passFileBtn);
         PassFilesSelectedIndex = 0;
-             
+
         await passFileBtn.OpenAsync();
     }
 
@@ -299,13 +315,13 @@ public class StoragePageModel : PageViewModel
         PassFilesPaneWidth = 250d,
         SectionsListMargin = new Thickness(0)
     };
-        
+
     private static readonly LayoutState AfterPassFileSelectionLayoutState = new()
     {
         PassFilesPaneWidth = 250d,
         SectionsListMargin = new Thickness(0, 0, -100, 0)
     };
-        
+
     private static readonly LayoutState AfterSectionSelectionLayoutState = new()
     {
         PassFilesPaneWidth = 200d,

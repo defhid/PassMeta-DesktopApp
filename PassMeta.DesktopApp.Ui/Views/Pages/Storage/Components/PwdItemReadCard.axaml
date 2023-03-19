@@ -1,0 +1,82 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="150"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdItemReadCard">
+  <Design.DataContext>
+    <components:PwdItemReadCardModel />
+  </Design.DataContext>
+
+  <Grid
+    ColumnDefinitions="Auto,*,Auto"
+    RowDefinitions="*,*">
+    <TextBlock
+      Grid.Row="0"
+      Grid.Column="0"
+      Opacity="0.7"
+      Margin="2 5 12 0"
+      VerticalAlignment="Top"
+      Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__WHAT}" />
+
+    <TextBox
+      Grid.Row="0"
+      Grid.Column="1"
+      Margin="0 0 6 0"
+      Padding="4"
+      MinHeight="45"
+      FontSize="15"
+      VerticalContentAlignment="Top"
+      AcceptsReturn="True"
+      TextWrapping="Wrap"
+      Text="{Binding Usernames}"
+      IsReadOnly="True"
+      Focusable="False" />
+
+    <Button
+      Grid.Row="0"
+      Grid.Column="2"
+      Margin="0 0 2 0"
+      Content="&#xE8C8;"
+      Command="{Binding CopyWhatCommand}"
+      ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__LOGIN_COPY}"
+      ToolTip.Placement="Left" />
+
+    <TextBlock
+      Grid.Row="1"
+      Grid.Column="0"
+      Opacity="0.7"
+      Margin="2 15 12 0"
+      VerticalAlignment="Top"
+      Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__PASSWORD}" />
+
+    <TextBox
+      Grid.Row="1"
+      Grid.Column="1"
+      Margin="0 10 6 0"
+      Padding="4"
+      Height="30"
+      MinHeight="30"
+      MaxHeight="30"
+      FontSize="15"
+      VerticalAlignment="Top"
+      VerticalContentAlignment="Center"
+      PasswordChar="{Binding PasswordChar}"
+      Text="{Binding Password}"
+      IsReadOnly="True"
+      Focusable="False" />
+
+    <Button
+      Grid.Row="1"
+      Grid.Column="2"
+      Margin="0 10 2 0"
+      Content="&#xE8C8;"
+      Command="{Binding CopyPasswordCommand}"
+      VerticalAlignment="Top"
+      ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__PASSWORD_COPY}"
+      ToolTip.Placement="Left" />
+  </Grid>
+</UserControl>

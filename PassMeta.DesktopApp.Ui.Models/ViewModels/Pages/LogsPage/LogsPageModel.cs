@@ -8,7 +8,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage.Models;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage.Extra;
 using ReactiveUI;
 using Splat;
 

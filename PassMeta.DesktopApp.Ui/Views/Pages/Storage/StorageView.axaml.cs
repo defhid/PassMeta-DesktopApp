@@ -1,4 +1,5 @@
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -18,7 +19,10 @@ public class StorageView : ReactiveUserControl<StoragePageModel>
     {
         AvaloniaXamlLoader.Load(this);
 
-        this.WhenActivated(d => d(ViewModel!.ShowPassFile.RegisterHandler(ShowPassFileAsync)));
+        this.WhenActivated(disposables =>
+        {
+            ViewModel!.ShowPassFile.RegisterHandler(ShowPassFileAsync).DisposeWith(disposables);
+        });
     }
     
     private async Task ShowPassFileAsync(InteractionContext<PassFileWinViewModel, Unit> interaction)

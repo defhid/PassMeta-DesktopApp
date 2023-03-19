@@ -86,8 +86,8 @@ public class PassFileData : ReactiveObject
     private readonly ObservableCollection<PassFileSectionBtn> _sectionsList = new();
     public ObservableCollection<PassFileSectionBtn>? SectionsList => _passFile is null ? null : _sectionsList;
 
-    private readonly ObservableCollection<PassFileSectionItemBtn> _sectionItemsList = new();
-    public ObservableCollection<PassFileSectionItemBtn>? SectionItemsList => _selectedSectionIndex < 0 ? null : _sectionItemsList;
+    private readonly ObservableCollection<PwdItemReadCardModel> _sectionItemsList = new();
+    public ObservableCollection<PwdItemReadCardModel>? SectionItemsList => _selectedSectionIndex < 0 ? null : _sectionItemsList;
         
     public IObservable<bool> IsSectionsBarVisible { get; }
     public IObservable<bool> IsItemsBarVisible { get; }
@@ -203,11 +203,9 @@ public class PassFileData : ReactiveObject
 
     #region Buttons factory
 
-    private PassFileSectionBtn _MakePassFileSectionBtn(PwdSection section) 
-        => new(section);
+    private PassFileSectionBtn _MakePassFileSectionBtn(PwdSection section) => new(section);
         
-    private PassFileSectionItemBtn _MakePassFileSectionItemBtn(PwdItem item) 
-        => new(item, _editModeObservable, ItemDelete, ItemMove);
+    private PwdItemReadCardModel _MakePassFileSectionItemBtn(PwdItem item) => new(item);
 
     #endregion
 
@@ -325,37 +323,37 @@ public class PassFileData : ReactiveObject
             _addingSectionMode = false;
         }
 
-        var items = _sectionItemsList.Select(btn => btn.ToItem()).ToList();
-        var sectionName = Edit.SectionName?.Trim();
-
-        if (string.IsNullOrEmpty(sectionName))
-        {
-            sectionName = section.Name;
-        }
-
-        if (!section.DiffersFrom(new PwdSection { Name = sectionName, Items = items }))
-        {
-            Edit.Mode = false;
-            return;
-        }
-        
-        
-        var lSection = passFile.Content.Decrypted!.First(s => s.Id == section.Id);
-        lSection.Name = sectionName;
-        lSection.Items = items.Select(i => i.Copy()).ToList();
-            
-        var result = _pfContext.UpdateContent(passFile);
-        if (result.Ok)
-        {
-            using (_passFileBarExpander.DisableAutoExpandingScoped())
-            {
-                _UpdatePassFileSectionList(true);
-                SelectedSectionIndex = _sectionsList.FindIndex(btn => btn.Section.Id == section.Id);
-                _UpdatePassFileSectionItemList();
-            }
-                
-            Edit.Mode = false;
-        }
+        // var items = _sectionItemsList.Select(btn => btn.ToItem()).ToList();
+        // var sectionName = Edit.SectionName?.Trim();
+        //
+        // if (string.IsNullOrEmpty(sectionName))
+        // {
+        //     sectionName = section.Name;
+        // }
+        //
+        // if (!section.DiffersFrom(new PwdSection { Name = sectionName, Items = items }))
+        // {
+        //     Edit.Mode = false;
+        //     return;
+        // }
+        //
+        //
+        // var lSection = passFile.Content.Decrypted!.First(s => s.Id == section.Id);
+        // lSection.Name = sectionName;
+        // lSection.Items = items.Select(i => i.Copy()).ToList();
+        //     
+        // var result = _pfContext.UpdateContent(passFile);
+        // if (result.Ok)
+        // {
+        //     using (_passFileBarExpander.DisableAutoExpandingScoped())
+        //     {
+        //         _UpdatePassFileSectionList(true);
+        //         SelectedSectionIndex = _sectionsList.FindIndex(btn => btn.Section.Id == section.Id);
+        //         _UpdatePassFileSectionItemList();
+        //     }
+        //         
+        //     Edit.Mode = false;
+        // }
     }
 
     private void ItemsDiscardChanges()
@@ -384,14 +382,14 @@ public class PassFileData : ReactiveObject
         _viewElements.ItemScrollViewer!.ScrollToEnd();
     }
 
-    private void ItemDelete(PassFileSectionItemBtn itemBtn)
+    private void ItemDelete(PwdItemReadCardModel itemReadCardModel)
     {
-        _sectionItemsList.Remove(itemBtn);
+        _sectionItemsList.Remove(itemReadCardModel);
     }
         
-    private void ItemMove(PassFileSectionItemBtn itemBtn, int direction)
+    private void ItemMove(PwdItemReadCardModel itemReadCardModel, int direction)
     {
-        var index = _sectionItemsList.IndexOf(itemBtn);
+        var index = _sectionItemsList.IndexOf(itemReadCardModel);
             
         if (direction > 0 && index + direction < _sectionItemsList.Count 
             || direction < 0 && index + direction > -1)

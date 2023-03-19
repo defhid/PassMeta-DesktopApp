@@ -14,8 +14,16 @@ public class OnlineObserver : IObserver<bool>
     private static IPassMetaInfoService PmInfoService => Locator.Current.Resolve<IPassMetaInfoService>();
     private static ILogsWriter LogsWriter => Locator.Current.Resolve<ILogsWriter>();
 
+    private bool _initialized;
+
     public async void OnNext(bool value)
     {
+        if (!_initialized)
+        {
+            _initialized = true;
+            return;
+        }
+
         try
         {
             if (value)

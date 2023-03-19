@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -24,16 +25,19 @@ public class JournalPageModel : PageViewModel
     private readonly IHistoryService _historyService = Locator.Current.Resolve<IHistoryService>();
     private readonly IUserContextProvider _userContextProvider = Locator.Current.Resolve<IUserContextProvider>();
 
-    private static int _pageSize = 50;
+    private static int _pageSize = 100;
     private int _selectedPageIndex;
     private int _selectedKindIndex;
     private DateTimeOffset _selectedMonth = DateTime.Today;
 
-    private IReadOnlyList<JournalRecordKindDto> _kinds = new List<JournalRecordKindDto>
+    private readonly ObservableCollection<JournalRecordKindDto> _kinds = new()
     {
-        new() { Id = -1, Name = Resources.JOURNAL__ALL_KINDS }
+        new JournalRecordKindDto { Id = -1, Name = Resources.JOURNAL__ALL_KINDS }
     };
-    private IReadOnlyList<int> _pageList = new List<int> { 1 };
+    private readonly ObservableCollection<int> _pageList = new()
+    {
+        1
+    };
     private IReadOnlyList<JournalRecordInfo> _records = new List<JournalRecordInfo>();
     
     /// <summary></summary>
@@ -42,9 +46,10 @@ public class JournalPageModel : PageViewModel
         this.WhenNavigatedToObservable()
             .InvokeCommand(ReactiveCommand.CreateFromTask(async () =>
             {
-                await LoadKindsAsync();
-
-                await LoadRecordsAsync(SelectedPageIndex);
+                if (!await TryLoadKindsAsync())
+                {
+                    return;
+                }
 
                 this.WhenAnyValue(
                         vm => vm.SelectedPageIndex,
@@ -62,11 +67,7 @@ public class JournalPageModel : PageViewModel
     }
 
     /// <summary></summary>
-    public IReadOnlyList<int> PageList
-    {
-        get => _pageList;
-        set => this.RaiseAndSetIfChanged(ref _pageList, value);
-    }
+    public IReadOnlyList<int> PageList => _pageList;
 
     /// <summary></summary>
     public int SelectedPageIndex
@@ -83,11 +84,7 @@ public class JournalPageModel : PageViewModel
     }
 
     /// <summary></summary>
-    public IReadOnlyList<JournalRecordKindDto> Kinds
-    {
-        get => _kinds;
-        private set => this.RaiseAndSetIfChanged(ref _kinds, value);
-    }
+    public IReadOnlyList<JournalRecordKindDto> Kinds => _kinds;
 
     /// <summary></summary>
     public int SelectedKindIndex
@@ -115,17 +112,22 @@ public class JournalPageModel : PageViewModel
         await LoadRecordsAsync(SelectedPageIndex);
     }
 
-    private async Task LoadKindsAsync()
+    private async Task<bool> TryLoadKindsAsync()
     {
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
 
         var result = await _historyService.GetKindsAsync();
-        if (result.Ok)
+        if (result.Bad)
         {
-            Kinds = Kinds
-                .Concat(result.Data!.OrderBy(info => info.Name))
-                .ToList();
+            return false;
         }
+
+        foreach (var kind in result.Data!.OrderBy(info => info.Name))
+        {
+            _kinds.Add(kind);
+        }
+
+        return true;
     }
 
     private async Task LoadRecordsAsync(int pageIndex)
@@ -142,13 +144,18 @@ public class JournalPageModel : PageViewModel
 
         _pageSize = result.Data!.PageSize;
 
-        var pageList = Enumerable.Range(1, (int)Math.Ceiling((double)result.Data.Total / _pageSize)).ToList();
-        if (!pageList.Any())
+        var pageCount = Math.Max((int)Math.Ceiling((double)result.Data.Total / _pageSize), 1);
+
+        while (_pageList.Count > pageCount)
         {
-            pageList.Add(1);
+            _pageList.RemoveAt(_pageList.Count - 1);
         }
 
-        PageList = pageList;
+        while (_pageList.Count < pageCount)
+        {
+            _pageList.Add(_pageList.Count + 1);
+        }
+
         SelectedPageIndex = result.Data.PageIndex;
 
         Records = result.Data.List.Select(rec => new JournalRecordInfo(rec)).ToList();

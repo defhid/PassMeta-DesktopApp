@@ -33,6 +33,7 @@ public class AppConfigObserver : IObserver<IAppConfig>
             if (value.Culture != _prev.Culture)
             {
                 SetCulture(value.Culture);
+                App.ReopenMainWindow();
             }
 
             if (value.ServerUrl != _prev.ServerUrl)

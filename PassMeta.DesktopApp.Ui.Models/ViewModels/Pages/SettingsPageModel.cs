@@ -121,18 +121,21 @@ public class SettingsPageModel : PageViewModel
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
 
         var serverUrl = ServerUrl?.Trim() ?? "";
+        var serverUrlChanged = serverUrl != _appConfigManager.Current.ServerUrl;
 
-        if (serverUrl.Length > 0 && !IsValidServerUrl(serverUrl))
+        if (serverUrlChanged)
         {
-            _dialogService.ShowError(Resources.SETTINGS__INCORRECT_API);
-            return;
-        }
+            if (serverUrl.Length > 0 && !IsValidServerUrl(serverUrl))
+            {
+                _dialogService.ShowError(Resources.SETTINGS__INCORRECT_API);
+                return;
+            }
 
-        if (serverUrl != _appConfigManager.Current.ServerUrl &&
-            _pfContextProvider.Contexts.Any(x => x.AnyChanged))
-        {
-            var confirm = await _dialogService.ConfirmAsync(Resources.SETTINGS__CONFIRM_SERVER_CHANGE);
-            if (confirm.Bad) return;
+            if (_pfContextProvider.Contexts.Any(x => x.AnyChanged))
+            {
+                var confirm = await _dialogService.ConfirmAsync(Resources.SETTINGS__CONFIRM_SERVER_CHANGE);
+                if (confirm.Bad) return;
+            }
         }
 
         var result = await _appConfigManager.ApplyAsync(appConfig =>
