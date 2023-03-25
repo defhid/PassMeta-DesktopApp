@@ -53,19 +53,9 @@ public class StorageView : ReactiveUserControl<StoragePageModel>
 
     #endregion
 
-    private void SectionNameEdit_OnAttachedToLogicalTree(object? sender, LogicalTreeAttachmentEventArgs e)
-    {
-        ViewModel!.ViewElements.SectionNameEditBox = (TextBox)sender!;
-    }
-
     private void Search_OnAttachedToLogicalTree(object? sender, LogicalTreeAttachmentEventArgs e)
     {
         ViewModel!.ViewElements.SearchBox = (TextBox)sender!;
-    }
-
-    private void ItemScrollViewer_OnAttachedToLogicalTree(object? sender, LogicalTreeAttachmentEventArgs e)
-    {
-        ViewModel!.ViewElements.ItemScrollViewer = (ScrollViewer)sender!;
     }
 
     private void SectionListBox_OnAttachedToLogicalTree(object? sender, LogicalTreeAttachmentEventArgs e)

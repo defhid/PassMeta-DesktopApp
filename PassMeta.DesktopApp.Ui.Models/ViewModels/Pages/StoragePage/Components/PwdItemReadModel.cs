@@ -16,7 +16,7 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 /// <summary>
 /// <see cref="PwdItem"/> view card ViewModel.
 /// </summary>
-public class PwdItemReadCardModel : ReactiveObject
+public class PwdItemReadModel : ReactiveObject
 {
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
     private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
@@ -24,26 +24,30 @@ public class PwdItemReadCardModel : ReactiveObject
     private readonly List<string> _usernames;
 
     /// <summary></summary>
-    public PwdItemReadCardModel(PwdItem item)
+    public PwdItemReadModel(PwdItem item)
     {
         _usernames = item.Usernames.Select(x => x.Trim()).Where(x => x != string.Empty).ToList();
         Password = item.Password;
         Remark = item.Remark;
 
-        CopyWhatCommand = ReactiveCommand.CreateFromTask(CopyWhatAsync);
+        CopyUsernameCommand = ReactiveCommand.CreateFromTask(CopyUsernameAsync);
         CopyPasswordCommand = ReactiveCommand.CreateFromTask(CopyPasswordAsync);
     }
 
+    #region preview
+
     /// <summary></summary>
     [Obsolete("PREVIEW constructor")]
-    public PwdItemReadCardModel() : this(new PwdItem
+    public PwdItemReadModel() : this(new PwdItem
     {
-        Usernames = new[] { "example_login" },
+        Usernames = new[] { "example_login1", "example_login2" },
         Password = "example_pwd", 
         Remark = "example_remark"
     })
     {
     }
+
+    #endregion
 
     /// <summary></summary>
     public string Usernames => string.Join('\n', _usernames);
@@ -61,18 +65,18 @@ public class PwdItemReadCardModel : ReactiveObject
     public char? PasswordChar => _appConfig.Current.HidePasswords ? '*' : null;
 
     /// <summary></summary>
-    public ReactCommand CopyWhatCommand { get; }
+    public ReactCommand CopyUsernameCommand { get; }
 
     /// <summary></summary>
     public ReactCommand CopyPasswordCommand { get; }
 
-    private async Task CopyWhatAsync()
+    private async Task CopyUsernameAsync()
     {
-        var what = _usernames.FirstOrDefault() ?? string.Empty;
+        var firstUsername = _usernames.FirstOrDefault() ?? string.Empty;
 
-        if (await _clipboardService.TrySetTextAsync(what))
+        if (await _clipboardService.TrySetTextAsync(firstUsername))
         {
-            _dialogService.ShowInfo(string.Format(Resources.STORAGE__ITEM_INFO__WHAT_COPIED, what));
+            _dialogService.ShowInfo(string.Format(Resources.STORAGE__ITEM_INFO__USERNAME_COPIED, firstUsername));
         }
     }
 

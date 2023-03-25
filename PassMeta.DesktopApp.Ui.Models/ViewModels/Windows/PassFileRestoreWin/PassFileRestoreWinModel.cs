@@ -48,12 +48,6 @@ public class PassFileRestoreWinModel : ReactiveObject
     public static IObservable<bool> CanBeDownloaded => Locator.Current.Resolve<IPassMetaClient>().OnlineObservable;
 
     public readonly ViewElements ViewElements = new();
-    
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public PassFileRestoreWinModel()
-    {
-    }
 
     public PassFileRestoreWinModel(PwdPassFile passFile)
     {
@@ -69,6 +63,16 @@ public class PassFileRestoreWinModel : ReactiveObject
 
         CloseCommand = ReactiveCommand.Create(Close);
     }
+
+    #region preview
+
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public PassFileRestoreWinModel()
+    {
+    }
+
+    #endregion
 
     public async Task LoadAsync()
     {

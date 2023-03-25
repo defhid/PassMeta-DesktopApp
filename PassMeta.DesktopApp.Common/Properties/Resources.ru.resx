@@ -200,7 +200,7 @@
     <data name="STORAGE__ITEM_INFO__PASSWORD_COPIED" xml:space="preserve">
         <value>Пароль скопирован в буфер обмена</value>
     </data>
-    <data name="STORAGE__ITEM_INFO__WHAT_COPIED" xml:space="preserve">
+    <data name="STORAGE__ITEM_INFO__USERNAME_COPIED" xml:space="preserve">
         <value>Логин '{0}' скопирован в буфер обмена</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">

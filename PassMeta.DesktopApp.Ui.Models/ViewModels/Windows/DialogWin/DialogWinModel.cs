@@ -45,6 +45,8 @@ public class DialogWinModel : ReactiveObject
     /// <summary></summary>
     public DialogButton? Result { get; set; }
 
+    #region preview
+
     /// <summary></summary>
     [Obsolete("PREVIEW constructor")]
     public DialogWinModel()
@@ -61,6 +63,8 @@ public class DialogWinModel : ReactiveObject
             new ResultButton(DialogButton.Cancel),
         };
     }
+
+    #endregion
 
     /// <summary></summary>
     public DialogWinModel(

@@ -11,19 +11,17 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 /// <summary>
 /// <see cref="PwdItem"/> edit card ViewModel.
 /// </summary>
-public class PwdItemEditCardModel : ReactiveObject
+public class PwdItemEditModel : ReactiveObject
 {
     private readonly BehaviorSubject<bool> _isPopupGeneratorOpened = new(false);
     private string? _password;
 
     /// <summary></summary>
-    public PwdItemEditCardModel(
-        Action<PwdItemEditCardModel> onDelete,
-        Action<PwdItemEditCardModel, int> onMove)
+    public PwdItemEditModel()
     {
-        DeleteCommand = ReactiveCommand.Create(() => onDelete(this));
-        UpCommand = ReactiveCommand.Create(() => onMove(this, -1));
-        DownCommand = ReactiveCommand.Create(() => onMove(this, 1));
+        DeleteCommand = ReactiveCommand.Create(() => OnDelete?.Invoke(this));
+        UpCommand = ReactiveCommand.Create(() => OnMove?.Invoke(this, -1));
+        DownCommand = ReactiveCommand.Create(() => OnMove?.Invoke(this, 1));
 
         OpenPopupGenerator = ReactiveCommand.Create(() =>
         {
@@ -36,6 +34,12 @@ public class PwdItemEditCardModel : ReactiveObject
         PopupGeneratorCanBeOpened = this.WhenAnyValue(btn => btn.Password)
             .Select(string.IsNullOrEmpty);
     }
+
+    /// <summary></summary>
+    public event Action<PwdItemEditModel>? OnDelete;
+
+    /// <summary></summary>
+    public event Action<PwdItemEditModel, int>? OnMove;
 
     /// <summary></summary>
     public string? Usernames { get; set; }
@@ -69,15 +73,36 @@ public class PwdItemEditCardModel : ReactiveObject
     public IObservable<bool> PopupGeneratorCanBeOpened { get; }
 
     /// <summary></summary>
+    public bool IsEmpty => string.IsNullOrWhiteSpace(Usernames) && 
+                           string.IsNullOrEmpty(Password) &&
+                           string.IsNullOrWhiteSpace(Remark);
+
+    /// <summary></summary>
     public PwdItem ToItem() => new()
     {
-        Usernames = NormalizeWhat().Split('\n'),
+        Usernames = NormalizeUsernames(Usernames?.Split('\n')),
         Password = Password ?? string.Empty,
         Remark = Remark?.Trim() ?? string.Empty
     };
 
-    private string NormalizeWhat()
-        => string.IsNullOrWhiteSpace(Usernames)
-            ? string.Empty
-            : string.Join('\n', Usernames.Split('\n').Select(x => x.Trim()).Where(x => x != string.Empty));
+    /// <summary></summary>
+    public static PwdItemEditModel From(PwdItem item) => new()
+    {
+        Usernames = string.Join('\n', NormalizeUsernames(item.Usernames)),
+        Password = item.Password,
+        Remark = item.Remark.Trim()
+    };
+
+    /// <summary></summary>
+    public static PwdItemEditModel Empty() => new()
+    {
+        Usernames = string.Empty,
+        Password = string.Empty,
+        Remark = string.Empty
+    };
+
+    private static string[] NormalizeUsernames(string[]? usernames)
+        => usernames is null
+            ? Array.Empty<string>()
+            : usernames.Select(x => x.Trim()).Where(x => x != string.Empty).ToArray();
 }

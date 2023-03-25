@@ -207,7 +207,7 @@
     <data name="STORAGE__ITEM_INFO__PASSWORD_COPIED" xml:space="preserve">
         <value>Password is copied to clipboard</value>
     </data>
-    <data name="STORAGE__ITEM_INFO__WHAT_COPIED" xml:space="preserve">
+    <data name="STORAGE__ITEM_INFO__USERNAME_COPIED" xml:space="preserve">
         <value>Login '{0}' is copied to clipboard</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">

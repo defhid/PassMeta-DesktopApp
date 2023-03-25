@@ -173,11 +173,15 @@ public class StoragePageModel : PageViewModel
                 _pfContext.AnyChangedSource.Subscribe(_ => LoadPassFilesAsync(lastItemPath))));
     }
 
+    #region preview
+
     /// <summary></summary>
     [Obsolete("PREVIEW constructor")]
     public StoragePageModel() : this(null!)
     {
     }
+
+    #endregion
 
     /// <inheritdoc />
     protected override async ValueTask<IResult> CanLeaveAsync()

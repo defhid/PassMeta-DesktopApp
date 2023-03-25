@@ -41,11 +41,15 @@ public class GeneratorPageModel : PageViewModel
             .Select(res => res != string.Empty);
     }
 
+    #region preview
+
     /// <summary></summary>
     [Obsolete("PREVIEW constructor")]
     public GeneratorPageModel() : this(null!)
     {
     }
+
+    #endregion
 
     /// <summary></summary>
     public int Length

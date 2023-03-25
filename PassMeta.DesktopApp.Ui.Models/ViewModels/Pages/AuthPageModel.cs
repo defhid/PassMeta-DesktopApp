@@ -26,11 +26,15 @@ public class AuthPageModel : PageViewModel
     {
     }
 
+    #region preview
+
     /// <summary></summary>
     [Obsolete("PREVIEW constructor")]
     public AuthPageModel() : this(null!)
     {
     }
+
+    #endregion
 
     /// <summary></summary>
     public string? Login { get; set; }

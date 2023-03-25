@@ -5,15 +5,15 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="150"
-  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdItemReadCard">
+  mc:Ignorable="d" d:DesignWidth="400"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdItemReadView">
   <Design.DataContext>
-    <components:PwdItemReadCardModel />
+    <components:PwdItemReadModel />
   </Design.DataContext>
 
   <Grid
     ColumnDefinitions="Auto,*,Auto"
-    RowDefinitions="*,*">
+    RowDefinitions="Auto,Auto">
     <TextBlock
       Grid.Row="0"
       Grid.Column="0"
@@ -27,7 +27,7 @@
       Grid.Column="1"
       Margin="0 0 6 0"
       Padding="4"
-      MinHeight="45"
+      Height="60"
       FontSize="15"
       VerticalContentAlignment="Top"
       AcceptsReturn="True"
@@ -41,7 +41,7 @@
       Grid.Column="2"
       Margin="0 0 2 0"
       Content="&#xE8C8;"
-      Command="{Binding CopyWhatCommand}"
+      Command="{Binding CopyUsernameCommand}"
       ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__LOGIN_COPY}"
       ToolTip.Placement="Left" />
 

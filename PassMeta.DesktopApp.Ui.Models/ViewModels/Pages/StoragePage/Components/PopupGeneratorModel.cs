@@ -35,12 +35,16 @@ public class PopupGeneratorModel : ReactiveObject
                 Length, IncludeDigits, IncludeLetters, IncludeLetters, IncludeSpecial)));
     }
 
+    #region preview
+
     /// <summary></summary>
     [Obsolete("PREVIEW constructor")]
     public PopupGeneratorModel() : this(Observable.Return(true), _ => {})
     {
     }
-    
+
+    #endregion
+
     /// <summary></summary>
     public int Length
     {

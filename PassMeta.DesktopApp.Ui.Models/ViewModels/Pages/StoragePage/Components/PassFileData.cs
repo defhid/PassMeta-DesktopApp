@@ -86,8 +86,8 @@ public class PassFileData : ReactiveObject
     private readonly ObservableCollection<PassFileSectionBtn> _sectionsList = new();
     public ObservableCollection<PassFileSectionBtn>? SectionsList => _passFile is null ? null : _sectionsList;
 
-    private readonly ObservableCollection<PwdItemReadCardModel> _sectionItemsList = new();
-    public ObservableCollection<PwdItemReadCardModel>? SectionItemsList => _selectedSectionIndex < 0 ? null : _sectionItemsList;
+    private readonly ObservableCollection<PwdItemReadModel> _sectionItemsList = new();
+    public ObservableCollection<PwdItemReadModel>? SectionItemsList => _selectedSectionIndex < 0 ? null : _sectionItemsList;
         
     public IObservable<bool> IsSectionsBarVisible { get; }
     public IObservable<bool> IsItemsBarVisible { get; }
@@ -205,7 +205,7 @@ public class PassFileData : ReactiveObject
 
     private PassFileSectionBtn _MakePassFileSectionBtn(PwdSection section) => new(section);
         
-    private PwdItemReadCardModel _MakePassFileSectionItemBtn(PwdItem item) => new(item);
+    private PwdItemReadModel _MakePassFileSectionItemBtn(PwdItem item) => new(item);
 
     #endregion
 
@@ -267,7 +267,7 @@ public class PassFileData : ReactiveObject
         }
 
         ItemsEdit();
-        ItemAdd();
+        // ItemAdd();
             
         _addingSectionMode = true;
     }
@@ -373,29 +373,6 @@ public class PassFileData : ReactiveObject
         }
 
         Edit.Mode = false;
-    }
-        
-    public void ItemAdd()
-    {
-        var itemBtn = _MakePassFileSectionItemBtn(new PwdItem());
-        _sectionItemsList.Add(itemBtn);
-        _viewElements.ItemScrollViewer!.ScrollToEnd();
-    }
-
-    private void ItemDelete(PwdItemReadCardModel itemReadCardModel)
-    {
-        _sectionItemsList.Remove(itemReadCardModel);
-    }
-        
-    private void ItemMove(PwdItemReadCardModel itemReadCardModel, int direction)
-    {
-        var index = _sectionItemsList.IndexOf(itemReadCardModel);
-            
-        if (direction > 0 && index + direction < _sectionItemsList.Count 
-            || direction < 0 && index + direction > -1)
-        {
-            _sectionItemsList.Move(index, index + direction);
-        }
     }
 
     #endregion

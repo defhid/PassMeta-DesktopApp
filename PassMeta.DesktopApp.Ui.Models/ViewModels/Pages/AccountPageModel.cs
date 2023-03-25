@@ -62,11 +62,15 @@ public class AccountPageModel : PageViewModel
                 .DisposeWith(disposables);
         });
 
+    #region preview
+
     /// <summary></summary>
     [Obsolete("PREVIEW constructor")]
     public AccountPageModel() : this(null!)
     {
     }
+
+    #endregion
 
     /// <inheritdoc />
     public override ContentControl[] RightBarButtons => new ContentControl[]

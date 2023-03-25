@@ -77,6 +77,8 @@ public sealed class MainPaneButtonModel
             : 20);
     }
 
+    #region preview
+
     /// <summary></summary>
     [Obsolete("PREVIEW constructor")]
     public MainPaneButtonModel() : this("Button", "P", Observable.Return(true))
@@ -85,4 +87,6 @@ public sealed class MainPaneButtonModel
         IsVisible = Observable.Return(true);
         Command = ReactiveCommand.Create(() => { });
     }
+
+    #endregion
 }

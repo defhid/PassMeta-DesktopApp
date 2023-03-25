@@ -1790,9 +1790,9 @@ namespace PassMeta.DesktopApp.Common {
         /// <summary>
         ///   Looks up a localized string similar to Login &apos;{0}&apos; is copied to clipboard.
         /// </summary>
-        public static string STORAGE__ITEM_INFO__WHAT_COPIED {
+        public static string STORAGE__ITEM_INFO__USERNAME_COPIED {
             get {
-                return ResourceManager.GetString("STORAGE__ITEM_INFO__WHAT_COPIED", resourceCulture);
+                return ResourceManager.GetString("STORAGE__ITEM_INFO__USERNAME_COPIED", resourceCulture);
             }
         }
         

@@ -52,6 +52,14 @@
           <DependentUpon>PopupGeneratorView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Pages\Storage\Components\PwdItemEditView.axaml.cs">
+          <DependentUpon>PwdItemEditCard.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Pages\Storage\Components\PwdSectionEditView.axaml.cs">
+          <DependentUpon>PwdSectionEditView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
     
     <ItemGroup>
