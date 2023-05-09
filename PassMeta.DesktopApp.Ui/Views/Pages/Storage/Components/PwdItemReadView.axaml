@@ -18,8 +18,10 @@
       Grid.Row="0"
       Grid.Column="0"
       Opacity="0.7"
-      Margin="2 5 12 0"
-      VerticalAlignment="Top"
+      Margin="2 0 12 0"
+      FontStyle="Italic"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Center"
       Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__WHAT}" />
 
     <TextBox
@@ -41,6 +43,8 @@
       Grid.Column="2"
       Margin="0 0 2 0"
       Content="&#xE8C8;"
+      VerticalAlignment="Stretch"
+      VerticalContentAlignment="Center"
       Command="{Binding CopyUsernameCommand}"
       ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__LOGIN_COPY}"
       ToolTip.Placement="Left" />
@@ -50,6 +54,8 @@
       Grid.Column="0"
       Opacity="0.7"
       Margin="2 15 12 0"
+      FontStyle="Italic"
+      HorizontalAlignment="Right"
       VerticalAlignment="Top"
       Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__PASSWORD}" />
 

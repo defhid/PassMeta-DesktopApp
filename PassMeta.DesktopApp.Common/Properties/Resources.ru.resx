@@ -681,4 +681,10 @@
     <data name="PASSFILE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
         <value>Неверная кодовая фраза, попробуйте ввести заново</value>
     </data>
+    <data name="STORAGE__SECTION_LABEL__URL" xml:space="preserve">
+        <value>Адрес</value>
+    </data>
+    <data name="STORAGE__SECTION_LABEL__NAME" xml:space="preserve">
+        <value>Название</value>
+    </data>
 </root>

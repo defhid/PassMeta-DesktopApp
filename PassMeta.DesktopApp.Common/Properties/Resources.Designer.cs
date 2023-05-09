@@ -1987,6 +1987,24 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string STORAGE__SECTION_LABEL__NAME {
+            get {
+                return ResourceManager.GetString("STORAGE__SECTION_LABEL__NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL.
+        /// </summary>
+        public static string STORAGE__SECTION_LABEL__URL {
+            get {
+                return ResourceManager.GetString("STORAGE__SECTION_LABEL__URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New section.
         /// </summary>
         public static string STORAGE__SECTION_NEW_NAME {

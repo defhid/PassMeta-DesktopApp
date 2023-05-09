@@ -8,7 +8,7 @@
   xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PopupGeneratorView"
   mc:Ignorable="d"
-  d:DesignWidth="300"
+  d:DesignWidth="260"
   d:DesignHeight="100">
 
   <Design.DataContext>

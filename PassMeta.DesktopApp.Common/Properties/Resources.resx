@@ -688,4 +688,10 @@ try another keywords...</value>
     <data name="PASSFILE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
         <value>Wrong passphrase, try input again</value>
     </data>
+    <data name="STORAGE__SECTION_LABEL__NAME" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="STORAGE__SECTION_LABEL__URL" xml:space="preserve">
+        <value>URL</value>
+    </data>
 </root>

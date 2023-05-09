@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -13,12 +14,15 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 /// </summary>
 public class PwdSectionEditModel : ReactiveObject
 {
+    private readonly Guid _id;
+
     /// <summary></summary>
     public readonly Interaction<Unit, Unit> ScrollToBottom = new();
 
     /// <summary></summary>
-    public PwdSectionEditModel()
+    private PwdSectionEditModel(Guid id)
     {
+        _id = id;
         Items = new ObservableCollection<PwdItemEditModel>();
         Items.CollectionChanged += (_, ev) =>
         {
@@ -31,6 +35,30 @@ public class PwdSectionEditModel : ReactiveObject
         };
         AddItemCommand = ReactiveCommand.Create(AddItem);
     }
+
+    #region preview
+
+    /// <summary></summary>
+    [Obsolete("PREVIEW constructor")]
+    public PwdSectionEditModel() : this(Guid.Empty)
+    {
+        Name = "Preview Name";
+        WebsiteUrl = "website.net";
+        Items.Add(PwdItemEditModel.From(new PwdItem
+        {
+            Usernames = new[] { "first" },
+            Password = "lalala",
+            Remark = "something",
+        }));
+        Items.Add(PwdItemEditModel.From(new PwdItem
+        {
+            Usernames = new[] { "second", "third", "forth" },
+            Password = "hahaha",
+            Remark = "my note",
+        }));
+    }
+
+    #endregion
 
     /// <summary></summary>
     public ReactCommand AddItemCommand { get; }
@@ -50,6 +78,7 @@ public class PwdSectionEditModel : ReactiveObject
     /// <summary></summary>
     public PwdSection ToSection() => new()
     {
+        Id = _id,
         Name = Name?.Trim() ?? string.Empty,
         WebsiteUrl = WebsiteUrl?.Trim() ?? string.Empty,
         Items = Items
@@ -61,7 +90,7 @@ public class PwdSectionEditModel : ReactiveObject
     /// <summary></summary>
     public static PwdSectionEditModel From(PwdSection section)
     {
-        var vm = new PwdSectionEditModel
+        var vm = new PwdSectionEditModel(section.Id)
         {
             Name = section.Name,
             WebsiteUrl = section.WebsiteUrl,
@@ -76,7 +105,7 @@ public class PwdSectionEditModel : ReactiveObject
     }
 
     /// <summary></summary>
-    public static PwdSectionEditModel Empty() => new()
+    public static PwdSectionEditModel Empty() => new(Guid.NewGuid())
     {
         Name = string.Empty,
         WebsiteUrl = string.Empty
