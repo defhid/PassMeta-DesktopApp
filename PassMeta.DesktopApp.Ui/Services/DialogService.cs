@@ -96,7 +96,7 @@ public class DialogService : IDialogService
                     title ?? Resources.DIALOG__DEFAULT_ERROR_TITLE,
                     message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
                     NotificationType.Error,
-                    TimeSpan.FromSeconds(8)));
+                    TimeSpan.FromSeconds(16)));
             }
             else
             {

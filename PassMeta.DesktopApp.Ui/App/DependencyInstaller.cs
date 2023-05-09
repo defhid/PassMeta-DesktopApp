@@ -46,7 +46,7 @@ public static class DependencyInstaller
 
         Register(new GeneratorPresetsCache());
 
-        Register<ILogsWriter, ILogsManager>(new LogsManager(
+        Register<ILogsWriter, ILogsManager>(new AppLogsManager(
             Resolve<AppInfo>().RootPath));
 
         Register<IDialogService>(new DialogService(

@@ -11,6 +11,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.App.Observers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
@@ -79,7 +80,7 @@ public class App : Application
         var pmInfoService = Locator.Current.Resolve<IPassMetaInfoService>();
 
         logManager.InternalErrorOccured += (_, ev) => 
-            dialogService.ShowError(ev.Message, more: ev.Exception.ToString());
+            dialogService.ShowError(ev.Message, more: ev.Exception.ToString(), defaultPresenter: DialogPresenter.Window);
 
         await appConfigManager.LoadAsync();
         await appContextManager.LoadAsync();

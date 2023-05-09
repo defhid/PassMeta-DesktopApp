@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Avalonia.Logging;
@@ -7,8 +8,8 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App;
 
-/// <inheritdoc />
-public class AppLogSink : ILogSink
+/// <inheritdoc cref="ILogSink" />
+public sealed class AppLogSink : ILogSink, IDisposable
 {
     private readonly LogEventLevel _minLevel;
 
@@ -16,7 +17,7 @@ public class AppLogSink : ILogSink
     {
         _minLevel = minLevel;
     }
-    
+
     #region ILogSink
 
     /// <inheritdoc />
@@ -65,6 +66,9 @@ public class AppLogSink : ILogSink
     }
 
     #endregion
+
+    /// <inheritdoc />
+    public void Dispose() => Locator.Current.ResolveOrDefault<ILogsWriter>()?.Flush();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void LogInternal(string area, object? source, string messageTemplate, params object?[] args)

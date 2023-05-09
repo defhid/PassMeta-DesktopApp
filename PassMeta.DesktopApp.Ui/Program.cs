@@ -7,13 +7,14 @@ namespace PassMeta.DesktopApp.Ui;
 
 public static class Program
 {
-    public static AppBuilder BuildAvaloniaApp() 
-        => AppBuilder.Configure<App.App>().UsePlatformDetect()
-            .UseReactiveUI();
+    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App.App>()
+        .UsePlatformDetect()
+        .UseReactiveUI();
 
     public static void Main(string[] args)
     {
-        Logger.Sink = new AppLogSink(LogEventLevel.Error);
+        using var appLogSink = new AppLogSink(LogEventLevel.Error);
+        Logger.Sink = appLogSink;
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

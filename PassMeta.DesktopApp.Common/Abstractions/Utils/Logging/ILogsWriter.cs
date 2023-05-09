@@ -16,4 +16,9 @@ public interface ILogsWriter
     /// Write application log.
     /// </summary>
     void Write(Log log);
+
+    /// <summary>
+    /// Flush logs queue.
+    /// </summary>
+    void Flush();
 }

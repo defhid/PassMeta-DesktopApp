@@ -1,5 +1,5 @@
 # PassMeta Desktop App
-#### © 2022 Vladislav Mironov
+#### © 2023 Vladislav Mironov
 
 
 ### About the project
