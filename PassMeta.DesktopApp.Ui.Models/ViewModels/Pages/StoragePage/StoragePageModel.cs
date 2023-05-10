@@ -40,7 +40,7 @@ public class StoragePageModel : PageViewModel
     private static bool _loaded;
     private static readonly PassFileItemPath LastItemPath = new();
 
-    public readonly Interaction<PassFileWinViewModel, Unit> ShowPassFile = new();
+    public readonly Interaction<PassFileWinViewModel<PwdPassFile>, Unit> ShowPassFile = new();
 
     /// <inheritdoc />
     public override ContentControl[] RightBarButtons => new ContentControl[]
@@ -64,9 +64,9 @@ public class StoragePageModel : PageViewModel
 
     #region Passfile list
 
-    private ObservableCollection<PassFileBtn> _passFileList = new();
+    private ObservableCollection<PassFileCellModel<PwdPassFile>> _passFileList = new();
 
-    public ObservableCollection<PassFileBtn> PassFileList
+    public ObservableCollection<PassFileCellModel<PwdPassFile>> PassFileList
     {
         get => _passFileList;
         private set => this.RaiseAndSetIfChanged(ref _passFileList, value);
@@ -85,11 +85,11 @@ public class StoragePageModel : PageViewModel
         }
     }
 
-    public PassFileBtn? SelectedPassFileBtn =>
+    public PassFileCellModel<PwdPassFile>? SelectedPassFileBtn =>
         _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex];
 
     public PwdPassFile? SelectedPassFile =>
-        _passFilesSelectedIndex == -1 ? null : _passFileList[_passFilesSelectedIndex].PassFile;
+        _passFilesSelectedIndex == -1 ? null : (PwdPassFile) _passFileList[_passFilesSelectedIndex].PassFile;
 
     #endregion
 
@@ -212,7 +212,7 @@ public class StoragePageModel : PageViewModel
         await LoadPassFilesAsync(LastItemPath.Copy());
     }
 
-    private PassFileBtn _MakePassFileBtn(PwdPassFile passFile)
+    private PassFileCellModel<PwdPassFile> _MakePassFileBtn(PwdPassFile passFile)
         => new(passFile, ShowPassFile, PassFileBarExpander.ShortModeObservable);
 
     private async Task LoadPassFilesAsync(PassFileItemPath lastItemPath)
@@ -232,7 +232,7 @@ public class StoragePageModel : PageViewModel
             var index = _passFileList.FindIndex(btn => btn.PassFile!.Id == lastItemPath.PassFileId.Value);
             if (index >= 0)
             {
-                if (_passFileList[index].PassFile?.Content.PassPhrase is not null)
+                if ((_passFileList[index].PassFile as PwdPassFile).Content.PassPhrase is not null)
                 {
                     PassFilesSelectedIndex = index;
                     if (lastItemPath.PassFileSectionId is not null)
@@ -250,7 +250,7 @@ public class StoragePageModel : PageViewModel
 
     private void UpdatePassFileList()
     {
-        PassFileList = new ObservableCollection<PassFileBtn>(_pfContext.CurrentList
+        PassFileList = new ObservableCollection<PassFileCellModel<PwdPassFile>>(_pfContext.CurrentList
             .OrderBy(x => x, PassFileComparer.Instance)
             .Select(_MakePassFileBtn));
     }
@@ -304,12 +304,12 @@ public class StoragePageModel : PageViewModel
         PassFileList.Insert(0, passFileBtn);
         PassFilesSelectedIndex = 0;
 
-        await passFileBtn.OpenAsync();
+        passFileBtn.OpenCard();
     }
 
-    public async Task PassFileOpenAsync()
+    public void PassFileOpen()
     {
-        await SelectedPassFileBtn!.OpenAsync();
+        SelectedPassFileBtn!.OpenCard();
     }
 
     #region Layout states

@@ -9,10 +9,11 @@ namespace PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 /// <summary>
 /// Service for merging passfiles.
 /// </summary>
-public interface IPassFileMergeUiService
+public interface IPassFileMergeUiService<TPassFile>
+    where TPassFile : PassFile
 {
     /// <summary>
     /// Load required data, prepare and merge passfile data sections.
     /// </summary>
-    Task<IResult> LoadRemoteAndMergeAsync(PwdPassFile passFile, IPassFileContext<PwdPassFile> context, Window currentWindow);
+    Task<IResult> LoadRemoteAndMergeAsync(TPassFile passFile, IPassFileContext<TPassFile> context, Window currentWindow);
 }

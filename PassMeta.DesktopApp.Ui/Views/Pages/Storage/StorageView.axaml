@@ -57,7 +57,6 @@
             </TextBlock>
           </ToggleButton>
 
-          <!-- PassFileList -->
           <ListBox
             Grid.Row="1"
             x:Name="PassFiles"
@@ -70,38 +69,7 @@
             IsEnabled="{Binding !SelectedData.Edit.Mode}">
             <ListBox.ItemTemplate>
               <DataTemplate>
-                <Grid ColumnDefinitions="Auto,*" Margin="0 2 0 0">
-                  <Border
-                    Grid.Column="0"
-                    CornerRadius="3,0,0,3"
-                    Margin="1 0 0 0"
-                    Height="39" Width="6"
-                    HorizontalAlignment="Left"
-                    Background="{Binding Color^}" />
-
-                  <Button
-                    Grid.Column="0"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    HorizontalAlignment="Left"
-                    Margin="13 0 1 0"
-                    Padding="0 -1 0 0"
-                    Height="20" Width="22"
-                    FontSize="20"
-                    FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
-                    Content="&#xEC50;"
-                    Foreground="{Binding StateColor}"
-                    Opacity="{Binding Opacity^}"
-                    IsVisible="{Binding IsChecked, ElementName=PassFilesBarBtn}"
-                    Command="{Binding OpenCommand}" />
-
-                  <TextBlock
-                    Grid.Column="1"
-                    FontSize="16"
-                    Text="{Binding Name^}"
-                    Opacity="{Binding Opacity^}"
-                    Margin="5 0 0 0" />
-                </Grid>
+                <components:PassFileCellView DataContext="{Binding}" />
               </DataTemplate>
             </ListBox.ItemTemplate>
 
@@ -152,7 +120,6 @@
             Text="{Binding SelectedData.SearchText}"
             AttachedToLogicalTree="Search_OnAttachedToLogicalTree" />
 
-          <!-- PassFileSectionList -->
           <Border
             Grid.Row="1"
             VerticalAlignment="Stretch"
@@ -213,7 +180,6 @@
           </Border>
         </Grid>
 
-        <!-- PassFileSectionItemList -->
         <Border
           Grid.Column="1"
           CornerRadius="3"

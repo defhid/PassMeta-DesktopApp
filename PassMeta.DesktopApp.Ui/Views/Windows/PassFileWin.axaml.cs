@@ -2,12 +2,14 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Extensions;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
 
 namespace PassMeta.DesktopApp.Ui.Views.Windows;
 
-public class PassFileWin : ReactiveWindow<PassFileWinViewModel>
+public class PassFileWin<TPassFile> : ReactiveWindow<PassFileWinViewModel<TPassFile>>
+    where TPassFile : PassFile
 {
     public PassFileWin()
     {

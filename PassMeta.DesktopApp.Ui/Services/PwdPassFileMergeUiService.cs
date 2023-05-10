@@ -21,13 +21,13 @@ using PassMeta.DesktopApp.Ui.Views.Windows;
 namespace PassMeta.DesktopApp.Ui.Services;
 
 /// <inheritdoc />
-public class PassFileMergeUiService : IPassFileMergeUiService
+public class PwdPassFileMergeUiService : IPassFileMergeUiService<PwdPassFile>
 {
     private readonly IPwdPassFileMergePreparingService _mergePreparingService;
     private readonly IDialogService _dialogService;
     private readonly ILogsWriter _logger;
 
-    public PassFileMergeUiService(IPwdPassFileMergePreparingService mergePreparingService, IDialogService dialogService, ILogsWriter logger)
+    public PwdPassFileMergeUiService(IPwdPassFileMergePreparingService mergePreparingService, IDialogService dialogService, ILogsWriter logger)
     {
         _mergePreparingService = mergePreparingService;
         _dialogService = dialogService;
@@ -57,7 +57,7 @@ public class PassFileMergeUiService : IPassFileMergeUiService
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, nameof(PassFileMergeUiService));
+            _logger.Error(ex, nameof(PwdPassFileMergeUiService));
             _dialogService.ShowError(ex.Message);
             return Result.Failure();
         }

@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
 using PassMeta.DesktopApp.Ui.Views.Windows;
@@ -25,9 +26,9 @@ public class StorageView : ReactiveUserControl<StoragePageModel>
         });
     }
     
-    private async Task ShowPassFileAsync(InteractionContext<PassFileWinViewModel, Unit> interaction)
+    private async Task ShowPassFileAsync(InteractionContext<PassFileWinViewModel<PwdPassFile>, Unit> interaction)
     {
-        var win = new PassFileWin { ViewModel = interaction.Input };
+        var win = new PassFileWin<PwdPassFile> { ViewModel = interaction.Input };
 
         await win.ShowDialog(App.App.MainWindow);
 
@@ -36,9 +37,9 @@ public class StorageView : ReactiveUserControl<StoragePageModel>
 
     #region Context menus
 
-    private async void OpenCurrentPassFile_OnClick(object? sender, RoutedEventArgs e)
+    private void OpenCurrentPassFile_OnClick(object? sender, RoutedEventArgs e)
     {
-        await ViewModel!.PassFileOpenAsync();
+        ViewModel!.PassFileOpen();
     }
 
     private void EditCurrentSection_OnClick(object? sender, RoutedEventArgs e)

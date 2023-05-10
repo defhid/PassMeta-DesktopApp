@@ -14,7 +14,9 @@ using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 namespace PassMeta.DesktopApp.Ui.Services;
 
 /// <inheritdoc />
-public class PassFileExportUiService : IPassFileExportUiService
+public class PassFileExportUiService<TPassFile, TContent> : IPassFileExportUiService<TPassFile>
+    where TPassFile : PassFile<TContent>
+    where TContent : class, new()
 {
     private readonly IPassFileExportService _exportService;
     private readonly IDialogService _dialogService;
@@ -31,8 +33,7 @@ public class PassFileExportUiService : IPassFileExportUiService
     }
 
     /// <inheritdoc />
-    public async Task SelectAndExportAsync<TContent>(PassFile<TContent> passFile, Window currentWindow)
-        where TContent : class, new()
+    public async Task SelectAndExportAsync(TPassFile passFile, Window currentWindow)
     {
         try
         {
@@ -45,10 +46,7 @@ public class PassFileExportUiService : IPassFileExportUiService
         }
     }
 
-    private async Task SelectAndExportInternalAsync<TContent>(
-        PassFile<TContent> passFile,
-        Window currentWindow)
-        where TContent : class, new()
+    private async Task SelectAndExportInternalAsync(TPassFile passFile, Window currentWindow)
     {
         var fileDialog = new SaveFileDialog
         {

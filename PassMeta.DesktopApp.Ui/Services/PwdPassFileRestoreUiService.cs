@@ -21,12 +21,12 @@ using Splat;
 namespace PassMeta.DesktopApp.Ui.Services;
 
 /// <inheritdoc />
-public class PassFileRestoreUiService : IPassFileRestoreUiService
+public class PwdPassFileRestoreUiService : IPassFileRestoreUiService<PwdPassFile>
 {
     private readonly IDialogService _dialogService;
     private readonly ILogsWriter _logger;
 
-    public PassFileRestoreUiService(IDialogService dialogService, ILogsWriter logger)
+    public PwdPassFileRestoreUiService(IDialogService dialogService, ILogsWriter logger)
     {
         _dialogService = dialogService;
         _logger = logger;
@@ -52,7 +52,7 @@ public class PassFileRestoreUiService : IPassFileRestoreUiService
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, nameof(PassFileRestoreUiService));
+            _logger.Error(ex, nameof(PwdPassFileRestoreUiService));
             _dialogService.ShowError(ex.Message);
             return Result.Failure();
         }

@@ -23,11 +23,12 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
 
-public class PassFileWinViewModel : ReactiveObject
+public class PassFileWinViewModel<TPassFile> : ReactiveObject
+    where TPassFile : PassFile
 {
-    private PwdPassFile? _passFile;
+    private TPassFile? _passFile;
 
-    public PwdPassFile? PassFile
+    public TPassFile? PassFile
     {
         get => _passFile;
         private set => this.RaiseAndSetIfChanged(ref _passFile, value);
@@ -80,12 +81,12 @@ public class PassFileWinViewModel : ReactiveObject
     public readonly ViewElements ViewElements = new();
 
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
-    private readonly IPassFileContext<PwdPassFile> _pfContext = 
-        Locator.Current.Resolve<IPassFileContextProvider>().For<PwdPassFile>();
+    private readonly IPassFileContext<TPassFile> _pfContext = 
+        Locator.Current.Resolve<IPassFileContextProvider>().For<TPassFile>();
     private readonly IPassFileDecryptionHelper _pfDecryptionHelper = 
         Locator.Current.Resolve<IPassFileDecryptionHelper>();
 
-    public PassFileWinViewModel(PwdPassFile passFile)
+    public PassFileWinViewModel(TPassFile passFile)
     {
         PassFile = passFile;
         _name = passFile.Name;
@@ -200,7 +201,7 @@ public class PassFileWinViewModel : ReactiveObject
         var passPhraseNew = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE_NEW);
         if (passPhraseNew.Bad || passPhraseNew.Data == string.Empty) return;
 
-        PassFile.Content = new PassFileContent<List<PwdSection>>(PassFile.Content.Encrypted!, passPhraseNew.Data!);
+        (PassFile as PwdPassFile).Content = new PassFileContent<List<PwdSection>>((PassFile as PwdPassFile).Content.Encrypted!, passPhraseNew.Data!);
 
         var updateResult = _pfContext.UpdateContent(PassFile);
         if (updateResult.Ok)
@@ -253,7 +254,7 @@ public class PassFileWinViewModel : ReactiveObject
             return Task.CompletedTask;
         }
 
-        var exportService = Locator.Current.Resolve<IPassFileExportUiService>();
+        var exportService = Locator.Current.Resolve<IPassFileExportUiService<TPassFile>>();
 
         return exportService.SelectAndExportAsync(PassFile, ViewElements.Window!);
     }
@@ -262,7 +263,7 @@ public class PassFileWinViewModel : ReactiveObject
     {
         if (PassFile is null) return;
 
-        var restoreService = Locator.Current.Resolve<IPassFileRestoreUiService>();
+        var restoreService = Locator.Current.Resolve<IPassFileRestoreUiService<TPassFile>>();
 
         await restoreService.SelectAndRestoreAsync(PassFile, _pfContext, ViewElements.Window!);
     }
@@ -271,7 +272,7 @@ public class PassFileWinViewModel : ReactiveObject
     {
         if (PassFile?.IsLocalDeleted() is not false) return;
 
-        var mergeService = Locator.Current.Resolve<IPassFileMergeUiService>();
+        var mergeService = Locator.Current.Resolve<IPassFileMergeUiService<TPassFile>>();
 
         await mergeService.LoadRemoteAndMergeAsync(PassFile, _pfContext, ViewElements.Window!);
     }

@@ -5,6 +5,7 @@
         xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
         xmlns:passFileWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;assembly=PassMeta.DesktopApp.Ui.Models"
         xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+        xmlns:pf="clr-namespace:PassMeta.DesktopApp.Common.Models.Entities.PassFile;assembly=PassMeta.DesktopApp.Common"
         mc:Ignorable="d"
         Width="540"
         MinWidth="540"
@@ -17,7 +18,7 @@
         WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
-        <passFileWin:PassFileWinViewModel/>
+        <passFileWin:PassFileWinViewModel x:TypeArguments="pf:PwdPassFile" />
     </Design.DataContext>
     
     <Grid Margin="7 7 10 10" RowDefinitions="Auto,*">

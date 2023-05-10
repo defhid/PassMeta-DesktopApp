@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using AutoMapper;
@@ -16,6 +17,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Mapping.Entities;
 using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Services;
 using PassMeta.DesktopApp.Core.Services.PassFileServices;
@@ -164,21 +167,39 @@ public static class DependencyInstaller
             Resolve<IPassFileCryptoService>(),
             Resolve<IDialogService>()));
 
-        Register<IPassFileExportUiService>(new PassFileExportUiService(
+        RegisterPassFileExportUiService<PwdPassFile, List<PwdSection>>();
+        RegisterPassFileExportUiService<TxtPassFile, List<TxtSection>>();
+        RegisterPassFileMergeUiServices();
+        RegisterPassFileRestoreUiServices();
+
+        Resolve<ILogsWriter>().AppConfigProvider = Resolve<IAppConfigProvider>();
+    }
+
+    private static void RegisterPassFileExportUiService<TPassFile, TContent>()
+        where TPassFile : PassFile<TContent>
+        where TContent : class, new() =>
+        Register<IPassFileExportUiService<TPassFile>>(new PassFileExportUiService<TPassFile, TContent>(
             Resolve<IPassFileExportService>(),
             Resolve<IDialogService>(),
             Resolve<ILogsWriter>()));
 
-        Register<IPassFileMergeUiService>(new PassFileMergeUiService(
+    private static void RegisterPassFileMergeUiServices()
+    {
+        Register<IPassFileMergeUiService<PwdPassFile>>(new PwdPassFileMergeUiService(
             Resolve<IPwdPassFileMergePreparingService>(),
             Resolve<IDialogService>(),
             Resolve<ILogsWriter>()));
+        
+        // ...
+    }
 
-        Register<IPassFileRestoreUiService>(new PassFileRestoreUiService(
+    private static void RegisterPassFileRestoreUiServices()
+    {
+        Register<IPassFileRestoreUiService<PwdPassFile>>(new PwdPassFileRestoreUiService(
             Resolve<IDialogService>(),
             Resolve<ILogsWriter>()));
 
-        Resolve<ILogsWriter>().AppConfigProvider = Resolve<IAppConfigProvider>();
+        // ...
     }
 
     public static void RegisterViewsForViewModels()

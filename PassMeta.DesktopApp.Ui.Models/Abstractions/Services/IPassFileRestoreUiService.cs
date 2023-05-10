@@ -9,10 +9,11 @@ namespace PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 /// <summary>
 /// Service for restoring / importing passfiles.
 /// </summary>
-public interface IPassFileRestoreUiService
+public interface IPassFileRestoreUiService<TPassFile>
+    where TPassFile : PassFile
 {
     /// <summary>
     /// Select required file and import its data.
     /// </summary>
-    Task<IResult> SelectAndRestoreAsync(PwdPassFile passFile, IPassFileContext<PwdPassFile> pfContext, Window currentWindow);
+    Task<IResult> SelectAndRestoreAsync(TPassFile passFile, IPassFileContext<TPassFile> pfContext, Window currentWindow);
 }
