@@ -417,8 +417,8 @@
     <data name="STORAGE__ITEM_TOOLTIP__MOVE_UP" xml:space="preserve">
         <value>Переместить вверх</value>
     </data>
-    <data name="STORAGE__PASSFILE_CONTEXT__EDIT_BTN" xml:space="preserve">
-        <value>Изменить</value>
+    <data name="STORAGE__PASSFILE_CONTEXT__MORE_BTN" xml:space="preserve">
+        <value>Подробнее...</value>
     </data>
     <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
         <value>Обновить</value>
@@ -663,7 +663,7 @@
     <data name="SETTINGS__DEV_MODE" xml:space="preserve">
         <value>Режим разработчика</value>
     </data>
-    <data name="PASSCONTEXT_ERR" xml:space="preserve">
+    <data name="PASSCONTEXT__ERR_OTHER" xml:space="preserve">
         <value>Ошибка при работе контекстного менеджера пакетов (см. логи)</value>
     </data>
     <data name="DICT__PASSFILE" xml:space="preserve">
@@ -686,5 +686,17 @@
     </data>
     <data name="STORAGE__SECTION_LABEL__NAME" xml:space="preserve">
         <value>Название</value>
+    </data>
+    <data name="PASSCONTEXT__ERR_EMPTY_PASSPHRASE" xml:space="preserve">
+        <value>Пароль не задан</value>
+    </data>
+    <data name="STORAGE__ASK_PASSPHRASE_FOR_PASSFILE" xml:space="preserve">
+        <value>Введите кодовую фразу для пакета {0}</value>
+    </data>
+    <data name="PASSFILE__INFO_PASSPHRASE_NOT_CHANGED" xml:space="preserve">
+        <value>Кодовая фраза не изменена!</value>
+    </data>
+    <data name="DIALOG__DEFAULT_WARNING_TITLE" xml:space="preserve">
+        <value>Предупреждение</value>
     </data>
 </root>

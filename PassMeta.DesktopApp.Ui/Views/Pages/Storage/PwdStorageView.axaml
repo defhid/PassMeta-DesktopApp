@@ -7,12 +7,12 @@
   xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:storagePage="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
-  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.StorageView"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.PwdStorageView"
   mc:Ignorable="d"
   d:DesignWidth="800"
   d:DesignHeight="450">
   <Design.DataContext>
-    <storagePage:StoragePageModel />
+    <storagePage:PwdStoragePageModel />
   </Design.DataContext>
 
   <Grid>
@@ -37,67 +37,7 @@
       OpenPaneLength="{Binding LayoutState^.PassFilesPaneWidth}"
       IsPaneOpen="{Binding PassFileBarExpander.IsOpened}">
       <SplitView.Pane>
-        <Grid RowDefinitions="Auto,*">
-          <ToggleButton
-            Grid.Row="0"
-            x:Name="PassFilesBarBtn"
-            Margin="4 5 5 12"
-            Padding="0"
-            Height="40"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            IsChecked="{Binding PassFileBarExpander.IsOpened}"
-            FontSize="{Binding PassFilesBarBtn.FontSize}"
-            FontFamily="{Binding PassFilesBarBtn.FontFamily}">
-            <TextBlock Text="{Binding PassFilesBarBtn.Content}">
-              <TextBlock.RenderTransform>
-                <RotateTransform Angle="{Binding PassFilesBarBtn.RotationAngle}" />
-              </TextBlock.RenderTransform>
-            </TextBlock>
-          </ToggleButton>
-
-          <ListBox
-            Grid.Row="1"
-            x:Name="PassFiles"
-            Margin="4 0 5 5"
-            Padding="0 0 0 4"
-            SelectionMode="Toggle"
-            CornerRadius="3"
-            SelectedIndex="{Binding PassFilesSelectedIndex}"
-            Items="{Binding PassFileList}"
-            IsEnabled="{Binding !SelectedData.Edit.Mode}">
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <components:PassFileCellView DataContext="{Binding}" />
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-
-            <ListBox.Styles>
-              <Style Selector="ListBoxItem">
-                <Setter Property="CornerRadius" Value="3" />
-                <Setter Property="Height" Value="40" />
-                <Setter Property="Margin" Value="0 0 0 8" />
-                <Setter Property="Padding" Value="0 9 6 9" />
-                <Setter Property="ContextMenu">
-                  <ContextMenu>
-                    <MenuItem
-                      Header="{x:Static com:Resources.STORAGE__PASSFILE_CONTEXT__EDIT_BTN}"
-                      Click="OpenCurrentPassFile_OnClick" />
-                  </ContextMenu>
-                </Setter>
-              </Style>
-            </ListBox.Styles>
-          </ListBox>
-
-          <Button
-            Grid.Row="1"
-            Classes="list_add"
-            Margin="4 0 5 5"
-            IsEnabled="{Binding !SelectedData.Edit.Mode}"
-            Command="{Binding PassFileAddAsync}"
-            ToolTip.Tip="{x:Static com:Resources.STORAGE__PASSFILE_TOOLTIP__ADD}" />
-        </Grid>
+        <components:PassFileListView DataContext="{Binding PassFileList}" />
       </SplitView.Pane>
 
       <Grid ColumnDefinitions="2*,3*">
@@ -127,7 +67,7 @@
             Padding="0 4 0 4"
             CornerRadius="3"
             DataContext="{Binding SelectedData}"
-            Background="{Binding Background, ElementName=PassFiles}"
+            Background="{DynamicResource SystemControlBackgroundListMediumBrush}"
             IsVisible="{Binding IsSectionsBarVisible^}"
             IsEnabled="{Binding !Edit.Mode}">
             <Grid VerticalAlignment="Stretch">

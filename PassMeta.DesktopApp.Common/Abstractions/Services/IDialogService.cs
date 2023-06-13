@@ -17,6 +17,15 @@ public interface IDialogService
     /// <param name="more">Secondary content.</param>
     /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
     void ShowInfo(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
+    
+    /// <summary>
+    /// Show warning message to user.
+    /// </summary>
+    /// <param name="message">Primary content.</param>
+    /// <param name="title">Message title.</param>
+    /// <param name="more">Secondary content.</param>
+    /// <param name="defaultPresenter">How to show the message. Default is popup, but if not available, dialog window will be used.</param>
+    void ShowWarning(string message, string? title = null, string? more = null, DialogPresenter defaultPresenter = DialogPresenter.PopUp);
 
     /// <summary>
     /// Show error message to user.

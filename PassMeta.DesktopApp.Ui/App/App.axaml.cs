@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 
 using Splat;
 using System.Threading.Tasks;
+using Avalonia.Controls.Mixins;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
@@ -14,8 +15,10 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.App.Observers;
+using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 using PassMeta.DesktopApp.Ui.Views.Windows.MainWin;
+using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.App;
 
@@ -75,6 +78,7 @@ public class App : Application
         var logManager = Locator.Current.Resolve<ILogsManager>();
         var appConfigManager = Locator.Current.Resolve<IAppConfigManager>();
         var appContextManager = Locator.Current.Resolve<IAppContextManager>();
+        var userContextProvider = Locator.Current.Resolve<IUserContextProvider>();
         var dialogService = Locator.Current.Resolve<IDialogService>();
         var pmClient = Locator.Current.Resolve<IPassMetaClient>();
         var pmInfoService = Locator.Current.Resolve<IPassMetaInfoService>();
@@ -98,6 +102,7 @@ public class App : Application
 
         appConfigManager.CurrentObservable.Subscribe(new AppConfigObserver());
         pmClient.OnlineObservable.Subscribe(new OnlineObserver());
+        userContextProvider.CurrentObservable.Subscribe(new UserContextObserver());
 
         _ = Task.Run(logManager.CleanUp);
     }
@@ -107,6 +112,9 @@ public class App : Application
         var win = new MainWindow { ViewModel = new MainWinModel() };
 
         win.GotFocus += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
+
+        win.WhenActivated(disposables => 
+            win.ViewModel.HostWindowProvider = new HostWindowProvider(win).DisposeWith(disposables));
 
         DependencyInstaller.Unregister<INotificationManager>();
         DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)

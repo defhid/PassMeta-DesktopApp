@@ -167,13 +167,33 @@ public static class DependencyInstaller
             Resolve<IPassFileCryptoService>(),
             Resolve<IDialogService>()));
 
+        RegisterPassFileContentHelper<PwdPassFile, List<PwdSection>>();
+        RegisterPassFileContentHelper<TxtPassFile, List<TxtSection>>();
+
+        RegisterPassFileOpenUiService<PwdPassFile>();
+        RegisterPassFileOpenUiService<TxtPassFile>();
+
         RegisterPassFileExportUiService<PwdPassFile, List<PwdSection>>();
         RegisterPassFileExportUiService<TxtPassFile, List<TxtSection>>();
+
         RegisterPassFileMergeUiServices();
         RegisterPassFileRestoreUiServices();
 
         Resolve<ILogsWriter>().AppConfigProvider = Resolve<IAppConfigProvider>();
     }
+
+    private static void RegisterPassFileContentHelper<TPassFile, TContent>()
+        where TPassFile : PassFile<TContent>
+        where TContent : class, new() =>
+        Register<IPassFileContentHelper<TPassFile>>(new PassFileContentHelper<TPassFile, TContent>(
+            Resolve<IPassFileDecryptionHelper>(),
+            Resolve<IPassFileContextProvider>(),
+            Resolve<IDialogService>()));
+    
+    private static void RegisterPassFileOpenUiService<TPassFile>()
+        where TPassFile : PassFile =>
+        Register<IPassFileOpenUiService<TPassFile>>(new PassFileOpenUiService<TPassFile>(
+            Resolve<ILogsWriter>()));
 
     private static void RegisterPassFileExportUiService<TPassFile, TContent>()
         where TPassFile : PassFile<TContent>

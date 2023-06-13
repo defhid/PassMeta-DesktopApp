@@ -6,6 +6,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Services;
 /// <summary>
 /// A service for asking user for a passphrase.
 /// </summary>
+/// <remarks>Singleton.</remarks>
 public interface IPassPhraseAskHelper
 {
     /// <summary>

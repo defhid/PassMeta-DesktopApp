@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Media;
@@ -12,27 +13,46 @@ using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 using PassMeta.DesktopApp.Ui.Models.Constants;
 using PassMeta.DesktopApp.Ui.Models.Extensions;
+using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Common;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin.Extra;
 using ReactiveUI;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
 
-public class PassFileWinViewModel<TPassFile> : ReactiveObject
+/// <summary>
+/// Passfile window ViewModel.
+/// </summary>
+public abstract class PassFileWinModel : ReactiveObject
+{
+    /// <summary></summary>
+    public readonly PassFile PassFile;
+
+    /// <summary></summary>
+    public event Action? Finish;
+
+    /// <summary></summary>
+    protected PassFileWinModel(PassFile passFile)
+    {
+        PassFile = passFile;
+        CloseCommand = ReactiveCommand.Create(() => Finish?.Invoke());
+    }
+
+    /// <summary></summary>
+    public ReactiveCommand<Unit, Unit> CloseCommand { get; }
+}
+
+/// <inheritdoc />
+public class PassFileWinModel<TPassFile> : PassFileWinModel 
     where TPassFile : PassFile
 {
-    private TPassFile? _passFile;
+    /// <summary></summary>
+    public new readonly TPassFile PassFile;
 
-    public TPassFile? PassFile
-    {
-        get => _passFile;
-        private set => this.RaiseAndSetIfChanged(ref _passFile, value);
-    }
+    private readonly HostWindowProvider _hostWindowProvider;
 
     public IObservable<string> Title { get; }
 
@@ -78,17 +98,17 @@ public class PassFileWinViewModel<TPassFile> : ReactiveObject
 
     #endregion
 
-    public readonly ViewElements ViewElements = new();
-
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
-    private readonly IPassFileContext<TPassFile> _pfContext = 
-        Locator.Current.Resolve<IPassFileContextProvider>().For<TPassFile>();
-    private readonly IPassFileDecryptionHelper _pfDecryptionHelper = 
-        Locator.Current.Resolve<IPassFileDecryptionHelper>();
+    private readonly IPassFileContext<TPassFile> _pfContext;
 
-    public PassFileWinViewModel(TPassFile passFile)
+    private readonly IPassFileContentHelper<TPassFile> _pfContentHelper
+        = Locator.Current.Resolve<IPassFileContentHelper<TPassFile>>();
+
+    public PassFileWinModel(TPassFile passFile, HostWindowProvider hostWindowProvider) : base(passFile)
     {
+        _pfContext = Locator.Current.Resolve<IPassFileContextProvider>().For<TPassFile>();
         PassFile = passFile;
+        _hostWindowProvider = hostWindowProvider;
         _name = passFile.Name;
         SelectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
 
@@ -99,69 +119,64 @@ public class PassFileWinViewModel<TPassFile> : ReactiveObject
                 vm => vm.SelectedColorIndex,
                 vm => vm.PassFile)
             .Select(val =>
-                val.Item3 is not null && (
-                    val.Item1 != val.Item3.Name ||
-                    PassFileColor.List[val.Item2] != val.Item3.GetPassFileColor()));
+                val.Item1 != val.Item3.Name ||
+                PassFileColor.List[val.Item2] != val.Item3.GetPassFileColor());
 
-        Title = passFileChanged.Select(pf => pf is null
-            ? string.Empty
-            : string.Format(pf.IsLocalCreated()
-                ? Resources.PASSFILE__TITLE_NEW
-                : pf.IsLocalDeleted()
-                    ? Resources.PASSFILE__TITLE_DELETED
-                    : Resources.PASSFILE__TITLE, pf.GetIdentityString()));
+        Title = passFileChanged.Select(pf => string.Format(pf.IsLocalCreated()
+            ? Resources.PASSFILE__TITLE_NEW
+            : pf.IsLocalDeleted()
+                ? Resources.PASSFILE__TITLE_DELETED
+                : Resources.PASSFILE__TITLE, pf.GetIdentityString()));
 
-        CreatedOn = passFileChanged.Select(pf => pf?.CreatedOn.ToLocalTime().ToShortDateTimeString());
+        CreatedOn = passFileChanged.Select(pf => pf.CreatedOn.ToLocalTime().ToShortDateTimeString());
 
         ChangedOn = passFileChanged.Select(pf => string.Join(" / ",
-            new[] { pf?.InfoChangedOn, pf?.VersionChangedOn }
-                .Where(dt => dt is not null)
-                .Select(dt => dt!.Value.ToLocalTime().ToShortDateTimeString())));
+            new[] { pf.InfoChangedOn, pf.VersionChangedOn }
+                .Select(dt => dt.ToLocalTime().ToShortDateTimeString())));
 
         StateColor = passFileChanged.Select(pf => pf.GetStateColor());
 
-        State = passFileChanged.Select(pf => pf is null ? string.Empty : _MakeState(pf));
+        State = passFileChanged.Select(_MakeState);
 
         OkBtn = new BtnState
         {
             ContentObservable = anyChanged.Select(changed => changed
                 ? Resources.PASSFILE__BTN_SAVE
                 : Resources.PASSFILE__BTN_OK),
-            CommandObservable = anyChanged.Select(changed => ReactiveCommand.Create(changed ? Save : Close))
+            CommandObservable = anyChanged.Select(changed => changed ? ReactiveCommand.Create(Save) : CloseCommand)
         };
 
         ChangePasswordBtn = new BtnState
         {
             CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(ChangePasswordAsync)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf?.IsLocalDeleted() is false)
+            IsVisibleObservable = passFileChanged.Select(pf => pf.IsLocalDeleted() is false)
         };
 
         MergeBtn = new BtnState
         {
             CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf?.IsLocalDeleted() is false
+            IsVisibleObservable = passFileChanged.Select(pf => pf.IsLocalDeleted() is false
                                                                && pf.Mark.HasFlag(PassFileMark.NeedsMerge))
         };
 
         ExportBtn = new BtnState
         {
             CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(ExportAsync)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf?.IsLocalDeleted() is false)
+            IsVisibleObservable = passFileChanged.Select(pf => pf.IsLocalDeleted() is false)
         };
 
         RestoreBtn = new BtnState
         {
-            CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(RestoreAsync)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf is not null)
+            CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(RestoreAsync))
         };
 
         DeleteBtn = new BtnState
         {
             CommandObservable = Observable.Return(ReactiveCommand.Create(Delete)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf?.IsLocalDeleted() is false)
+            IsVisibleObservable = passFileChanged.Select(pf => pf.IsLocalDeleted() is false)
         };
 
-        ReadOnly = passFileChanged.Select(pf => pf?.IsLocalDeleted() is not false);
+        ReadOnly = passFileChanged.Select(pf => pf.IsLocalDeleted() is not false);
     }
 
     private static string _MakeState(PassFile passFile)
@@ -185,39 +200,26 @@ public class PassFileWinViewModel<TPassFile> : ReactiveObject
         return string.Join(Environment.NewLine, states.Where(s => s != string.Empty));
     }
 
-    public void Close() => ViewElements.Window!.Close();
-
-    public async Task ChangePasswordAsync()
+    private async Task ChangePasswordAsync()
     {
-        if (PassFile?.IsLocalDeleted() is not false) return;
+        if (PassFile.IsLocalDeleted())
+        {
+            return;
+        }
 
-        var result = await _pfDecryptionHelper.ProvideDecryptedContentAsync(PassFile, _pfContext,
-            (Resources.PASSFILE__ASK_PASSPHRASE_OLD, null));
-        if (result.Bad) return;
-
-        var provideResult = await _pfContext.ProvideEncryptedContentAsync(PassFile);
-        if (provideResult.Bad) return;
-
-        var passPhraseNew = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE_NEW);
-        if (passPhraseNew.Bad || passPhraseNew.Data == string.Empty) return;
-
-        (PassFile as PwdPassFile).Content = new PassFileContent<List<PwdSection>>((PassFile as PwdPassFile).Content.Encrypted!, passPhraseNew.Data!);
-
-        var updateResult = _pfContext.UpdateContent(PassFile);
-        if (updateResult.Ok)
+        var result = await _pfContentHelper.ChangePassPhraseAsync(PassFile);
+        if (result.Ok)
         {
             _dialogService.ShowInfo(Resources.PASSFILE__INFO_PASSPHRASE_CHANGED);
+        }
+        else
+        {
+            _dialogService.ShowWarning(Resources.PASSFILE__INFO_PASSPHRASE_NOT_CHANGED);
         }
     }
 
     private void Save()
     {
-        if (PassFile is null)
-        {
-            Close();
-            return;
-        }
-
         if (PassFile.IsLocalDeleted())
         {
             return;
@@ -237,49 +239,47 @@ public class PassFileWinViewModel<TPassFile> : ReactiveObject
 
     private void Delete()
     {
-        if (PassFile?.IsLocalDeleted() is not false) return;
+        if (PassFile.IsLocalDeleted())
+        {
+            return;
+        }
 
         var result = _pfContext.Delete(PassFile);
 
         if (result.Ok && _pfContext.CurrentList.Contains(PassFile))
         {
-            Close();
+            _ = CloseCommand.Execute();
         }
     }
 
-    private Task ExportAsync()
+    private async Task ExportAsync()
     {
-        if (PassFile?.IsLocalDeleted() is not false)
+        if (PassFile.IsLocalDeleted())
         {
-            return Task.CompletedTask;
+            return;
         }
 
         var exportService = Locator.Current.Resolve<IPassFileExportUiService<TPassFile>>();
 
-        return exportService.SelectAndExportAsync(PassFile, ViewElements.Window!);
+        await exportService.SelectAndExportAsync(PassFile, _hostWindowProvider);
     }
 
     private async Task RestoreAsync()
     {
-        if (PassFile is null) return;
-
         var restoreService = Locator.Current.Resolve<IPassFileRestoreUiService<TPassFile>>();
 
-        await restoreService.SelectAndRestoreAsync(PassFile, _pfContext, ViewElements.Window!);
+        await restoreService.SelectAndRestoreAsync(PassFile, _pfContext, _hostWindowProvider);
     }
 
     private async Task MergeAsync()
     {
-        if (PassFile?.IsLocalDeleted() is not false) return;
+        if (PassFile.IsLocalDeleted())
+        {
+            return;
+        }
 
         var mergeService = Locator.Current.Resolve<IPassFileMergeUiService<TPassFile>>();
 
-        await mergeService.LoadRemoteAndMergeAsync(PassFile, _pfContext, ViewElements.Window!);
+        await mergeService.LoadRemoteAndMergeAsync(PassFile, _pfContext, _hostWindowProvider);
     }
-
-#pragma warning disable 8618
-    public PassFileWinViewModel()
-    {
-    }
-#pragma warning restore 8618
 }

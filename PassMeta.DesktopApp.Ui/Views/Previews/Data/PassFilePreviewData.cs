@@ -4,12 +4,12 @@ using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Ui.Models.Constants;
 
-namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
+namespace PassMeta.DesktopApp.Ui.Views.Previews.Data;
 
 /// <summary>
-/// Preview models.
+/// Preview data.
 /// </summary>
-internal static class PassFilePreviews
+internal static class PassFilePreviewData
 {
     public static PwdSection PwdSection => new()
     {
@@ -44,7 +44,9 @@ internal static class PassFilePreviews
         Content = "Some content",
     };
 
-    public static TPassFile GetPassFile<TPassFile>() 
+    public static PassFile GetPassFile() => GetPassFile<PwdPassFile>();
+
+    public static TPassFile GetPassFile<TPassFile>()
         where TPassFile : PassFile
     {
         if (typeof(TPassFile) == typeof(PwdPassFile))

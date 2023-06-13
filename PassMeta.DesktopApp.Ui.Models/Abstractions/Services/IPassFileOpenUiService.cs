@@ -1,18 +1,17 @@
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Models.Providers;
 
 namespace PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 
 /// <summary>
-/// Service for exporting passfiles.
+/// Service for opening passfiles.
 /// </summary>
-public interface IPassFileExportUiService<in TPassFile>
+public interface IPassFileOpenUiService<in TPassFile>
     where TPassFile : PassFile
 {
     /// <summary>
-    /// Select destination file path and export passfile data there.
+    /// Show passfile information.
     /// </summary>
-    Task SelectAndExportAsync(TPassFile passFile, HostWindowProvider windowProvider);
+    Task ShowInfoAsync(TPassFile passFile, HostWindowProvider windowProvider);
 }

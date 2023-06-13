@@ -5,6 +5,7 @@ using System.Reactive.Subjects;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.JournalPage;
@@ -46,7 +47,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
                 {
                     AuthPageModel => Account,
                     AccountPageModel => Account,
-                    StoragePageModel => Storage,
+                    PwdStoragePageModel => Storage,
                     GeneratorPageModel => Generator,
                     JournalPageModel => Journal,
                     LogsPageModel => Logs,
@@ -70,7 +71,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
             Resources.APP__MENU_BTN__STORAGE,
             "\uE8F1",
             _authSource,
-            () => new StoragePageModel(hostScreen));
+            () => new PwdStoragePageModel(hostScreen, HostWindowProvider!));
 
         Generator = createButton(
             Resources.APP__MENU_BTN__GENERATOR,
@@ -96,6 +97,9 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
             Observable.Return(true),
             () => new SettingsPageModel(hostScreen));
     }
+
+    /// <inheritdoc cref="HostWindowProvider"/>
+    public HostWindowProvider? HostWindowProvider { private get; set; }
 
     /// <summary></summary>
     public bool IsOpened

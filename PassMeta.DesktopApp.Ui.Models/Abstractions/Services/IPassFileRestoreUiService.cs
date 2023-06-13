@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Ui.Models.Providers;
 
 namespace PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 
@@ -15,5 +15,8 @@ public interface IPassFileRestoreUiService<TPassFile>
     /// <summary>
     /// Select required file and import its data.
     /// </summary>
-    Task<IResult> SelectAndRestoreAsync(TPassFile passFile, IPassFileContext<TPassFile> pfContext, Window currentWindow);
+    Task<IResult> SelectAndRestoreAsync(
+        TPassFile passFile,
+        IPassFileContext<TPassFile> pfContext,
+        HostWindowProvider windowProvider);
 }

@@ -10,6 +10,7 @@ using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
+using PassMeta.DesktopApp.Ui.Models.Providers;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 
@@ -33,11 +34,18 @@ public class PassFileExportUiService<TPassFile, TContent> : IPassFileExportUiSer
     }
 
     /// <inheritdoc />
-    public async Task SelectAndExportAsync(TPassFile passFile, Window currentWindow)
+    public async Task SelectAndExportAsync(TPassFile passFile, HostWindowProvider windowProvider)
     {
+        var win = windowProvider.Window;
+        if (win is null)
+        {
+            _logger.Error(GetType().Name + ": host window is currently null!");
+            return;
+        }
+
         try
         {
-            await SelectAndExportInternalAsync(passFile, currentWindow);
+            await SelectAndExportInternalAsync(passFile, win);
         }
         catch (Exception ex)
         {

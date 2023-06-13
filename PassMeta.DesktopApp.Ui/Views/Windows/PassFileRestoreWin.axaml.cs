@@ -1,5 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
@@ -24,10 +22,5 @@ public class PassFileRestoreWin : ReactiveWindow<PassFileRestoreWinModel>
         };
 
         Opened += async (_, _) => await ViewModel!.LoadAsync();
-    }
-
-    private void DataGrid_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
-    {
-        ViewModel!.ViewElements.DataGrid = (DataGrid)sender!;
     }
 }

@@ -137,7 +137,7 @@ public class PassFileRestoreWinModel : ReactiveObject
             if (passFileId == _passFile.Id)
             {
                 SelectedFile = FoundList.Last();
-                ViewElements.DataGrid!.ScrollIntoView(SelectedFile, ViewElements.DataGrid.Columns.First());
+                // TODO DataGrid!.ScrollIntoView(SelectedFile, DataGrid.Columns.First());
             }
         }
     }

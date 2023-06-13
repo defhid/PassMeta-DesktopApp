@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Utils;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models;
 
 namespace PassMeta.DesktopApp.Core.Utils;
 
@@ -28,7 +30,7 @@ public class Counter : ICounter
     }
 
     /// <inheritdoc />
-    public async Task<long> GetNextValueAsync(string name, long gt = 0, CancellationToken cancellationToken = default)
+    public async Task<IResult<long>> GetNextValueAsync(string name, long gt = 0, CancellationToken cancellationToken = default)
     {
         await _semaphore.WaitAsync(cancellationToken);
 
@@ -51,14 +53,14 @@ public class Counter : ICounter
                 _dict[name] = curr;
             }
 
-            throw;
+            return Result.Failure<long>();
         }
         finally
         {
             _semaphore.Release();
         }
 
-        return next;
+        return Result.Success(next);
     }
 
     private async ValueTask<Dictionary<string, long>> LoadAsync(CancellationToken cancellationToken)

@@ -7,6 +7,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Helpers;
 /// <summary>
 /// A helper for decrypting passfiles.
 /// </summary>
+/// <remarks>Singleton.</remarks>
 public interface IPassFileDecryptionHelper
 {
     /// <summary>

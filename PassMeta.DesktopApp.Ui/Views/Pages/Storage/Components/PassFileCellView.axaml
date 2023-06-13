@@ -4,23 +4,22 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
-  xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
-  xmlns:pf="clr-namespace:PassMeta.DesktopApp.Common.Models.Entities.PassFile;assembly=PassMeta.DesktopApp.Common"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Views.Previews"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PassFileCellView"
   mc:Ignorable="d"
   d:DesignWidth="260"
-  d:DesignHeight="60">
+  d:DesignHeight="40">
 
   <Design.DataContext>
-    <components:PassFileCellModel x:TypeArguments="pf:PwdPassFile" />
+    <previews:PassFileCellModelPreview />
   </Design.DataContext>
 
-  <Grid ColumnDefinitions="Auto,*" Margin="0 2 0 0">
+  <Grid ColumnDefinitions="Auto,*">
     <Border
       Grid.Column="0"
       CornerRadius="3,0,0,3"
-      Margin="1 0 0 0"
-      Height="39" Width="6"
+      Width="6"
       HorizontalAlignment="Left"
       Background="{Binding Color}" />
 
@@ -38,7 +37,7 @@
       Foreground="{Binding StateColor}"
       Opacity="{Binding Opacity}"
       IsVisible="{Binding FullMode}"
-      Command="{Binding OpenCommand}" />
+      Command="{Binding ShowCardCommand}" />
 
     <TextBlock
       Grid.Column="1"
@@ -47,5 +46,14 @@
       Opacity="{Binding Opacity}"
       Margin="5 0 0 0"
       VerticalAlignment="Center"/>
+    
+    <Grid.ContextMenu>
+      <ContextMenu IsVisible="{Binding !FullMode}">
+        <MenuItem
+          Header="{x:Static com:Resources.STORAGE__PASSFILE_CONTEXT__MORE_BTN}"
+          Command="{Binding ShowCardCommand}"/>
+      </ContextMenu>
+    </Grid.ContextMenu>
   </Grid>
+
 </UserControl>

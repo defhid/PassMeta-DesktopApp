@@ -25,8 +25,7 @@
                       AutoGenerateColumns="False"
                       CanUserResizeColumns="True"
                       IsReadOnly="True"
-                      Height="340"
-                      AttachedToVisualTree="DataGrid_OnAttachedToVisualTree">
+                      Height="340">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{x:Static com:Resources.PASSFILELIST__COLUMN_FILENAME}"
                                         Binding="{Binding Name}"

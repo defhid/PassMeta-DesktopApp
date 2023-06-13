@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Extra;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 
@@ -19,6 +20,11 @@ public interface IPassFileContext : IDisposable
     PassFileType PassFileType { get; }
 
     /// <summary>
+    /// Get current passfile list.
+    /// </summary>
+    IEnumerable<PassFile> CurrentList { get; }
+
+    /// <summary>
     /// Has any added/changed/deleted passfile?
     /// </summary>
     bool AnyChanged { get; }
@@ -27,6 +33,13 @@ public interface IPassFileContext : IDisposable
     /// Represents <see cref="AnyChanged"/>.
     /// </summary>
     IObservable<bool> AnyChangedSource { get; }
+
+    /// <summary>
+    /// Load <see cref="CurrentList"/> if it hasn't been loaded yet,
+    /// otherwise execute <see cref="Rollback"/>.
+    /// </summary>
+    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
+    ValueTask<IResult> LoadListAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Save all changes.
@@ -47,21 +60,14 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     /// <summary>
     /// Get current passfile list.
     /// </summary>
-    IEnumerable<TPassFile> CurrentList { get; }
-
-    /// <summary>
-    /// Load <see cref="CurrentList"/> if it hasn't been loaded yet,
-    /// otherwise execute <see cref="IPassFileContext.Rollback"/>.
-    /// </summary>
-    /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
-    ValueTask<IResult> LoadListAsync(CancellationToken cancellationToken = default);
+    new IEnumerable<TPassFile> CurrentList { get; }
 
     /// <summary>
     /// Load passfile encrypted content of its current version.
     /// </summary>
     /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
     ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Load passfile encrypted content of its current version
     /// or encrypt current decrypted content.
@@ -72,7 +78,7 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     /// <summary>
     /// Create a new passfile with local id, add it to <see cref="CurrentList"/>.
     /// </summary>
-    ValueTask<TPassFile> CreateAsync(CancellationToken cancellationToken = default);
+    ValueTask<IResult<TPassFile>> CreateAsync(PassFileCreationArgs args, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Add <paramref name="originPassFile"/> to <see cref="CurrentList"/>,

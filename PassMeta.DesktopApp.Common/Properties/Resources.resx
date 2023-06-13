@@ -389,7 +389,7 @@ try another keywords...</value>
         <value>Input NEW passphrase</value>
     </data>
     <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
-        <value>Passphrase successfully changed!</value>
+        <value>Passphrase was successfully changed!</value>
     </data>
     <data name="UI__COPY" xml:space="preserve">
         <value>Copy</value>
@@ -424,8 +424,8 @@ try another keywords...</value>
     <data name="STORAGE__ITEM_TOOLTIP__DELETE" xml:space="preserve">
         <value>Delete</value>
     </data>
-    <data name="STORAGE__PASSFILE_CONTEXT__EDIT_BTN" xml:space="preserve">
-        <value>Edit</value>
+    <data name="STORAGE__PASSFILE_CONTEXT__MORE_BTN" xml:space="preserve">
+        <value>More...</value>
     </data>
     <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
         <value>Refresh</value>
@@ -670,7 +670,7 @@ try another keywords...</value>
     <data name="SETTINGS__DEV_MODE" xml:space="preserve">
         <value>Developer mode</value>
     </data>
-    <data name="PASSCONTEXT_ERR" xml:space="preserve">
+    <data name="PASSCONTEXT__ERR_OTHER" xml:space="preserve">
         <value>Passfile context manager error (see logs)</value>
     </data>
     <data name="DICT__PASSFILE" xml:space="preserve">
@@ -693,5 +693,17 @@ try another keywords...</value>
     </data>
     <data name="STORAGE__SECTION_LABEL__URL" xml:space="preserve">
         <value>URL</value>
+    </data>
+    <data name="PASSCONTEXT__ERR_EMPTY_PASSPHRASE" xml:space="preserve">
+        <value>Passphrase is empty</value>
+    </data>
+    <data name="STORAGE__ASK_PASSPHRASE_FOR_PASSFILE" xml:space="preserve">
+        <value>Input passphrase for passfile {0}</value>
+    </data>
+    <data name="PASSFILE__INFO_PASSPHRASE_NOT_CHANGED" xml:space="preserve">
+        <value>Passphrase was not changed!</value>
+    </data>
+    <data name="DIALOG__DEFAULT_WARNING_TITLE" xml:space="preserve">
+        <value>Warning</value>
     </data>
 </root>

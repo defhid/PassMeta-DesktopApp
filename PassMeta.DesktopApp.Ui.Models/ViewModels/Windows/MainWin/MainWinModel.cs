@@ -9,6 +9,7 @@ using Avalonia.Threading;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
 using ReactiveUI;
@@ -53,6 +54,12 @@ public sealed class MainWinModel : ReactiveObject, IScreen, IActivatableViewMode
 
             MainPane.Activator.Activate().DisposeWith(disposables);
         });
+    }
+
+    /// <inheritdoc cref="HostWindowProvider"/>
+    public HostWindowProvider? HostWindowProvider
+    {
+        set => MainPane.HostWindowProvider = value;
     }
 
     /// <inheritdoc />

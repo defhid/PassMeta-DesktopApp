@@ -1,10 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models;
@@ -55,12 +53,13 @@ public class DialogService : IDialogService
                     _logger.Error(ex, "Deferred dialog showing failed");
                 }
             }
+
             _deferred.Clear();
         }
     }
 
     /// <inheritdoc />
-    public void ShowInfo(string message, string? title = null, string? more = null, 
+    public void ShowInfo(string message, string? title = null, string? more = null,
         DialogPresenter defaultPresenter = DialogPresenter.PopUp)
     {
         CallOrDeffer(() =>
@@ -84,8 +83,32 @@ public class DialogService : IDialogService
         });
     }
 
+    public void ShowWarning(string message, string? title = null, string? more = null,
+        DialogPresenter defaultPresenter = DialogPresenter.PopUp)
+    {
+        CallOrDeffer(() =>
+        {
+            if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
+            {
+                ShowNotification(new Notification(title,
+                    message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
+                    NotificationType.Warning, TimeSpan.FromSeconds(2.5)));
+            }
+            else
+            {
+                ShowDialog(new DialogWinModel(
+                    title ?? Resources.DIALOG__DEFAULT_WARNING_TITLE,
+                    message,
+                    more,
+                    new[] { DialogButton.Close },
+                    DialogWindowIcon.Failure,
+                    null));
+            }
+        });
+    }
+
     /// <inheritdoc />
-    public void ShowError(string message, string? title = null, string? more = null, 
+    public void ShowError(string message, string? title = null, string? more = null,
         DialogPresenter defaultPresenter = DialogPresenter.PopUp)
     {
         CallOrDeffer(() =>
@@ -112,7 +135,7 @@ public class DialogService : IDialogService
     }
 
     /// <inheritdoc />
-    public void ShowFailure(string message, string? title = null, string? more = null, 
+    public void ShowFailure(string message, string? title = null, string? more = null,
         DialogPresenter defaultPresenter = DialogPresenter.Window)
     {
         CallOrDeffer(() =>
@@ -173,7 +196,7 @@ public class DialogService : IDialogService
 
         return Result.From(dialog.ViewModel!.Result is DialogButton.Ok, value ?? string.Empty);
     }
-        
+
     /// <inheritdoc />
     /// <remarks>Use only when the main window has been rendered.</remarks>
     public async Task<IResult<string>> AskPasswordAsync(string message, string? title = null)
@@ -189,7 +212,7 @@ public class DialogService : IDialogService
             new TextInputBox(true, "", "", '*')));
 
         var value = ((DialogWinModel)dialog.DataContext!).TextInputBox.Value;
-            
+
         return Result.From(dialog.ViewModel!.Result is DialogButton.Ok, value ?? string.Empty);
     }
 
@@ -200,9 +223,9 @@ public class DialogService : IDialogService
             shower();
             return;
         }
-            
+
         var added = false;
-                
+
         lock (_deferred)
         {
             if (App.App.MainWindow is null)
@@ -214,7 +237,7 @@ public class DialogService : IDialogService
 
         if (!added) shower();
     }
-        
+
     private void ShowNotification(INotification context)
     {
         NotificationManager!.Show(context);
@@ -223,7 +246,7 @@ public class DialogService : IDialogService
     private void ShowDialog(DialogWinModel context)
     {
         var dialog = new DialogWindow { DataContext = context };
-            
+
         dialog.CorrectMainWindowFocusWhileOpened();
 
         dialog.Closing += (_, _) => TryRemoveOpened(dialog);
@@ -239,7 +262,7 @@ public class DialogService : IDialogService
             TryRemoveOpened(dialog);
         }
     }
-        
+
     private async Task<DialogWindow> ShowDialogAndWaitAsync(DialogWinModel context)
     {
         var dialog = new DialogWindow { DataContext = context };
@@ -264,7 +287,7 @@ public class DialogService : IDialogService
             App.App.MainWindow!.IsEnabled = false;
         }
     }
-        
+
     private void TryRemoveOpened(Window dialog)
     {
         lock (_opened)

@@ -16,6 +16,7 @@ using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
+using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Views.Windows;
 
 namespace PassMeta.DesktopApp.Ui.Services;
@@ -35,11 +36,21 @@ public class PwdPassFileMergeUiService : IPassFileMergeUiService<PwdPassFile>
     }
 
     /// <inheritdoc />
-    public async Task<IResult> LoadRemoteAndMergeAsync(PwdPassFile passFile, IPassFileContext<PwdPassFile> context, Window currentWindow)
+    public async Task<IResult> LoadRemoteAndMergeAsync(
+        PwdPassFile passFile,
+        IPassFileContext<PwdPassFile> context,
+        HostWindowProvider windowProvider)
     {
+        var win = windowProvider.Window;
+        if (win is null)
+        {
+            _logger.Error(GetType().Name + ": host window is currently null!");
+            return Result.Failure();
+        }
+
         try
         {
-            var result = await ProcessPwdPassFile(passFile, currentWindow);
+            var result = await ProcessPwdPassFile(passFile, win);
             if (result.Bad) return result;
                 
             var updateResult = context.UpdateContent(passFile);

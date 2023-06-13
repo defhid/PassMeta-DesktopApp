@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Subjects;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -20,6 +21,7 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Extra;
 
 namespace PassMeta.DesktopApp.Core.Utils.PassFileContext;
 
@@ -76,14 +78,20 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     public IObservable<bool> AnyChangedSource => _anyChangedSource;
 
     /// <inheritdoc />
-    public IEnumerable<TPassFile> CurrentList => (_initialized 
+    IEnumerable<PassFile> IPassFileContext.CurrentList => GetCurrentList();
+
+    /// <inheritdoc />
+    IEnumerable<TPassFile> IPassFileContext<TPassFile>.CurrentList => GetCurrentList();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private IEnumerable<TPassFile> GetCurrentList() => (_initialized
         ? _states.Values
             .Select(x => x.Current)
             .Where(x => x is not null)
-        : throw new InvalidOperationException($"{nameof(CurrentList)} is accessed before loading!"))!;
+        : throw new InvalidOperationException("Current list is accessed before loading!"))!;
 
     /// <inheritdoc />
-    public async ValueTask<IResult> LoadListAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<IResult> LoadListAsync(CancellationToken cancellationToken)
     {
         if (_initialized)
         {
@@ -114,7 +122,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     }
 
     /// <inheritdoc />
-    public async ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
+    public async ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken)
     {
         if (!FindStateWhereCurrentIs(passFile, out var state))
         {
@@ -136,7 +144,8 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     }
 
     /// <inheritdoc />
-    public async ValueTask<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default)
+    public async ValueTask<IResult> ProvideEncryptedContentAsync(TPassFile passFile,
+        CancellationToken cancellationToken)
     {
         if (passFile.Content.Decrypted is not null)
         {
@@ -156,13 +165,26 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     }
 
     /// <inheritdoc />
-    public async ValueTask<TPassFile> CreateAsync(CancellationToken cancellationToken = default)
+    async ValueTask<IResult<TPassFile>> IPassFileContext<TPassFile>.CreateAsync(
+        PassFileCreationArgs args,
+        CancellationToken cancellationToken)
     {
+        if (string.IsNullOrEmpty(args.PassPhrase))
+        {
+            return UnexpectedError("Passphrase is empty").WithNullData<TPassFile>();
+        }
+
         const string idSequenceName = "pfid";
+
+        var nextIdResult = await _counter.GetNextValueAsync(idSequenceName, 0L, cancellationToken);
+        if (nextIdResult.Bad)
+        {
+            return UnexpectedError("Id generation failed").WithNullData<TPassFile>();
+        }
 
         var dto = new PassFileLocalDto
         {
-            Id = -await _counter.GetNextValueAsync(idSequenceName, 0L, cancellationToken),
+            Id = -nextIdResult.Data,
             UserId = _userContext.UserId!.Value,
             Type = PassFileType,
             Name = Resources.PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME,
@@ -172,12 +194,15 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
             Version = 1
         };
 
+        var content = new PassFileContent<TContent>(new TContent(), args.PassPhrase);
+
         var state = new PassFileState(null, _mapper.Map<PassFileLocalDto, TPassFile>(dto));
+        state.Current!.Content = content;
 
         _states[state.Current!.Id] = state;
         _anyChangedSource.OnNext(true);
 
-        return state.Current;
+        return Result.Success(state.Current);
     }
 
     /// <inheritdoc />
@@ -324,7 +349,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
             if (state.Current.VersionChangedOn != state.Source?.VersionChangedOn)
             {
-                var res = await ProvideEncryptedContentAsync(state.Current);
+                var res = await ProvideEncryptedContentAsync(state.Current, CancellationToken.None);
                 if (res.Bad) return res;
 
                 toSaveContent.Add(state.Current);
@@ -455,7 +480,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
         if (show)
         {
-            _dialogService.ShowError(Resources.PASSCONTEXT_ERR, more: log);
+            _dialogService.ShowError(Resources.PASSCONTEXT__ERR_OTHER, more: log);
         }
 
         return Result.Failure();

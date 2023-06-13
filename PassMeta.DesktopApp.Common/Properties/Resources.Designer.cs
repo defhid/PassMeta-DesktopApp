@@ -483,6 +483,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string DIALOG__DEFAULT_WARNING_TITLE {
+            get {
+                return ResourceManager.GetString("DIALOG__DEFAULT_WARNING_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to passfile.
         /// </summary>
         public static string DICT__PASSFILE {
@@ -906,20 +915,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Saved locally.
+        ///   Looks up a localized string similar to Passphrase is empty.
         /// </summary>
-        public static string PASSCONTEXT__INFO_COMMITED {
+        public static string PASSCONTEXT__ERR_EMPTY_PASSPHRASE {
             get {
-                return ResourceManager.GetString("PASSCONTEXT__INFO_COMMITED", resourceCulture);
+                return ResourceManager.GetString("PASSCONTEXT__ERR_EMPTY_PASSPHRASE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Passfile context manager error (see logs).
         /// </summary>
-        public static string PASSCONTEXT_ERR {
+        public static string PASSCONTEXT__ERR_OTHER {
             get {
-                return ResourceManager.GetString("PASSCONTEXT_ERR", resourceCulture);
+                return ResourceManager.GetString("PASSCONTEXT__ERR_OTHER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saved locally.
+        /// </summary>
+        public static string PASSCONTEXT__INFO_COMMITED {
+            get {
+                return ResourceManager.GetString("PASSCONTEXT__INFO_COMMITED", resourceCulture);
             }
         }
         
@@ -1131,11 +1149,20 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Passphrase successfully changed!.
+        ///   Looks up a localized string similar to Passphrase was successfully changed!.
         /// </summary>
         public static string PASSFILE__INFO_PASSPHRASE_CHANGED {
             get {
                 return ResourceManager.GetString("PASSFILE__INFO_PASSPHRASE_CHANGED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passphrase was not changed!.
+        /// </summary>
+        public static string PASSFILE__INFO_PASSPHRASE_NOT_CHANGED {
+            get {
+                return ResourceManager.GetString("PASSFILE__INFO_PASSPHRASE_NOT_CHANGED", resourceCulture);
             }
         }
         
@@ -1752,6 +1779,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Input passphrase for passfile {0}.
+        /// </summary>
+        public static string STORAGE__ASK_PASSPHRASE_FOR_PASSFILE {
+            get {
+                return ResourceManager.GetString("STORAGE__ASK_PASSPHRASE_FOR_PASSFILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you really want to delete section &apos;{0}&apos;?.
         /// </summary>
         public static string STORAGE__CONFIRM_DELETE_SECTION {
@@ -1906,11 +1942,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit.
+        ///   Looks up a localized string similar to More....
         /// </summary>
-        public static string STORAGE__PASSFILE_CONTEXT__EDIT_BTN {
+        public static string STORAGE__PASSFILE_CONTEXT__MORE_BTN {
             get {
-                return ResourceManager.GetString("STORAGE__PASSFILE_CONTEXT__EDIT_BTN", resourceCulture);
+                return ResourceManager.GetString("STORAGE__PASSFILE_CONTEXT__MORE_BTN", resourceCulture);
             }
         }
         
