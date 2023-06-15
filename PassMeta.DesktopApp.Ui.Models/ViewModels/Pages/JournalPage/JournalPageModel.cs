@@ -60,16 +60,6 @@ public class JournalPageModel : PageViewModel
             }));
     }
 
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public JournalPageModel() : base(null!)
-    {
-    }
-
-    #endregion
-
     /// <summary></summary>
     public IReadOnlyList<int> PageList => _pageList;
 

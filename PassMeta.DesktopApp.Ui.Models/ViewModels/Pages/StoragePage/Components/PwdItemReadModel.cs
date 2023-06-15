@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,26 +27,11 @@ public class PwdItemReadModel : ReactiveObject
     {
         _usernames = item.Usernames.Select(x => x.Trim()).Where(x => x != string.Empty).ToList();
         Password = item.Password;
-        Remark = item.Remark;
+        Remark = string.IsNullOrEmpty(item.Remark) ? null : $"#{item.Remark}";
 
         CopyUsernameCommand = ReactiveCommand.CreateFromTask(CopyUsernameAsync);
         CopyPasswordCommand = ReactiveCommand.CreateFromTask(CopyPasswordAsync);
     }
-
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public PwdItemReadModel() : this(new PwdItem
-    {
-        Usernames = new[] { "example_login1", "example_login2" },
-        Password = "example_pwd", 
-        Remark = "example_remark"
-    })
-    {
-    }
-
-    #endregion
 
     /// <summary></summary>
     public string Usernames => string.Join('\n', _usernames);
@@ -56,10 +40,10 @@ public class PwdItemReadModel : ReactiveObject
     public string Password { get; }
     
     /// <summary></summary>
-    public string Remark { get; }
+    public string? Remark { get; }
 
     /// <summary></summary>
-    public bool IsCommentTextVisible => string.IsNullOrEmpty(Remark);
+    public bool IsCommentTextVisible => Remark is not null;
     
     /// <summary></summary>
     public char? PasswordChar => _appConfig.Current.HidePasswords ? '*' : null;

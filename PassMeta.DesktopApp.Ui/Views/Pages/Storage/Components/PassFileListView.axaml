@@ -5,7 +5,7 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
-  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Views.Previews"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PassFileListView"
   mc:Ignorable="d"
   d:DesignWidth="250"

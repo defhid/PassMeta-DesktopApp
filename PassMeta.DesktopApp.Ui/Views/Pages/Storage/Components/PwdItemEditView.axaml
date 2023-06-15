@@ -3,14 +3,14 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:components1="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
   xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   mc:Ignorable="d" d:DesignWidth="400"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdItemEditView">
   <Design.DataContext>
-    <components:PwdItemEditModel />
+    <previews:PwdItemEditModelPreview />
   </Design.DataContext>
 
   <Grid RowDefinitions="Auto,Auto,Auto">

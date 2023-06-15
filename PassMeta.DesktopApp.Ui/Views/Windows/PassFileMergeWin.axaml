@@ -3,9 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-        xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
-        xmlns:passFileMergeWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileMergeWin;assembly=PassMeta.DesktopApp.Ui.Models"
         xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+        xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
         x:Class="PassMeta.DesktopApp.Ui.Views.Windows.PassFileMergeWin"
         mc:Ignorable="d"
         Width="900"
@@ -17,7 +16,7 @@
         WindowStartupLocation="CenterOwner">
     
     <Design.DataContext>
-        <passFileMergeWin:PassFileMergeWinModel></passFileMergeWin:PassFileMergeWinModel>
+        <previews:PassFileMergeWinModelPreview />
     </Design.DataContext>
     
     <Grid ColumnDefinitions="2*,*,2*">

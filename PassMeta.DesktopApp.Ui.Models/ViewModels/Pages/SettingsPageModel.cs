@@ -47,16 +47,6 @@ public class SettingsPageModel : PageViewModel
         SaveCommand = ReactiveCommand.CreateFromTask(SaveAsync);
     }
 
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public SettingsPageModel() : this(null!)
-    {
-    }
-
-    #endregion
-
     /// <summary></summary>
     public IReadOnlyList<AppCulture> Cultures => AppCulture.All;
 

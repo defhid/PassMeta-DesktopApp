@@ -4,14 +4,14 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-  xmlns:journalPage="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.JournalPage;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.JournalView"
   mc:Ignorable="d"
   d:DesignWidth="800"
   d:DesignHeight="450">
 
   <Design.DataContext>
-    <journalPage:JournalPageModel />
+    <previews:JournalPageModelPreview />
   </Design.DataContext>
 
   <Grid RowDefinitions="52,*">

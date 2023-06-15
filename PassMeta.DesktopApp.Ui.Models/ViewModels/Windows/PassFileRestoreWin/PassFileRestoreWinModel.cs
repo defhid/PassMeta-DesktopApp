@@ -64,16 +64,6 @@ public class PassFileRestoreWinModel : ReactiveObject
         CloseCommand = ReactiveCommand.Create(Close);
     }
 
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public PassFileRestoreWinModel()
-    {
-    }
-
-    #endregion
-
     public async Task LoadAsync()
     {
         FoundList.Clear();

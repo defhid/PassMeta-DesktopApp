@@ -3,13 +3,13 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:componentsVm="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:componentsV="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdSectionEditView">
   <Design.DataContext>
-    <componentsVm:PwdSectionEditModel />
+    <previews:PwdSectionEditModelPreview />
   </Design.DataContext>
 
   <Grid>

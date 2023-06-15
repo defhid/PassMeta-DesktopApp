@@ -5,14 +5,13 @@ using Avalonia;
 using Avalonia.Layout;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Ui.Models.Constants;
-using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
 
 /// <summary>
 /// A button for main pane.
 /// </summary>
-public sealed class MainPaneButtonModel
+public class MainPaneButtonModel
 {
     /// <summary></summary>
     public IObservable<bool> IsActive { get; set; } = null!;
@@ -76,17 +75,4 @@ public sealed class MainPaneButtonModel
             ? 28
             : 20);
     }
-
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public MainPaneButtonModel() : this("Button", "P", Observable.Return(true))
-    {
-        IsActive = Observable.Return(false);
-        IsVisible = Observable.Return(true);
-        Command = ReactiveCommand.Create(() => { });
-    }
-
-    #endregion
 }

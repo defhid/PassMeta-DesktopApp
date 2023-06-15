@@ -149,8 +149,4 @@ public class PassFileMergeWinModel : ReactiveObject
         });
 
     #endregion
-        
-#pragma warning disable 8618
-    public PassFileMergeWinModel() {}
-#pragma warning restore 8618
 }

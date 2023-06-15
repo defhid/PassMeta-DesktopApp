@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using PassMeta.DesktopApp.Common.Abstractions.App;
@@ -25,16 +24,6 @@ public class AuthPageModel : PageViewModel
     public AuthPageModel(IScreen hostScreen) : base(hostScreen)
     {
     }
-
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public AuthPageModel() : this(null!)
-    {
-    }
-
-    #endregion
 
     /// <summary></summary>
     public string? Login { get; set; }

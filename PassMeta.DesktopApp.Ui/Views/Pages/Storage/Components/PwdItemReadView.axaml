@@ -3,19 +3,30 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   mc:Ignorable="d" d:DesignWidth="400"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdItemReadView">
+
   <Design.DataContext>
-    <components:PwdItemReadModel />
+    <previews:PwdItemReadModelPreview />
   </Design.DataContext>
 
   <Grid
     ColumnDefinitions="Auto,*,Auto"
-    RowDefinitions="Auto,Auto">
+    RowDefinitions="Auto,Auto,Auto">
     <TextBlock
       Grid.Row="0"
+      Grid.Column="1"
+      Opacity="0.7"
+      Margin="8 0 12 6"
+      FontStyle="Italic"
+      HorizontalAlignment="Right"
+      IsVisible="{Binding IsCommentTextVisible}"
+      Text="{Binding Remark}" />
+    
+    <TextBlock
+      Grid.Row="1"
       Grid.Column="0"
       Opacity="0.7"
       Margin="2 0 12 0"
@@ -25,7 +36,7 @@
       Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__WHAT}" />
 
     <TextBox
-      Grid.Row="0"
+      Grid.Row="1"
       Grid.Column="1"
       Margin="0 0 6 0"
       Padding="4"
@@ -39,7 +50,7 @@
       Focusable="False" />
 
     <Button
-      Grid.Row="0"
+      Grid.Row="1"
       Grid.Column="2"
       Margin="0 0 2 0"
       Content="&#xE8C8;"
@@ -50,7 +61,7 @@
       ToolTip.Placement="Left" />
 
     <TextBlock
-      Grid.Row="1"
+      Grid.Row="2"
       Grid.Column="0"
       Opacity="0.7"
       Margin="2 15 12 0"
@@ -60,7 +71,7 @@
       Text="{x:Static com:Resources.STORAGE__ITEM_LABEL__PASSWORD}" />
 
     <TextBox
-      Grid.Row="1"
+      Grid.Row="2"
       Grid.Column="1"
       Margin="0 10 6 0"
       Padding="4"
@@ -76,7 +87,7 @@
       Focusable="False" />
 
     <Button
-      Grid.Row="1"
+      Grid.Row="2"
       Grid.Column="2"
       Margin="0 10 2 0"
       Content="&#xE8C8;"

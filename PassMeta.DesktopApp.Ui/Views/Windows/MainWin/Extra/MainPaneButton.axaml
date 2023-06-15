@@ -1,12 +1,14 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:extra="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;assembly=PassMeta.DesktopApp.Ui.Models"
-             x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra.MainPaneButton"
-             IsVisible="{Binding IsVisible^}">
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra.MainPaneButton"
+  IsVisible="{Binding IsVisible^}">
+
   <Design.DataContext>
-    <extra:MainPaneButtonModel />
+    <previews:MainPaneButtonModelPreview />
   </Design.DataContext>
-  
+
   <Grid Height="40">
     <Button
       IsVisible="{Binding !IsActive^}"
@@ -33,6 +35,6 @@
       FontSize="{Binding FontSize^}"
       FontFamily="{Binding FontFamily^}"
       TextAlignment="{Binding HorizontalTextAlignment^}"
-      VerticalAlignment="Stretch"/>
+      VerticalAlignment="Stretch" />
   </Grid>
 </UserControl>

@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Models.Providers;
 

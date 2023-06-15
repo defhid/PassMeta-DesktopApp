@@ -84,16 +84,6 @@ public class LogsPageModel : PageViewModel
             .Select(_ => (FromDate, ToDate)).InvokeCommand(loadCommand);
     }
 
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public LogsPageModel() : this(null!)
-    {
-    }
-
-    #endregion
-
     /// <inheritdoc />
     public override ValueTask RefreshAsync()
     {

@@ -45,27 +45,6 @@ public class DialogWinModel : ReactiveObject
     /// <summary></summary>
     public DialogButton? Result { get; set; }
 
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public DialogWinModel()
-    {
-        Title = "Dialog Title";
-        WindowIcon = DialogWindowIcon.Hidden;
-        Text = "Dialog Text";
-        TextInputBox = new TextInputBox(false);
-        NumberInputBox = new NumberInputBox(false);
-        Buttons = new[]
-        {
-            new ResultButton(DialogButton.Yes),
-            new ResultButton(DialogButton.No),
-            new ResultButton(DialogButton.Cancel),
-        };
-    }
-
-    #endregion
-
     /// <summary></summary>
     public DialogWinModel(
         string title,

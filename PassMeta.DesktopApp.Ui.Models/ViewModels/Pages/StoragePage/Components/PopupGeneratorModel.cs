@@ -1,5 +1,4 @@
 using System;
-using System.Reactive.Linq;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Extensions;
@@ -34,16 +33,6 @@ public class PopupGeneratorModel : ReactiveObject
             Locator.Current.Resolve<IPassMetaRandomService>().GeneratePassword(
                 Length, IncludeDigits, IncludeLetters, IncludeLetters, IncludeSpecial)));
     }
-
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public PopupGeneratorModel() : this(Observable.Return(true), _ => {})
-    {
-    }
-
-    #endregion
 
     /// <summary></summary>
     public int Length

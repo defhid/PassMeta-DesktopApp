@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
@@ -18,35 +17,6 @@ public class PwdSectionReadModel : ReactiveObject
         WebsiteUrl = section.WebsiteUrl;
         Items = section.Items.Select(x => new PwdItemReadModel(x)).ToList();
     }
-
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public PwdSectionReadModel() : this(new PwdSection
-    {
-        Name = "Test name",
-        WebsiteUrl = "website@example.com",
-        Items = new List<PwdItem>
-        {
-            new()
-            {
-                Usernames = new[] { "example_login1", "example_login2" },
-                Password = "example_pwd",
-                Remark = "example_remark"
-            },
-            new()
-            {
-                Usernames = new[] { "example_login3" },
-                Password = "example_pwd",
-                Remark = "example_remark"
-            },
-        },
-    })
-    {
-    }
-
-    #endregion
 
     /// <summary></summary>
     public string Name { get; }

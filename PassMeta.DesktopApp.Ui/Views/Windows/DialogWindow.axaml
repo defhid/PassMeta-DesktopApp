@@ -5,6 +5,7 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:dialogWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.DialogWin;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   mc:Ignorable="d"
   Width="500"
   Height="150"
@@ -20,7 +21,7 @@
   WindowStartupLocation="CenterOwner">
 
   <Design.DataContext>
-    <dialogWin:DialogWinModel />
+    <previews:DialogWinModelPreview />
   </Design.DataContext>
 
   <Window.Resources>

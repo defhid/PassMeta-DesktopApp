@@ -5,14 +5,14 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
-  xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PopupGeneratorView"
   mc:Ignorable="d"
   d:DesignWidth="260"
   d:DesignHeight="100">
 
   <Design.DataContext>
-    <components:PopupGeneratorModel />
+    <previews:PopupGeneratorModelPreview />
   </Design.DataContext>
 
   <UserControl.Styles>

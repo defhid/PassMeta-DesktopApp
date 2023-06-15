@@ -4,7 +4,7 @@ using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Ui.Models.Constants;
 
-namespace PassMeta.DesktopApp.Ui.Views.Previews.Data;
+namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews.Data;
 
 /// <summary>
 /// Preview data.

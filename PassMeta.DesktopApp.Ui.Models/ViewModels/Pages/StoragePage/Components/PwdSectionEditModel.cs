@@ -20,7 +20,7 @@ public class PwdSectionEditModel : ReactiveObject
     public readonly Interaction<Unit, Unit> ScrollToBottom = new();
 
     /// <summary></summary>
-    private PwdSectionEditModel(Guid id)
+    protected PwdSectionEditModel(Guid id)
     {
         _id = id;
         Items = new ObservableCollection<PwdItemEditModel>();
@@ -35,30 +35,6 @@ public class PwdSectionEditModel : ReactiveObject
         };
         AddItemCommand = ReactiveCommand.Create(AddItem);
     }
-
-    #region preview
-
-    /// <summary></summary>
-    [Obsolete("PREVIEW constructor")]
-    public PwdSectionEditModel() : this(Guid.Empty)
-    {
-        Name = "Preview Name";
-        WebsiteUrl = "website.net";
-        Items.Add(PwdItemEditModel.From(new PwdItem
-        {
-            Usernames = new[] { "first" },
-            Password = "lalala",
-            Remark = "something",
-        }));
-        Items.Add(PwdItemEditModel.From(new PwdItem
-        {
-            Usernames = new[] { "second", "third", "forth" },
-            Password = "hahaha",
-            Remark = "my note",
-        }));
-    }
-
-    #endregion
 
     /// <summary></summary>
     public ReactCommand AddItemCommand { get; }
