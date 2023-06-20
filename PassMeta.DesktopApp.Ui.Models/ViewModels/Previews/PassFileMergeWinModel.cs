@@ -7,7 +7,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PassFileMergeWinModelPreview : PassFileMergeWinModel
 {
-    /// <summary></summary>
     public PassFileMergeWinModelPreview() : base(
         new PwdPassFileMerge(
             PassFilePreviewData.GetPassFile(),

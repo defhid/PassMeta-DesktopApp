@@ -9,7 +9,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PassFileCellModelPreview : PassFileCellModel<PwdPassFile>
 {
-    /// <summary></summary>
     public PassFileCellModelPreview() 
         : base(
             PassFilePreviewData.GetPassFile<PwdPassFile>(), 

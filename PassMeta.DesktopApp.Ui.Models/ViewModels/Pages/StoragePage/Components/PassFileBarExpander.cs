@@ -33,7 +33,7 @@ public class PassFileBarExpander : ReactiveObject
             IsOpened = isOpened;
     }
 
-    public DisabledAutoExpanding DisableAutoExpandingScoped() => new DisabledAutoExpanding(this).Start();
+    public IDisposable DisableAutoExpandingScoped() => new DisabledAutoExpanding(this).Start();
         
     public sealed class DisabledAutoExpanding : IDisposable
     {
@@ -53,8 +53,6 @@ public class PassFileBarExpander : ReactiveObject
             _expander._autoExpandingFreeze = true;
             return this;
         }
-
-        public void Stop() => Dispose();
 
         public void Dispose()
         {

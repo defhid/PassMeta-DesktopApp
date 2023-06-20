@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using PassMeta.DesktopApp.Common.Enums;
 
 namespace PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 
@@ -33,6 +34,10 @@ public class PwdSection
     /// </summary>
     [JsonPropertyName("it")]
     public List<PwdItem> Items { get; set; }
+
+    /// <inheritdoc cref="PwdSectionMark"/>
+    [JsonIgnore]
+    public PwdSectionMark Mark;
 
     /// <summary></summary>
     public PwdSection()

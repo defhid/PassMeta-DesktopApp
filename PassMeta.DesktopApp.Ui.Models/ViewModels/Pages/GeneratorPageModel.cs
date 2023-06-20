@@ -28,7 +28,6 @@ public class GeneratorPageModel : PageViewModel
     private string _result = string.Empty;
     private int _length;
 
-    /// <summary></summary>
     public GeneratorPageModel(IScreen hostScreen) : base(hostScreen)
     {
         _length = _appConfig.Current.DefaultPasswordLength;
@@ -41,55 +40,46 @@ public class GeneratorPageModel : PageViewModel
             .Select(res => res != string.Empty);
     }
 
-    /// <summary></summary>
     public int Length
     {
         get => _length;
         set => this.RaiseAndSetIfChanged(ref _length, value);
     }
 
-    /// <summary></summary>
     public bool IncludeDigits
     {
         get => _presetsCache.IncludeDigits;
         set => _presetsCache.IncludeDigits = value;
     }
 
-    /// <summary></summary>
     public bool IncludeLowercase
     {
         get => _presetsCache.IncludeLowercase;
         set => _presetsCache.IncludeLowercase = value;
     }
 
-    /// <summary></summary>
     public bool IncludeUppercase
     {
         get => _presetsCache.IncludeUppercase;
         set => _presetsCache.IncludeUppercase = value;
     }
 
-    /// <summary></summary>
     public bool IncludeSpecial
     {
         get => _presetsCache.IncludeSpecial;
         set => _presetsCache.IncludeSpecial = value;
     }
 
-    /// <summary></summary>
     public string Result
     {
         get => _result;
         set => this.RaiseAndSetIfChanged(ref _result, value);
     }
 
-    /// <summary></summary>
     public IObservable<bool> Generated { get; }
 
-    /// <summary></summary>
     public ICommand GenerateCommand { get; }
 
-    /// <summary></summary>
     public ICommand CopyCommand { get; }
 
     /// <inheritdoc />

@@ -5,7 +5,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class GeneratorPageModelPreview : GeneratorPageModel
 {
-    /// <summary></summary>
     public GeneratorPageModelPreview() : base(null!)
     {
     }

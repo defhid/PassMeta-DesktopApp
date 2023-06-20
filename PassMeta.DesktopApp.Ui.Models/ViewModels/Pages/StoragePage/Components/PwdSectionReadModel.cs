@@ -10,7 +10,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 /// </summary>
 public class PwdSectionReadModel : ReactiveObject
 {
-    /// <summary></summary>
     public PwdSectionReadModel(PwdSection section)
     {
         Name = section.Name;
@@ -18,18 +17,13 @@ public class PwdSectionReadModel : ReactiveObject
         Items = section.Items.Select(x => new PwdItemReadModel(x)).ToList();
     }
 
-    /// <summary></summary>
     public string Name { get; }
 
-    /// <summary></summary>
     public string WebsiteUrl { get; }
 
-    /// <summary></summary>
     public List<PwdItemReadModel> Items { get; }
 
-    /// <summary></summary>
     public bool HasWebsiteUrl => !string.IsNullOrWhiteSpace(WebsiteUrl);
 
-    /// <summary></summary>
     public bool HasItems => Items.Count == 0;
 }

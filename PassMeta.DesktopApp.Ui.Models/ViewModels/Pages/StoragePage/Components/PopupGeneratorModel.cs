@@ -16,7 +16,6 @@ public class PopupGeneratorModel : ReactiveObject
 {
     private int _length;
 
-    /// <summary></summary>
     public PopupGeneratorModel(IObservable<bool> isOpen, Action<string> apply)
     {
         IsOpen = isOpen;
@@ -34,25 +33,19 @@ public class PopupGeneratorModel : ReactiveObject
                 Length, IncludeDigits, IncludeLetters, IncludeLetters, IncludeSpecial)));
     }
 
-    /// <summary></summary>
     public int Length
     {
         get => _length;
         set => this.RaiseAndSetIfChanged(ref _length, value);
     }
 
-    /// <summary></summary>
     public bool IncludeDigits { get; set; }
 
-    /// <summary></summary>
     public bool IncludeLetters { get; set; }
 
-    /// <summary></summary>
     public bool IncludeSpecial { get; set; }
 
-    /// <summary></summary>
     public IObservable<bool> IsOpen { get; }
 
-    /// <summary></summary>
     public ReactCommand ResultApplyCommand { get; }
 }

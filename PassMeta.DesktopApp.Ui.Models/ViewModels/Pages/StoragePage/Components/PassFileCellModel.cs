@@ -25,10 +25,8 @@ public class PassFileCellModel<TPassFile> : ReactiveObject
 
     private readonly ObservableAsPropertyHelper<bool> _fullMode;
 
-    /// <summary></summary>
     public readonly TPassFile PassFile;
 
-    /// <summary></summary>
     public PassFileCellModel(
         TPassFile passFile,
         IObservable<bool> fullModeObservable,
@@ -43,10 +41,8 @@ public class PassFileCellModel<TPassFile> : ReactiveObject
         fullModeObservable.Subscribe(_ => this.RaisePropertyChanged(nameof(Name)));
     }
 
-    /// <summary></summary>
     public bool FullMode => _fullMode.Value;
 
-    /// <summary></summary>
     public string Name => PassFile.IsLocalDeleted()
         ? '~' + (_fullMode.Value
             ? PassFile.Name
@@ -55,19 +51,14 @@ public class PassFileCellModel<TPassFile> : ReactiveObject
             ? PassFile.Name
             : PassFile.Name[..2];
 
-    /// <summary></summary>
     public ISolidColorBrush? Color => PassFile.GetPassFileColor().Brush;
 
-    /// <summary></summary>
     public double Opacity => PassFile.IsLocalDeleted() ? 0.6d : 1d;
 
-    /// <summary></summary>
     public ISolidColorBrush StateColor => PassFile.GetStateColor();
 
-    /// <summary></summary>
     public ReactCommand ShowCardCommand { get; }
 
-    /// <summary></summary>
     public async Task ShowCardAsync()
     {
         await _openUiService.ShowInfoAsync(PassFile, _windowProvider);

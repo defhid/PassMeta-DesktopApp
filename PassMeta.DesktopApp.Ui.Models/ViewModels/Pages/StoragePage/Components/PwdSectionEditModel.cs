@@ -16,10 +16,8 @@ public class PwdSectionEditModel : ReactiveObject
 {
     private readonly Guid _id;
 
-    /// <summary></summary>
     public readonly Interaction<Unit, Unit> ScrollToBottom = new();
 
-    /// <summary></summary>
     protected PwdSectionEditModel(Guid id)
     {
         _id = id;
@@ -36,22 +34,16 @@ public class PwdSectionEditModel : ReactiveObject
         AddItemCommand = ReactiveCommand.Create(AddItem);
     }
 
-    /// <summary></summary>
     public ReactCommand AddItemCommand { get; }
 
-    /// <summary></summary>
     public string? Name { get; set; }
 
-    /// <summary></summary>
     public string? WebsiteUrl { get; set; }
 
-    /// <summary></summary>
     public ObservableCollection<PwdItemEditModel> Items { get; }
 
-    /// <summary></summary>
     public bool HasItems => Items.Count == 0;
-    
-    /// <summary></summary>
+
     public PwdSection ToSection() => new()
     {
         Id = _id,
@@ -63,7 +55,6 @@ public class PwdSectionEditModel : ReactiveObject
             .ToList()
     };
 
-    /// <summary></summary>
     public static PwdSectionEditModel From(PwdSection section)
     {
         var vm = new PwdSectionEditModel(section.Id)
@@ -79,13 +70,6 @@ public class PwdSectionEditModel : ReactiveObject
 
         return vm;
     }
-
-    /// <summary></summary>
-    public static PwdSectionEditModel Empty() => new(Guid.NewGuid())
-    {
-        Name = string.Empty,
-        WebsiteUrl = string.Empty
-    };
 
     private void AddItem()
     {

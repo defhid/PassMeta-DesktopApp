@@ -13,37 +13,26 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
 /// </summary>
 public class MainPaneButtonModel
 {
-    /// <summary></summary>
     public IObservable<bool> IsActive { get; set; } = null!;
 
-    /// <summary></summary>
     public IObservable<bool> IsVisible { get; init; } = null!;
 
-    /// <summary></summary>
     public IObservable<string> Content { get; }
 
-    /// <summary></summary>
     public IObservable<int> Width { get; }
 
-    /// <summary></summary>
     public IObservable<Thickness> ButtonPadding { get; }
 
-    /// <summary></summary>
     public IObservable<HorizontalAlignment> HorizontalContentAlignment { get; }
 
-    /// <summary></summary>
     public IObservable<TextAlignment> HorizontalTextAlignment { get; }
 
-    /// <summary></summary>
     public IObservable<FontFamily> FontFamily { get; }
 
-    /// <summary></summary>
     public IObservable<int> FontSize { get; }
 
-    /// <summary></summary>
     public ICommand Command { get; set; } = null!;
 
-    /// <summary></summary>
     public MainPaneButtonModel(
         string text,
         string icon,

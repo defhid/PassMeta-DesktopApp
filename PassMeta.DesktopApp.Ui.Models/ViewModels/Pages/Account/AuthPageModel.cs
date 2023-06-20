@@ -9,7 +9,7 @@ using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using ReactiveUI;
 using Splat;
 
-namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
+namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
 
 /// <summary>
 /// Authorization page ViewModel.
@@ -20,15 +20,12 @@ public class AuthPageModel : PageViewModel
     private readonly IAuthService _authService = Locator.Current.Resolve<IAuthService>();
     private readonly AppLoading _appLoading = Locator.Current.Resolve<AppLoading>();
 
-    /// <summary></summary>
     public AuthPageModel(IScreen hostScreen) : base(hostScreen)
     {
     }
 
-    /// <summary></summary>
     public string? Login { get; set; }
 
-    /// <summary></summary>
     public string? Password { get; set; }
 
     /// <summary>

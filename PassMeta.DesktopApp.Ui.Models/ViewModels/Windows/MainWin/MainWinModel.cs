@@ -28,7 +28,6 @@ public sealed class MainWinModel : ReactiveObject, IScreen, IActivatableViewMode
     private ObservableAsPropertyHelper<ContentControl[]?>? _rightBarButtons;
     private bool _preloaderEnabled = true;
 
-    /// <summary></summary>
     public MainWinModel()
     {
         Mode = new AppMode(_isOnlineSource);
@@ -68,19 +67,14 @@ public sealed class MainWinModel : ReactiveObject, IScreen, IActivatableViewMode
     /// <inheritdoc />
     public RoutingState Router { get; } = new();
 
-    /// <summary></summary>
     public AppMode Mode { get; }
 
-    /// <summary></summary>
     public MainPane MainPane { get; }
 
-    /// <summary></summary>
     public ContentControl[] RightBarButtons => _rightBarButtons?.Value ?? Array.Empty<ContentControl>();
 
-    /// <summary></summary>
     public ICommand RefreshCurrentPageCommand => ReactiveCommand.CreateFromTask(RefreshCurrentPageAsync);
 
-    /// <summary></summary>
     public bool PreloaderEnabled
     {
         get => _preloaderEnabled;

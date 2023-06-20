@@ -3,13 +3,16 @@ using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 
-public class PassFileSectionBtn : ReactiveObject
-{
+/// <summary>
+/// <see cref="PwdSection"/> cell ViewModel.
+/// </summary>
+public class PwdSectionCellModel : ReactiveObject
+{    
     public readonly PwdSection Section;
 
     public string Name { get; set; }
 
-    public PassFileSectionBtn(PwdSection section)
+    public PwdSectionCellModel(PwdSection section)
     {
         Section = section;
         Name = Section.Name;

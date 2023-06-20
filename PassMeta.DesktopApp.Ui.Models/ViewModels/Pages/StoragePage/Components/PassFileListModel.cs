@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -37,7 +36,6 @@ public class PassFileListModel<TPassFile> : ReactiveObject
     private readonly IObservable<bool> _fullModeObservable;
     private bool _isReadOnly;
 
-    /// <summary></summary>
     public PassFileListModel(HostWindowProvider windowProvider)
     {
         _windowProvider = windowProvider;
@@ -61,33 +59,26 @@ public class PassFileListModel<TPassFile> : ReactiveObject
         };
     }
 
-    /// <summary></summary>
     public BtnState ExpanderBtn { get; }
 
-    /// <summary></summary>
     public bool IsExpanded
     {
         get => _isExpanded;
         set => this.RaiseAndSetIfChanged(ref _isExpanded, value);
     }
 
-    /// <summary></summary>
     public bool IsReadOnly
     {
         get => _isReadOnly;
         set => this.RaiseAndSetIfChanged(ref _isReadOnly, value);
     }
 
-    /// <summary>
-    /// List of passfiles to display.
-    /// </summary>
     public IReadOnlyList<PassFileCellModel<TPassFile>> List
     {
         get => _list;
         private set => this.RaiseAndSetIfChanged(ref _list, value);
     }
 
-    /// <summary></summary>
     public int SelectedIndex
     {
         get => _selectedIndex;
@@ -98,11 +89,9 @@ public class PassFileListModel<TPassFile> : ReactiveObject
         }
     }
 
-    /// <summary></summary>
     public TPassFile? GetSelectedPassFile()
         => _selectedIndex < 0 ? null : _list[_selectedIndex].PassFile;
 
-    /// <summary></summary>
     public void RollbackSelectedPassFile()
         => SelectedIndex = _prevSelectedIndex;
 
@@ -127,14 +116,12 @@ public class PassFileListModel<TPassFile> : ReactiveObject
             return;
         }
 
-        SelectedIndex = List.FindIndex(x => x.PassFile == result.Data);
+        var cell = ToCell(result.Data!);
 
-        Debug.Assert(SelectedIndex >= 0);
+        List = new[] { cell }.Concat(List).ToList();
+        SelectedIndex = 0;
 
-        if (SelectedIndex >= 0)
-        {
-            await List[SelectedIndex].ShowCardAsync();
-        }
+        await cell.ShowCardAsync();
     }
 
     /// <summary>
@@ -144,10 +131,10 @@ public class PassFileListModel<TPassFile> : ReactiveObject
     {
         List = passFiles
             .OrderBy(x => x, PassFileComparer.Instance)
-            .Select(ToPassFileCell)
+            .Select(ToCell)
             .ToList();
     }
 
-    private PassFileCellModel<TPassFile> ToPassFileCell(TPassFile passFile)
+    private PassFileCellModel<TPassFile> ToCell(TPassFile passFile)
         => new(passFile, _fullModeObservable, _windowProvider);
 }

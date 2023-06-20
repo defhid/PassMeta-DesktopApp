@@ -8,7 +8,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PassFileWinModelPreview : PassFileWinModel<PwdPassFile>
 {
-    /// <summary></summary>
     public PassFileWinModelPreview()
         : base(PassFilePreviewData.GetPassFile<PwdPassFile>(), HostWindowProvider.Empty)
     {

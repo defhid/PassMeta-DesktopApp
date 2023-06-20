@@ -13,7 +13,7 @@ using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using ReactiveUI;
 using Splat;
 
-namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
+namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
 
 /// <summary>
 /// Account page ViewModel.
@@ -32,7 +32,6 @@ public class AccountPageModel : PageViewModel
     private bool _isPasswordConfirmVisible;
     private bool _isBtnSaveVisible;
 
-    /// <summary></summary>
     public AccountPageModel(IScreen hostScreen) : base(hostScreen) => 
         this.WhenActivated(disposables => 
         {
@@ -83,42 +82,36 @@ public class AccountPageModel : PageViewModel
         }
     };
 
-    /// <summary></summary>
     public string? FullName
     {
         get => _fullName;
         set => this.RaiseAndSetIfChanged(ref _fullName, value);
     }
 
-    /// <summary></summary>
     public string? Login
     {
         get => _login;
         set => this.RaiseAndSetIfChanged(ref _login, value);
     }
 
-    /// <summary></summary>
     public string? Password
     {
         get => _password;
         set => this.RaiseAndSetIfChanged(ref _password, value);
     }
 
-    /// <summary></summary>
     public string? PasswordConfirm
     {
         get => _passwordConfirm;
         set => this.RaiseAndSetIfChanged(ref _passwordConfirm, value);
     }
 
-    /// <summary></summary>
     public bool IsPasswordConfirmVisible
     {
         get => _isPasswordConfirmVisible;
         set => this.RaiseAndSetIfChanged(ref _isPasswordConfirmVisible, value);
     }
 
-    /// <summary></summary>
     public bool IsBtnSaveVisible
     {
         get => _isBtnSaveVisible;

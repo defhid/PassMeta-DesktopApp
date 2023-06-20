@@ -11,25 +11,19 @@ public class LogInfo
 {
     private readonly Log? _log;    
 
-    /// <summary></summary>
     public LogInfo(Log? log)
     {
         _log = log;
     }
 
-    /// <summary></summary>
     public string CreatedOnShort => _log?.CreatedOn?.ToShortDateTimeString() ?? string.Empty;
     
-    /// <summary></summary>
     public string? CreatedOnFull => _log?.CreatedOn?.ToString("F").Capitalize();
 
-    /// <summary></summary>
     public string SectionShort => LogSectionMapping.SectionToShortName.Map(_log?.Section, "?");
 
-    /// <summary></summary>
     public string? SectionFull => LogSectionMapping.SectionToFullName.Map(_log?.Section, _log?.Section);
 
-    /// <summary></summary>
     public string TextShort
     {
         get
@@ -41,6 +35,5 @@ public class LogInfo
         }
     }
 
-    /// <summary></summary>
     public string? TextFull => _log?.Text;
 }

@@ -6,7 +6,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PwdItemReadModelPreview : PwdItemReadModel
 {
-    /// <summary></summary>
     public PwdItemReadModelPreview() : base(new PwdItem
     {
         Usernames = new[] { "example_login1", "example_login2" },

@@ -30,10 +30,8 @@ public class SettingsPageModel : PageViewModel
     private readonly IPassFileContextProvider _pfContextProvider = Locator.Current.Resolve<IPassFileContextProvider>();
     private bool _devMode;
 
-    /// <summary></summary>
     public readonly Interaction<AppInfoWinModel, Unit> ShowInfo = new();
 
-    /// <summary></summary>
     public SettingsPageModel(IScreen hostScreen) : base(hostScreen)
     {
         FillFromAppConfig();
@@ -47,41 +45,31 @@ public class SettingsPageModel : PageViewModel
         SaveCommand = ReactiveCommand.CreateFromTask(SaveAsync);
     }
 
-    /// <summary></summary>
     public IReadOnlyList<AppCulture> Cultures => AppCulture.All;
 
-    /// <summary></summary>
     public string? ServerUrl { get; set; }
 
-    /// <summary></summary>
     public AppCulture? SelectedCulture { get; set; }
 
-    /// <summary></summary>
     public bool HidePasswords { get; set; }
 
-    /// <summary></summary>
     public bool DevMode
     {
         get => _devMode;
         set => this.RaiseAndSetIfChanged(ref _devMode, value);
     }
 
-    /// <summary></summary>
     public IObservable<float> DevModeOpacity { get; }
 
-    /// <summary></summary>
     public IObservable<string> ServerInfo => _appContextProvider.CurrentObservable
         .Select(x => x.ServerVersion is null
             ? string.Empty
             : $"v{x.ServerVersion}, #{x.ServerId ?? "?"}");
 
-    /// <summary></summary>
     public static string AppInfo => $"v{Locator.Current.Resolve<AppInfo>().Version}";
 
-    /// <summary></summary>
     public ReactCommand AppInfoCommand { get; }
 
-    /// <summary></summary>
     public ReactCommand SaveCommand { get; }
 
     /// <inheritdoc />

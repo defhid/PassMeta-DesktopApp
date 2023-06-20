@@ -61,6 +61,10 @@
           <DependentUpon>PwdSectionEditView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Pages\Storage\Components\PwdSectionListView.axaml.cs">
+          <DependentUpon>PwdSectionListView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
     
     <ItemGroup>

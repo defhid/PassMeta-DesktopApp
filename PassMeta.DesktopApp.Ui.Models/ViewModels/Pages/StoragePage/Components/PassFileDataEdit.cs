@@ -5,8 +5,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 
 public class PassFileDataEdit : ReactiveObject
 {
-    private readonly ViewElements _viewElements;
-        
     private bool _editMode;
     public bool Mode
     {
@@ -40,8 +38,8 @@ public class PassFileDataEdit : ReactiveObject
         }
     }
         
-    private PassFileSectionBtn? _sectionBtn;
-    public PassFileSectionBtn? SectionBtn
+    private PwdSectionCellModel? _sectionBtn;
+    public PwdSectionCellModel? SectionBtn
     {
         get => _sectionBtn;
         set
@@ -59,10 +57,5 @@ public class PassFileDataEdit : ReactiveObject
             if (_sectionBtn is not null)
                 _sectionBtn.Name = value ?? string.Empty;
         }
-    }
-
-    public PassFileDataEdit(ViewElements viewElements)
-    {
-        _viewElements = viewElements;
     }
 }

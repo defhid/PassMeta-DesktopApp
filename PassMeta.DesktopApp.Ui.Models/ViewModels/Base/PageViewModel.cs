@@ -13,7 +13,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 /// </summary>
 public abstract class PageViewModel : ReactiveObject, IActivatableViewModel, IRoutableViewModel
 {
-    /// <summary></summary>
     protected PageViewModel(IScreen hostScreen)
     {
         Activator = new ViewModelActivator();

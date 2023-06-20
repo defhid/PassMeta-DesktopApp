@@ -7,7 +7,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PwdSectionReadModelPreview : PwdSectionReadModel
 {
-    /// <summary></summary>
     public PwdSectionReadModelPreview() : base(new PwdSection
     {
         Name = "Test name",

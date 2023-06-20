@@ -59,6 +59,7 @@ public class App : Application
         MainWindow?.Close();
         MainWindow = window;
     }
+
     /// <summary></summary>
     public static MainWindow? MainWindow
     {

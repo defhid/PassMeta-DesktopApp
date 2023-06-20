@@ -16,7 +16,6 @@ public class PwdItemEditModel : ReactiveObject
     private readonly BehaviorSubject<bool> _isPopupGeneratorOpened = new(false);
     private string? _password;
 
-    /// <summary></summary>
     public PwdItemEditModel()
     {
         DeleteCommand = ReactiveCommand.Create(() => OnDelete?.Invoke(this));
@@ -35,49 +34,36 @@ public class PwdItemEditModel : ReactiveObject
             .Select(string.IsNullOrEmpty);
     }
 
-    /// <summary></summary>
     public event Action<PwdItemEditModel>? OnDelete;
 
-    /// <summary></summary>
     public event Action<PwdItemEditModel, int>? OnMove;
 
-    /// <summary></summary>
     public string? Usernames { get; set; }
 
-    /// <summary></summary>
     public string? Password
     {
         get => _password;
         set => this.RaiseAndSetIfChanged(ref _password, value);
     }
 
-    /// <summary></summary>
     public string? Remark { get; set; }
 
-    /// <summary></summary>
     public ReactCommand DeleteCommand { get; }
 
-    /// <summary></summary>
     public ReactCommand UpCommand { get; }
 
-    /// <summary></summary>
     public ReactCommand DownCommand { get; }
 
-    /// <summary></summary>
     public ReactCommand OpenPopupGenerator { get; }
 
-    /// <summary></summary>
     public PopupGeneratorModel PopupGenerator { get; }
 
-    /// <summary></summary>
     public IObservable<bool> PopupGeneratorCanBeOpened { get; }
 
-    /// <summary></summary>
     public bool IsEmpty => string.IsNullOrWhiteSpace(Usernames) && 
                            string.IsNullOrEmpty(Password) &&
                            string.IsNullOrWhiteSpace(Remark);
 
-    /// <summary></summary>
     public PwdItem ToItem() => new()
     {
         Usernames = NormalizeUsernames(Usernames?.Split('\n')),
@@ -85,7 +71,6 @@ public class PwdItemEditModel : ReactiveObject
         Remark = Remark?.Trim() ?? string.Empty
     };
 
-    /// <summary></summary>
     public static PwdItemEditModel From(PwdItem item) => new()
     {
         Usernames = string.Join('\n', NormalizeUsernames(item.Usernames)),
@@ -93,7 +78,6 @@ public class PwdItemEditModel : ReactiveObject
         Remark = item.Remark.Trim()
     };
 
-    /// <summary></summary>
     public static PwdItemEditModel Empty() => new()
     {
         Usernames = string.Empty,

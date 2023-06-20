@@ -7,7 +7,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class MainPaneButtonModelPreview : MainPaneButtonModel
 {
-    /// <summary></summary>
     public MainPaneButtonModelPreview() : base("Button", "P", Observable.Return(true))
     {
         IsActive = Observable.Return(false);

@@ -2,6 +2,10 @@
 
     <Import Project="$(SolutionDir)\.props" />
 
+    <PropertyGroup>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\PassMeta.DesktopApp.Common\PassMeta.DesktopApp.Common.csproj" />
     </ItemGroup>

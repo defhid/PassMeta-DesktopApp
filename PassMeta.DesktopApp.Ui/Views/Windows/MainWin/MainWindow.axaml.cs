@@ -10,6 +10,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 using Splat;
 

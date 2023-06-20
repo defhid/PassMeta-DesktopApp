@@ -7,7 +7,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PwdSectionEditModelPreview : PwdSectionEditModel
 {
-    /// <summary></summary>
     public PwdSectionEditModelPreview() : base(Guid.Empty)
     {
         Name = "Preview Name";

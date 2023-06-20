@@ -6,7 +6,6 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class DialogWinModelPreview : DialogWinModel
 {
-    /// <summary></summary>
     public DialogWinModelPreview() : base(
         "Dialog Title",
         "Dialog Text",

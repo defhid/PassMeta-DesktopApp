@@ -3,7 +3,7 @@ namespace PassMeta.DesktopApp.Common.Enums;
 /// <summary>
 /// Buttons for dialog windows.
 /// </summary>
-public enum DialogButton
+public enum DialogButton : byte
 {
     /// Ok, confirm.
     Ok,

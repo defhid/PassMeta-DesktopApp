@@ -28,20 +28,16 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
 /// </summary>
 public abstract class PassFileWinModel : ReactiveObject
 {
-    /// <summary></summary>
     public readonly PassFile PassFile;
 
-    /// <summary></summary>
     public event Action? Finish;
 
-    /// <summary></summary>
     protected PassFileWinModel(PassFile passFile)
     {
         PassFile = passFile;
         CloseCommand = ReactiveCommand.Create(() => Finish?.Invoke());
     }
 
-    /// <summary></summary>
     public ReactiveCommand<Unit, Unit> CloseCommand { get; }
 }
 
@@ -49,7 +45,6 @@ public abstract class PassFileWinModel : ReactiveObject
 public class PassFileWinModel<TPassFile> : PassFileWinModel 
     where TPassFile : PassFile
 {
-    /// <summary></summary>
     public new readonly TPassFile PassFile;
 
     private readonly HostWindowProvider _hostWindowProvider;

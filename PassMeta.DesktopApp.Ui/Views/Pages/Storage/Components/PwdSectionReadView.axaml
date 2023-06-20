@@ -12,61 +12,65 @@
     <previews:PwdSectionReadModelPreview />
   </Design.DataContext>
 
-  <Grid>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-      <Grid RowDefinitions="Auto,Auto,*">
-        <TextBox
-          Grid.Row="0"
-          Margin="5 5 7 10"
-          Padding="8 3 8 3"
-          MinHeight="28"
-          Height="28"
-          FontSize="14"
-          VerticalContentAlignment="Center"
-          Text="{Binding Name}"
-          IsReadOnly="True"
-          Focusable="False" />
+  <Border
+    CornerRadius="3"
+    Background="{DynamicResource ListBoxBackgroundThemeBrush}">
+    <Grid>
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid RowDefinitions="Auto,Auto,*">
+          <TextBox
+            Grid.Row="0"
+            Margin="5 5 7 10"
+            Padding="8 3 8 3"
+            MinHeight="28"
+            Height="28"
+            FontSize="14"
+            VerticalContentAlignment="Center"
+            Text="{Binding Name}"
+            IsReadOnly="True"
+            Focusable="False" />
 
-        <TextBox
-          Grid.Row="1"
-          Margin="5 5 7 10"
-          Padding="8 3 8 3"
-          MinHeight="28"
-          Height="28"
-          FontSize="14"
-          VerticalContentAlignment="Center"
-          Text="{Binding WebsiteUrl}"
-          IsVisible="{Binding HasWebsiteUrl}"
-          IsReadOnly="True"
-          Focusable="False" />
+          <TextBox
+            Grid.Row="1"
+            Margin="5 5 7 10"
+            Padding="8 3 8 3"
+            MinHeight="28"
+            Height="28"
+            FontSize="14"
+            VerticalContentAlignment="Center"
+            Text="{Binding WebsiteUrl}"
+            IsVisible="{Binding HasWebsiteUrl}"
+            IsReadOnly="True"
+            Focusable="False" />
 
-        <ItemsControl
-          Grid.Row="2"
-          Items="{Binding Items}"
-          CornerRadius="3"
-          Padding="5 10 5 100"
-          VerticalAlignment="Top">
-          <ItemsControl.Styles>
-            <Style Selector="ItemsPresenter">
-              <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
-            </Style>
-          </ItemsControl.Styles>
+          <ItemsControl
+            Grid.Row="2"
+            Items="{Binding Items}"
+            CornerRadius="3"
+            Padding="5 10 5 100"
+            VerticalAlignment="Top">
+            <ItemsControl.Styles>
+              <Style Selector="ItemsPresenter">
+                <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
+              </Style>
+            </ItemsControl.Styles>
 
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <componentsV:PwdItemReadView Margin="0 0 0 20" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </Grid>
-    </ScrollViewer>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <componentsV:PwdItemReadView Margin="0 0 0 20" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Grid>
+      </ScrollViewer>
 
-    <TextBlock
-      FontSize="16"
-      Foreground="DarkGray"
-      VerticalAlignment="Center"
-      HorizontalAlignment="Center"
-      Text="{x:Static com:Resources.STORAGE__NO_ITEMS}"
-      IsVisible="{Binding HasItems}" />
-  </Grid>
+      <TextBlock
+        FontSize="16"
+        Foreground="DarkGray"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Center"
+        Text="{x:Static com:Resources.STORAGE__NO_ITEMS}"
+        IsVisible="{Binding HasItems}" />
+    </Grid>
+  </Border>
 </UserControl>

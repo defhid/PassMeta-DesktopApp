@@ -30,45 +30,38 @@ public class LogsPageModel : PageViewModel
     private const int InitIntervalDays = 3;
     private const int MaxIntervalDays = 60;
 
-    /// <summary></summary>
     public DateTimeOffset FromDate
     {
         get => _fromDate;
         set => this.RaiseAndSetIfChanged(ref _fromDate, value);
     }
 
-    /// <summary></summary>
     public DateTimeOffset ToDate
     {
         get => _toDate;
         set => this.RaiseAndSetIfChanged(ref _toDate, value);
     }
 
-    /// <summary></summary>
     public IReadOnlyList<LogInfo> Logs
     {
         get => _logs;
         set => this.RaiseAndSetIfChanged(ref _logs, value);
     }
 
-    /// <summary></summary>
     public int SelectedLogIndex
     {
         get => _selectedLogIndex;
         set => this.RaiseAndSetIfChanged(ref _selectedLogIndex, value);
     }
 
-    /// <summary></summary>
     public IObservable<LogInfo> SelectedLog { get; }
 
-    /// <summary></summary>
     public string? FoundText
     {
         get => _foundText;
         set => this.RaiseAndSetIfChanged(ref _foundText, value);
     }
 
-    /// <summary></summary>
     public LogsPageModel(IScreen hostScreen) : base(hostScreen)
     {
         var loadCommand = ReactiveCommand.Create<(DateTimeOffset, DateTimeOffset)>(LoadLogs);

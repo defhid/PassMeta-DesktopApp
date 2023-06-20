@@ -13,13 +13,11 @@ public sealed class HostWindowProvider : IDisposable
     /// </summary>
     public Window? Window { get; private set; }
 
-    /// <summary></summary>
     public HostWindowProvider(Window hostWindow)
     {
         Window = hostWindow;
     }
 
-    /// <summary></summary>
     private HostWindowProvider()
     {
     }
@@ -30,6 +28,5 @@ public sealed class HostWindowProvider : IDisposable
         Window = null;
     }
 
-    /// <summary></summary>
     public static readonly HostWindowProvider Empty = new();
 }

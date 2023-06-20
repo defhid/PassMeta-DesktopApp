@@ -3,7 +3,6 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:storagePage="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
@@ -12,7 +11,7 @@
   d:DesignWidth="800"
   d:DesignHeight="450">
   <Design.DataContext>
-    <storagePage:PwdStoragePageModel />
+    <storagePage:PwdStorageModel />
   </Design.DataContext>
 
   <Grid>
@@ -41,93 +40,16 @@
       </SplitView.Pane>
 
       <Grid ColumnDefinitions="2*,3*">
-        <Grid
-          Grid.Column="0"
-          RowDefinitions="Auto,*"
-          Margin="{Binding LayoutState^.SectionsListMargin}">
-          <TextBox
-            Grid.Row="0"
-            VerticalAlignment="Top"
-            Margin="0 6 5 6"
-            Height="39"
-            Padding="6 8 6 0"
-            FontSize="15"
-            Classes="clearButton"
-            Watermark="{x:Static com:Resources.STORAGE__SECTION_SEARCH_INPUT_WATERMARK}"
-            IsVisible="{Binding SelectedData.IsSectionsBarVisible^}"
-            IsReadOnly="{Binding SelectedData.Edit.Mode}"
-            Focusable="{Binding !SelectedData.Edit.Mode}"
-            Text="{Binding SelectedData.SearchText}"
-            AttachedToLogicalTree="Search_OnAttachedToLogicalTree" />
+        <components:PwdSectionListView
+          Grid.Column="0" 
+          DataContext=""
+          Margin="{Binding LayoutState^.SectionsListMargin}" />
 
-          <Border
-            Grid.Row="1"
-            VerticalAlignment="Stretch"
-            Margin="0 6 5 5"
-            Padding="0 4 0 4"
-            CornerRadius="3"
-            DataContext="{Binding SelectedData}"
-            Background="{DynamicResource SystemControlBackgroundListMediumBrush}"
-            IsVisible="{Binding IsSectionsBarVisible^}"
-            IsEnabled="{Binding !Edit.Mode}">
-            <Grid VerticalAlignment="Stretch">
-              <ListBox
-                x:Name="Sections"
-                Padding="0 0 0 20"
-                SelectionMode="Toggle"
-                SelectedIndex="{Binding SelectedSectionIndex}"
-                Items="{Binding SectionsList}"
-                IsEnabled="{Binding !Edit.Mode}"
-                AttachedToLogicalTree="SectionListBox_OnAttachedToLogicalTree">
-                <ListBox.Styles>
-                  <Style Selector="ListBoxItem">
-                    <Setter Property="Padding" Value="8" />
-                    <Setter Property="ContextMenu">
-                      <ContextMenu>
-                        <MenuItem
-                          Header="{x:Static com:Resources.STORAGE__SECTION_CONTEXT__EDIT_BTN}"
-                          Click="EditCurrentSection_OnClick" />
-                        <MenuItem
-                          Header="{x:Static com:Resources.STORAGE__SECTION_CONTEXT__DELETE_BTN}"
-                          Click="DeleteCurrentSection_OnClick" />
-                      </ContextMenu>
-                    </Setter>
-                  </Style>
-                </ListBox.Styles>
-
-                <ListBox.ItemTemplate>
-                  <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                  </DataTemplate>
-                </ListBox.ItemTemplate>
-              </ListBox>
-
-              <Button
-                Classes="list_add"
-                Margin="0 0 0 -4"
-                Command="{Binding SectionAdd}"
-                ToolTip.Tip="{x:Static com:Resources.STORAGE__SECTION_TOOLTIP__ADD}" />
-
-              <TextBlock
-                FontSize="16"
-                Foreground="DarkGray"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Margin="0 0 0 30"
-                Text="{Binding NoSectionsText^}"
-                IsVisible="{Binding IsNoSectionsTextVisible}" />
-            </Grid>
-          </Border>
-        </Grid>
-
-        <Border
+        <components:PwdSectionReadView
           Grid.Column="1"
-          CornerRadius="3"
+          DataContext=""
           Margin="0 6 4 5"
-          Background="{Binding #Sections.Background}"
-          IsVisible="{Binding SelectedData.IsItemsBarVisible^}">
-          <components:PwdSectionReadView DataContext="" />
-        </Border>
+          IsVisible="{Binding SelectedData.IsItemsBarVisible^}" />
       </Grid>
     </SplitView>
   </Grid>

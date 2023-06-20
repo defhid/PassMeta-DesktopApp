@@ -3,7 +3,7 @@ namespace PassMeta.DesktopApp.Common.Enums;
 /// <summary>
 /// Passfile content types.
 /// </summary>
-public enum PassFileType : short
+public enum PassFileType : byte
 {
     /// Password notes.
     ///

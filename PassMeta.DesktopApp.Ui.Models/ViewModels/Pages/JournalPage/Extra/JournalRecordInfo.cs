@@ -11,19 +11,14 @@ public class JournalRecordInfo
 {
     private readonly JournalRecordDto _recordDto;
 
-    /// <summary></summary>
     public string WrittenOn => _recordDto.WrittenOn.ToLocalTime().ToShortDateTimeString();
 
-    /// <summary></summary>
     public string RecordKind => _recordDto.Kind;
 
-    /// <summary></summary>
     public string User => _recordDto.UserLogin ?? (_recordDto.UserId.HasValue ? $"#{_recordDto.UserId}" : "?");
 
-    /// <summary></summary>
     public string UserIp => _recordDto.UserIp;
 
-    /// <summary></summary>
     public string More => string.Join("; ", new[]
     {
         _recordDto.More,
@@ -32,7 +27,6 @@ public class JournalRecordInfo
             : null
     }.Where(x => !string.IsNullOrEmpty(x)));
 
-    /// <summary></summary>
     public JournalRecordInfo(JournalRecordDto journalRecordDto)
     {
         _recordDto = journalRecordDto;

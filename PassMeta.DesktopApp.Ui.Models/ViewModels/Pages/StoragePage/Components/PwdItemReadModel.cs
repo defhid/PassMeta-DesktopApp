@@ -22,7 +22,6 @@ public class PwdItemReadModel : ReactiveObject
     private readonly IAppConfigProvider _appConfig = Locator.Current.Resolve<IAppConfigProvider>();
     private readonly List<string> _usernames;
 
-    /// <summary></summary>
     public PwdItemReadModel(PwdItem item)
     {
         _usernames = item.Usernames.Select(x => x.Trim()).Where(x => x != string.Empty).ToList();
@@ -33,25 +32,18 @@ public class PwdItemReadModel : ReactiveObject
         CopyPasswordCommand = ReactiveCommand.CreateFromTask(CopyPasswordAsync);
     }
 
-    /// <summary></summary>
     public string Usernames => string.Join('\n', _usernames);
     
-    /// <summary></summary>
     public string Password { get; }
     
-    /// <summary></summary>
     public string? Remark { get; }
 
-    /// <summary></summary>
     public bool IsCommentTextVisible => Remark is not null;
     
-    /// <summary></summary>
     public char? PasswordChar => _appConfig.Current.HidePasswords ? '*' : null;
 
-    /// <summary></summary>
     public ReactCommand CopyUsernameCommand { get; }
 
-    /// <summary></summary>
     public ReactCommand CopyPasswordCommand { get; }
 
     private async Task CopyUsernameAsync()

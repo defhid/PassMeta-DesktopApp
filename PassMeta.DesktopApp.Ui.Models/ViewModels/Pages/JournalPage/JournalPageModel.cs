@@ -11,6 +11,7 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.JournalPage.Extra;
 using ReactiveUI;
 using Splat;
@@ -40,7 +41,6 @@ public class JournalPageModel : PageViewModel
     };
     private IReadOnlyList<JournalRecordInfo> _records = new List<JournalRecordInfo>();
     
-    /// <summary></summary>
     public JournalPageModel(IScreen hostScreen) : base(hostScreen)
     {
         this.WhenNavigatedToObservable()
@@ -60,34 +60,28 @@ public class JournalPageModel : PageViewModel
             }));
     }
 
-    /// <summary></summary>
     public IReadOnlyList<int> PageList => _pageList;
 
-    /// <summary></summary>
     public int SelectedPageIndex
     {
         get => _selectedPageIndex;
         set => this.RaiseAndSetIfChanged(ref _selectedPageIndex, value);
     }
 
-    /// <summary></summary>
     public DateTimeOffset SelectedMonth
     {
         get => _selectedMonth;
         set => this.RaiseAndSetIfChanged(ref _selectedMonth, value);
     }
 
-    /// <summary></summary>
     public IReadOnlyList<JournalRecordKindDto> Kinds => _kinds;
 
-    /// <summary></summary>
     public int SelectedKindIndex
     {
         get => _selectedKindIndex;
         set => this.RaiseAndSetIfChanged(ref _selectedKindIndex, value);
     }
 
-    /// <summary></summary>
     public IReadOnlyList<JournalRecordInfo> Records
     {
         get => _records;

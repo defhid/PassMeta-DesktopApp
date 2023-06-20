@@ -8,6 +8,7 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.JournalPage;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.LogsPage;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;
@@ -26,7 +27,6 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
     private readonly BehaviorSubject<MainPaneButtonModel?> _activeBtnSource = new(null);
     private bool _isOpened;
 
-    /// <summary></summary>
     public MainPane(IScreen hostScreen)
     {
         var userContext = Locator.Current.Resolve<IUserContextProvider>();
@@ -47,7 +47,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
                 {
                     AuthPageModel => Account,
                     AccountPageModel => Account,
-                    PwdStoragePageModel => Storage,
+                    PwdStorageModel => Storage,
                     GeneratorPageModel => Generator,
                     JournalPageModel => Journal,
                     LogsPageModel => Logs,
@@ -71,7 +71,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
             Resources.APP__MENU_BTN__STORAGE,
             "\uE8F1",
             _authSource,
-            () => new PwdStoragePageModel(hostScreen, HostWindowProvider!));
+            () => new PwdStorageModel(hostScreen, HostWindowProvider!));
 
         Generator = createButton(
             Resources.APP__MENU_BTN__GENERATOR,
@@ -101,7 +101,6 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
     /// <inheritdoc cref="HostWindowProvider"/>
     public HostWindowProvider? HostWindowProvider { private get; set; }
 
-    /// <summary></summary>
     public bool IsOpened
     {
         get => _isOpened;
@@ -111,22 +110,16 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
     /// <inheritdoc />
     public ViewModelActivator Activator { get; } = new();
 
-    /// <summary></summary>
     public MainPaneButtonModel Account { get; }
 
-    /// <summary></summary>
     public MainPaneButtonModel Storage { get; }
 
-    /// <summary></summary>
     public MainPaneButtonModel Generator { get; }
 
-    /// <summary></summary>
     public MainPaneButtonModel Journal { get; }
 
-    /// <summary></summary>
     public MainPaneButtonModel Logs { get; }
 
-    /// <summary></summary>
     public MainPaneButtonModel Settings { get; }
 
     private MainPaneButtonModelFactory BuildButtonFactory()
