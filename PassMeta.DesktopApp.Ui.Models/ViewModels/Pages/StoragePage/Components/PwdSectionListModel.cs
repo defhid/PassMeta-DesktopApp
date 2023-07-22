@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using Avalonia;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
@@ -20,6 +21,7 @@ public class PwdSectionListModel : ReactiveObject
     private int _selectedIndex = -1;
     private bool _isReadOnly;
     private string? _searchText;
+    private Thickness _margin;
 
     public PwdSectionListModel()
     {
@@ -30,11 +32,22 @@ public class PwdSectionListModel : ReactiveObject
         
         IsNoSectionsTextVisible = this.WhenAnyValue(x => x.List)
             .Select(x => x.Count == 0);
+
+        this.WhenAnyValue(vm => vm.SearchText)
+            .Throttle(TimeSpan.FromMilliseconds(500))
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(Search);
     }
 
     public IObservable<bool> IsNoSectionsTextVisible { get; }
 
     public IObservable<string> NoSectionsText { get; }
+
+    public Thickness Margin
+    {
+        get => _margin;
+        set => this.RaiseAndSetIfChanged(ref _margin, value);
+    }
 
     public bool IsReadOnly
     {
@@ -104,6 +117,37 @@ public class PwdSectionListModel : ReactiveObject
         var list = sections.Select(ToCell).ToList();
         list.Sort(new PwdSectionCellModelComparer());
         List = list;
+    }
+    
+    private void Search(string? text)
+    {
+        // var searching = ++_searching;
+        // if (text is null) return;
+        //     
+        // _UpdatePassFileSectionList(false);
+        //         
+        // if (!string.IsNullOrWhiteSpace(text))
+        // {
+        //     throw new NotImplementedException("Search is not implemented");
+        //     
+        //     text = text.Trim();
+        //     for (var i = _sectionsList.Count - 1; i >= 0; --i)
+        //     {
+        //         var sectionBtn = _sectionsList[i];
+        //         if (sectionBtn.Section.Search.Contains(text))
+        //         {
+        //             continue;
+        //         }
+        //         if (sectionBtn.Section.Items.Any(item => item.Search.Contains(text)))
+        //         {
+        //             continue;
+        //         }
+        //         if (searching == _searching)
+        //         {
+        //             _sectionsList.RemoveAt(i);
+        //         }
+        //     }
+        // }
     }
 
     private static PwdSectionCellModel ToCell(PwdSection pwdSection) => new(pwdSection);

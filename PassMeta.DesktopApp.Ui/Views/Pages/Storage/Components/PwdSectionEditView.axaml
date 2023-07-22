@@ -62,7 +62,7 @@
 
         <ItemsControl
           Grid.Row="1"
-          Items="{Binding Items}"
+          ItemsSource="{Binding Items}"
           CornerRadius="3"
           Padding="5 5 5 100"
           VerticalAlignment="Top">

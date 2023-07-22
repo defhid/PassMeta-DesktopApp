@@ -2,21 +2,19 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using Avalonia;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Views.Windows.MainWin;
 
-public class MainWindow : ReactiveWindow<MainWinModel>
+public partial class MainWindow : ReactiveWindow<MainWinModel>
 {
     private bool _closingConfirmed;
 
@@ -25,7 +23,7 @@ public class MainWindow : ReactiveWindow<MainWinModel>
         Opened += OnOpened;
         Closing += OnClosing;
 
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
 
 #if DEBUG
         this.AttachDevTools();

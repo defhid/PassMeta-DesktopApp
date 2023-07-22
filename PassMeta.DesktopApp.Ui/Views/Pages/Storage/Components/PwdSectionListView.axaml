@@ -14,7 +14,7 @@
     <previews:PwdSectionListModelPreview />
   </Design.DataContext>
 
-  <Grid RowDefinitions="Auto,*">
+  <Grid RowDefinitions="Auto,*" Margin="{Binding Margin}">
     <TextBox
       Grid.Row="0"
       VerticalAlignment="Top"
@@ -44,7 +44,7 @@
           Padding="0 0 0 20"
           SelectionMode="Toggle"
           SelectedIndex="{Binding SelectedIndex}"
-          Items="{Binding List}"
+          ItemsSource="{Binding List}"
           IsEnabled="{Binding !IsReadOnly}"
           AttachedToLogicalTree="SectionListBox_OnAttachedToLogicalTree">
           <ListBox.Styles>

@@ -1,6 +1,5 @@
 using System.Reactive;
 using System.Threading.Tasks;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows;
@@ -9,11 +8,11 @@ using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Views.Pages;
 
-public class SettingsView : ReactiveUserControl<SettingsPageModel>
+public partial class SettingsView : ReactiveUserControl<SettingsPageModel>
 {
     public SettingsView()
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
 
         this.WhenActivated(d => d(ViewModel!.ShowInfo.RegisterHandler(ShowInfoAsync)));
     }

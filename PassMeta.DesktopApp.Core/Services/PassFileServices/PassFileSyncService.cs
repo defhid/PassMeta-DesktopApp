@@ -44,7 +44,7 @@ public class PassFileSyncService : IPassFileSyncService
         var remoteList = await _pfRemoteService.GetListAsync<TPassFile>();
         if (remoteList.Ok)
         {
-            syncWarning = await SynchronizeInternalAsync(context, context.CurrentList, remoteList.Data!);
+            syncWarning = !await SynchronizeInternalAsync(context, context.CurrentList, remoteList.Data!);
             synced = true;
         }
 

@@ -99,7 +99,7 @@
         Grid.Row="1"
         MinHeight="50"
         HorizontalAlignment="Right"
-        Items="{Binding Buttons}"
+        ItemsSource="{Binding Buttons}"
         Margin="10 0 0 0">
         <ItemsRepeater.Layout>
           <StackLayout Spacing="30" Orientation="Horizontal" />

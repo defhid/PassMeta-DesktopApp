@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
@@ -23,96 +24,44 @@ using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
 
-/// <summary>
-/// Passfile window ViewModel.
-/// </summary>
-public abstract class PassFileWinModel : ReactiveObject
-{
-    public readonly PassFile PassFile;
-
-    public event Action? Finish;
-
-    protected PassFileWinModel(PassFile passFile)
-    {
-        PassFile = passFile;
-        CloseCommand = ReactiveCommand.Create(() => Finish?.Invoke());
-    }
-
-    public ReactiveCommand<Unit, Unit> CloseCommand { get; }
-}
-
 /// <inheritdoc />
-public class PassFileWinModel<TPassFile> : PassFileWinModel 
+public class PassFileWinModel<TPassFile> : ReactiveObject
     where TPassFile : PassFile
 {
-    public new readonly TPassFile PassFile;
-
+    private readonly IMapper _mapper;
+    private readonly IDialogService _dialogService;
+    private readonly IPassFileContext<TPassFile> _pfContext;
+    private readonly IPassFileContentHelper<TPassFile> _pfContentHelper;
     private readonly HostWindowProvider _hostWindowProvider;
 
-    public IObservable<string> Title { get; }
-
-    public IObservable<bool> ReadOnly { get; }
-
-    #region Input
-
     private string? _name;
-
-    public string? Name
-    {
-        get => _name;
-        set => this.RaiseAndSetIfChanged(ref _name, value);
-    }
-
     private int _selectedColorIndex;
+    private TPassFile _passFileOrigin;
 
-    public int SelectedColorIndex
+    public readonly TPassFile PassFile;
+    public event Action? Finish;
+
+    public PassFileWinModel(TPassFile passFile, HostWindowProvider hostWindowProvider)
     {
-        get => _selectedColorIndex;
-        set => this.RaiseAndSetIfChanged(ref _selectedColorIndex, value);
-    }
-
-    #endregion
-
-    #region Read-only fields
-
-    public IObservable<string?> CreatedOn { get; }
-    public IObservable<string?> ChangedOn { get; }
-    public IObservable<ISolidColorBrush> StateColor { get; }
-    public IObservable<string> State { get; }
-
-    #endregion
-
-    #region Bottom buttons
-
-    public BtnState OkBtn { get; }
-    public BtnState ChangePasswordBtn { get; }
-    public BtnState MergeBtn { get; }
-    public BtnState ExportBtn { get; }
-    public BtnState RestoreBtn { get; }
-    public BtnState DeleteBtn { get; }
-
-    #endregion
-
-    private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
-    private readonly IPassFileContext<TPassFile> _pfContext;
-
-    private readonly IPassFileContentHelper<TPassFile> _pfContentHelper
-        = Locator.Current.Resolve<IPassFileContentHelper<TPassFile>>();
-
-    public PassFileWinModel(TPassFile passFile, HostWindowProvider hostWindowProvider) : base(passFile)
-    {
+        _mapper = Locator.Current.Resolve<IMapper>();
+        _dialogService = Locator.Current.Resolve<IDialogService>();
         _pfContext = Locator.Current.Resolve<IPassFileContextProvider>().For<TPassFile>();
-        PassFile = passFile;
+        _pfContentHelper = Locator.Current.Resolve<IPassFileContentHelper<TPassFile>>();
         _hostWindowProvider = hostWindowProvider;
+
+        _passFileOrigin = _mapper.Map<TPassFile, TPassFile>(passFile);
         _name = passFile.Name;
-        SelectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
+        _selectedColorIndex = PassFileColor.List.IndexOf(passFile.GetPassFileColor());
+
+        PassFile = passFile;
+        CloseCommand = ReactiveCommand.Create(() => Finish?.Invoke());
 
         var passFileChanged = this.WhenAnyValue(vm => vm.PassFile);
 
         var anyChanged = this.WhenAnyValue(
                 vm => vm.Name,
                 vm => vm.SelectedColorIndex,
-                vm => vm.PassFile)
+                vm => vm.PassFileOrigin)
             .Select(val =>
                 val.Item1 != val.Item3.Name ||
                 PassFileColor.List[val.Item2] != val.Item3.GetPassFileColor());
@@ -144,20 +93,20 @@ public class PassFileWinModel<TPassFile> : PassFileWinModel
         ChangePasswordBtn = new BtnState
         {
             CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(ChangePasswordAsync)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf.IsLocalDeleted() is false)
+            IsVisibleObservable = passFileChanged.Select(pf => !pf.IsLocalDeleted())
         };
 
         MergeBtn = new BtnState
         {
             CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(MergeAsync)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf.IsLocalDeleted() is false
-                                                               && pf.Mark.HasFlag(PassFileMark.NeedsMerge))
+            IsVisibleObservable = passFileChanged.Select(pf => !pf.IsLocalDeleted() &&
+                                                               pf.Mark.HasFlag(PassFileMark.NeedsMerge))
         };
 
         ExportBtn = new BtnState
         {
             CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(ExportAsync)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf.IsLocalDeleted() is false)
+            IsVisibleObservable = passFileChanged.Select(pf => !pf.IsLocalDeleted())
         };
 
         RestoreBtn = new BtnState
@@ -168,11 +117,45 @@ public class PassFileWinModel<TPassFile> : PassFileWinModel
         DeleteBtn = new BtnState
         {
             CommandObservable = Observable.Return(ReactiveCommand.Create(Delete)),
-            IsVisibleObservable = passFileChanged.Select(pf => pf.IsLocalDeleted() is false)
+            IsVisibleObservable = passFileChanged.Select(pf => !pf.IsLocalDeleted())
         };
 
-        ReadOnly = passFileChanged.Select(pf => pf.IsLocalDeleted() is not false);
+        ReadOnly = passFileChanged.Select(pf => pf.IsLocalDeleted());
     }
+
+    public IObservable<string> Title { get; }
+    public IObservable<bool> ReadOnly { get; }
+    public IObservable<string?> CreatedOn { get; }
+    public IObservable<string?> ChangedOn { get; }
+    public IObservable<ISolidColorBrush> StateColor { get; }
+    public IObservable<string> State { get; }
+
+    private TPassFile PassFileOrigin
+    {
+        get => _passFileOrigin;
+        set => this.RaiseAndSetIfChanged(ref _passFileOrigin, value);
+    }
+
+    public string? Name
+    {
+        get => _name;
+        set => this.RaiseAndSetIfChanged(ref _name, value);
+    }
+
+    public int SelectedColorIndex
+    {
+        get => _selectedColorIndex;
+        set => this.RaiseAndSetIfChanged(ref _selectedColorIndex, value);
+    }
+
+    public BtnState OkBtn { get; }
+    public BtnState ChangePasswordBtn { get; }
+    public BtnState MergeBtn { get; }
+    public BtnState ExportBtn { get; }
+    public BtnState RestoreBtn { get; }
+    public BtnState DeleteBtn { get; }
+
+    public ReactiveCommand<Unit, Unit> CloseCommand { get; }
 
     private static string _MakeState(PassFile passFile)
     {
@@ -229,7 +212,11 @@ public class PassFileWinModel<TPassFile> : PassFileWinModel
         PassFile.Name = Name.Trim();
         PassFile.Color = PassFileColor.List[SelectedColorIndex].Hex;
 
-        _pfContext.UpdateInfo(PassFile);
+        var result = _pfContext.UpdateInfo(PassFile);
+        if (result.Ok)
+        {
+            PassFileOrigin = _mapper.Map<TPassFile, TPassFile>(PassFile);
+        }
     }
 
     private void Delete()
@@ -241,7 +228,7 @@ public class PassFileWinModel<TPassFile> : PassFileWinModel
 
         var result = _pfContext.Delete(PassFile);
 
-        if (result.Ok && _pfContext.CurrentList.Contains(PassFile))
+        if (result.Ok && !_pfContext.CurrentList.Contains(PassFile))
         {
             _ = CloseCommand.Execute();
         }

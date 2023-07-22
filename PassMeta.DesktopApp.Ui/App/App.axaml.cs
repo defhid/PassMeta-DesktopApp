@@ -1,3 +1,4 @@
+using System.Reactive.Disposables;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
@@ -6,7 +7,6 @@ using Avalonia.Markup.Xaml;
 
 using Splat;
 using System.Threading.Tasks;
-using Avalonia.Controls.Mixins;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;

@@ -57,7 +57,7 @@
             
             <ScrollViewer Grid.Row="1"
                           Margin="0 7">
-                <ItemsControl Items="{Binding LocalItems}"
+                <ItemsControl ItemsSource="{Binding LocalItems}"
                               Margin="10 0">
                     <ItemsControl.Styles>
                         <Style Selector="ItemsPresenter">
@@ -170,7 +170,7 @@
         
         <ListBox Grid.Column="1"
                  MinWidth="150"
-                 Items="{Binding ConflictButtons}"
+                 ItemsSource="{Binding ConflictButtons}"
                  SelectedItem="{Binding SelectedConflictBtn}"
                  SelectionMode="Single,Toggle">
             <ListBox.ItemTemplate>
@@ -219,7 +219,7 @@
             
             <ScrollViewer Grid.Row="1"
                           Margin="0 7">
-                <ItemsControl Items="{Binding RemoteItems}"
+                <ItemsControl ItemsSource="{Binding RemoteItems}"
                               Margin="10 0">
                     <ItemsControl.Styles>
                         <Style Selector="ItemsPresenter">

@@ -41,8 +41,10 @@ public class PwdStorageModel : PageViewModel
     private readonly IPassFileDecryptionHelper _pfDecryptionHelper =
         Locator.Current.Resolve<IPassFileDecryptionHelper>();
 
-    private static bool _loaded;
-    private static readonly PassFileItemPath LastItemPath = new();
+    private PwdStoragePath _currentPath;
+    private bool _loaded;
+    private PwdSectionReadModel? _sectionRead;
+    private PwdSectionEditModel? _sectionEdit;
 
     /// <inheritdoc />
     public override ContentControl[] RightBarButtons => new ContentControl[]
@@ -52,13 +54,9 @@ public class PwdStorageModel : PageViewModel
             Content = "\uE74E",
             Command = ReactiveCommand.CreateFromTask(SaveAsync),
             [!Visual.IsVisibleProperty] = this.WhenAnyValue(vm => vm.SectionEdit)
-                .Select(edit => edit is not null)
+                .Select(edit => edit is null)
                 .ToBinding(),
-            [!InputElement.IsEnabledProperty] = Locator.Current.Resolve<IPassFileContextProvider>()
-                .For<PwdPassFile>()
-                .AnyChangedSource
-                .Select(state => state)
-                .ToBinding(),
+            [!InputElement.IsEnabledProperty] = _pfContext.AnyChangedSource.ToBinding(),  // TODO: dispose
             [ToolTip.TipProperty] = Resources.STORAGE__RIGHT_BAR_TOOLTIP__SAVE,
             [ToolTip.PlacementProperty] = PlacementMode.Left
         },
@@ -116,15 +114,29 @@ public class PwdStorageModel : PageViewModel
             .WhenAnyValue(x => x.SelectedIndex)
             .InvokeCommand(ReactiveCommand.Create<int>(OnSelectSection));
 
-        LayoutState = this.WhenAnyValue(vm => vm.PassFileList.SelectedIndex,
-                vm => vm.SectionList.SelectedIndex)
-            .Select(x => x.Item1 < 0
-                ? InitLayoutState
-                : x.Item2 < 0
-                    ? AfterPassFileSelectionLayoutState
-                    : AfterSectionSelectionLayoutState);
+        var indexes = this.WhenAnyValue(
+            vm => vm.PassFileList.SelectedIndex,
+            vm => vm.SectionList.SelectedIndex);
 
-        var lastItemPath = LastItemPath.Copy();
+        LayoutState = indexes.Select(x => x.Item1 < 0
+            ? InitLayoutState
+            : x.Item2 < 0
+                ? AfterPassFileSelectionLayoutState
+                : AfterSectionSelectionLayoutState);
+
+        LayoutState.Subscribe(x => SectionList.Margin = x.SectionsListMargin);
+
+        indexes.Subscribe(_ => _currentPath = new PwdStoragePath(
+            PassFileList.GetSelectedPassFile()?.Id,
+            SectionList.GetSelectedSection()?.Id));
+
+        IsSectionReadVisible = this
+            .WhenAnyValue(x => x.SectionRead)
+            .Select(x => x is not null);
+
+        IsSectionEditVisible = this
+            .WhenAnyValue(x => x.SectionEdit)
+            .Select(x => x is not null);
 
         PassFileBarExpander.IsOpenedObservable
             .Subscribe(isOpened =>
@@ -133,20 +145,32 @@ public class PwdStorageModel : PageViewModel
             });
 
         this.WhenNavigatedToObservable()
-            .InvokeCommand(ReactiveCommand.Create(() => LoadPassFilesAsync(lastItemPath)));
+            .InvokeCommand(ReactiveCommand.Create(LoadPassFilesAsync));
     }
-    
+
     public PassFileListModel<PwdPassFile> PassFileList { get; }
 
     public PwdSectionListModel SectionList { get; }
 
-    public PwdSectionReadModel? SectionRead { get; set; }
+    public PwdSectionReadModel? SectionRead
+    {
+        get => _sectionRead;
+        set => this.RaiseAndSetIfChanged(ref _sectionRead, value);
+    }
 
-    public PwdSectionEditModel? SectionEdit { get; set; }
+    public PwdSectionEditModel? SectionEdit
+    {
+        get => _sectionEdit;
+        set => this.RaiseAndSetIfChanged(ref _sectionEdit, value);
+    }
 
     public PassFileBarExpander PassFileBarExpander { get; } = new();
 
     public IObservable<LayoutState> LayoutState { get; }
+    
+    public IObservable<bool> IsSectionReadVisible { get; }
+    
+    public IObservable<bool> IsSectionEditVisible { get; }
 
     /// <inheritdoc />
     protected override async ValueTask<IResult> CanLeaveAsync()
@@ -174,41 +198,79 @@ public class PwdStorageModel : PageViewModel
         }
 
         _loaded = false;
-        await LoadPassFilesAsync(LastItemPath.Copy());
+        await LoadPassFilesAsync();
     }
 
+    // public bool Mode
+    // {
+    //     get => _editMode;
+    //     set
+    //     {
+    //         this.RaiseAndSetIfChanged(ref _editMode, value);
+    //         this.RaisePropertyChanged(nameof(SectionName));
+    //             
+    //         if (_viewElements.SectionNameEditBox is null) return;
+    //         if (value)
+    //         {
+    //             var section = _sectionBtn!.Section;
+    //             if (section.Items.Count == 0)
+    //             {
+    //                 _viewElements.SectionNameEditBox.SelectionStart = 0;
+    //                 _viewElements.SectionNameEditBox.SelectionEnd = section.Name.Length;
+    //                 _viewElements.SectionNameEditBox.Focus();
+    //             }
+    //             else
+    //             {
+    //                 _viewElements.SectionNameEditBox.SelectionStart = section.Name.Length;
+    //                 _viewElements.SectionNameEditBox.SelectionEnd = section.Name.Length;
+    //             }
+    //         }
+    //         else
+    //         {
+    //             _viewElements.SectionNameEditBox.SelectionStart = 0;
+    //             _viewElements.SectionNameEditBox.SelectionEnd = 0;
+    //         }
+    //     }
+    // }
 
-    private async Task LoadPassFilesAsync(PassFileItemPath lastItemPath)
+
+    private async Task LoadPassFilesAsync()
     {
-        // using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
-        //
-        // if (!_loaded)
-        // {
-        //     await _pfSyncService.SynchronizeAsync(_pfContext);
-        //     _loaded = true;
-        // }
-        //
-        // UpdatePassFileList();
-        //
-        // if (lastItemPath.PassFileId is not null)
-        // {
-        //     var index = _passFileList.FindIndex(btn => btn.PassFile!.Id == lastItemPath.PassFileId.Value);
-        //     if (index >= 0)
-        //     {
-        //         if ((_passFileList[index].PassFile as PwdPassFile).Content.PassPhrase is not null)
-        //         {
-        //             PassFilesSelectedIndex = index;
-        //             if (lastItemPath.PassFileSectionId is not null)
-        //             {
-        //                 SelectedData.SelectedSectionIndex =
-        //                     SelectedData.SectionsList!.FindIndex(
-        //                         btn => btn.Section.Id == lastItemPath.PassFileSectionId);
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // PassFileBarExpander.IsOpened = true;
+        using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
+
+        var path = _currentPath;
+
+        if (!_loaded)
+        {
+            await _pfSyncService.SynchronizeAsync(_pfContext);
+            _loaded = true;
+        }
+
+        PassFileList.RefreshList(_pfContext.CurrentList);
+
+        if (path.PassFileId is not null)
+        {
+            var index = PassFileList.List
+                .FindIndex(btn => btn.PassFile.Id == path.PassFileId);
+
+            if (index >= 0)
+            {
+                var passFile = (PwdPassFile) PassFileList.List[index].PassFile;
+
+                if (passFile.Content.PassPhrase is not null)
+                {
+                    PassFileList.SelectedIndex = index;
+
+                    if (path.SectionId is not null)
+                    {
+                        SectionList.SelectedIndex = SectionList.List
+                            .FindIndex(btn => btn.Section.Id == path.SectionId);
+                    }
+                }
+            }
+        }
+
+        PassFileBarExpander.IsOpened = true;
     }
 
     private async Task OnSelectPassFileAsync(int _)
@@ -267,17 +329,18 @@ public class PwdStorageModel : PageViewModel
             await _pfSyncService.SynchronizeAsync(_pfContext);
         }
 
-        await LoadPassFilesAsync(LastItemPath.Copy());
+        await LoadPassFilesAsync();
     }
-    
+
     #region Sections
 
     private async Task SectionDeleteAsync()
     {
         var passFile = PassFileList.GetSelectedPassFile()!;
         var section = SectionList.GetSelectedSection()!;
-            
-        var confirm = await _dialogService.ConfirmAsync(string.Format(Resources.STORAGE__CONFIRM_DELETE_SECTION, section.Name));
+
+        var confirm =
+            await _dialogService.ConfirmAsync(string.Format(Resources.STORAGE__CONFIRM_DELETE_SECTION, section.Name));
         if (confirm.Bad) return;
 
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
@@ -290,12 +353,12 @@ public class PwdStorageModel : PageViewModel
             SectionList.Remove(section);
         }
     }
-        
+
     #endregion
-    
+
     #region Items
 
-    private void ItemsEdit() => 
+    private void ItemsEdit() =>
         SectionEdit = PwdSectionEditModel.From(SectionList.GetSelectedSection()!);
 
     private void ItemsApplyChanges()

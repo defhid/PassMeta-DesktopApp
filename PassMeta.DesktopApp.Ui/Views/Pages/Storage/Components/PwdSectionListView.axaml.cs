@@ -1,14 +1,13 @@
 using Avalonia.Controls;
 using Avalonia.LogicalTree;
-using Avalonia.Markup.Xaml;
 
 namespace PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components;
 
-public class PwdSectionListView : UserControl
+public partial class PwdSectionListView : UserControl
 {
     public PwdSectionListView()
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
     }
 
     private void Search_OnAttachedToLogicalTree(object? sender, LogicalTreeAttachmentEventArgs e)

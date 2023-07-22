@@ -21,7 +21,7 @@
   <Grid Margin="7 7 7 10"
         RowDefinitions="Auto,*">
     <Grid Grid.Row="0">
-      <DataGrid Items="{Binding FoundList}"
+      <DataGrid ItemsSource="{Binding FoundList}"
                 SelectedItem="{Binding SelectedFile}"
                 AutoGenerateColumns="False"
                 CanUserResizeColumns="True"

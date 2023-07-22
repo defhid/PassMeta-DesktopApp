@@ -72,7 +72,7 @@
           VerticalAlignment="Top"
           HorizontalAlignment="Left"
           Width="200"
-          Items="{Binding Cultures}"
+          ItemsSource="{Binding Cultures}"
           SelectedItem="{Binding SelectedCulture}" />
       </Grid>
 

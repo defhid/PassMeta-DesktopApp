@@ -9,7 +9,8 @@ public static class Program
 {
     public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App.App>()
         .UsePlatformDetect()
-        .UseReactiveUI();
+        .UseReactiveUI()
+        .WithInterFont();
 
     public static void Main(string[] args)
     {

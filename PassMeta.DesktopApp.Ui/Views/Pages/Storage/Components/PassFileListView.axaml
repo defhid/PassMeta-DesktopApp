@@ -42,7 +42,7 @@
       SelectionMode="Toggle"
       CornerRadius="3"
       SelectedIndex="{Binding SelectedIndex}"
-      Items="{Binding List}"
+      ItemsSource="{Binding List}"
       IsEnabled="{Binding !IsReadOnly}">
       <ListBox.ItemTemplate>
         <DataTemplate>

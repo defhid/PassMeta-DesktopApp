@@ -2,20 +2,19 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.DialogWin;
 
 namespace PassMeta.DesktopApp.Ui.Views.Windows;
 
-public class DialogWindow : ReactiveWindow<DialogWinModel>
+public partial class DialogWindow : ReactiveWindow<DialogWinModel>
 {
     public DialogWindow()
     {
+        InitializeComponent();
 #if DEBUG
         this.AttachDevTools();
 #endif
-        AvaloniaXamlLoader.Load(this);
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)

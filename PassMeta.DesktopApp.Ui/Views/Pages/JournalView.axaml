@@ -23,7 +23,7 @@
         Grid.Column="0"
         HorizontalAlignment="Left"
         Margin="0 2 0 0"
-        Items="{Binding PageList}"
+        ItemsSource="{Binding PageList}"
         SelectedIndex="{Binding SelectedPageIndex}"
         ToolTip.Tip="{x:Static com:Resources.JOURNAL__TOOLTIP_PAGE_NUM}" />
 
@@ -41,7 +41,7 @@
         HorizontalAlignment="Left"
         Margin="20 2 0 0"
         MinWidth="150"
-        Items="{Binding Kinds}"
+        ItemsSource="{Binding Kinds}"
         SelectedIndex="{Binding SelectedKindIndex}"
         ToolTip.Tip="{x:Static com:Resources.JOURNAL__TOOLTIP_KIND}" />
     </Grid>
@@ -54,7 +54,7 @@
         AutoGenerateColumns="False"
         CanUserResizeColumns="True"
         CanUserSortColumns="False"
-        Items="{Binding Records}">
+        ItemsSource="{Binding Records}">
         <DataGrid.Columns>
           <DataGridTextColumn
             Header="{x:Static com:Resources.JOURNAL__HEADER_TIMESTAMP}"

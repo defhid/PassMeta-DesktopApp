@@ -55,7 +55,7 @@
         FontWeight="Bold"
         FontStyle="Italic"
         SelectedIndex="{Binding SelectedColorIndex}"
-        Items="{x:Static constants:PassFileColor.List}"
+        ItemsSource="{x:Static constants:PassFileColor.List}"
         IsEnabled="{Binding !ReadOnly^}">
         <ComboBox.ItemTemplate>
           <DataTemplate>

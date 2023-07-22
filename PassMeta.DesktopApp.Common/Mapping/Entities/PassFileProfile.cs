@@ -52,7 +52,7 @@ public class PassFileProfile : Profile
                         Version = x.Version
                     }));
 
-        CreateMap<TPassFile, PassFile>()
+        CreateMap<PassFileLocalDto, TPassFile>()
             .ForMember(x => x.OriginChangeStamps, opt => opt
                 .MapFrom(dto => dto == null
                     ? null

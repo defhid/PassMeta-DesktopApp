@@ -45,7 +45,7 @@
 
           <ItemsControl
             Grid.Row="2"
-            Items="{Binding Items}"
+            ItemsSource="{Binding Items}"
             CornerRadius="3"
             Padding="5 10 5 100"
             VerticalAlignment="Top">

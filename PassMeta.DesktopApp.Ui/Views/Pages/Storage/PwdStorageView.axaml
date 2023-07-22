@@ -34,22 +34,26 @@
       PaneBackground="Transparent"
       CompactPaneLength="50"
       OpenPaneLength="{Binding LayoutState^.PassFilesPaneWidth}"
-      IsPaneOpen="{Binding PassFileBarExpander.IsOpened}">
+      IsPaneOpen="{Binding PassFileList.IsExpanded}">
       <SplitView.Pane>
         <components:PassFileListView DataContext="{Binding PassFileList}" />
       </SplitView.Pane>
 
       <Grid ColumnDefinitions="2*,3*">
         <components:PwdSectionListView
-          Grid.Column="0" 
-          DataContext=""
-          Margin="{Binding LayoutState^.SectionsListMargin}" />
+          Grid.Column="0"
+          DataContext="{Binding SectionList}" />
 
         <components:PwdSectionReadView
           Grid.Column="1"
-          DataContext=""
           Margin="0 6 4 5"
-          IsVisible="{Binding SelectedData.IsItemsBarVisible^}" />
+          DataContext="{Binding SectionRead}" />
+        
+        <!-- <components:PwdSectionEditView -->
+        <!--   Grid.Column="1" -->
+        <!--   DataContext="{Binding SectionEdit}" -->
+        <!--   Margin="0 6 4 5" -->
+        <!--   IsVisible="{Binding IsSectionEditVisible^}" /> -->
       </Grid>
     </SplitView>
   </Grid>

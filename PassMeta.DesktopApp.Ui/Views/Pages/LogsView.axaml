@@ -45,7 +45,7 @@
         CanUserResizeColumns="True"
         CanUserSortColumns="False"
         HeadersVisibility="None"
-        Items="{Binding Logs}"
+        ItemsSource="{Binding Logs}"
         SelectedIndex="{Binding SelectedLogIndex}">
         <DataGrid.Columns>
           <DataGridTextColumn Binding="{Binding CreatedOnShort}" />

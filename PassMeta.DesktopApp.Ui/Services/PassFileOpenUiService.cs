@@ -4,8 +4,6 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 using PassMeta.DesktopApp.Ui.Models.Providers;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
-using PassMeta.DesktopApp.Ui.Views.Windows;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 
@@ -30,8 +28,8 @@ public class PassFileOpenUiService<TPassFile> : IPassFileOpenUiService<TPassFile
             return;
         }
 
-        var win = new PassFileWin { ViewModel = new PassFileWinModel<TPassFile>(passFile, windowProvider) };
-
-        await win.ShowDialog(hostWindow);
+        // var win = new PassFileWin<TPassFile> { ViewModel = new PassFileWinModel<TPassFile>(passFile, windowProvider) };
+        //
+        // await win.ShowDialog(hostWindow);
     }
 }

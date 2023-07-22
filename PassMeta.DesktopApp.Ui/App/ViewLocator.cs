@@ -8,25 +8,15 @@ using System;
 
 public class ViewLocator : IDataTemplate
 {
-    public bool SupportsRecycling => false;
-
-    public IControl Build(object data)
+    public Control Build(object data)
     {
         var name = data.GetType().FullName!.Replace("ViewModel", "View");
         var type = Type.GetType(name);
 
-        if (type != null)
-        {
-            return (Control)Activator.CreateInstance(type)!;
-        }
-        else
-        {
-            return new TextBlock { Text = "Not Found: " + name };
-        }
+        return type == null
+            ? new TextBlock { Text = "Not Found: " + name }
+            : (Control)Activator.CreateInstance(type)!;
     }
 
-    public bool Match(object data)
-    {
-        return data is PageViewModel;
-    }
+    public bool Match(object data) => data is PageViewModel;
 }

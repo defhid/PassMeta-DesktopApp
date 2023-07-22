@@ -10,6 +10,7 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Extra;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 using PassMeta.DesktopApp.Ui.Models.Comparers;
 using PassMeta.DesktopApp.Ui.Models.Constants;
 using PassMeta.DesktopApp.Ui.Models.Providers;
@@ -25,11 +26,14 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 public class PassFileListModel<TPassFile> : ReactiveObject
     where TPassFile : PassFile
 {
+    private readonly IPassFileOpenUiService<TPassFile> _pfOpenService =
+        Locator.Current.Resolve<IPassFileOpenUiService<TPassFile>>();
+
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
     private readonly HostWindowProvider _windowProvider;
     private readonly IPassFileContext<TPassFile> _pfContext;
 
-    private IReadOnlyList<PassFileCellModel<TPassFile>> _list = Array.Empty<PassFileCellModel<TPassFile>>();
+    private IReadOnlyList<PassFileCellModel> _list = Array.Empty<PassFileCellModel>();
     private int _selectedIndex = -1;
     private int _prevSelectedIndex = -1;
     private bool _isExpanded;
@@ -73,7 +77,7 @@ public class PassFileListModel<TPassFile> : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _isReadOnly, value);
     }
 
-    public IReadOnlyList<PassFileCellModel<TPassFile>> List
+    public IReadOnlyList<PassFileCellModel> List
     {
         get => _list;
         private set => this.RaiseAndSetIfChanged(ref _list, value);
@@ -90,7 +94,7 @@ public class PassFileListModel<TPassFile> : ReactiveObject
     }
 
     public TPassFile? GetSelectedPassFile()
-        => _selectedIndex < 0 ? null : _list[_selectedIndex].PassFile;
+        => _selectedIndex < 0 ? null : (TPassFile)_list[_selectedIndex].PassFile;
 
     public void RollbackSelectedPassFile()
         => SelectedIndex = _prevSelectedIndex;
@@ -121,20 +125,28 @@ public class PassFileListModel<TPassFile> : ReactiveObject
         List = new[] { cell }.Concat(List).ToList();
         SelectedIndex = 0;
 
-        await cell.ShowCardAsync();
+        await ShowCardAsync(cell.PassFile);
     }
 
     /// <summary>
     /// Actualize list from current passfile context.
     /// </summary>
     public void RefreshList(IEnumerable<TPassFile> passFiles)
-    {
-        List = passFiles
+        => List = passFiles
             .OrderBy(x => x, PassFileComparer.Instance)
             .Select(ToCell)
             .ToList();
+
+    private async Task ShowCardAsync(PassFile passFile)
+    {
+        await _pfOpenService.ShowInfoAsync((TPassFile)passFile, _windowProvider);
+
+        if (!_pfContext.CurrentList.Contains(passFile))
+        {
+            List = List.Where(x => x.PassFile != passFile).ToList();
+        }
     }
 
-    private PassFileCellModel<TPassFile> ToCell(TPassFile passFile)
-        => new(passFile, _fullModeObservable, _windowProvider);
+    private PassFileCellModel ToCell(TPassFile passFile)
+        => new(passFile, _fullModeObservable, ReactiveCommand.CreateFromTask(() => ShowCardAsync(passFile)));
 }

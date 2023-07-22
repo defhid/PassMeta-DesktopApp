@@ -1,19 +1,20 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Extensions;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Views.Windows;
 
-public class PassFileWin : ReactiveWindow<PassFileWinModel>
+// TODO
+public partial class PassFileWin : ReactiveWindow<PassFileWinModel<PwdPassFile>>
 {
     public PassFileWin()
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
         this.CorrectMainWindowFocusWhileOpened();
 
         this.WhenActivated(_ => ViewModel!.Finish += Close);
