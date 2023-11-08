@@ -1,16 +1,38 @@
-# PassMeta Desktop App
+# PassMeta Desktop App — *your passwords SAFE*
 #### © 2023 Vladislav Mironov
 
 
 ### About the project
 PassMeta DesktopApp is a cross-platform client application of PassMeta System for Windows, Linux and macOS.
 
+**Server** application is [here](https://github.com/defhid/PassMeta-Server).
+
 ### Technologies
-*.NET 6.0, C#, Avalonia UI.*
+_.NET 6.0, C#, Avalonia UI_
+<br>
+_MVVM, Reactive UI, Service Locator_
+<br>
+_AES256 (multipass & client side only), SHA256_
 
 ### Screenshots
 
+#### _General password storage page:_
 ![screenshot](docs/screenshot_storage.png)
-<br>
-<br>
+
+#### _Random password generator page:_
 ![screenshot](docs/screenshot_generator.png)
+
+#### _User account page:_
+![screenshot](docs/screenshot_account.png)
+
+#### _Server side journal page:_
+![screenshot](docs/screenshot_journal.png)
+
+#### _Client side dev-logs page:_
+![screenshot](docs/screenshot_logs.png)
+
+#### _Application settings page:_
+![screenshot](docs/screenshot_settings.png)
+
+#### _Application info:_
+![screenshot](docs/screenshot_info.png)
