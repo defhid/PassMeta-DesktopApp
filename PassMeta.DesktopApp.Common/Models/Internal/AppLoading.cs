@@ -1,6 +1,6 @@
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Loading;
 
-namespace PassMeta.DesktopApp.Common.Models.App;
+namespace PassMeta.DesktopApp.Common.Models.Internal;
 
 /// <summary>
 /// Application loading management.

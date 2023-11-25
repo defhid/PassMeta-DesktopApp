@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Models.Entities.Internal;
+using PassMeta.DesktopApp.Common.Models.Internal;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.App;
 

@@ -1,4 +1,4 @@
-using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Common.Models.Internal;
 using PassMeta.DesktopApp.Core.Utils.Loading;
 
 namespace PassMeta.DesktopApp.Core;

@@ -16,9 +16,9 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Mapping.Entities;
-using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+using PassMeta.DesktopApp.Common.Models.Internal;
 using PassMeta.DesktopApp.Core;
 using PassMeta.DesktopApp.Core.Services;
 using PassMeta.DesktopApp.Core.Services.PassFileServices;
@@ -30,7 +30,6 @@ using PassMeta.DesktopApp.Core.Utils.Helpers;
 using PassMeta.DesktopApp.Core.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Core.Utils.PassFileContext;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
-using PassMeta.DesktopApp.Ui.Models.Cache;
 using PassMeta.DesktopApp.Ui.Services;
 using ReactiveUI;
 using Splat;
@@ -46,8 +45,6 @@ public static class DependencyInstaller
 
         Register(AppInfoSource.Get());
         Register(AppLoadingFactory.Create());
-
-        Register(new GeneratorPresetsCache());
 
         Register<ILogsWriter, ILogsManager>(new AppLogsManager(
             Resolve<AppInfo>().RootPath));
@@ -73,6 +70,8 @@ public static class DependencyInstaller
         Register<IUserContextProvider, IAppContextProvider, IAppContextManager>(new AppContextManager(
             Resolve<ILogsWriter>(),
             Resolve<IFileRepositoryFactory>().ForSystemFiles()));
+        
+        Register<IAppPresetsProvider, IAppPresetsManager>(new AppPresetsManager());
 
         Register<IOkBadService>(new OkBadService(
             Resolve<IDialogService>()));

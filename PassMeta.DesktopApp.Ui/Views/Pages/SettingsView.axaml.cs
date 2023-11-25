@@ -21,7 +21,7 @@ public partial class SettingsView : ReactiveUserControl<SettingsPageModel>
     {
         var window = new ApplicationInfoWindow { ViewModel = interaction.Input };
         
-        await window.ShowDialog(App.App.MainWindow);
+        await window.ShowDialog(App.App.MainWindow!);
         
         interaction.SetOutput(Unit.Default);
     }

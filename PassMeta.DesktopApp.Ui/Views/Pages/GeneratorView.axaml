@@ -44,6 +44,8 @@
           Grid.Row="0" Grid.Column="1"
           Minimum="4"
           Maximum="100"
+          Increment="1"
+          MinWidth="110"
           Value="{Binding Length}" />
 
         <TextBlock
@@ -117,8 +119,8 @@
         <Grid
           Grid.Row="1"
           ColumnDefinitions="Auto,Auto"
-          Margin="5 0 0 0"
-          HorizontalAlignment="Center">
+          Margin="7 0 0 0"
+          HorizontalAlignment="Left">
           <Button
             Grid.Column="0"
             ToolTip.Tip="{x:Static com:Resources.GENERATOR__COPY_BTN}"

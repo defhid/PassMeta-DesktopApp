@@ -10,7 +10,7 @@ using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Common.Models.Internal;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows;
 using ReactiveUI;

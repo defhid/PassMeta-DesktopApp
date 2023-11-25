@@ -3,8 +3,9 @@ using System.Linq;
 using System.Net;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
+using PassMeta.DesktopApp.Common.Models.Entities;
 
-namespace PassMeta.DesktopApp.Common.Models.Entities.Internal;
+namespace PassMeta.DesktopApp.Common.Models.Internal;
 
 /// <inheritdoc />
 public class AppContextModel : IAppContext

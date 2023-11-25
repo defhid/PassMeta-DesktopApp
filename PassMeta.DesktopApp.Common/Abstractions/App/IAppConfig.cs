@@ -32,9 +32,4 @@ public interface IAppConfig
     /// Debugging mode.
     /// </summary>
     public bool DebugMode { get; }
-
-    /// <summary>
-    /// Default length for password generator.
-    /// </summary>
-    public int DefaultPasswordLength { get; }
 }

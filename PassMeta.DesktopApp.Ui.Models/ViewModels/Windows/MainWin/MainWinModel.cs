@@ -8,7 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Common.Models.Internal;
 using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;

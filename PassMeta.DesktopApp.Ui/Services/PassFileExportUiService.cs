@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
@@ -10,7 +10,6 @@ using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
-using PassMeta.DesktopApp.Ui.Models.Providers;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 
@@ -34,18 +33,11 @@ public class PassFileExportUiService<TPassFile, TContent> : IPassFileExportUiSer
     }
 
     /// <inheritdoc />
-    public async Task SelectAndExportAsync(TPassFile passFile, HostWindowProvider windowProvider)
+    public async Task SelectAndExportAsync(TPassFile passFile, IStorageProvider storageProvider)
     {
-        var win = windowProvider.Window;
-        if (win is null)
-        {
-            _logger.Error(GetType().Name + ": host window is currently null!");
-            return;
-        }
-
         try
         {
-            await SelectAndExportInternalAsync(passFile, win);
+            await SelectAndExportInternalAsync(passFile, storageProvider);
         }
         catch (Exception ex)
         {
@@ -54,29 +46,27 @@ public class PassFileExportUiService<TPassFile, TContent> : IPassFileExportUiSer
         }
     }
 
-    private async Task SelectAndExportInternalAsync(TPassFile passFile, Window currentWindow)
+    private async Task SelectAndExportInternalAsync(TPassFile passFile, IStorageProvider storageProvider)
     {
-        var fileDialog = new SaveFileDialog
+        var file = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            InitialFileName = passFile.Name + '.' + PassFileExternalFormat.Encrypted.Extension,
+            SuggestedFileName = passFile.Name + '.' + PassFileExternalFormat.Encrypted.Extension,
             DefaultExtension = '.' + PassFileExternalFormat.Encrypted.Extension,
-            Filters = _exportService.SupportedFormats.Select(format => new FileDialogFilter
+            FileTypeChoices = _exportService.SupportedFormats.Select(format => new FilePickerFileType(format.Name)
             {
-                Name = format.Name,
-                Extensions = { format.Extension }
-            }).ToList()
-        };
+                Patterns = new[] { "*." + format.Extension }
+            }).ToList(),
+        });
 
-        var filePath = await fileDialog.ShowAsync(currentWindow);
-        if (string.IsNullOrEmpty(filePath))
+        if (file is null)
         {
             return;
         }
 
-        var result = await _exportService.ExportAsync(passFile, filePath);
+        var result = await _exportService.ExportAsync(passFile, file.Path.AbsolutePath);
         if (result.Ok)
         {
-            _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_EXPORT, passFile.Name, filePath));
+            _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_EXPORT, passFile.Name, file.Path.AbsolutePath));
         }
     }
 }

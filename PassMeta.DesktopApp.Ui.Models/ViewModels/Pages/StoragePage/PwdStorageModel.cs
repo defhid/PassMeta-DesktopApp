@@ -14,8 +14,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Helpers;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.App;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Common.Models.Internal;
 using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
@@ -177,7 +177,7 @@ public class PwdStorageModel : PageViewModel
     {
         return SectionEdit is not null
             ? await _dialogService.ConfirmAsync(Resources.STORAGE__CONFIRM_SECTION_RESET)
-            : Result.Failure();
+            : Result.Success();
     }
 
     /// <inheritdoc />

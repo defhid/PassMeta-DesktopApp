@@ -254,7 +254,7 @@ public class DialogService : IDialogService
 
         try
         {
-            dialog.Show(App.App.MainWindow);
+            dialog.Show(App.App.MainWindow!);
         }
         catch (Exception ex)
         {
@@ -269,7 +269,7 @@ public class DialogService : IDialogService
 
         try
         {
-            await dialog.ShowDialog(App.App.MainWindow);
+            await dialog.ShowDialog(App.App.MainWindow!);
         }
         catch (Exception ex)
         {

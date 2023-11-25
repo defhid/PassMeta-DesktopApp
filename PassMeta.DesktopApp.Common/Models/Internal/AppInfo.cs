@@ -1,4 +1,4 @@
-namespace PassMeta.DesktopApp.Common.Models.App;
+namespace PassMeta.DesktopApp.Common.Models.Internal;
 
 /// <summary>
 /// Information about this application.

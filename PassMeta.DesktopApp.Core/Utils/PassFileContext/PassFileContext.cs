@@ -415,7 +415,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         var states = new Dictionary<long, PassFileState>(toSaveList.Count + 1);
         foreach (var source in toSaveList)
         {
-            _states[source.Id] = new PassFileState(_mapper.Map<TPassFile, TPassFile>(source), source);
+            states[source.Id] = new PassFileState(_mapper.Map<TPassFile, TPassFile>(source), source);
         }
 
         _states = states;

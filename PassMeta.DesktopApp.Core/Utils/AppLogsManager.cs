@@ -123,7 +123,7 @@ public class AppLogsManager : ILogsManager
     }
         
     /// <inheritdoc />
-    public void CleanUp()
+    public Task CleanUpAsync()
     {
         try
         {
@@ -153,6 +153,8 @@ public class AppLogsManager : ILogsManager
                 Text = $"Logs optimizing failed [{ex}]"
             });
         }
+        
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />

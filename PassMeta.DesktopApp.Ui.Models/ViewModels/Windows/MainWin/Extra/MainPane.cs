@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -25,6 +26,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
     private readonly BehaviorSubject<bool> _devModeSource = new(false);
     private readonly BehaviorSubject<bool> _authSource = new(false);
     private readonly BehaviorSubject<MainPaneButtonModel?> _activeBtnSource = new(null);
+    private readonly Dictionary<Func<PageViewModel>, PageViewModel> _pagesCache = new();
     private bool _isOpened;
 
     public MainPane(IScreen hostScreen)
@@ -54,6 +56,14 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
                     SettingsPageModel => Settings,
                     _ => null
                 }))
+                .DisposeWith(disposables);
+
+            userContext.CurrentObservable
+                .Subscribe(_ => _pagesCache.Clear())
+                .DisposeWith(disposables);
+
+            appConfig.CurrentObservable
+                .Subscribe(_ => _pagesCache.Clear())
                 .DisposeWith(disposables);
         });
 
@@ -133,7 +143,12 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
                 IsVisible = isVisible,
                 Command = ReactiveCommand.CreateFromTask(async () =>
                 {
-                    var pvm = pageFactory();
+                    if (!_pagesCache.TryGetValue(pageFactory, out var pvm))
+                    {
+                        pvm =  pageFactory();
+                        _pagesCache[pageFactory] = pvm;
+                    }
+
                     await pvm.TryNavigateAsync();
                     IsOpened = false;
                 })

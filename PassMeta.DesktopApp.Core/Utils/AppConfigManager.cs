@@ -11,7 +11,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Internal;
-using PassMeta.DesktopApp.Common.Models.Entities.Internal;
+using PassMeta.DesktopApp.Common.Models.Internal;
 
 namespace PassMeta.DesktopApp.Core.Utils;
 

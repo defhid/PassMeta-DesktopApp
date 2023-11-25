@@ -3,7 +3,7 @@ using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Common.Models.Internal;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App.Observers;

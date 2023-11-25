@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Avalonia.Controls;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
@@ -243,7 +244,7 @@ public class PassFileWinModel<TPassFile> : ReactiveObject
 
         var exportService = Locator.Current.Resolve<IPassFileExportUiService<TPassFile>>();
 
-        await exportService.SelectAndExportAsync(PassFile, _hostWindowProvider);
+        //await exportService.SelectAndExportAsync(PassFile, TopLevel.GetTopLevel().StorageProvider);
     }
 
     private async Task RestoreAsync()

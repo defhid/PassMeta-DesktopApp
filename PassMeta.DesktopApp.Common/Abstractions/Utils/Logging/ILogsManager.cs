@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging.Extra;
 using PassMeta.DesktopApp.Common.Models.Entities;
 
@@ -19,7 +20,7 @@ public interface ILogsManager : ILogsWriter, IDisposable
     /// <summary>
     /// Delete old logs without throwing exceptions.
     /// </summary>
-    void CleanUp();
+    Task CleanUpAsync();
 
     /// <summary>
     /// The event that is emitted when an error occurs during logging.

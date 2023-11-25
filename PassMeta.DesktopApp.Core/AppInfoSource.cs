@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using PassMeta.DesktopApp.Common.Constants;
-using PassMeta.DesktopApp.Common.Models.App;
+using PassMeta.DesktopApp.Common.Models.Internal;
 
 namespace PassMeta.DesktopApp.Core;
 

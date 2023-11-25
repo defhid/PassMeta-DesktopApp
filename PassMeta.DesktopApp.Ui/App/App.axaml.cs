@@ -78,6 +78,7 @@ public class App : Application
         var logManager = Locator.Current.Resolve<ILogsManager>();
         var appConfigManager = Locator.Current.Resolve<IAppConfigManager>();
         var appContextManager = Locator.Current.Resolve<IAppContextManager>();
+        var appPresetsManager = Locator.Current.Resolve<IAppPresetsManager>();
         var userContextProvider = Locator.Current.Resolve<IUserContextProvider>();
         var dialogService = Locator.Current.Resolve<IDialogService>();
         var pmClient = Locator.Current.Resolve<IPassMetaClient>();
@@ -104,7 +105,8 @@ public class App : Application
         pmClient.OnlineObservable.Subscribe(new OnlineObserver());
         userContextProvider.CurrentObservable.Subscribe(new UserContextObserver());
 
-        _ = Task.Run(logManager.CleanUp);
+        _ = Task.Run(logManager.CleanUpAsync);
+        _ = Task.Run(appPresetsManager.LoadAsync);
     }
 
     private static MainWindow MakeWindow()

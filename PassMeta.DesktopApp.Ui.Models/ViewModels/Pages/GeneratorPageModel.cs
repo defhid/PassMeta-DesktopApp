@@ -7,7 +7,7 @@ using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Ui.Models.Cache;
+using PassMeta.DesktopApp.Common.Models.Presets;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using ReactiveUI;
 using Splat;
@@ -22,22 +22,37 @@ public class GeneratorPageModel : PageViewModel
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
     private readonly IPassMetaRandomService _pmRandomService = Locator.Current.Resolve<IPassMetaRandomService>();
     private readonly IClipboardService _clipboardService = Locator.Current.Resolve<IClipboardService>();
-    private readonly IAppConfigProvider _appConfig = Locator.Current.Resolve<IAppConfigProvider>();
-    private readonly GeneratorPresetsCache _presetsCache = Locator.Current.Resolve<GeneratorPresetsCache>();
+    private readonly PasswordGeneratorPresets _presets = Locator.Current.Resolve<IAppPresetsProvider>().PasswordGeneratorPresets;
 
     private string _result = string.Empty;
     private int _length;
+    private bool _includeDigits;
+    private bool _includeLowercase;
+    private bool _includeUppercase;
+    private bool _includeSpecial;
 
     public GeneratorPageModel(IScreen hostScreen) : base(hostScreen)
     {
-        _length = _appConfig.Current.DefaultPasswordLength;
-        Generate();
-
         GenerateCommand = ReactiveCommand.Create(Generate);
         CopyCommand = ReactiveCommand.Create(CopyResultAsync);
 
         Generated = this.WhenAnyValue(vm => vm.Result)
             .Select(res => res != string.Empty);
+        
+        Length = _presets.Length;
+        IncludeDigits = _presets.IncludeDigits;
+        IncludeLowercase = _presets.IncludeLowercase;
+        IncludeUppercase = _presets.IncludeUppercase;
+        IncludeSpecial = _presets.IncludeSpecial;
+
+        this.WhenActivated(d => d(
+            this.WhenAnyValue(
+                x => x.Length,
+                x => x.IncludeDigits,
+                x => x.IncludeLowercase,
+                x => x.IncludeUppercase,
+                x => x.IncludeSpecial)
+                .Subscribe(_ => Generate())));
     }
 
     public int Length
@@ -48,26 +63,26 @@ public class GeneratorPageModel : PageViewModel
 
     public bool IncludeDigits
     {
-        get => _presetsCache.IncludeDigits;
-        set => _presetsCache.IncludeDigits = value;
+        get => _includeDigits;
+        set => this.RaiseAndSetIfChanged(ref _includeDigits, value);
     }
 
     public bool IncludeLowercase
     {
-        get => _presetsCache.IncludeLowercase;
-        set => _presetsCache.IncludeLowercase = value;
+        get => _includeLowercase;
+        set => this.RaiseAndSetIfChanged(ref _includeLowercase, value);
     }
 
     public bool IncludeUppercase
     {
-        get => _presetsCache.IncludeUppercase;
-        set => _presetsCache.IncludeUppercase = value;
+        get => _includeUppercase;
+        set => this.RaiseAndSetIfChanged(ref _includeUppercase, value);
     }
 
     public bool IncludeSpecial
     {
-        get => _presetsCache.IncludeSpecial;
-        set => _presetsCache.IncludeSpecial = value;
+        get => _includeSpecial;
+        set => this.RaiseAndSetIfChanged(ref _includeSpecial, value);
     }
 
     public string Result
