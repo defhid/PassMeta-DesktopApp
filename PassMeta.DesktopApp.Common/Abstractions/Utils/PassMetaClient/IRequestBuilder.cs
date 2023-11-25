@@ -1,10 +1,9 @@
 using System.Threading;
+using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
 using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-
-using System.Threading.Tasks;
 
 /// <summary>
 /// PassMeta client request builder.

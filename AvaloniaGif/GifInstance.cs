@@ -1,9 +1,9 @@
-using AvaloniaGif.Decoding;
 using System;
 using System.IO;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using AvaloniaGif.Decoding;
 
 namespace AvaloniaGif;
 

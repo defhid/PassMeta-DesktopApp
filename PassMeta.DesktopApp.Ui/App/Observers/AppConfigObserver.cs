@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Threading;
+using Avalonia.Threading;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
@@ -68,7 +69,7 @@ public class AppConfigObserver : IObserver<IAppConfig>
         CultureInfo.DefaultThreadCurrentCulture = Resources.Culture;
         CultureInfo.DefaultThreadCurrentUICulture = Resources.Culture;
 
-        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             Thread.CurrentThread.CurrentCulture = Resources.Culture;
             Thread.CurrentThread.CurrentUICulture = Resources.Culture;

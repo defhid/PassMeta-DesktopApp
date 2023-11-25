@@ -1,6 +1,6 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services;
-
 using System.Threading.Tasks;
+
+namespace PassMeta.DesktopApp.Common.Abstractions.Services;
 
 /// <summary>
 /// Service for working with user's clipboard.

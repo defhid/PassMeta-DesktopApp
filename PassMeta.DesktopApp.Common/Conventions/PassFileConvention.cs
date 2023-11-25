@@ -22,14 +22,6 @@ public static class PassFileConvention
         x => x.Key);
 
     /// <summary>
-    /// Get entity class by passfile type.
-    /// </summary>
-    public static Type GetEntityType(PassFileType passFileType)
-        => EnumToEntity.TryGetValue(passFileType, out var enumValue)
-            ? enumValue
-            : throw new ArgumentOutOfRangeException(nameof(passFileType), passFileType, null);
-
-    /// <summary>
     /// Get passfile type by entity class.
     /// </summary>
     public static PassFileType GetPassFileType(Type entityType)

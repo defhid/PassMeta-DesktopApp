@@ -1,10 +1,9 @@
+using System;
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 
 namespace PassMeta.DesktopApp.Ui.App;
-
-using Avalonia.Controls.Templates;
-using Avalonia.Controls;
-using System;
 
 public class ViewLocator : IDataTemplate
 {

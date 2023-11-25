@@ -1,10 +1,10 @@
-namespace PassMeta.DesktopApp.Ui.Utils;
-
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+
+namespace PassMeta.DesktopApp.Ui.Utils;
 
 public class ImageConverter : IValueConverter
 {

@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;

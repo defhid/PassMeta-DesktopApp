@@ -1,6 +1,6 @@
-namespace PassMeta.DesktopApp.Common.Models.Dto.Response;
-
 using System.Collections.Generic;
+
+namespace PassMeta.DesktopApp.Common.Models.Dto.Response;
 
 /// <summary>
 /// Page result with list of <typeparamref name="TElement"/>.

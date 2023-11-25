@@ -1,8 +1,8 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services;
-
 using System.Threading.Tasks;
-using Models.Dto.Request;
+using PassMeta.DesktopApp.Common.Models.Dto.Request;
 using PassMeta.DesktopApp.Common.Models.Entities;
+
+namespace PassMeta.DesktopApp.Common.Abstractions.Services;
 
 /// <summary>
 /// Service for authorization in PassMeta system.

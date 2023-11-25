@@ -1,12 +1,10 @@
 using System.Reactive.Disposables;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
-
-using Splat;
-using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
@@ -19,6 +17,7 @@ using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 using PassMeta.DesktopApp.Ui.Views.Windows.MainWin;
 using ReactiveUI;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App;
 

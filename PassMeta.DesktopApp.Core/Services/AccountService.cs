@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.App;
@@ -8,8 +7,8 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
 using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
+using PassMeta.DesktopApp.Common.Models.Entities;
 
 namespace PassMeta.DesktopApp.Core.Services;
 

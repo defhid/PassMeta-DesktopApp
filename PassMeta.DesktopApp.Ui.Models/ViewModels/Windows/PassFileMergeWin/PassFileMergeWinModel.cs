@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
@@ -12,7 +13,7 @@ using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileMergeWin;
 
-using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
+using ReactCommand = ReactiveCommand<Unit, Unit>;
 
 public class PassFileMergeWinModel : ReactiveObject
 {

@@ -10,9 +10,9 @@ PassMeta DesktopApp is a cross-platform client application of PassMeta System fo
 ### Technologies
 _.NET 6.0, C#, Avalonia UI_
 <br>
-_MVVM, Reactive UI, Service Locator_
+_MVVM, Reactive UI, Service Locator, AutoMapper_
 <br>
-_AES256 (multipass & client side only), SHA256_
+_AES256 multipass (client side only), SHA256_
 
 ### Screenshots
 
@@ -28,7 +28,7 @@ _AES256 (multipass & client side only), SHA256_
 #### _Server side journal page:_
 ![screenshot](docs/screenshot_journal.png)
 
-#### _Client side dev-logs page:_
+#### _Client side logs page:_
 ![screenshot](docs/screenshot_logs.png)
 
 #### _Application settings page:_

@@ -1,7 +1,7 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-
 using System;
 using System.Threading.Tasks;
+
+namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 
 /// <summary>
 /// HTTP PassMeta API client.

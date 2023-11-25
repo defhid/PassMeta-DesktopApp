@@ -1,6 +1,6 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Loading;
-
 using System;
+
+namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Loading;
 
 /// <summary>
 /// Loading manager.

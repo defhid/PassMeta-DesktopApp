@@ -1,8 +1,8 @@
-namespace PassMeta.DesktopApp.Common.Constants;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+
+namespace PassMeta.DesktopApp.Common.Constants;
 
 /// <summary>
 /// Application culture info.
@@ -38,22 +38,6 @@ public readonly struct AppCulture
 
     /// <inheritdoc />
     public override int GetHashCode() => _code.GetHashCode();
-
-    /// <summary>
-    /// Get culture from <see cref="All"/> by <paramref name="code"/>.
-    /// </summary>
-    public static AppCulture Parse(string code)
-    {
-        code = code.Trim().ToLower();
-            
-        foreach (var cult in All)
-        {
-            if (cult._code != code) continue;
-            return cult;
-        }
-
-        throw new ArgumentOutOfRangeException(nameof(code), code, @"Unknown code");
-    }
 
     /// <summary>
     /// Try to get culture from <see cref="All"/> by <paramref name="code"/>.

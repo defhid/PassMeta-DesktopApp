@@ -1,7 +1,7 @@
-namespace PassMeta.DesktopApp.Ui.Constants;
-
 using System;
-using Utils;
+using PassMeta.DesktopApp.Ui.Utils;
+
+namespace PassMeta.DesktopApp.Ui.Constants;
 
 public static class ManifestResourcePaths
 {

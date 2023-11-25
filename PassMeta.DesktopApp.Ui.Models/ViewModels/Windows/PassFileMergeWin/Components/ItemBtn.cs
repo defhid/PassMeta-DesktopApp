@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
+using System.Reactive;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileMergeWin.Components;
 
-using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
+using ReactCommand = ReactiveCommand<Unit, Unit>;
 
 public class ItemBtn : ReactiveObject
 {

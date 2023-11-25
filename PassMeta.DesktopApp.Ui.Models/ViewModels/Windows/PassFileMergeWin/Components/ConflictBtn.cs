@@ -1,10 +1,11 @@
 using System;
+using System.Reactive;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFileMerge;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileMergeWin.Components;
 
-using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
+using ReactCommand = ReactiveCommand<Unit, Unit>;
 
 public class ConflictBtn : ReactiveObject
 {
