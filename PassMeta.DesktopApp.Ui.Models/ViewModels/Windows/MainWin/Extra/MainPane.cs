@@ -6,7 +6,7 @@ using System.Reactive.Subjects;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Ui.Models.Providers;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
@@ -23,6 +23,8 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
 /// </summary>
 public sealed class MainPane : ReactiveObject, IActivatableViewModel
 {
+    private static IHostWindowProvider HostWindowProvider => Locator.Current.Resolve<IHostWindowProvider>();
+    
     private readonly BehaviorSubject<bool> _devModeSource = new(false);
     private readonly BehaviorSubject<bool> _authSource = new(false);
     private readonly BehaviorSubject<MainPaneButtonModel?> _activeBtnSource = new(null);
@@ -81,7 +83,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
             Resources.APP__MENU_BTN__STORAGE,
             "\uE8F1",
             _authSource,
-            () => new PwdStorageModel(hostScreen, HostWindowProvider!));
+            () => new PwdStorageModel(hostScreen, HostWindowProvider));
 
         Generator = createButton(
             Resources.APP__MENU_BTN__GENERATOR,
@@ -107,9 +109,6 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
             Observable.Return(true),
             () => new SettingsPageModel(hostScreen));
     }
-
-    /// <inheritdoc cref="HostWindowProvider"/>
-    public HostWindowProvider? HostWindowProvider { private get; set; }
 
     public bool IsOpened
     {
@@ -145,7 +144,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
                 {
                     if (!_pagesCache.TryGetValue(pageFactory, out var pvm))
                     {
-                        pvm =  pageFactory();
+                        pvm = pageFactory();
                         _pagesCache[pageFactory] = pvm;
                     }
 

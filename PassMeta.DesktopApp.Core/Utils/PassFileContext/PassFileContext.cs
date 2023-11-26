@@ -57,8 +57,6 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         IDialogService dialogService,
         ILogsWriter logger)
     {
-        Debug.Assert(userContext.UserId is not null);
-
         _pfLocalStorage = pfLocalStorage;
         _pfCryptoService = pfCryptoService;
         _counter = counter;
@@ -109,7 +107,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
         foreach (var dto in result.Data!.Where(x => x.Type == PassFileType))
         {
-            _states[dto.Id] = new PassFileState(
+            states[dto.Id] = new PassFileState(
                 _mapper.Map<PassFileLocalDto, TPassFile>(dto),
                 _mapper.Map<PassFileLocalDto, TPassFile>(dto));
         }
@@ -169,6 +167,11 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         PassFileCreationArgs args,
         CancellationToken cancellationToken)
     {
+        if (_userContext.UserId is null)
+        {
+            return UnexpectedError("Current user is not defined").WithNullData<TPassFile>();
+        }
+
         if (string.IsNullOrEmpty(args.PassPhrase))
         {
             return UnexpectedError("Passphrase is empty").WithNullData<TPassFile>();
@@ -185,7 +188,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         var dto = new PassFileLocalDto
         {
             Id = -nextIdResult.Data,
-            UserId = _userContext.UserId!.Value,
+            UserId = _userContext.UserId.Value,
             Type = PassFileType,
             Name = Resources.PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME,
             CreatedOn = DateTime.UtcNow,
@@ -336,6 +339,11 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     /// <inheritdoc />
     public async Task<IResult> CommitAsync()
     {
+        if (_userContext.UserId is null)
+        {
+            return UnexpectedError("Current user is not defined");
+        }
+
         var toSaveList = new List<TPassFile>();
         var toSaveContent = new List<TPassFile>();
         var toDeleteContent = new List<(TPassFile passFile, int version)>();

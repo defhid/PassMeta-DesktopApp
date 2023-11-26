@@ -71,7 +71,7 @@ public class PassFileDecryptionHelper : IPassFileDecryptionHelper
         }
 
         await _passPhraseAskHelper.AskLoopedAsync(question, repeatQuestion,
-            x => Task.FromResult(_pfCryptoService.Decrypt(passFile, x).Bad));
+            x => Task.FromResult(_pfCryptoService.Decrypt(passFile, x).Ok));
 
         return Result.From(passFile.Content.Decrypted is not null);
     }

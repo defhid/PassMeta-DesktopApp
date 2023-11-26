@@ -8,7 +8,7 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PassFileListModelPreview : PassFileListModel<PwdPassFile>
 {
-    public PassFileListModelPreview() : base(HostWindowProvider.Empty)
+    public PassFileListModelPreview() : base(PreviewHostWindowProvider.Instance)
     {
         RefreshList(new[]
         {

@@ -5,7 +5,7 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 
 public class PwdStorageModelPreview : PwdStorageModel
 {
-    public PwdStorageModelPreview() : base(null!, HostWindowProvider.Empty)
+    public PwdStorageModelPreview() : base(null!, PreviewHostWindowProvider.Instance)
     {
     }
 }

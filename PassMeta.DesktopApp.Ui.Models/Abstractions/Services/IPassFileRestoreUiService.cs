@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Ui.Models.Providers;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 
 namespace PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 
@@ -18,5 +18,5 @@ public interface IPassFileRestoreUiService<TPassFile>
     Task<IResult> SelectAndRestoreAsync(
         TPassFile passFile,
         IPassFileContext<TPassFile> pfContext,
-        HostWindowProvider windowProvider);
+        IHostWindowProvider windowProvider);
 }

@@ -12,8 +12,8 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
-using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Views.Windows;
 using Splat;
 
@@ -35,15 +35,9 @@ public class PwdPassFileRestoreUiService : IPassFileRestoreUiService<PwdPassFile
     public async Task<IResult> SelectAndRestoreAsync(
         PwdPassFile passFile,
         IPassFileContext<PwdPassFile> pfContext,
-        HostWindowProvider windowProvider)
+        IHostWindowProvider windowProvider)
     {
         var win = windowProvider.Window;
-        if (win is null)
-        {
-            _logger.Error(GetType().Name + ": host window is currently null!");
-            return Result.Failure();
-        }
-
         try
         {
             var selectResult = await new PassFileRestoreWin(passFile).ShowDialog<IResult?>(win);

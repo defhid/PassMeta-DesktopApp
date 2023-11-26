@@ -1,5 +1,4 @@
 using System;
-using System.Reactive.Linq;
 using ReactiveUI;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
@@ -14,8 +13,6 @@ public class PassFileBarExpander : ReactiveObject
     }
         
     public readonly IObservable<bool> IsOpenedObservable;
-        
-    public readonly IObservable<bool> ShortModeObservable;
 
     public bool AutoExpanding = true;
 
@@ -24,7 +21,6 @@ public class PassFileBarExpander : ReactiveObject
     public PassFileBarExpander()
     {
         IsOpenedObservable = this.WhenAnyValue(vm => vm.IsOpened);
-        ShortModeObservable = IsOpenedObservable.Select(isOpened => !isOpened);
     }
 
     public void TryExecuteAutoExpanding(bool isOpened)
@@ -35,7 +31,7 @@ public class PassFileBarExpander : ReactiveObject
 
     public IDisposable DisableAutoExpandingScoped() => new DisabledAutoExpanding(this).Start();
         
-    public sealed class DisabledAutoExpanding : IDisposable
+    private sealed class DisabledAutoExpanding : IDisposable
     {
         private readonly PassFileBarExpander _expander;
         private bool _disposed;

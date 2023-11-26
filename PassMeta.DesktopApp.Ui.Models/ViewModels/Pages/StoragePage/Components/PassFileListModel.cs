@@ -10,10 +10,10 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Extra;
 using PassMeta.DesktopApp.Common.Models.Internal;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 using PassMeta.DesktopApp.Ui.Models.Comparers;
 using PassMeta.DesktopApp.Ui.Models.Constants;
-using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Common;
 using ReactiveUI;
 using Splat;
@@ -30,7 +30,7 @@ public class PassFileListModel<TPassFile> : ReactiveObject
         Locator.Current.Resolve<IPassFileOpenUiService<TPassFile>>();
 
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
-    private readonly HostWindowProvider _windowProvider;
+    private readonly IHostWindowProvider _windowProvider;
     private readonly IPassFileContext<TPassFile> _pfContext;
 
     private IReadOnlyList<PassFileCellModel> _list = Array.Empty<PassFileCellModel>();
@@ -40,7 +40,7 @@ public class PassFileListModel<TPassFile> : ReactiveObject
     private readonly IObservable<bool> _fullModeObservable;
     private bool _isReadOnly;
 
-    public PassFileListModel(HostWindowProvider windowProvider)
+    public PassFileListModel(IHostWindowProvider windowProvider)
     {
         _windowProvider = windowProvider;
         _pfContext = Locator.Current.Resolve<IPassFileContextProvider>().For<TPassFile>();

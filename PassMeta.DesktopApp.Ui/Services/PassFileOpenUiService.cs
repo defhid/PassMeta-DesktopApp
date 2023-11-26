@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
-using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
-using PassMeta.DesktopApp.Ui.Models.Providers;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 
@@ -19,14 +18,11 @@ public class PassFileOpenUiService<TPassFile> : IPassFileOpenUiService<TPassFile
     }
 
     /// <inheritdoc />
-    public async Task ShowInfoAsync(TPassFile passFile, HostWindowProvider windowProvider)
+    public Task ShowInfoAsync(TPassFile passFile, IHostWindowProvider windowProvider)
     {
-        var hostWindow = windowProvider.Window;
-        if (hostWindow is null)
-        {
-            _logger.Error(GetType().Name + ": host window is currently null!");
-            return;
-        }
+        var win = windowProvider.Window;
+
+        return Task.CompletedTask;
 
         // var win = new PassFileWin<TPassFile> { ViewModel = new PassFileWinModel<TPassFile>(passFile, windowProvider) };
         //

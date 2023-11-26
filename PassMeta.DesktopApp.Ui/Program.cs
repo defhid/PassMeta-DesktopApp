@@ -7,6 +7,8 @@ namespace PassMeta.DesktopApp.Ui;
 
 public static class Program
 {
+    // Used by previews!
+    // ReSharper disable once MemberCanBePrivate.Global
     public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App.App>()
         .UsePlatformDetect()
         .UseReactiveUI()

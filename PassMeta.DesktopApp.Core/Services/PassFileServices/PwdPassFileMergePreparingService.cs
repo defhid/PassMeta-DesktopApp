@@ -107,7 +107,7 @@ public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingServic
             }
             else if (remote.Items.Count != local.Items.Count ||
                      remote.Items.Exists(it1 =>
-                         local.Items.All(it2 => it2.DiffersFrom(it1))))
+                         local.Items.All(it2 => it2 != it1)))
             {
                 remoteSections.Remove(remote);
                 merge.Conflicts.Add(new PwdPassFileMerge.Conflict(reverse ? remote : local, reverse ? local : remote));

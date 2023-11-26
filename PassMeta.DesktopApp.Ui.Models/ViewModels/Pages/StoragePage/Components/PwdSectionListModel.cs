@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using Avalonia;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
@@ -21,7 +20,6 @@ public class PwdSectionListModel : ReactiveObject
     private int _selectedIndex = -1;
     private bool _isReadOnly;
     private string? _searchText;
-    private Thickness _margin;
 
     public PwdSectionListModel()
     {
@@ -35,7 +33,7 @@ public class PwdSectionListModel : ReactiveObject
 
         this.WhenAnyValue(vm => vm.SearchText)
             .Throttle(TimeSpan.FromMilliseconds(500))
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxApp.TaskpoolScheduler)
             .Subscribe(Search);
     }
 
@@ -43,11 +41,7 @@ public class PwdSectionListModel : ReactiveObject
 
     public IObservable<string> NoSectionsText { get; }
 
-    public Thickness Margin
-    {
-        get => _margin;
-        set => this.RaiseAndSetIfChanged(ref _margin, value);
-    }
+    public bool IsVisible { get; private set; }
 
     public bool IsReadOnly
     {
@@ -90,7 +84,7 @@ public class PwdSectionListModel : ReactiveObject
     
     public void Remove(PwdSection section)
     {
-        var index = List.FindIndex(x => x.Section.Id != section.Id);
+        var index = List.FindIndex(x => x.Section.Id == section.Id);
         if (index < 0)
         {
             return;
@@ -100,23 +94,31 @@ public class PwdSectionListModel : ReactiveObject
         SelectedIndex = index == List.Count ? List.Count - 1 : index;
     }
     
-    public void Refresh(PwdSection section)
+    public void RefreshOnly(PwdSection section)
     {
-        var index = List.FindIndex(x => x.Section.Id != section.Id);
+        var index = List.FindIndex(x => x.Section.Id == section.Id);
         if (index < 0)
         {
             return;
         }
 
-        List = List.Take(index).Concat(new[] { ToCell(section) }).Concat(List.Skip(index + 1)).ToList();
+        List = List.Take(index).Append(ToCell(section)).Concat(List.Skip(index + 1)).ToList();
         SelectedIndex = index;
     }
 
-    public void RefreshList(IEnumerable<PwdSection> sections)
+    public void Show(IEnumerable<PwdSection> sections)
     {
         var list = sections.Select(ToCell).ToList();
-        list.Sort(new PwdSectionCellModelComparer());
+        list.Sort(PwdSectionCellModelComparer.Instance);
         List = list;
+        IsVisible = true;
+        this.RaisePropertyChanged(nameof(IsVisible));
+    }
+
+    public void Hide()
+    {
+        IsVisible = false;
+        this.RaisePropertyChanged(nameof(IsVisible));
     }
     
     private void Search(string? text)
@@ -148,6 +150,8 @@ public class PwdSectionListModel : ReactiveObject
         //         }
         //     }
         // }
+        
+        // Dispatcher.UiThread...
     }
 
     private static PwdSectionCellModel ToCell(PwdSection pwdSection) => new(pwdSection);

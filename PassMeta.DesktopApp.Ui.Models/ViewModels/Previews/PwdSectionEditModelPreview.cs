@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 
@@ -7,21 +7,27 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PwdSectionEditModelPreview : PwdSectionEditModel
 {
-    public PwdSectionEditModelPreview() : base(Guid.Empty)
+    public PwdSectionEditModelPreview()
     {
-        Name = "Preview Name";
-        WebsiteUrl = "website.net";
-        Items.Add(PwdItemEditModel.From(new PwdItem
+        Show(new PwdSection
         {
-            Usernames = new[] { "first" },
-            Password = "lalala",
-            Remark = "something",
-        }));
-        Items.Add(PwdItemEditModel.From(new PwdItem
-        {
-            Usernames = new[] { "second", "third", "forth" },
-            Password = "hahaha",
-            Remark = "my note",
-        }));
+            Name = "Preview Name",
+            WebsiteUrl = "website.net",
+            Items = new List<PwdItem>
+            {
+                new()
+                {
+                    Usernames = new[] { "first" },
+                    Password = "lalala",
+                    Remark = "something",
+                },
+                new()
+                {
+                    Usernames = new[] { "second", "third", "forth" },
+                    Password = "hahaha",
+                    Remark = "my note",
+                }
+            },
+        });
     }
 }

@@ -21,13 +21,13 @@ public class PwdSection
     /// Section name.
     /// </summary>
     [JsonPropertyName("nm")]
-    public string Name { get; set; }
+    public string Name { get; init; }
 
     /// <summary>
     /// Website address.
     /// </summary>
     [JsonPropertyName("url")]
-    public string WebsiteUrl { get; set; }
+    public string WebsiteUrl { get; init; }
 
     /// <summary>
     /// Section items.

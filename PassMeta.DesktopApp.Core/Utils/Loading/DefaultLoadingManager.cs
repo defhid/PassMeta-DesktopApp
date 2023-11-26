@@ -40,7 +40,10 @@ public class DefaultLoadingManager : ILoadingManager
     {
         lock (_lockObject)
         {
-            if (_counter <= 0) return;
+            if (_counter <= 0)
+            {
+                throw new InvalidOperationException("Cannot finish extra loading counter");
+            }
 
             --_counter;
 
@@ -54,16 +57,22 @@ public class DefaultLoadingManager : ILoadingManager
     private class LoadingReleaser : IDisposable
     {
         private readonly DefaultLoadingManager _manager;
-
+        private bool _disposed;
 
         public LoadingReleaser(DefaultLoadingManager manager)
         {
             _manager = manager;
         }
-        
+
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             _manager.FinishOne();
+            _disposed = true;
         }
     }
 }

@@ -4,18 +4,22 @@ using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Extensions;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
 using ReactiveUI;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.Views.Windows;
 
 // TODO
 public partial class PassFileWin : ReactiveWindow<PassFileWinModel<PwdPassFile>>
 {
+    private readonly IHostWindowProvider _hostWindowProvider = Locator.Current.Resolve<IHostWindowProvider>();
+
     public PassFileWin()
     {
         InitializeComponent();
-        this.CorrectMainWindowFocusWhileOpened();
+        this.CorrectMainWindowFocusWhileOpened(_hostWindowProvider);
 
         this.WhenActivated(_ => ViewModel!.Finish += Close);
     }

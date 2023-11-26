@@ -29,6 +29,7 @@ using PassMeta.DesktopApp.Core.Utils.FileRepository;
 using PassMeta.DesktopApp.Core.Utils.Helpers;
 using PassMeta.DesktopApp.Core.Utils.PassFileContentSerializer;
 using PassMeta.DesktopApp.Core.Utils.PassFileContext;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 using PassMeta.DesktopApp.Ui.Services;
 using ReactiveUI;
@@ -51,9 +52,8 @@ public static class DependencyInstaller
 
         Register<IDialogService>(new DialogService(
             ResolveOrDefault<INotificationManager>,
+            ResolveOrDefault<IHostWindowProvider>,
             Resolve<ILogsWriter>()));
-
-        Register<IFileDialogService>(new FileDialogService());
 
         Register<IFileRepositoryFactory>(new FileRepositoryFactory(
             Resolve<AppInfo>().RootPath,

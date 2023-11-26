@@ -41,20 +41,22 @@
       </SplitView.Pane>
 
       <Grid ColumnDefinitions="2*,3*">
-        <!-- <components:PwdSectionListView -->
-        <!--   Grid.Column="0" -->
-        <!--   DataContext="{Binding SectionList}" /> -->
+        <components:PwdSectionListView
+          Grid.Column="0"
+          DataContext="{Binding SectionList}"
+          IsVisible="{Binding IsVisible}" />
 
-        <!-- <components:PwdSectionReadView -->
-        <!--   Grid.Column="1" -->
-        <!--   Margin="0 6 4 5" -->
-        <!--   DataContext="{Binding SectionRead}" /> -->
-        
-        <!-- <components:PwdSectionEditView -->
-        <!--   Grid.Column="1" -->
-        <!--   DataContext="{Binding SectionEdit}" -->
-        <!--   Margin="0 6 4 5" -->
-        <!--   IsVisible="{Binding IsSectionEditVisible^}" /> -->
+        <Grid Grid.Column="1">
+          <components:PwdSectionReadView
+            Margin="0 6 4 5"
+            DataContext="{Binding SectionRead}"
+            IsVisible="{Binding IsVisible}" />
+
+          <components:PwdSectionEditView
+            DataContext="{Binding SectionEdit}"
+            Margin="0 6 4 5"
+            IsVisible="{Binding IsVisible}" />
+        </Grid>
       </Grid>
     </SplitView>
   </Grid>

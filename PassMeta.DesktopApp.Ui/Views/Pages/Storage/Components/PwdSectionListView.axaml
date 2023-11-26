@@ -14,7 +14,7 @@
     <previews:PwdSectionListModelPreview />
   </Design.DataContext>
 
-  <Grid RowDefinitions="Auto,*" Margin="{Binding Margin}">
+  <Grid RowDefinitions="Auto,*" Margin="0, 6, 5, 5">
     <TextBox
       Grid.Row="0"
       VerticalAlignment="Top"

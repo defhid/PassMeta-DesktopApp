@@ -1,4 +1,3 @@
-using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -13,10 +12,10 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.App.Observers;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 using PassMeta.DesktopApp.Ui.Views.Windows.MainWin;
-using ReactiveUI;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App;
@@ -60,10 +59,10 @@ public class App : Application
     }
 
     /// <summary></summary>
-    public static MainWindow? MainWindow
+    private static MainWindow? MainWindow
     {
         get => _mainWindow;
-        private set
+        set
         {
             if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -114,18 +113,20 @@ public class App : Application
         var win = new MainWindow { ViewModel = new MainWinModel() };
 
         win.GotFocus += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
-
-        win.WhenActivated(disposables => 
-            win.ViewModel.HostWindowProvider = new HostWindowProvider(win).DisposeWith(disposables));
-
-        DependencyInstaller.Unregister<INotificationManager>();
-        DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)
+        win.Opened += (_, _) =>
         {
-            HorizontalAlignment = HorizontalAlignment.Right,
-            VerticalAlignment = VerticalAlignment.Bottom,
-            Opacity = 0.8,
-            Margin = Thickness.Parse("0 0 0 -4")
-        });
+            DependencyInstaller.Unregister<IHostWindowProvider>();
+            DependencyInstaller.Register<IHostWindowProvider>(new SimpleHostWindowProvider(win));
+
+            DependencyInstaller.Unregister<INotificationManager>();
+            DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Opacity = 0.8,
+                Margin = Thickness.Parse("0 0 0 -4")
+            });
+        };
 
         return win;
     }

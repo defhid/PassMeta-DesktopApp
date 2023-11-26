@@ -5,7 +5,6 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalonia.Controls;
 using Avalonia.Media;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
@@ -15,10 +14,10 @@ using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 using PassMeta.DesktopApp.Ui.Models.Constants;
 using PassMeta.DesktopApp.Ui.Models.Extensions;
-using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Common;
 using ReactiveUI;
 using Splat;
@@ -33,7 +32,7 @@ public class PassFileWinModel<TPassFile> : ReactiveObject
     private readonly IDialogService _dialogService;
     private readonly IPassFileContext<TPassFile> _pfContext;
     private readonly IPassFileContentHelper<TPassFile> _pfContentHelper;
-    private readonly HostWindowProvider _hostWindowProvider;
+    private readonly IHostWindowProvider _hostWindowProvider;
 
     private string? _name;
     private int _selectedColorIndex;
@@ -42,7 +41,7 @@ public class PassFileWinModel<TPassFile> : ReactiveObject
     public readonly TPassFile PassFile;
     public event Action? Finish;
 
-    public PassFileWinModel(TPassFile passFile, HostWindowProvider hostWindowProvider)
+    public PassFileWinModel(TPassFile passFile, IHostWindowProvider hostWindowProvider)
     {
         _mapper = Locator.Current.Resolve<IMapper>();
         _dialogService = Locator.Current.Resolve<IDialogService>();

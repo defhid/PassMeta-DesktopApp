@@ -8,7 +8,7 @@ public class PwdSectionListModelPreview : PwdSectionListModel
 {
     public PwdSectionListModelPreview()
     {
-        RefreshList(new[]
+        Show(new[]
         {
             PassFilePreviewData.PwdSection,
             PassFilePreviewData.PwdSection,

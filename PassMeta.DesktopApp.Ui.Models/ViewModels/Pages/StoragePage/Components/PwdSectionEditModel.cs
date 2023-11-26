@@ -1,8 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Reactive;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using ReactiveUI;
 using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
@@ -14,25 +12,15 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 /// </summary>
 public class PwdSectionEditModel : ReactiveObject
 {
-    private readonly Guid _id;
+    private Guid _id;
 
-    public readonly Interaction<Unit, Unit> ScrollToBottom = new();
-
-    protected PwdSectionEditModel(Guid id)
+    public PwdSectionEditModel()
     {
-        _id = id;
         Items = new ObservableCollection<PwdItemEditModel>();
-        Items.CollectionChanged += (_, ev) =>
-        {
-            if (ev.Action is not NotifyCollectionChangedAction.Add) return;
-            foreach (PwdItemEditModel item in ev.NewItems!)
-            {
-                item.OnDelete += DeleteItem;
-                item.OnMove += MoveItem;
-            }
-        };
-        AddItemCommand = ReactiveCommand.Create(AddItem);
+        AddItemCommand = ReactiveCommand.Create(() => AddItem(PwdItemEditModel.Empty()));
     }
+
+    public bool IsVisible { get; private set; }
 
     public ReactCommand AddItemCommand { get; }
 
@@ -42,7 +30,7 @@ public class PwdSectionEditModel : ReactiveObject
 
     public ObservableCollection<PwdItemEditModel> Items { get; }
 
-    public bool HasItems => Items.Count == 0;
+    public bool HasNoItems => Items.Count == 0;
 
     public PwdSection ToSection() => new()
     {
@@ -55,26 +43,42 @@ public class PwdSectionEditModel : ReactiveObject
             .ToList()
     };
 
-    public static PwdSectionEditModel From(PwdSection section)
+    public void Show(PwdSection section)
     {
-        var vm = new PwdSectionEditModel(section.Id)
-        {
-            Name = section.Name,
-            WebsiteUrl = section.WebsiteUrl,
-        };
+        _id = section.Id;
+        Name = section.Name;
+        WebsiteUrl = section.WebsiteUrl;
 
         foreach (var item in section.Items)
         {
-            vm.Items.Add(PwdItemEditModel.From(item));
+            AddItem(PwdItemEditModel.From(item));
         }
 
-        return vm;
+        IsVisible = true;
+        this.RaisePropertyChanged(nameof(Name));
+        this.RaisePropertyChanged(nameof(WebsiteUrl));
+        this.RaisePropertyChanged(nameof(HasNoItems));
+        this.RaisePropertyChanged(nameof(IsVisible));
     }
 
-    private void AddItem()
+    public void Hide()
     {
-        Items.Add(PwdItemEditModel.Empty());
-        ScrollToBottom.Handle(Unit.Default);
+        IsVisible = false;
+        Items.Clear();
+        WebsiteUrl = string.Empty;
+        Name = string.Empty;
+        _id = default;
+        this.RaisePropertyChanged(nameof(IsVisible));
+    }
+
+    #region Items
+
+    private void AddItem(PwdItemEditModel item)
+    {
+        item.OnDelete += DeleteItem;
+        item.OnMove += MoveItem;
+        Items.Add(item);
+        this.RaisePropertyChanged(nameof(HasNoItems));
     }
 
     private void MoveItem(PwdItemEditModel item, int direction)
@@ -91,5 +95,8 @@ public class PwdSectionEditModel : ReactiveObject
     private void DeleteItem(PwdItemEditModel item)
     {
         Items.Remove(item);
+        this.RaisePropertyChanged(nameof(HasNoItems));
     }
+
+    #endregion
 }

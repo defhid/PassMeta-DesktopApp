@@ -7,26 +7,27 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 /// <inheritdoc />
 public class PwdSectionReadModelPreview : PwdSectionReadModel
 {
-    public PwdSectionReadModelPreview() : base(new PwdSection
+    public PwdSectionReadModelPreview()
     {
-        Name = "Test name",
-        WebsiteUrl = "website@example.com",
-        Items = new List<PwdItem>
+        Show(new PwdSection
         {
-            new()
+            Name = "Test name",
+            WebsiteUrl = "website@example.com",
+            Items = new List<PwdItem>
             {
-                Usernames = new[] { "example_login1", "example_login2" },
-                Password = "example_pwd",
-                Remark = "example_remark"
+                new()
+                {
+                    Usernames = new[] { "example_login1", "example_login2" },
+                    Password = "example_pwd",
+                    Remark = "example_remark"
+                },
+                new()
+                {
+                    Usernames = new[] { "example_login3" },
+                    Password = "example_pwd",
+                    Remark = "example_remark"
+                },
             },
-            new()
-            {
-                Usernames = new[] { "example_login3" },
-                Password = "example_pwd",
-                Remark = "example_remark"
-            },
-        },
-    })
-    {
+        });
     }
 }

@@ -45,14 +45,13 @@ public class GeneratorPageModel : PageViewModel
         IncludeUppercase = _presets.IncludeUppercase;
         IncludeSpecial = _presets.IncludeSpecial;
 
-        this.WhenActivated(d => d(
-            this.WhenAnyValue(
+        this.WhenAnyValue(
                 x => x.Length,
                 x => x.IncludeDigits,
                 x => x.IncludeLowercase,
                 x => x.IncludeUppercase,
                 x => x.IncludeSpecial)
-                .Subscribe(_ => Generate())));
+            .Subscribe(_ => Generate());
     }
 
     public int Length

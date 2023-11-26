@@ -32,7 +32,7 @@ public abstract class PageViewModel : ReactiveObject, IActivatableViewModel, IRo
     /// <summary>
     /// Action buttons to display on the right bar.
     /// </summary>
-    public virtual ContentControl[] RightBarButtons { get; } = Array.Empty<ContentControl>();
+    public virtual ContentControl[] RightBarButtons => Array.Empty<ContentControl>();
 
     /// <summary>
     /// Refresh page data.

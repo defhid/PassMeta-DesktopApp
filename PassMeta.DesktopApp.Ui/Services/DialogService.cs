@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
+using Avalonia.Threading;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
@@ -11,6 +12,7 @@ using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Ui.Extensions;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.DialogWin;
 using PassMeta.DesktopApp.Ui.Views.Windows;
 
@@ -20,22 +22,29 @@ namespace PassMeta.DesktopApp.Ui.Services;
 public class DialogService : IDialogService
 {
     private readonly Func<INotificationManager?> _notificationManagerResolver;
+    private readonly Func<IHostWindowProvider?> _hostWindowProviderResolver;
     private readonly ILogsWriter _logger;
     private readonly List<Action> _deferred = new();
     private readonly List<Window> _opened = new();
 
-    public DialogService(Func<INotificationManager?> notificationManagerResolver, ILogsWriter logger)
+    public DialogService(
+        Func<INotificationManager?> notificationManagerResolver,
+        Func<IHostWindowProvider?> hostWindowProviderResolver,
+        ILogsWriter logger)
     {
         _notificationManagerResolver = notificationManagerResolver;
+        _hostWindowProviderResolver = hostWindowProviderResolver;
         _logger = logger;
     }
 
     private INotificationManager? NotificationManager => _notificationManagerResolver();
 
+    private Window? HostWindow => _hostWindowProviderResolver()?.Window;
+
     /// <inheritdoc />
     public void Flush()
     {
-        if (App.App.MainWindow is null)
+        if (HostWindow is null)
         {
             return;
         }
@@ -66,8 +75,11 @@ public class DialogService : IDialogService
         {
             if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
             {
-                ShowNotification(new Notification(title,
-                    message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
+                message += more is null ? string.Empty : Environment.NewLine + $"[{more}]";
+                
+                ShowNotification(new Notification(
+                    title ?? message,
+                    title is null ? null : message,
                     NotificationType.Information, TimeSpan.FromSeconds(2.5)));
             }
             else
@@ -90,8 +102,11 @@ public class DialogService : IDialogService
         {
             if (defaultPresenter is DialogPresenter.PopUp && NotificationManager is not null)
             {
-                ShowNotification(new Notification(title,
-                    message + (more is null ? string.Empty : Environment.NewLine + $"[{more}]"),
+                message += more is null ? string.Empty : Environment.NewLine + $"[{more}]";
+                
+                ShowNotification(new Notification(
+                    title ?? message,
+                    title is null ? null : message,
                     NotificationType.Warning, TimeSpan.FromSeconds(2.5)));
             }
             else
@@ -165,7 +180,7 @@ public class DialogService : IDialogService
     /// <remarks>Use only when the main window has been rendered.</remarks>
     public async Task<IResult> ConfirmAsync(string message, string? title = null)
     {
-        if (App.App.MainWindow is null) return Result.Failure();
+        if (HostWindow is null) return Result.Failure();
 
         var dialog = await ShowDialogAndWaitAsync(new DialogWinModel(
             title ?? Resources.DIALOG__DEFAULT_CONFIRM_TITLE,
@@ -182,7 +197,7 @@ public class DialogService : IDialogService
     /// <remarks>Use only when the main window has been rendered.</remarks>
     public async Task<IResult<string>> AskStringAsync(string message, string? title = null, string? defaultValue = null)
     {
-        if (App.App.MainWindow is null) return Result.Failure<string>();
+        if (HostWindow is null) return Result.Failure<string>();
 
         var dialog = await ShowDialogAndWaitAsync(new DialogWinModel(
             title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
@@ -201,7 +216,7 @@ public class DialogService : IDialogService
     /// <remarks>Use only when the main window has been rendered.</remarks>
     public async Task<IResult<string>> AskPasswordAsync(string message, string? title = null)
     {
-        if (App.App.MainWindow is null) return Result.Failure<string>();
+        if (HostWindow is null) return Result.Failure<string>();
 
         var dialog = await ShowDialogAndWaitAsync(new DialogWinModel(
             title ?? Resources.DIALOG__DEFAULT_ASK_TITLE,
@@ -218,7 +233,7 @@ public class DialogService : IDialogService
 
     private void CallOrDeffer(Action shower)
     {
-        if (App.App.MainWindow is not null)
+        if (HostWindow is not null)
         {
             shower();
             return;
@@ -228,7 +243,7 @@ public class DialogService : IDialogService
 
         lock (_deferred)
         {
-            if (App.App.MainWindow is null)
+            if (HostWindow is null)
             {
                 _deferred.Add(shower);
                 added = true;
@@ -240,43 +255,49 @@ public class DialogService : IDialogService
 
     private void ShowNotification(INotification context)
     {
-        NotificationManager!.Show(context);
+        Dispatcher.UIThread.Invoke(() => NotificationManager!.Show(context));
     }
 
     private void ShowDialog(DialogWinModel context)
     {
-        var dialog = new DialogWindow { DataContext = context };
-
-        dialog.CorrectMainWindowFocusWhileOpened();
-
-        dialog.Closing += (_, _) => TryRemoveOpened(dialog);
-        AddOpened(dialog);
-
-        try
+        Dispatcher.UIThread.Invoke(() =>
         {
-            dialog.Show(App.App.MainWindow!);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Dialog window opening failed");
-            TryRemoveOpened(dialog);
-        }
+            var dialog = new DialogWindow { DataContext = context };
+
+            dialog.CorrectMainWindowFocusWhileOpened(_hostWindowProviderResolver()!);
+
+            dialog.Closing += (_, _) => TryRemoveOpened(dialog);
+            AddOpened(dialog);
+
+            try
+            {
+                dialog.Show(HostWindow!);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Dialog window opening failed");
+                TryRemoveOpened(dialog);
+            }
+        });
     }
 
     private async Task<DialogWindow> ShowDialogAndWaitAsync(DialogWinModel context)
     {
-        var dialog = new DialogWindow { DataContext = context };
-
-        try
+        return await Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            await dialog.ShowDialog(App.App.MainWindow!);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Dialog window showing failed");
-        }
+            var dialog = new DialogWindow { DataContext = context };
 
-        return dialog;
+            try
+            {
+                await dialog.ShowDialog(HostWindow!);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Dialog window showing failed");
+            }
+
+            return dialog;
+        });
     }
 
     private void AddOpened(Window dialog)
@@ -284,7 +305,11 @@ public class DialogService : IDialogService
         lock (_opened)
         {
             _opened.Add(dialog);
-            App.App.MainWindow!.IsEnabled = false;
+
+            if (HostWindow is not null)
+            {
+                HostWindow.IsEnabled = false;
+            }
         }
     }
 
@@ -293,7 +318,11 @@ public class DialogService : IDialogService
         lock (_opened)
         {
             _opened.Remove(dialog);
-            App.App.MainWindow!.IsEnabled = _opened.Count == 0;
+
+            if (HostWindow is not null)
+            {
+                HostWindow.IsEnabled = _opened.Count == 0;
+            }
         }
     }
 }

@@ -31,33 +31,6 @@ public sealed class AppLogSink : ILogSink, IDisposable
     }
 
     /// <inheritdoc />
-    public void Log<T0>(LogEventLevel level, string area, object? source, string messageTemplate,
-        T0 propertyValue0)
-    {
-        if (IsEnabled(level))
-            LogInternal(area, source, messageTemplate, propertyValue0);
-    }
-
-    /// <inheritdoc />
-    public void Log<T0, T1>(LogEventLevel level, string area, object? source, string messageTemplate,
-        T0 propertyValue0,
-        T1 propertyValue1)
-    {
-        if (IsEnabled(level))
-            LogInternal(area, source, messageTemplate, propertyValue0, propertyValue1);
-    }
-
-    /// <inheritdoc />
-    public void Log<T0, T1, T2>(LogEventLevel level, string area, object? source, string messageTemplate,
-        T0 propertyValue0,
-        T1 propertyValue1,
-        T2 propertyValue2)
-    {
-        if (IsEnabled(level))
-            LogInternal(area, source, messageTemplate, propertyValue0, propertyValue1, propertyValue2);
-    }
-
-    /// <inheritdoc />
     public void Log(LogEventLevel level, string area, object? source, string messageTemplate,
         params object?[] propertyValues)
     {
@@ -70,7 +43,6 @@ public sealed class AppLogSink : ILogSink, IDisposable
     /// <inheritdoc />
     public void Dispose() => Locator.Current.ResolveOrDefault<ILogsWriter>()?.Flush();
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void LogInternal(string area, object? source, string messageTemplate, params object?[] args)
     {
         var message = $"UI, {area}, {source}: {messageTemplate} [{string.Join("; ", args)}]";

@@ -16,7 +16,7 @@ public static class ReadonlyDependencyResolverExtensions
     {
         var service = resolver.GetService(typeof(TService));
 
-        Debug.Assert(service is TService);
+        Debug.Assert(service is TService, "Cannot correctly resolve " + typeof(TService));
 
         return (TService)service;
     }
@@ -29,7 +29,7 @@ public static class ReadonlyDependencyResolverExtensions
     {
         var service = resolver.GetService(typeof(TService));
 
-        Debug.Assert(service is null or TService);
+        Debug.Assert(service is null or TService, "Cannot correctly resolve " + typeof(TService));
 
         return service as TService;
     }

@@ -29,6 +29,7 @@
             Text="{x:Static com:Resources.STORAGE__SECTION_LABEL__NAME}"/>
           
           <TextBox
+            x:Name="NameTextBox"
             Grid.Row="0"
             Grid.Column="1"
             Margin="5 5 7 7"
@@ -86,6 +87,7 @@
       Command="{Binding AddItemCommand}"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Bottom"
+      Opacity="0.9"
       ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__ADD}" />
 
     <TextBlock
@@ -94,6 +96,6 @@
       VerticalAlignment="Center"
       HorizontalAlignment="Center"
       Text="{x:Static com:Resources.STORAGE__NO_ITEMS}"
-      IsVisible="{Binding HasItems}" />
+      IsVisible="{Binding HasNoItems}" />
   </Grid>
 </UserControl>

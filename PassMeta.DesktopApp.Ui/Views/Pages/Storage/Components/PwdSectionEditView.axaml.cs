@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
@@ -14,9 +18,47 @@ public partial class PwdSectionEditView : ReactiveUserControl<PwdSectionEditMode
 
         this.WhenActivated(disposables =>
         {
-            ViewModel!.ScrollToBottom
-                .RegisterHandler(_ => this.FindControl<ScrollViewer>("RootScrollViewer").ScrollToEnd())
+            ViewModel!.Items.CollectionChanged += OnItemAdded;
+            Disposable
+                .Create(() => ViewModel!.Items.CollectionChanged -= OnItemAdded)
+                .DisposeWith(disposables);
+
+            ViewModel
+                .WhenAnyValue(x => x.IsVisible)
+                .Where(visible => visible)
+                .Subscribe(_ => OnSectionShow())
                 .DisposeWith(disposables);
         });
+    }
+
+    private void OnItemAdded(object? sender, NotifyCollectionChangedEventArgs args)
+    {
+        if (ViewModel!.IsVisible &&
+            args.Action is NotifyCollectionChangedAction.Add)
+        {
+            this.FindControl<ScrollViewer>("RootScrollViewer")?.ScrollToEnd();
+        }
+    }
+
+    private void OnSectionShow()
+    {
+        var sectionNameBox = this.FindControl<TextBox>("NameTextBox");
+        if (sectionNameBox is null)
+        {
+            Debug.Assert(sectionNameBox is not null);
+            return;
+        }
+
+        if (ViewModel!.Items.Count == 0)
+        {
+            sectionNameBox.SelectionStart = 0;
+            sectionNameBox.SelectionEnd = ViewModel.Name?.Length ?? 0;
+            sectionNameBox.Focus();
+        }
+        else
+        {
+            sectionNameBox.SelectionStart = ViewModel.Name?.Length ?? 0;
+            sectionNameBox.SelectionEnd = ViewModel.Name?.Length ?? 0;
+        }
     }
 }

@@ -5,10 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
-using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
@@ -18,6 +18,7 @@ using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileRestoreWin.Extra;
 using ReactiveUI;
 using Splat;
@@ -142,20 +143,24 @@ public class PassFileRestoreWinModel : ReactiveObject
     private async Task ImportForeignAsync()
     {
         var importService = Locator.Current.Resolve<IPassFileImportService>();
-        var dialogService = Locator.Current.Resolve<IFileDialogService>();
+        var storageProvider = Locator.Current.Resolve<IHostWindowProvider>().Window.StorageProvider;
 
-        var extensions = importService.GetSupportedFormats(PassFileType.Pwd)
-            .Select(format => format.Extension)
-            .ToList();
-
-        var result = await dialogService.AskForReadingAsync(new[]
+        var files = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            (Resources.PASSFILELIST__FILTER_PASSFILES, extensions)
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType(Resources.PASSFILELIST__FILTER_PASSFILES)
+                {
+                    Patterns = importService.GetSupportedFormats(PassFileType.Pwd)
+                        .Select(x => "*." + x.Extension)
+                        .ToList()
+                }
+            }
         });
 
-        if (result.Ok)
+        if (files.Count == 1)
         {
-            ViewElements.Window!.Close(result);
+            ViewElements.Window!.Close(files[0].Path.AbsolutePath);
         }
     }
 

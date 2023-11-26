@@ -5,11 +5,9 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
-using Avalonia.Threading;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Internal;
-using PassMeta.DesktopApp.Ui.Models.Providers;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;
 using ReactiveUI;
@@ -46,19 +44,12 @@ public sealed class MainWinModel : ReactiveObject, IScreen, IActivatableViewMode
                 .DisposeWith(disposables);
 
             _appLoading.General.ActiveObservable
-                .Subscribe(isLoading => Dispatcher.UIThread.InvokeAsync(
-                    () => PreloaderEnabled = isLoading,
-                    isLoading ? DispatcherPriority.MaxValue : DispatcherPriority.Normal))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(isLoading => PreloaderEnabled = isLoading)
                 .DisposeWith(disposables);
 
             MainPane.Activator.Activate().DisposeWith(disposables);
         });
-    }
-
-    /// <inheritdoc cref="HostWindowProvider"/>
-    public HostWindowProvider? HostWindowProvider
-    {
-        set => MainPane.HostWindowProvider = value;
     }
 
     /// <inheritdoc />

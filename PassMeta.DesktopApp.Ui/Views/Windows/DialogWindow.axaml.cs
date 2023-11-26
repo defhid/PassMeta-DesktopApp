@@ -9,6 +9,8 @@ namespace PassMeta.DesktopApp.Ui.Views.Windows;
 
 public partial class DialogWindow : ReactiveWindow<DialogWinModel>
 {
+    private bool _textBoxFocused;
+    
     public DialogWindow()
     {
         InitializeComponent();
@@ -35,11 +37,13 @@ public partial class DialogWindow : ReactiveWindow<DialogWinModel>
 
     private void Control_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
     {
-        if (sender is Control control && (
-                ReferenceEquals(control.DataContext, ViewModel?.InputBoxFocused) || 
-                ReferenceEquals(control.DataContext, ViewModel?.ButtonPrimary)))
+        if (!_textBoxFocused &&
+            sender is Control control &&
+            (ReferenceEquals(control.DataContext, ViewModel?.InputBoxFocused) || 
+             ReferenceEquals(control.DataContext, ViewModel?.ButtonPrimary)))
         {
             control.Focus();
+            _textBoxFocused |= ReferenceEquals(control.DataContext, ViewModel?.InputBoxFocused);
         }
     }
 }

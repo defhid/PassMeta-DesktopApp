@@ -16,15 +16,5 @@ public static class PassFileContentExtensions
         => left.Name != right.Name ||
            left.WebsiteUrl != right.WebsiteUrl ||
            left.Items.Count != right.Items.Count ||
-           left.Items.Any(lItem =>
-               right.Items.All(rItem => rItem.DiffersFrom(lItem)));
-
-    /// <summary>
-    /// Does <paramref name="left"/> item have any difference
-    /// with <paramref name="right"/>?
-    /// </summary>
-    public static bool DiffersFrom(this PwdItem left, PwdItem right)
-        => left.Password != right.Password || 
-           left.Remark != right.Remark ||
-           !left.Usernames.All(right.Usernames.Contains);
+           !left.Items.SequenceEqual(right.Items);
 }

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
-using PassMeta.DesktopApp.Ui.Models.Providers;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 
 namespace PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 
@@ -13,5 +13,5 @@ public interface IPassFileOpenUiService<in TPassFile>
     /// <summary>
     /// Show passfile information.
     /// </summary>
-    Task ShowInfoAsync(TPassFile passFile, HostWindowProvider windowProvider);
+    Task ShowInfoAsync(TPassFile passFile, IHostWindowProvider windowProvider);
 }

@@ -70,7 +70,7 @@
         VerticalAlignment="Center"
         HorizontalAlignment="Center"
         Text="{x:Static com:Resources.STORAGE__NO_ITEMS}"
-        IsVisible="{Binding HasItems}" />
+        IsVisible="{Binding HasNoItems}" />
     </Grid>
   </Border>
 </UserControl>
