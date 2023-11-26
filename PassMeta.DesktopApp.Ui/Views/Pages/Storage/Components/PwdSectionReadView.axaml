@@ -16,38 +16,39 @@
     CornerRadius="3"
     Background="{DynamicResource ListBoxBackgroundThemeBrush}">
     <Grid>
-      <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid RowDefinitions="Auto,Auto,*">
-          <TextBox
-            Grid.Row="0"
-            Margin="5 5 7 10"
-            Padding="8 3 8 3"
-            MinHeight="28"
-            Height="28"
-            FontSize="14"
-            VerticalContentAlignment="Center"
-            Text="{Binding Name}"
-            IsReadOnly="True"
-            Focusable="False" />
+      <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0 0 6 0">
+        <Grid RowDefinitions="Auto,*">
+          <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0 0 0 5">
+            <TextBlock
+              Grid.Row="0"
+              Margin="5 7 7 0"
+              Padding="8 3 8 3"
+              MinHeight="28"
+              Height="28"
+              FontSize="14"
+              FontWeight="Bold"
+              Text="{Binding Name}" />
 
-          <TextBox
-            Grid.Row="1"
-            Margin="5 5 7 10"
-            Padding="8 3 8 3"
-            MinHeight="28"
-            Height="28"
-            FontSize="14"
-            VerticalContentAlignment="Center"
-            Text="{Binding WebsiteUrl}"
-            IsVisible="{Binding HasWebsiteUrl}"
-            IsReadOnly="True"
-            Focusable="False" />
+            <TextBlock
+              Grid.Row="1"
+              Margin="5 0 7 0"
+              Padding="8 3 8 3"
+              MinHeight="28"
+              Height="28"
+              FontSize="14"
+              FontStyle="Italic"
+              Cursor="Hand"
+              Opacity="0.8"
+              PointerPressed="WebsiteUrlTextBlock_OnPointerPressed"
+              Text="{Binding WebsiteUrl}"
+              IsVisible="{Binding HasWebsiteUrl}" />
+          </Grid>
 
           <ItemsControl
-            Grid.Row="2"
+            Grid.Row="1"
             ItemsSource="{Binding Items}"
             CornerRadius="3"
-            Padding="5 10 5 100"
+            Padding="5 0 8 50"
             VerticalAlignment="Top">
             <ItemsControl.Styles>
               <Style Selector="ItemsPresenter">

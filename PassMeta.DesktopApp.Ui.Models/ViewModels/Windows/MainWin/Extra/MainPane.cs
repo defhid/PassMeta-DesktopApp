@@ -34,6 +34,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
     public MainPane(IScreen hostScreen)
     {
         var userContext = Locator.Current.Resolve<IUserContextProvider>();
+        var appContext = Locator.Current.Resolve<IAppContextProvider>();
         var appConfig = Locator.Current.Resolve<IAppConfigProvider>();
 
         this.WhenActivated(disposables =>
@@ -60,11 +61,13 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
                 }))
                 .DisposeWith(disposables);
 
-            userContext.CurrentObservable
+            appContext.CurrentObservable
+                .Skip(1)
                 .Subscribe(_ => _pagesCache.Clear())
                 .DisposeWith(disposables);
 
             appConfig.CurrentObservable
+                .Skip(1)
                 .Subscribe(_ => _pagesCache.Clear())
                 .DisposeWith(disposables);
         });

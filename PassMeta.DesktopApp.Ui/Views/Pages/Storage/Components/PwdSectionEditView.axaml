@@ -13,7 +13,7 @@
   </Design.DataContext>
 
   <Grid>
-    <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto" Padding="0 0 6 0">
       <Grid RowDefinitions="Auto,*">
         <Grid
           Grid.Row="0"
@@ -65,7 +65,7 @@
           Grid.Row="1"
           ItemsSource="{Binding Items}"
           CornerRadius="3"
-          Padding="5 5 5 100"
+          Padding="5 10 5 50"
           VerticalAlignment="Top">
           <ItemsControl.Styles>
             <Style Selector="ItemsPresenter">
@@ -75,7 +75,7 @@
 
           <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <componentsV:PwdItemEditView Margin="0 0 0 20" />
+              <componentsV:PwdItemEditView Margin="0 0 0 28" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -87,7 +87,6 @@
       Command="{Binding AddItemCommand}"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Bottom"
-      Opacity="0.9"
       ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__ADD}" />
 
     <TextBlock

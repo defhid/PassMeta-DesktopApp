@@ -706,4 +706,7 @@ try another keywords...</value>
     <data name="DIALOG__DEFAULT_WARNING_TITLE" xml:space="preserve">
         <value>Warning</value>
     </data>
+    <data name="STORAGE__ITEM_INFO__WEBSITE_COPIED" xml:space="preserve">
+        <value>URL is copied to clipboard</value>
+    </data>
 </root>

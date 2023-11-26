@@ -7,8 +7,6 @@ using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
-using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.Account;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
 using Splat;
 
@@ -30,16 +28,13 @@ public partial class MainWindow : ReactiveWindow<MainWinModel>
 #endif
     }
 
-    private async void OnOpened(object? sender, EventArgs e)
+    private void OnOpened(object? sender, EventArgs e)
     {
-        var userContext = Locator.Current.Resolve<IUserContextProvider>();
+        var navigate = Locator.Current.Resolve<IUserContextProvider>().Current.UserId is null
+            ? ViewModel!.MainPane.Account.Command
+            : ViewModel!.MainPane.Storage.Command;
 
-        var vm = userContext.Current.UserId is null
-            ? new AuthPageModel(ViewModel!)
-            : new AccountPageModel(ViewModel!) as PageViewModel;
-            //TODO : new StoragePageModel(ViewModel!) as PageViewModel;
-
-        await vm.TryNavigateAsync();
+        navigate.Execute(null);
     }
 
     private async void OnClosing(object? sender, CancelEventArgs e)

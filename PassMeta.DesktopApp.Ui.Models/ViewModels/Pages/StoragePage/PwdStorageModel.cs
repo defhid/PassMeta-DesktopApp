@@ -69,7 +69,7 @@ public class PwdStorageModel : PageViewModel
 
         PassFileBarExpander.IsOpenedObservable.Subscribe(isOpened => PassFileList.IsExpanded = isOpened);
 
-        Task.Run(SynchronizePassFilesAsync);
+        Task.Run(SynchronizeAsync);
     }
     
     /// <inheritdoc />
@@ -78,7 +78,7 @@ public class PwdStorageModel : PageViewModel
         new Button
         {
             Content = "\uE74E",
-            Command = ReactiveCommand.CreateFromTask(SynchronizePassFilesAsync),
+            Command = ReactiveCommand.CreateFromTask(SynchronizeAsync),
             [!Visual.IsVisibleProperty] = SectionEdit.WhenAnyValue(vm => vm.IsVisible)
                 .Select(editVisible => !editVisible)
                 .ToBinding(),
@@ -173,10 +173,10 @@ public class PwdStorageModel : PageViewModel
             _pfContext.Rollback();
         }
 
-        await SynchronizePassFilesAsync();
+        await SynchronizeAsync();
     }
 
-    private async Task SynchronizePassFilesAsync()
+    private async Task SynchronizeAsync()
     {
         using var preloader = _appLoading.General.Begin();
 
@@ -197,6 +197,8 @@ public class PwdStorageModel : PageViewModel
         if (passFile is null)
         {
             SectionList.Hide();
+            SectionRead.Hide();
+            SectionEdit.Hide();
             return;
         }
 

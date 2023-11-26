@@ -113,7 +113,7 @@ public class App : Application
         var win = new MainWindow { ViewModel = new MainWinModel() };
 
         win.GotFocus += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
-        win.Opened += (_, _) =>
+        win.Activated += (_, _) =>
         {
             DependencyInstaller.Unregister<IHostWindowProvider>();
             DependencyInstaller.Register<IHostWindowProvider>(new SimpleHostWindowProvider(win));

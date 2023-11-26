@@ -68,7 +68,7 @@ public class PwdItemEditModel : ReactiveObject
     {
         Usernames = NormalizeUsernames(Usernames?.Split('\n')),
         Password = Password ?? string.Empty,
-        Remark = Remark?.Trim() ?? string.Empty
+        Remark = Remark?.Trim().ToLower() ?? string.Empty
     };
 
     public static PwdItemEditModel From(PwdItem item) => new()

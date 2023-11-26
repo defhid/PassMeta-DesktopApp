@@ -33,6 +33,7 @@ public class PwdSectionReadModel : ReactiveObject
         this.RaisePropertyChanged(nameof(Name));
         this.RaisePropertyChanged(nameof(WebsiteUrl));
         this.RaisePropertyChanged(nameof(Items));
+        this.RaisePropertyChanged(nameof(HasWebsiteUrl));
         this.RaisePropertyChanged(nameof(HasNoItems));
         this.RaisePropertyChanged(nameof(IsVisible));
     }

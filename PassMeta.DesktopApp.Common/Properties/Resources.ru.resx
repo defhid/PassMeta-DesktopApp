@@ -198,10 +198,10 @@
         <value>Скопировать пароль</value>
     </data>
     <data name="STORAGE__ITEM_INFO__PASSWORD_COPIED" xml:space="preserve">
-        <value>Пароль скопирован в буфер обмена</value>
+        <value>Пароль скопирован</value>
     </data>
     <data name="STORAGE__ITEM_INFO__USERNAME_COPIED" xml:space="preserve">
-        <value>Логин '{0}' скопирован в буфер обмена</value>
+        <value>Логин '{0}' скопирован</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">
         <value>Пакет {0}</value>
@@ -698,5 +698,8 @@
     </data>
     <data name="DIALOG__DEFAULT_WARNING_TITLE" xml:space="preserve">
         <value>Предупреждение</value>
+    </data>
+    <data name="STORAGE__ITEM_INFO__WEBSITE_COPIED" xml:space="preserve">
+        <value>Адрес скопирован</value>
     </data>
 </root>

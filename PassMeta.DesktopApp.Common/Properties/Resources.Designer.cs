@@ -1833,6 +1833,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to URL is copied to clipboard.
+        /// </summary>
+        public static string STORAGE__ITEM_INFO__WEBSITE_COPIED {
+            get {
+                return ResourceManager.GetString("STORAGE__ITEM_INFO__WEBSITE_COPIED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string STORAGE__ITEM_LABEL__PASSWORD {
