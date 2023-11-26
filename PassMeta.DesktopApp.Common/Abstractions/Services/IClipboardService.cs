@@ -1,15 +1,14 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Services
-{
-    using System.Threading.Tasks;
+using System.Threading.Tasks;
 
+namespace PassMeta.DesktopApp.Common.Abstractions.Services;
+
+/// <summary>
+/// Service for working with user's clipboard.
+/// </summary>
+public interface IClipboardService
+{
     /// <summary>
-    /// Service for working with user's clipboard.
+    /// Try to set a text to clipboard.
     /// </summary>
-    public interface IClipboardService
-    {
-        /// <summary>
-        /// Try to set a text to clipboard.
-        /// </summary>
-        Task<bool> TrySetTextAsync(string? text);
-    }
+    Task<bool> TrySetTextAsync(string? text);
 }

@@ -5,17 +5,17 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Loading;
 namespace PassMeta.DesktopApp.Core.Utils.Loading;
 
 /// <inheritdoc />
-internal class DefaultLoadingManager : ILoadingManager
+public class DefaultLoadingManager : ILoadingManager
 {
     private readonly object _lockObject = new();
     private readonly BehaviorSubject<bool> _subject = new(false);
     private int _counter;
 
     /// <inheritdoc />
-    public bool Current => _subject.Value;
+    public bool Active => _subject.Value;
 
     /// <inheritdoc />
-    public IObservable<bool> CurrentObservable => _subject;
+    public IObservable<bool> ActiveObservable => _subject;
 
     /// <inheritdoc />
     public IDisposable Begin()
@@ -40,7 +40,10 @@ internal class DefaultLoadingManager : ILoadingManager
     {
         lock (_lockObject)
         {
-            if (_counter <= 0) return;
+            if (_counter <= 0)
+            {
+                throw new InvalidOperationException("Cannot finish extra loading counter");
+            }
 
             --_counter;
 
@@ -54,16 +57,22 @@ internal class DefaultLoadingManager : ILoadingManager
     private class LoadingReleaser : IDisposable
     {
         private readonly DefaultLoadingManager _manager;
-
+        private bool _disposed;
 
         public LoadingReleaser(DefaultLoadingManager manager)
         {
             _manager = manager;
         }
-        
+
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             _manager.FinishOne();
+            _disposed = true;
         }
     }
 }

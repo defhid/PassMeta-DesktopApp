@@ -1,10 +1,9 @@
-namespace PassMeta.DesktopApp.Ui.Constants
-{
-    using System;
-    using Utils;
+using System;
+using PassMeta.DesktopApp.Ui.Utils;
 
-    public static class ManifestResourcePaths
-    {
-        public static readonly Uri GifPreloader = ImageConverter.GetManifestResourcePath("Assets.Resm.Preloader.gif");
-    }
+namespace PassMeta.DesktopApp.Ui.Constants;
+
+public static class ManifestResourcePaths
+{
+    public static readonly Uri GifPreloader = ImageConverter.GetManifestResourcePath("Assets.Resm.Preloader.gif");
 }

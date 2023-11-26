@@ -1,14 +1,24 @@
-﻿namespace PassMeta.DesktopApp.Ui
-{
-    using Avalonia;
-    using Avalonia.ReactiveUI;
+﻿using Avalonia;
+using Avalonia.Logging;
+using Avalonia.ReactiveUI;
+using PassMeta.DesktopApp.Ui.App;
 
-    public static class Program
+namespace PassMeta.DesktopApp.Ui;
+
+public static class Program
+{
+    // Used by previews!
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App.App>()
+        .UsePlatformDetect()
+        .UseReactiveUI()
+        .WithInterFont();
+
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args) => AppBuilder.Configure<App.App>()
-            .UsePlatformDetect()
-            .LogToTrace()
-            .UseReactiveUI()
-            .StartWithClassicDesktopLifetime(args);
+        using var appLogSink = new AppLogSink(LogEventLevel.Error);
+        Logger.Sink = appLogSink;
+
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 }

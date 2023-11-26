@@ -1,0 +1,150 @@
+<Window
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:reactiveUi="http://reactiveui.net"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:mainWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:extra="clr-namespace:PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.MainWindow"
+  mc:Ignorable="d"
+  d:DesignWidth="800"
+  d:DesignHeight="500"
+  Icon="/Assets/AvaRes/PassMeta.ico"
+  Title="PassMeta"
+  MinWidth="800"
+  MinHeight="500"
+  Width="900"
+  Height="540"
+  WindowStartupLocation="CenterScreen">
+
+  <Design.DataContext>
+    <mainWin:MainWinModel />
+  </Design.DataContext>
+
+  <Grid>
+    <SplitView
+      x:Name="MainSplitView"
+      IsPaneOpen="{Binding MainPane.IsOpened}"
+      DisplayMode="CompactInline"
+      OpenPaneLength="188"
+      CompactPaneLength="48">
+      <SplitView.Pane>
+        <Grid IsEnabled="{Binding !PreloaderEnabled}">
+          <ToggleButton
+            IsChecked="{Binding MainPane.IsOpened}"
+            VerticalAlignment="Top"
+            Margin="4 5 4 4"
+            Width="{Binding MainPane.Account.Width^}"
+            Height="40"
+            FontSize="24"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            FontFamily="{x:Static constants:FontFamilies.SegoeMdl2}"
+            Content="&#xE700;" />
+
+          <StackPanel
+            Margin="0 57 0 0"
+            VerticalAlignment="Top">
+            <extra:MainPaneButton
+              DataContext="{Binding MainPane.Account}"
+              Margin="0 0 0 8" />
+
+            <extra:MainPaneButton
+              DataContext="{Binding MainPane.Storage}"
+              Margin="0 0 0 8" />
+
+            <extra:MainPaneButton
+              DataContext="{Binding MainPane.Generator}"
+              Margin="0 0 0 8" />
+
+            <extra:MainPaneButton
+              DataContext="{Binding MainPane.Journal}"
+              Margin="0 0 0 8" />
+          </StackPanel>
+
+          <extra:MainPaneButton
+            DataContext="{Binding MainPane.Logs}"
+            Margin="0 4 0 50"
+            VerticalAlignment="Bottom"
+            Opacity="0.65" />
+
+          <extra:MainPaneButton
+            DataContext="{Binding MainPane.Settings}"
+            Margin="0 4 0 5"
+            VerticalAlignment="Bottom"
+            Opacity="0.8" />
+        </Grid>
+      </SplitView.Pane>
+
+      <Grid ColumnDefinitions="*,48">
+        <reactiveUi:RoutedViewHost Grid.Column="0" Router="{Binding Router}">
+          <reactiveUi:RoutedViewHost.DefaultContent>
+            <extra:MainPreloader IsVisible="{Binding PreloaderEnabled}" />
+          </reactiveUi:RoutedViewHost.DefaultContent>
+        </reactiveUi:RoutedViewHost>
+
+        <Grid
+          Grid.Column="0"
+          IsVisible="{Binding PreloaderEnabled}"
+          Background="Black"
+          Opacity="0.2" />
+
+        <Grid
+          Grid.Column="1"
+          RowDefinitions="*,69"
+          IsEnabled="{Binding !PreloaderEnabled}"
+          Background="{Binding #MainSplitView.PaneBackground}">
+          <Grid.Styles>
+            <Style Selector="Button,ToggleButton">
+              <Setter Property="Width" Value="40" />
+              <Setter Property="Height" Value="40" />
+              <Setter Property="FontFamily" Value="{x:Static constants:FontFamilies.SegoeMdl2}" />
+              <Setter Property="FontSize" Value="26" />
+              <Setter Property="Padding" Value="0" />
+              <Setter Property="Margin" Value="4 4 4 1" />
+              <Setter Property="VerticalContentAlignment" Value="Center" />
+              <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+          </Grid.Styles>
+
+          <ItemsControl Grid.Row="0" ItemsSource="{Binding RightBarButtons}">
+            <ItemsControl.Styles>
+              <Style Selector="ItemsPresenter">
+                <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
+              </Style>
+            </ItemsControl.Styles>
+          </ItemsControl>
+
+          <TextBlock
+            Grid.Row="1"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            Margin="5 0 5 50"
+            Width="38"
+            MaxWidth="38"
+            TextAlignment="Center"
+            FontSize="9.5"
+            FontWeight="Bold"
+            Text="{Binding Mode.Text^}"
+            Foreground="{Binding Mode.Foreground^}" />
+
+          <Button
+            Grid.Row="1"
+            Command="{Binding RefreshCurrentPageCommand}"
+            VerticalAlignment="Bottom"
+            Margin="4 0 4 5"
+            Content="&#xE72C;"
+            ToolTip.Tip="{x:Static com:Resources.APP__RIGHT_BAR_BTN__REFRESH}"
+            ToolTip.Placement="Left"
+            ToolTip.VerticalOffset="0"
+            ToolTip.HorizontalOffset="-5" />
+        </Grid>
+      </Grid>
+    </SplitView>
+
+    <extra:MainPreloader IsVisible="{Binding PreloaderEnabled}" />
+  </Grid>
+</Window>

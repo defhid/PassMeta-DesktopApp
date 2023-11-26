@@ -1,33 +1,26 @@
-namespace PassMeta.DesktopApp.Ui.App
+using System;
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Base;
+
+namespace PassMeta.DesktopApp.Ui.App;
+
+public class ViewLocator : IDataTemplate
 {
-    using DesktopApp.Ui.ViewModels.Base;
-    
-    using Avalonia.Controls.Templates;
-    using Avalonia.Controls;
-    using System;
-
-    public class ViewLocator : IDataTemplate
+    public Control Build(object? data)
     {
-        public bool SupportsRecycling => false;
-
-        public IControl Build(object data)
+        if (data is null)
         {
-            var name = data.GetType().FullName!.Replace("ViewModel", "View");
-            var type = Type.GetType(name);
-
-            if (type != null)
-            {
-                return (Control)Activator.CreateInstance(type)!;
-            }
-            else
-            {
-                return new TextBlock { Text = "Not Found: " + name };
-            }
+            return new TextBlock { Text = "Not Found: null view" };
         }
 
-        public bool Match(object data)
-        {
-            return data is PageViewModel;
-        }
+        var name = data.GetType().FullName!.Replace("ViewModel", "View");
+        var type = Type.GetType(name);
+
+        return type is not null
+            ? (Control)Activator.CreateInstance(type)!
+            : new TextBlock { Text = "Not Found: " + name };
     }
+
+    public bool Match(object? data) => data is PageViewModel;
 }

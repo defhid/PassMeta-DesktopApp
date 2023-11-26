@@ -51,7 +51,7 @@ public static class PassMetaApi
     {
         /// Sign in.
         /// 
-        public static IHttpRequestWithBodySupportBase PostSignIn() => _Post("auth/sign-in");
+        public static IHttpRequestWithBodySupportBase PostLogIn() => _Post("auth/sign-in");
 
         /// Reset all current user sessions.
         /// 
@@ -77,27 +77,27 @@ public static class PassMetaApi
 
         /// Get passfile.
         ///
-        public static IHttpRequestBase Get(int passFileId) => _Get($"passfiles/{passFileId}");
+        public static IHttpRequestBase Get(long passFileId) => _Get($"passfiles/{passFileId}");
 
         /// Edit passfile.
         ///
-        public static IHttpRequestWithBodySupportBase Patch(int passFileId) => _Patch($"passfiles/{passFileId}");
+        public static IHttpRequestWithBodySupportBase Patch(long passFileId) => _Patch($"passfiles/{passFileId}");
 
         /// Delete passfile.
         ///
-        public static IHttpRequestWithBodySupportBase Delete(int passFileId) => _Delete($"passfiles/{passFileId}");
+        public static IHttpRequestWithBodySupportBase Delete(long passFileId) => _Delete($"passfiles/{passFileId}");
 
         /// Create a new passfile version content.
         ///
-        public static IHttpRequestWithBodySupportBase PostVersion(int passFileId) => _Post($"passfiles/{passFileId}/versions/new");
+        public static IHttpRequestWithBodySupportBase PostVersion(long passFileId) => _Post($"passfiles/{passFileId}/versions/new");
 
         /// Get passfile versions.
         ///
-        public static IHttpRequestBase GetVersionList(int passFileId) => _Get($"passfiles/{passFileId}/versions");
+        public static IHttpRequestBase GetVersionList(long passFileId) => _Get($"passfiles/{passFileId}/versions");
 
         /// Get passfile version content.
         ///
-        public static IHttpRequestBase GetVersion(int passFileId, int version) => _Get($"passfiles/{passFileId}/versions/{version}");
+        public static IHttpRequestBase GetVersion(long passFileId, int version) => _Get($"passfiles/{passFileId}/versions/{version}");
     }
 
     /// <summary>

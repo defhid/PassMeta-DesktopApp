@@ -174,9 +174,6 @@
     <data name="PASSFILE__VALIDATION__WRONG_PASSPHRASE" xml:space="preserve">
         <value>Wrong passphrase!</value>
     </data>
-    <data name="DICT_STORAGE__CHECK_PASSWORD" xml:space="preserve">
-        <value>account password</value>
-    </data>
     <data name="STORAGE__ITEM_LABEL__WHAT" xml:space="preserve">
         <value>Login</value>
     </data>
@@ -189,16 +186,16 @@
     <data name="STORAGE__ITEM_TOOLTIP__PASSWORD_COPY" xml:space="preserve">
         <value>Copy</value>
     </data>
-    <data name="PASSFILE_PROBLEM__NEEDS_MERGE" xml:space="preserve">
-        <value>Needs merge</value>
+    <data name="PASSFILE_MARK__NEEDS_MERGE" xml:space="preserve">
+        <value>Need to resolve conflicts</value>
     </data>
-    <data name="PASSFILE_PROBLEM__DOWNLOAD_ERR" xml:space="preserve">
+    <data name="DICT__PASSFILE_MARK__DOWNLOAD_ERR" xml:space="preserve">
         <value>Downloading error</value>
     </data>
-    <data name="PASSFILE_PROBLEM__UPLOAD_ERR" xml:space="preserve">
+    <data name="PASSFILE_MARK__UPLOAD_ERR" xml:space="preserve">
         <value>Uploading error</value>
     </data>
-    <data name="PASSFILE_PROBLEM__OTHER" xml:space="preserve">
+    <data name="PASSFILE_MARK__OTHER_ERR" xml:space="preserve">
         <value>Error</value>
     </data>
     <data name="GENERATOR__RESULT_COPIED" xml:space="preserve">
@@ -210,7 +207,7 @@
     <data name="STORAGE__ITEM_INFO__PASSWORD_COPIED" xml:space="preserve">
         <value>Password is copied to clipboard</value>
     </data>
-    <data name="STORAGE__ITEM_INFO__WHAT_COPIED" xml:space="preserve">
+    <data name="STORAGE__ITEM_INFO__USERNAME_COPIED" xml:space="preserve">
         <value>Login '{0}' is copied to clipboard</value>
     </data>
     <data name="PASSFILE__TITLE" xml:space="preserve">
@@ -288,53 +285,47 @@
     <data name="PASSFILE__ENCRYPTION_ERROR" xml:space="preserve">
         <value>Passfile encryption failed</value>
     </data>
-    <data name="PASSMGR__VERSION_NOT_FOUND_ERR" xml:space="preserve">
+    <data name="PASSSTORAGE__VERSION_NOT_FOUND_ERR" xml:space="preserve">
         <value>Passfile local version not found!</value>
     </data>
-    <data name="PASSMGR__ERR" xml:space="preserve">
+    <data name="PASSSTORAGE__ERR" xml:space="preserve">
         <value>Passfile local manager error! (see logs)</value>
     </data>
-    <data name="PASSMGR__COMMIT_WARNING" xml:space="preserve">
-        <value>Passfiles are saved to the local storage with errors! (see logs)</value>
-    </data>
-    <data name="PASSERVICE__ASK_PASSWORD_TO_DELETE_PASSFILE" xml:space="preserve">
-        <value>Please, input your account password to delete passfile '{0}' from the server (#{1}, deleted locally on {2})</value>
-    </data>
-    <data name="PASSFILE_PROBLEM__REMOTE_DELETING_ERR" xml:space="preserve">
+    <data name="PASSFILE_MARK__REMOTE_DELETING_ERR" xml:space="preserve">
         <value>Remote deleting error</value>
     </data>
     <data name="PASSFILE__TITLE_DELETED" xml:space="preserve">
         <value>Deleted locally passfile {0}</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_ID" xml:space="preserve">
+    <data name="DICT__PASSFILE__ID" xml:space="preserve">
         <value>passfile ID</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_NAME" xml:space="preserve">
+    <data name="DICT__PASSFILE__NAME" xml:space="preserve">
         <value>passfile name</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_COLOR" xml:space="preserve">
+    <data name="DICT__PASSFILE__COLOR" xml:space="preserve">
         <value>passfile color</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_CREATED_ON" xml:space="preserve">
+    <data name="DICT__PASSFILE__CREATED_ON" xml:space="preserve">
         <value>timestamp of passfile creation</value>
     </data>
-    <data name="DICT_STORAGE__PASSFILE_SMTH" xml:space="preserve">
-        <value>passfile data</value>
+    <data name="DICT__PASSFILE__CONTENT" xml:space="preserve">
+        <value>passfile content</value>
     </data>
-    <data name="DICT_ACCOUNT__FIRST_NAME" xml:space="preserve">
+    <data name="DICT__USER__FIRST_NAME" xml:space="preserve">
         <value>name</value>
     </data>
-    <data name="DICT_ACCOUNT__LAST_NAME" xml:space="preserve">
+    <data name="DICT__USER__LAST_NAME" xml:space="preserve">
         <value>surname</value>
     </data>
-    <data name="DICT_ACCOUNT__PASSWORD" xml:space="preserve">
+    <data name="DICT__USER__PASSWORD" xml:space="preserve">
         <value>new password</value>
     </data>
-    <data name="DICT_ACCOUNT__LOGIN" xml:space="preserve">
+    <data name="DICT__USER__LOGIN" xml:space="preserve">
         <value>login</value>
     </data>
-    <data name="DICT_ACCOUNT__PASSWORD_CONFIRM" xml:space="preserve">
-        <value>current password (confirm)</value>
+    <data name="DICT__USER__PASSWORD_CONFIRM" xml:space="preserve">
+        <value>old password (confirm)</value>
     </data>
     <data name="APP__ONLINE_MODE" xml:space="preserve">
         <value>Online</value>
@@ -342,16 +333,16 @@
     <data name="APP__OFFLINE_MODE" xml:space="preserve">
         <value>Offline</value>
     </data>
-    <data name="DICT_AUTH__USER" xml:space="preserve">
+    <data name="DICT__USER" xml:space="preserve">
         <value>user</value>
     </data>
-    <data name="PASSERVICE__INFO_COMMITED" xml:space="preserve">
+    <data name="PASSCONTEXT__INFO_COMMITED" xml:space="preserve">
         <value>Saved locally</value>
     </data>
     <data name="STORAGE__ASK_PASSPHRASE_FOR_NEW_PASSFILE" xml:space="preserve">
         <value>Input passphrase for a new passfile</value>
     </data>
-    <data name="PASSMGR__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
+    <data name="PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME" xml:space="preserve">
         <value>New</value>
     </data>
     <data name="STORAGE__SECTION_SEARCH_INPUT_WATERMARK" xml:space="preserve">
@@ -398,7 +389,7 @@ try another keywords...</value>
         <value>Input NEW passphrase</value>
     </data>
     <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
-        <value>Passphrase successfully changed!</value>
+        <value>Passphrase was successfully changed!</value>
     </data>
     <data name="UI__COPY" xml:space="preserve">
         <value>Copy</value>
@@ -433,8 +424,8 @@ try another keywords...</value>
     <data name="STORAGE__ITEM_TOOLTIP__DELETE" xml:space="preserve">
         <value>Delete</value>
     </data>
-    <data name="STORAGE__PASSFILE_CONTEXT__EDIT_BTN" xml:space="preserve">
-        <value>Edit</value>
+    <data name="STORAGE__PASSFILE_CONTEXT__MORE_BTN" xml:space="preserve">
+        <value>More...</value>
     </data>
     <data name="APP__RIGHT_BAR_BTN__REFRESH" xml:space="preserve">
         <value>Refresh</value>
@@ -678,5 +669,44 @@ try another keywords...</value>
     </data>
     <data name="SETTINGS__DEV_MODE" xml:space="preserve">
         <value>Developer mode</value>
+    </data>
+    <data name="PASSCONTEXT__ERR_OTHER" xml:space="preserve">
+        <value>Passfile context manager error (see logs)</value>
+    </data>
+    <data name="DICT__PASSFILE" xml:space="preserve">
+        <value>passfile</value>
+    </data>
+    <data name="PASSFILE_MARK__MERGED" xml:space="preserve">
+        <value>Conflicts are resolved </value>
+    </data>
+    <data name="PASSERVICE__ERR" xml:space="preserve">
+        <value>An unknown error is occured in passfile service (see logs)</value>
+    </data>
+    <data name="PASSERVICE__WARN_SYNCHRONIZED" xml:space="preserve">
+        <value>Synchronized with the server. WARNING: see logs</value>
+    </data>
+    <data name="PASSFILE__ASK_PASSPHRASE_AGAIN" xml:space="preserve">
+        <value>Wrong passphrase, try input again</value>
+    </data>
+    <data name="STORAGE__SECTION_LABEL__NAME" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="STORAGE__SECTION_LABEL__URL" xml:space="preserve">
+        <value>URL</value>
+    </data>
+    <data name="PASSCONTEXT__ERR_EMPTY_PASSPHRASE" xml:space="preserve">
+        <value>Passphrase is empty</value>
+    </data>
+    <data name="STORAGE__ASK_PASSPHRASE_FOR_PASSFILE" xml:space="preserve">
+        <value>Input passphrase for passfile {0}</value>
+    </data>
+    <data name="PASSFILE__INFO_PASSPHRASE_NOT_CHANGED" xml:space="preserve">
+        <value>Passphrase was not changed!</value>
+    </data>
+    <data name="DIALOG__DEFAULT_WARNING_TITLE" xml:space="preserve">
+        <value>Warning</value>
+    </data>
+    <data name="STORAGE__ITEM_INFO__WEBSITE_COPIED" xml:space="preserve">
+        <value>URL is copied to clipboard</value>
     </data>
 </root>

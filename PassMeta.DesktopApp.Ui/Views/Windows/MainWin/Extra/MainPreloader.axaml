@@ -1,0 +1,22 @@
+<UserControl 
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:avaloniaGif="clr-namespace:AvaloniaGif;assembly=AvaloniaGif"
+  xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Constants"
+  mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="200"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra.MainPreloader"
+  HorizontalAlignment="Stretch"
+  VerticalAlignment="Stretch">
+
+  <avaloniaGif:GifImage
+    Stretch="Uniform"
+    StretchDirection="Both"
+    Width="50"
+    Height="50"
+    HorizontalAlignment="Center"
+    VerticalAlignment="Center"
+    SourceUri="{x:Static const:ManifestResourcePaths.GifPreloader}" />
+
+</UserControl>

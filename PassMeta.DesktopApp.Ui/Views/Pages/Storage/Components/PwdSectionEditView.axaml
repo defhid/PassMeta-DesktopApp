@@ -1,0 +1,100 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:componentsV="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdSectionEditView">
+  <Design.DataContext>
+    <previews:PwdSectionEditModelPreview />
+  </Design.DataContext>
+
+  <Grid>
+    <ScrollViewer x:Name="RootScrollViewer" VerticalScrollBarVisibility="Auto" Padding="0 0 6 0">
+      <Grid RowDefinitions="Auto,*">
+        <Grid
+          Grid.Row="0"
+          RowDefinitions="Auto,Auto"
+          ColumnDefinitions="Auto,*">
+          <TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5 5 7 7"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Right"
+            Opacity="0.9"
+            Text="{x:Static com:Resources.STORAGE__SECTION_LABEL__NAME}"/>
+          
+          <TextBox
+            x:Name="NameTextBox"
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="5 5 7 7"
+            Padding="8 3 8 3"
+            MinHeight="28"
+            Height="28"
+            FontSize="14"
+            VerticalContentAlignment="Center"
+            Text="{Binding Name}" />
+          
+          <TextBlock
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="5 5 7 20"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Right"
+            Opacity="0.9"
+            Text="{x:Static com:Resources.STORAGE__SECTION_LABEL__URL}"/>
+
+          <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="5 5 7 20"
+            Padding="8 3 8 3"
+            MinHeight="28"
+            Height="28"
+            FontSize="14"
+            VerticalContentAlignment="Center"
+            Text="{Binding WebsiteUrl}" />
+        </Grid>
+
+        <ItemsControl
+          Grid.Row="1"
+          ItemsSource="{Binding Items}"
+          CornerRadius="3"
+          Padding="5 10 5 50"
+          VerticalAlignment="Top">
+          <ItemsControl.Styles>
+            <Style Selector="ItemsPresenter">
+              <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
+            </Style>
+          </ItemsControl.Styles>
+
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <componentsV:PwdItemEditView Margin="0 0 0 28" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Grid>
+    </ScrollViewer>
+
+    <Button
+      Classes="list_add"
+      Command="{Binding AddItemCommand}"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Bottom"
+      ToolTip.Tip="{x:Static com:Resources.STORAGE__ITEM_TOOLTIP__ADD}" />
+
+    <TextBlock
+      FontSize="16"
+      Foreground="DarkGray"
+      VerticalAlignment="Center"
+      HorizontalAlignment="Center"
+      Text="{x:Static com:Resources.STORAGE__NO_ITEMS}"
+      IsVisible="{Binding HasNoItems}" />
+  </Grid>
+</UserControl>

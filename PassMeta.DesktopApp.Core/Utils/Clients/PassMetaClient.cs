@@ -6,44 +6,55 @@ using System.Net.Http.Headers;
 using System.Reactive.Subjects;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-
 using PassMeta.DesktopApp.Common;
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Models;
-
-using PassMeta.DesktopApp.Core.Services.Extensions;
-using PassMeta.DesktopApp.Core.Utils.Extensions;
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
+using PassMeta.DesktopApp.Core.Extensions;
+using PassMeta.DesktopApp.Core.Utils.Json;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;
 
 /// <inheritdoc />
 public sealed class PassMetaClient : IPassMetaClient
 {
-    private static readonly BehaviorSubject<bool> OnlineSubject = new(false);
-
-    private readonly ILogService _logger;
+    private readonly BehaviorSubject<bool> _onlineSubject = new(false);
+    private readonly ILogsWriter _logger;
     private readonly IDialogService _dialogService;
     private readonly IOkBadService _okBadService;
     private readonly HttpClient _httpClient;
 
+    internal readonly IAppConfigProvider AppConfigProvider;
+
+    static PassMetaClient()
+        => ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+
     /// <summary></summary>
-    public PassMetaClient(ILogService logger, IDialogService dialogService, IOkBadService okBadService)
+    public PassMetaClient(
+        IAppContextManager appContextManager,
+        IAppConfigProvider appConfigProvider,
+        ILogsWriter logger,
+        IDialogService dialogService,
+        IOkBadService okBadService)
     {
+        AppConfigProvider = appConfigProvider;
         _logger = logger;
         _dialogService = dialogService;
         _okBadService = okBadService;
-        _httpClient = CreateHttpClient();
+        _httpClient = CreateHttpClient(appContextManager);
     }
-        
-    /// <inheritdoc />
-    public bool Online => OnlineSubject.Value;
 
     /// <inheritdoc />
-    public IObservable<bool> OnlineObservable => OnlineSubject;
+    public bool Online => _onlineSubject.Value;
+
+    /// <inheritdoc />
+    public IObservable<bool> OnlineObservable => _onlineSubject;
 
     /// <inheritdoc />
     public void Dispose() => _httpClient.Dispose();
@@ -57,16 +68,25 @@ public sealed class PassMetaClient : IPassMetaClient
         => new RequestBuilder(httpRequestBase.Method, httpRequestBase.Url, this);
 
     /// <inheritdoc />
-    public async Task<bool> CheckConnectionAsync()
+    public async Task<bool> CheckConnectionAsync(bool reset = false)
     {
-        if (AppConfig.Current.ServerUrl is null) return false;
+        if (AppConfigProvider.Current.ServerUrl is null)
+        {
+            SetOnline(false);
+            return false;
+        }
+
+        if (reset)
+        {
+            SetOnline(false);
+        }
 
         var has = false;
         try
         {
             var requestBase = PassMetaApi.General.GetCheck();
                 
-            var request = new HttpRequestMessage(requestBase.Method, AppConfig.Current.ServerUrl + "/" + requestBase.Url);
+            var request = new HttpRequestMessage(requestBase.Method, AppConfigProvider.Current.ServerUrl + "/" + requestBase.Url);
             var response = await _httpClient.SendAsync(request);
 
             has = response.StatusCode is HttpStatusCode.OK;
@@ -79,12 +99,12 @@ public sealed class PassMetaClient : IPassMetaClient
             }
         }
 
-        RefreshOnline(has);
+        SetOnline(has);
 
         return Online;
     }
 
-    internal async ValueTask<byte[]?> BuildAndExecuteRawAsync(RequestBuilder requestBuilder)
+    internal async ValueTask<byte[]?> BuildAndExecuteRawAsync(RequestBuilder requestBuilder, CancellationToken cancellationToken)
     {
         if (!TryBuildRequestMessage(requestBuilder, out var request))
         {
@@ -97,7 +117,8 @@ public sealed class PassMetaClient : IPassMetaClient
         OkBadResponse? failureOkBadResponse;
         try
         {
-            (successBody, failureOkBadResponse) = await SendAsync(request, context, content => content.ReadAsByteArrayAsync());
+            (successBody, failureOkBadResponse) = await SendAsync(
+                request, context, content => content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
         }
         catch (Exception ex)
         {
@@ -109,7 +130,7 @@ public sealed class PassMetaClient : IPassMetaClient
         if (successBody is null)
         {
             if (requestBuilder.BadMapper is not null)
-                failureOkBadResponse!.ApplyWhatMapping(requestBuilder.BadMapper);
+                failureOkBadResponse!.More?.ApplyWhatMapping(requestBuilder.BadMapper);
 
             if (requestBuilder.HandleBad)
                 _okBadService.ShowResponseFailure(failureOkBadResponse!, context);
@@ -120,7 +141,7 @@ public sealed class PassMetaClient : IPassMetaClient
         return successBody;
     }
 
-    internal async ValueTask<OkBadResponse<TData>?> BuildAndExecuteAsync<TData>(RequestBuilder requestBuilder)
+    internal async ValueTask<OkBadResponse<TData>?> BuildAndExecuteAsync<TData>(RequestBuilder requestBuilder, CancellationToken cancellationToken)
     {
         if (!TryBuildRequestMessage(requestBuilder, out var request))
         {
@@ -128,13 +149,15 @@ public sealed class PassMetaClient : IPassMetaClient
         }
             
         var context = requestBuilder.Context;
-        string? successBody;
+        byte[]? successBody;
         OkBadResponse? failureOkBadResponse;
         OkBadResponse<TData>? successOkBadResponse = null;
 
         try
         {
-            (successBody, failureOkBadResponse) = await SendAsync(request, context, content => content.ReadAsStringAsync());
+            (successBody, failureOkBadResponse) = await SendAsync(
+                request, context, content => content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
+
             if (successBody is not null)
             {
                 successOkBadResponse = ParseOkBadResponse<TData>(successBody);
@@ -149,8 +172,8 @@ public sealed class PassMetaClient : IPassMetaClient
 
         if (requestBuilder.BadMapper is not null)
         {
-            failureOkBadResponse?.ApplyWhatMapping(requestBuilder.BadMapper);
-            successOkBadResponse?.ApplyWhatMapping(requestBuilder.BadMapper);
+            failureOkBadResponse?.More?.ApplyWhatMapping(requestBuilder.BadMapper);
+            successOkBadResponse?.More?.ApplyWhatMapping(requestBuilder.BadMapper);
         }
 
         if (successBody is null)
@@ -163,7 +186,7 @@ public sealed class PassMetaClient : IPassMetaClient
 
         if (successOkBadResponse!.Success is false)
         {
-            _logger.Warning("Failure response with success HTTP code: " + successBody);
+            _logger.Warning("Failure response with success HTTP code: " + Encoding.UTF8.GetString(successBody));
 
             if (requestBuilder.HandleBad)
                 _okBadService.ShowResponseFailure(successOkBadResponse, context);
@@ -179,30 +202,34 @@ public sealed class PassMetaClient : IPassMetaClient
     private async Task<(TBody? SuccessBody, OkBadResponse? FailureResponse)> SendAsync<TBody>(
         HttpRequestMessage message,
         string? context,
-        Func<HttpContent, Task<TBody>> handleResponseAsync)
+        Func<HttpContent, Task<TBody>> handleResponseAsync,
+        CancellationToken cancellationToken)
         where TBody : class
     {
         try
         {
-            using var response = await _httpClient.SendAsync(message);
+            using var response = await _httpClient.SendAsync(message, cancellationToken);
 
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
                 {
+                    SetOnline(true);
                     return (await handleResponseAsync(response.Content), null);
                 }
                 case HttpStatusCode.RequestTimeout or HttpStatusCode.GatewayTimeout:
                 {
+                    SetOnline(false);
                     _logger.Error(message.GetShortInformation() + $"{Resources.API__CONNECTION_TIMEOUT_ERR} [{context}]");
                     return (null, ResponseFactory.FakeOkBad(false, Resources.API__CONNECTION_TIMEOUT_ERR));
                 }
                 default:
                 {
-                    var responseBody = await response.Content.ReadAsStringAsync();
+                    var responseBody = await response.Content.ReadAsByteArrayAsync(cancellationToken);
                     var okBadResponse = ParseOkBadResponse<object>(responseBody);
 
-                    _logger.Warning($"{message.GetShortInformation()} {response.StatusCode} [{context}] {responseBody}");
+                    SetOnline(true);
+                    _logger.Warning($"{message.GetShortInformation()} {response.StatusCode} [{context}] {Encoding.UTF8.GetString(responseBody)}");
 
                     return (null, okBadResponse);
                 }
@@ -210,7 +237,7 @@ public sealed class PassMetaClient : IPassMetaClient
         }
         catch (HttpRequestException ex)
         {
-            RefreshOnline(false);
+            SetOnline(false);
             _logger.Error(ex, $"{message.GetShortInformation()} {Resources.API__CONNECTION_ERR} [{context}]");
             return (null, ResponseFactory.FakeOkBad(false, Resources.API__CONNECTION_ERR));
         }
@@ -250,7 +277,7 @@ public sealed class PassMetaClient : IPassMetaClient
 
     private static void SetJsonBody(HttpRequestMessage message, object data)
     {
-        var dataBytes = Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(data));
+        var dataBytes = JsonSerializer.SerializeToUtf8Bytes(data, SerializerOptions);
 
         message.Content = new ByteArrayContent(dataBytes);
         message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -281,13 +308,13 @@ public sealed class PassMetaClient : IPassMetaClient
         message.Content = form;
     }
 
-    private static OkBadResponse<TData> ParseOkBadResponse<TData>(string body)
+    private static OkBadResponse<TData> ParseOkBadResponse<TData>(byte[] body)
     {
-        var okBad = JsonConvert.DeserializeObject<OkBadResponse<TData>>(body);
+        var okBad = JsonSerializer.Deserialize<OkBadResponse<TData>>(body, SerializerOptions);
         return okBad ?? throw new FormatException();
     }
 
-    private void RefreshOnline(bool isOnline)
+    private void SetOnline(bool isOnline)
     {
         if (Online == isOnline)
         {
@@ -296,7 +323,7 @@ public sealed class PassMetaClient : IPassMetaClient
 
         try
         {
-            OnlineSubject.OnNext(isOnline);
+            _onlineSubject.OnNext(isOnline);
         }
         catch (Exception ex)
         {
@@ -304,9 +331,15 @@ public sealed class PassMetaClient : IPassMetaClient
         }
     }
 
-    private HttpClient CreateHttpClient()
+    private HttpClient CreateHttpClient(IAppContextManager appContextManager)
     {
-        var handler = new PassMetaClientHandler(_logger);
+        var handler = new PassMetaClientHandler(appContextManager, _logger);
         return new HttpClient(handler, disposeHandler: true);
     }
+
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance,
+        WriteIndented = false
+    };
 }

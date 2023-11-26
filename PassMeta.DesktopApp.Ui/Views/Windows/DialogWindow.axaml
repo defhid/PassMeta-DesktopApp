@@ -1,0 +1,122 @@
+<Window
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:ut="using:PassMeta.DesktopApp.Ui.Utils"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:dialogWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.DialogWin;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  mc:Ignorable="d"
+  Width="500"
+  Height="150"
+  MinWidth="500"
+  MinHeight="150"
+  MaxWidth="750"
+  MaxHeight="400"
+  SizeToContent="Height"
+  CanResize="False"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Windows.DialogWindow"
+  Icon="/Assets/AvaRes/PassMeta.ico"
+  Title="{Binding Title}"
+  WindowStartupLocation="CenterOwner">
+
+  <Design.DataContext>
+    <previews:DialogWinModelPreview />
+  </Design.DataContext>
+
+  <Window.Resources>
+    <ut:ImageConverter x:Key="ImageConverter" />
+  </Window.Resources>
+
+  <Grid RowDefinitions="Auto,*">
+    <Grid
+      Grid.Row="0"
+      ColumnDefinitions="Auto,*"
+      Margin="20 22 20 14">
+      <Image
+        Grid.Column="0"
+        IsVisible="{Binding WindowIcon.Visible}"
+        Source="{Binding WindowIcon.Source, Converter={StaticResource ImageConverter}}"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Top"
+        Margin="2 0 20 0"
+        Width="50"
+        Height="50" />
+
+      <StackPanel Grid.Column="1">
+        <TextBlock
+          TextWrapping="Wrap"
+          Text="{Binding Text}"
+          TextAlignment="Center"
+          FontSize="16" />
+
+        <TextBlock
+          Margin="0 10 0 0"
+          HorizontalAlignment="Right"
+          TextWrapping="Wrap"
+          Text="{Binding Details}"
+          IsVisible="{Binding DetailsVisible}"
+          Opacity="0.7"
+          FontSize="14"
+          MaxHeight="200" />
+      </StackPanel>
+    </Grid>
+
+    <Grid
+      Grid.Row="1"
+      RowDefinitions="*,Auto"
+      Margin="0 0 20 20">
+      <TextBox
+        Grid.Row="0"
+        DataContext="{Binding TextInputBox}"
+        IsVisible="{Binding Visible}"
+        Text="{Binding Value}"
+        Watermark="{Binding Placeholder}"
+        PasswordChar="{Binding PasswordChar}"
+        SelectionStart="{Binding SelectionStart}"
+        SelectionEnd="{Binding SelectionEnd}"
+        Classes.revealPasswordButton="{Binding IsForPassword}"
+        Classes.clearButton="{Binding !IsForPassword}"
+        Margin="80 5 0 0"
+        VerticalAlignment="Bottom"
+        KeyDown="Input_OnKeyDown"
+        AttachedToVisualTree="Control_OnAttachedToVisualTree" />
+
+      <NumericUpDown
+        Grid.Row="0"
+        DataContext="{Binding NumberInputBox}"
+        IsVisible="{Binding Visible}"
+        Value="{Binding Value}"
+        AllowSpin="False"
+        ShowButtonSpinner="False"
+        Watermark="{Binding Placeholder}"
+        Margin="80 5 0 0"
+        VerticalAlignment="Bottom"
+        KeyDown="Input_OnKeyDown"
+        AttachedToVisualTree="Control_OnAttachedToVisualTree" />
+
+      <ItemsRepeater
+        Grid.Row="1"
+        MinHeight="50"
+        HorizontalAlignment="Right"
+        ItemsSource="{Binding Buttons}"
+        Margin="10 0 0 0">
+        <ItemsRepeater.Layout>
+          <StackLayout Spacing="30" Orientation="Horizontal" />
+        </ItemsRepeater.Layout>
+
+        <ItemsRepeater.ItemTemplate>
+          <DataTemplate DataType="dialogWin:ResultButton">
+            <Button
+              Content="{Binding Content}"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Bottom"
+              Padding="12 7 12 7"
+              Click="Button_OnClick"
+              AttachedToVisualTree="Control_OnAttachedToVisualTree" />
+          </DataTemplate>
+        </ItemsRepeater.ItemTemplate>
+      </ItemsRepeater>
+    </Grid>
+  </Grid>
+</Window>

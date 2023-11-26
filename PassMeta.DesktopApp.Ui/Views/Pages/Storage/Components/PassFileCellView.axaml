@@ -1,0 +1,59 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PassFileCellView"
+  mc:Ignorable="d"
+  d:DesignWidth="260"
+  d:DesignHeight="40">
+
+  <Design.DataContext>
+    <previews:PassFileCellModelPreview />
+  </Design.DataContext>
+
+  <Grid ColumnDefinitions="Auto,*">
+    <Border
+      Grid.Column="0"
+      CornerRadius="3,0,0,3"
+      Width="6"
+      HorizontalAlignment="Left"
+      Background="{Binding Color}" />
+
+    <Button
+      Grid.Column="0"
+      HorizontalContentAlignment="Center"
+      VerticalContentAlignment="Center"
+      HorizontalAlignment="Left"
+      Margin="13 0 1 0"
+      Padding="0 -1 0 0"
+      Height="20" Width="22"
+      FontSize="20"
+      FontFamily="{x:Static const:FontFamilies.SegoeMdl2}"
+      Content="&#xEC50;"
+      Foreground="{Binding StateColor}"
+      Opacity="{Binding Opacity}"
+      IsVisible="{Binding FullMode}"
+      Command="{Binding ShowCardCommand}" />
+
+    <TextBlock
+      Grid.Column="1"
+      FontSize="16"
+      Text="{Binding Name}"
+      Opacity="{Binding Opacity}"
+      Margin="5 0 0 0"
+      VerticalAlignment="Center"/>
+    
+    <Grid.ContextMenu>
+      <ContextMenu IsVisible="{Binding !FullMode}">
+        <MenuItem
+          Header="{x:Static com:Resources.STORAGE__PASSFILE_CONTEXT__MORE_BTN}"
+          Command="{Binding ShowCardCommand}"/>
+      </ContextMenu>
+    </Grid.ContextMenu>
+  </Grid>
+
+</UserControl>

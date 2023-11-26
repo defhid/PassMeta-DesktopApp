@@ -1,27 +1,26 @@
 using System.Net.Http;
 
-namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient
+namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+
+/// <summary>
+/// PassMeta client request base.
+/// </summary>
+public interface IHttpRequestBase
 {
     /// <summary>
-    /// PassMeta client request base.
+    /// PassMeta controller path.
     /// </summary>
-    public interface IHttpRequestBase
-    {
-        /// <summary>
-        /// PassMeta controller path.
-        /// </summary>
-        string Url { get; }
-
-        /// <summary>
-        /// HTTP method.
-        /// </summary>
-        HttpMethod Method { get; }
-    }
+    string Url { get; }
 
     /// <summary>
-    /// PassMeta client request with body support base.
+    /// HTTP method.
     /// </summary>
-    public interface IHttpRequestWithBodySupportBase : IHttpRequestBase
-    {
-    }
+    HttpMethod Method { get; }
+}
+
+/// <summary>
+/// PassMeta client request with body support base.
+/// </summary>
+public interface IHttpRequestWithBodySupportBase : IHttpRequestBase
+{
 }

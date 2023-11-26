@@ -1,79 +1,72 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-    
+using Avalonia.Platform.Storage;
 using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
-using PassMeta.DesktopApp.Common.Abstractions.Services.PassFile;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Constants;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Models.Entities;
-    
-using PassMeta.DesktopApp.Core;
-using PassMeta.DesktopApp.Core.Services.Extensions;
-using PassMeta.DesktopApp.Ui.Interfaces.UiServices;
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 
-namespace PassMeta.DesktopApp.Ui.Services
+namespace PassMeta.DesktopApp.Ui.Services;
+
+/// <inheritdoc />
+public class PassFileExportUiService<TPassFile, TContent> : IPassFileExportUiService<TPassFile>
+    where TPassFile : PassFile<TContent>
+    where TContent : class, new()
 {
-    /// <inheritdoc />
-    public class PassFileExportUiService : IPassFileExportUiService
+    private readonly IPassFileExportService _exportService;
+    private readonly IDialogService _dialogService;
+    private readonly ILogsWriter _logger;
+
+    public PassFileExportUiService(
+        IPassFileExportService exportService,
+        IDialogService dialogService,
+        ILogsWriter logger)
     {
-        private readonly IDialogService _dialogService;
-        private readonly ILogService _logger;
+        _exportService = exportService;
+        _dialogService = dialogService;
+        _logger = logger;
+    }
 
-        public PassFileExportUiService(IDialogService dialogService, ILogService logger)
+    /// <inheritdoc />
+    public async Task SelectAndExportAsync(TPassFile passFile, IStorageProvider storageProvider)
+    {
+        try
         {
-            _dialogService = dialogService;
-            _logger = logger;
+            await SelectAndExportInternalAsync(passFile, storageProvider);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, GetType().Name);
+            _dialogService.ShowError(ex.Message);
+        }
+    }
+
+    private async Task SelectAndExportInternalAsync(TPassFile passFile, IStorageProvider storageProvider)
+    {
+        var file = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            SuggestedFileName = passFile.Name + '.' + PassFileExternalFormat.Encrypted.Extension,
+            DefaultExtension = '.' + PassFileExternalFormat.Encrypted.Extension,
+            FileTypeChoices = _exportService.SupportedFormats.Select(format => new FilePickerFileType(format.Name)
+            {
+                Patterns = new[] { "*." + format.Extension }
+            }).ToList(),
+        });
+
+        if (file is null)
+        {
+            return;
         }
 
-        /// <inheritdoc />
-        public async Task<IResult> SelectAndExportAsync(PassFile passFile, Window currentWindow)
+        var result = await _exportService.ExportAsync(passFile, file.Path.AbsolutePath);
+        if (result.Ok)
         {
-            try
-            {
-                var exportService = EnvironmentContainer.Resolve<IPassFileExportService>(passFile.Type.ToString());
-
-                return await _SelectAndExportAsync(passFile, exportService, currentWindow);
-            }
-            catch (Exception ex)
-            {
-                
-                _logger.Error(ex, nameof(PassFileExportUiService));
-                _dialogService.ShowError(ex.Message);
-                return Result.Failure();
-            }
-        }
-
-        private async Task<IResult> _SelectAndExportAsync(PassFile passFile, IPassFileExportService exportService, Window currentWindow)
-        {
-            var fileDialog = new SaveFileDialog
-            {
-                InitialFileName = passFile.Name + ExternalFormat.PwdPassfileEncrypted.FullExtension,
-                DefaultExtension = ExternalFormat.PwdPassfileEncrypted.FullExtension,
-                Filters = exportService.SupportedFormats.Select(format => new FileDialogFilter
-                {
-                    Name = format.Name,
-                    Extensions = { format.PureExtension }
-                }).ToList()
-            };
-            
-            var filePath = await fileDialog.ShowAsync(currentWindow);
-            if (string.IsNullOrEmpty(filePath))
-            {
-                return Result.Failure();
-            }
-            
-            var result = await exportService.ExportAsync(passFile, filePath);
-            if (result.Ok)
-            {
-                _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_EXPORT, passFile.Name, filePath));
-            }
-
-            return result;
+            _dialogService.ShowInfo(string.Format(Resources.PASSFILE__SUCCESS_EXPORT, passFile.Name, file.Path.AbsolutePath));
         }
     }
 }

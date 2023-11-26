@@ -1,27 +1,55 @@
 using System;
 using System.Globalization;
 using System.Threading;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using Avalonia.Threading;
 using PassMeta.DesktopApp.Common;
-using PassMeta.DesktopApp.Common.Abstractions;
+using PassMeta.DesktopApp.Common.Abstractions.App;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-
-using PassMeta.DesktopApp.Core.Utils;
-using PassMeta.DesktopApp.Core.Services.Extensions;
-using AppContext = PassMeta.DesktopApp.Core.AppContext;
+using PassMeta.DesktopApp.Common.Constants;
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Internal;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App.Observers;
 
 public class AppConfigObserver : IObserver<IAppConfig>
 {
-    private readonly IPassMetaClient _passMetaClient;
-    private readonly ILogService _logger;
+    private static IPassMetaClient PassMetaClient => Locator.Current.Resolve<IPassMetaClient>();
+    private static ILogsWriter LogsWriter => Locator.Current.Resolve<ILogsWriter>();
+
     private IAppConfig? _prev;
-        
-    public AppConfigObserver(IPassMetaClient passMetaClient, ILogService logger)
+
+    public async void OnNext(IAppConfig value)
     {
-        _passMetaClient = passMetaClient;
-        _logger = logger;
+        try
+        {
+            if (_prev is null)
+            {
+                SetCulture(value.Culture);
+                _prev = value;
+                return;
+            }
+
+            if (value.Culture != _prev.Culture)
+            {
+                SetCulture(value.Culture);
+                App.ReopenMainWindow();
+            }
+
+            if (value.ServerUrl != _prev.ServerUrl)
+            {
+                using var loading = Locator.Current.Resolve<AppLoading>().General.Begin();
+
+                await PassMetaClient.CheckConnectionAsync(reset: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            LogsWriter.Error(ex, "Processing of app-config-changing event failed");
+        }
+
+        _prev = value;
     }
 
     public void OnCompleted()
@@ -32,42 +60,19 @@ public class AppConfigObserver : IObserver<IAppConfig>
     {
     }
 
-    public async void OnNext(IAppConfig value)
+    private static void SetCulture(AppCulture culture)
     {
-        try
-        {
-            Resources.Culture = value.Culture;
+        Resources.Culture = culture;
 
+        Thread.CurrentThread.CurrentCulture = Resources.Culture;
+        Thread.CurrentThread.CurrentUICulture = Resources.Culture;
+        CultureInfo.DefaultThreadCurrentCulture = Resources.Culture;
+        CultureInfo.DefaultThreadCurrentUICulture = Resources.Culture;
+
+        Dispatcher.UIThread.Post(() =>
+        {
             Thread.CurrentThread.CurrentCulture = Resources.Culture;
             Thread.CurrentThread.CurrentUICulture = Resources.Culture;
-            CultureInfo.DefaultThreadCurrentCulture = Resources.Culture;
-            CultureInfo.DefaultThreadCurrentUICulture = Resources.Culture;
-
-            if (_prev is null)
-            {
-                _prev = value;
-                return;
-            }
-
-            if (value.ServerUrl != _prev.ServerUrl)
-            {
-                await _passMetaClient.CheckConnectionAsync();
-
-                await AppContext.RefreshCurrentAsync(value, _passMetaClient);
-
-                await PassFileManager.ReloadAsync(false);
-            }
-
-            if (value.Culture != _prev.Culture)
-            {
-                App.ReopenMainWindow();
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Processing of app-config-changing event failed");
-        }
-
-        _prev = value;
+        });
     }
 }

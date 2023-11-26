@@ -1,0 +1,77 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:componentsV="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdSectionReadView">
+  <Design.DataContext>
+    <previews:PwdSectionReadModelPreview />
+  </Design.DataContext>
+
+  <Border
+    CornerRadius="3"
+    Background="{DynamicResource ListBoxBackgroundThemeBrush}">
+    <Grid>
+      <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0 0 6 0">
+        <Grid RowDefinitions="Auto,*">
+          <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0 0 0 5">
+            <TextBlock
+              Grid.Row="0"
+              Margin="5 7 7 0"
+              Padding="8 3 8 3"
+              MinHeight="28"
+              Height="28"
+              FontSize="14"
+              FontWeight="Bold"
+              Text="{Binding Name}" />
+
+            <TextBlock
+              Grid.Row="1"
+              Margin="5 0 7 0"
+              Padding="8 3 8 3"
+              MinHeight="28"
+              Height="28"
+              FontSize="14"
+              FontStyle="Italic"
+              Cursor="Hand"
+              Opacity="0.8"
+              PointerPressed="WebsiteUrlTextBlock_OnPointerPressed"
+              Text="{Binding WebsiteUrl}"
+              IsVisible="{Binding HasWebsiteUrl}" />
+          </Grid>
+
+          <ItemsControl
+            Grid.Row="1"
+            ItemsSource="{Binding Items}"
+            CornerRadius="3"
+            Padding="5 0 8 50"
+            VerticalAlignment="Top">
+            <ItemsControl.Styles>
+              <Style Selector="ItemsPresenter">
+                <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
+              </Style>
+            </ItemsControl.Styles>
+
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <componentsV:PwdItemReadView Margin="0 0 0 20" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Grid>
+      </ScrollViewer>
+
+      <TextBlock
+        FontSize="16"
+        Foreground="DarkGray"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Center"
+        Text="{x:Static com:Resources.STORAGE__NO_ITEMS}"
+        IsVisible="{Binding HasNoItems}" />
+    </Grid>
+  </Border>
+</UserControl>

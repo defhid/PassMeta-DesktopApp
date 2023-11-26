@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Models;
-using PassMeta.DesktopApp.Common.Utils.Extensions;
+using PassMeta.DesktopApp.Common.Extensions;
+using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 
 namespace PassMeta.DesktopApp.Core.Services;
 
@@ -29,23 +28,23 @@ public class OkBadService : IOkBadService
 
     private static List<string> _ResponseToText(OkBadResponse response, int level = 0)
     {
-        var message = response.Message.Capitalize();
+        var message = response.Msg.Capitalize();
 
-        var builder = response.What is null
+        var builder = response.More?.What is null
             ? new List<string> { message }
-            : new List<string> { $"{message}: {response.What}" };
+            : new List<string> { $"{message}: {response.More.What}" };
 
         if (response.More is not null)
         {
             builder.Add(response.More.ToString());
-        }
-
-        if (response.Sub?.Count > 0)
-        {
-            level += 2;
-            builder.AddRange(response.Sub.Select(okBad => "* ".PadRight(level) + string.Join(
-                Environment.NewLine + string.Concat(Enumerable.Repeat(' ', level + 1)), 
-                _ResponseToText(okBad, level))));
+            
+            if (response.More.Sub?.Count > 0)
+            {
+                level += 2;
+                builder.AddRange(response.More.Sub.Select(okBad => "* ".PadRight(level) + string.Join(
+                    Environment.NewLine + string.Concat(Enumerable.Repeat(' ', level + 1)), 
+                    _ResponseToText(okBad, level))));
+            }
         }
 
         return builder;

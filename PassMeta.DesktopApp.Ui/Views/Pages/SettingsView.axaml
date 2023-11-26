@@ -1,0 +1,116 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.SettingsView"
+  mc:Ignorable="d"
+  d:DesignWidth="800"
+  d:DesignHeight="450">
+
+  <Design.DataContext>
+    <previews:SettingsPageModelPreview />
+  </Design.DataContext>
+
+  <Grid>
+    <TextBlock
+      VerticalAlignment="Top"
+      HorizontalAlignment="Center"
+      Margin="0 40 0 0"
+      FontSize="30"
+      Text="{x:Static com:Resources.SETTINGS__TITLE}" />
+
+    <Grid
+      RowDefinitions="Auto,Auto,Auto,Auto,*"
+      Margin="20 100 10 10">
+      <Grid
+        Grid.Row="0"
+        RowDefinitions="Auto,Auto"
+        Margin="0 0 0 20">
+        <TextBlock
+          Grid.Row="0"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Left"
+          Margin="3 0 0 10"
+          FontSize="16"
+          Text="API" />
+
+        <TextBlock
+          Grid.Row="0"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Left"
+          Margin="35 4 0 0"
+          FontSize="12"
+          Opacity="0.7"
+          Text="{Binding ServerInfo^}" />
+
+        <TextBox
+          Grid.Row="1"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Left"
+          Width="400"
+          Text="{Binding ServerUrl}"
+          Watermark="https://" />
+      </Grid>
+
+      <Grid
+        Grid.Row="1"
+        RowDefinitions="Auto,Auto"
+        Margin="0 0 0 20">
+        <TextBlock
+          Grid.Row="0"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Left"
+          Margin="3 0 0 10"
+          FontSize="16"
+          Text="{x:Static com:Resources.SETTINGS__LOCALIZATION}" />
+
+        <ComboBox
+          Grid.Row="1"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Left"
+          Width="200"
+          ItemsSource="{Binding Cultures}"
+          SelectedItem="{Binding SelectedCulture}" />
+      </Grid>
+
+      <Grid
+        Grid.Row="2"
+        RowDefinitions="Auto,Auto"
+        Margin="0 0 0 20">
+        <CheckBox
+          Grid.Row="0"
+          IsChecked="{Binding HidePasswords}"
+          Content="{x:Static com:Resources.SETTINGS__HIDE_PASSWORDS}" />
+
+        <CheckBox
+          Grid.Row="1"
+          IsChecked="{Binding DevMode}"
+          Opacity="{Binding DevModeOpacity^}"
+          Content="{x:Static com:Resources.SETTINGS__DEV_MODE}" />
+      </Grid>
+
+      <Button
+        Grid.Row="3"
+        Grid.Column="0"
+        Margin="0 0 0 20"
+        Content="{x:Static com:Resources.SETTINGS__SAVE_BTN}"
+        Command="{Binding SaveCommand}" />
+
+      <Button
+        Grid.Row="4"
+        FontSize="12"
+        Opacity="0.7"
+        Background="Transparent"
+        BorderThickness="0"
+        VerticalAlignment="Bottom"
+        HorizontalAlignment="Right"
+        Cursor="Hand"
+        Content="{Binding AppInfo}"
+        Command="{Binding AppInfoCommand}" />
+    </Grid>
+  </Grid>
+
+</UserControl>

@@ -1,20 +1,19 @@
-namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Loading
+using System;
+
+namespace PassMeta.DesktopApp.Common.Abstractions.Utils.Loading;
+
+/// <summary>
+/// Loading state.
+/// </summary>
+public interface ILoadingState
 {
-    using System;
+    /// <summary>
+    /// Loading is happening now.
+    /// </summary>
+    bool Active { get; }
 
     /// <summary>
-    /// Loading state.
+    /// Represents <see cref="Active"/>.
     /// </summary>
-    public interface ILoadingState
-    {
-        /// <summary>
-        /// Loading is happening now.
-        /// </summary>
-        bool Current { get; }
-        
-        /// <summary>
-        /// Represents <see cref="Current"/>.
-        /// </summary>
-        IObservable<bool> CurrentObservable { get; }
-    }
+    IObservable<bool> ActiveObservable { get; }
 }

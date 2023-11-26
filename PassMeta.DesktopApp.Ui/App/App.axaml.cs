@@ -1,105 +1,132 @@
-using System.Net;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
-
-using Splat;
-using System.Threading.Tasks;
-
+using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
-using PassMeta.DesktopApp.Common.Abstractions.Services.Logging;
+using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
+using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Core;
-using PassMeta.DesktopApp.Core.Utils;
+using PassMeta.DesktopApp.Common.Enums;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Ui.App.Observers;
-using PassMeta.DesktopApp.Ui.ViewModels.Main.MainWindow;
-using PassMeta.DesktopApp.Ui.Views.Main;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
+using PassMeta.DesktopApp.Ui.Models.Providers;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin;
+using PassMeta.DesktopApp.Ui.Views.Windows.MainWin;
+using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App;
 
 public class App : Application
 {
     private static MainWindow? _mainWindow;
-    public static MainWindow? MainWindow
+    private Task? _beforeLaunchTask;
+
+    /// <inheritdoc />
+    public override void RegisterServices()
     {
-        get => _mainWindow;
-        private set
-        {
-            var desktop = (IClassicDesktopStyleApplicationLifetime)Current!.ApplicationLifetime!;
-            desktop.MainWindow = value;
-            _mainWindow = value;
-        }
+        base.RegisterServices();
+        DependencyInstaller.RegisterServices();
+        DependencyInstaller.RegisterViewsForViewModels();
     }
 
+    /// <inheritdoc />
     public override void Initialize()
     {
-        Task.Run(BeforeLaunchAsync).GetAwaiter().GetResult();
+        _beforeLaunchTask = Task.Run(BeforeLaunchAsync);
+        _beforeLaunchTask.ConfigureAwait(false);
         AvaloniaXamlLoader.Load(this);
     }
 
+    /// <inheritdoc />
     public override void OnFrameworkInitializationCompleted()
     {
+        _beforeLaunchTask!.GetAwaiter().GetResult();
         MainWindow = MakeWindow();
-        EnvironmentContainer.Resolve<IDialogService>().Flush();
     }
 
+    /// <summary></summary>
     public static void ReopenMainWindow()
     {
         var window = MakeWindow();
         window.Show();
 
-        MainWindow?.Close(true);
+        MainWindow?.Close();
         MainWindow = window;
+    }
 
-        EnvironmentContainer.Resolve<IDialogService>().Flush();
+    /// <summary></summary>
+    private static MainWindow? MainWindow
+    {
+        get => _mainWindow;
+        set
+        {
+            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.MainWindow = value;
+            }
+            _mainWindow = value;
+        }
     }
 
     private static async Task BeforeLaunchAsync()
     {
-        using var loading = AppLoading.General.Begin();
+        var logManager = Locator.Current.Resolve<ILogsManager>();
+        var appConfigManager = Locator.Current.Resolve<IAppConfigManager>();
+        var appContextManager = Locator.Current.Resolve<IAppContextManager>();
+        var appPresetsManager = Locator.Current.Resolve<IAppPresetsManager>();
+        var userContextProvider = Locator.Current.Resolve<IUserContextProvider>();
+        var dialogService = Locator.Current.Resolve<IDialogService>();
+        var pmClient = Locator.Current.Resolve<IPassMetaClient>();
+        var pmInfoService = Locator.Current.Resolve<IPassMetaInfoService>();
 
-        ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+        logManager.InternalErrorOccured += (_, ev) => 
+            dialogService.ShowError(ev.Message, more: ev.Exception.ToString(), defaultPresenter: DialogPresenter.Window);
 
-        DependencyInstaller.RegisterCoreServices();
-        DependencyInstaller.RegisterUiServices();
-        DependencyInstaller.RegisterViewsForViewModels();
+        await appConfigManager.LoadAsync();
+        await appContextManager.LoadAsync();
+        
+        var result = await pmInfoService.LoadAsync();
+        if (result.Ok)
+        {
+            await appContextManager.RefreshFromAsync(result.Data!);
+        }
 
-        EnvironmentContainer.Initialize(Locator.Current);
+        if (!pmClient.Online)
+        {
+            dialogService.ShowInfo(Common.Resources.API__CONNECTION_ERR);
+        }
 
-        var logService = EnvironmentContainer.Resolve<ILogService>();
-        var dialogService = EnvironmentContainer.Resolve<IDialogService>();
-        var passMetaClient = EnvironmentContainer.Resolve<IPassMetaClient>();
+        appConfigManager.CurrentObservable.Subscribe(new AppConfigObserver());
+        pmClient.OnlineObservable.Subscribe(new OnlineObserver());
+        userContextProvider.CurrentObservable.Subscribe(new UserContextObserver());
 
-        logService.ErrorOccured += (_, ev) => 
-            dialogService.ShowError(ev.Message, more: ev.Exception.ToString());
-
-        await StartUp.LoadConfigurationAsync();
-        await StartUp.LoadContextAsync();
-
-        _ = AppConfig.CurrentObservable.Subscribe(new AppConfigObserver(passMetaClient, logService));
-        _ = AppContext.CurrentObservable.Subscribe(new AppContextObserver(logService));
-            
-        _ = passMetaClient.OnlineObservable.Subscribe(new OnlineObserver(passMetaClient, logService));
-
-        _ = Task.Run(StartUp.CheckSystem);
+        _ = Task.Run(logManager.CleanUpAsync);
+        _ = Task.Run(appPresetsManager.LoadAsync);
     }
 
     private static MainWindow MakeWindow()
     {
-        var win = new MainWindow { DataContext = new MainWindowViewModel() };
+        var win = new MainWindow { ViewModel = new MainWinModel() };
 
-        win.Closed += (_, _) => win.DataContext.Dispose();
- 
-        DependencyInstaller.Unregister<INotificationManager>();
-        DependencyInstaller.RegisterSingleton<INotificationManager>(new WindowNotificationManager(win)
+        win.GotFocus += (_, _) => Locator.Current.Resolve<IDialogService>().Flush();
+        win.Activated += (_, _) =>
         {
-            HorizontalAlignment = HorizontalAlignment.Right,
-            VerticalAlignment = VerticalAlignment.Bottom,
-            Opacity = 0.8,
-            Margin = Thickness.Parse("0 0 0 -4")
-        });
+            DependencyInstaller.Unregister<IHostWindowProvider>();
+            DependencyInstaller.Register<IHostWindowProvider>(new SimpleHostWindowProvider(win));
+
+            DependencyInstaller.Unregister<INotificationManager>();
+            DependencyInstaller.Register<INotificationManager>(new WindowNotificationManager(win)
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Opacity = 0.8,
+                Margin = Thickness.Parse("0 0 0 -4")
+            });
+        };
 
         return win;
     }
