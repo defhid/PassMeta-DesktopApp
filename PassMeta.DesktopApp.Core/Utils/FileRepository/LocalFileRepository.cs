@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
@@ -18,13 +19,18 @@ public class LocalFileRepository : IFileRepository
     }
 
     /// <inheritdoc />
+    public string GetAbsolutePath(string? relativePath) => string.IsNullOrEmpty(relativePath) 
+        ? _rootPath 
+        : Path.Combine(_rootPath, relativePath);
+
+    /// <inheritdoc />
     public ValueTask<IEnumerable<string>> GetFilesAsync(CancellationToken cancellationToken = default)
     {
         var files = Directory.GetFiles(_rootPath);
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        return ValueTask.FromResult<IEnumerable<string>>(files);
+        return ValueTask.FromResult(files.Select(x => x[(_rootPath.Length + 1)..]));
     }
 
     /// <inheritdoc />
@@ -77,8 +83,4 @@ public class LocalFileRepository : IFileRepository
         
         return ValueTask.CompletedTask;
     }
-
-    private string GetAbsolutePath(string? relativePath) => string.IsNullOrEmpty(relativePath) 
-        ? _rootPath 
-        : Path.Combine(_rootPath, relativePath);
 }

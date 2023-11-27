@@ -11,6 +11,11 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Utils.FileRepository;
 public interface IFileRepository
 {
     /// <summary>
+    /// Get absolute file path by its name.
+    /// </summary>
+    string GetAbsolutePath(string? relativePath);
+
+    /// <summary>
     /// Get all repository file names.
     /// </summary>
     ValueTask<IEnumerable<string>> GetFilesAsync(CancellationToken cancellationToken = default);

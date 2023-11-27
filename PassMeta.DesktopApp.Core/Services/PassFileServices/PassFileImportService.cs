@@ -52,18 +52,11 @@ public class PassFileImportService : IPassFileImportService
     public async Task<IResult> ImportAsync<TContent>(PassFile<TContent> passFile, string sourceFilePath)
         where TContent : class, new()
     {
-        const string oldExtension = ".old";
-
         try
         {
             var bytes = await File.ReadAllBytesAsync(sourceFilePath);
             var name = Path.GetFileName(sourceFilePath);
-            var ext = Path.GetExtension(name);
-
-            if (ext.Equals(oldExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                ext = Path.GetExtension(sourceFilePath[..^oldExtension.Length]);
-            }
+            var ext = Path.GetExtension(name)[".".Length..];
 
             if (PassFileExternalFormat.Encrypted.Extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
             {
@@ -75,7 +68,7 @@ public class PassFileImportService : IPassFileImportService
                 return await ImportPassfileDecryptedAsync(passFile, bytes, sourceFilePath);
             }
 
-            _dialogService.ShowFailure(Resources.PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR);
+            _dialogService.ShowFailure(string.Format(Resources.PASSIMPORT__NOT_SUPPORTED_EXTENSION_ERR, ext));
         }
         catch (Exception ex)
         {

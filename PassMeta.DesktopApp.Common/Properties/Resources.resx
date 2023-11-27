@@ -529,8 +529,8 @@ try another keywords...</value>
     <data name="PASSFILELIST__DESCRIPTION_OLD_VERSION" xml:space="preserve">
         <value>old version</value>
     </data>
-    <data name="PASSFILELIST__DESCRIPTION_CURRENT" xml:space="preserve">
-        <value>current</value>
+    <data name="PASSFILELIST__DESCRIPTION_ACTUAL_VERSION" xml:space="preserve">
+        <value>actual version</value>
     </data>
     <data name="PASSFILELIST__DESCRIPTION_UNKNOWN" xml:space="preserve">
         <value>Unknown</value>
@@ -708,5 +708,11 @@ try another keywords...</value>
     </data>
     <data name="STORAGE__ITEM_INFO__WEBSITE_COPIED" xml:space="preserve">
         <value>URL is copied to clipboard</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_LOCAL_CREATED" xml:space="preserve">
+        <value>old local version</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_CURRENT" xml:space="preserve">
+        <value>current</value>
     </data>
 </root>

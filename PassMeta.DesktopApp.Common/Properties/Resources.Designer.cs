@@ -1500,11 +1500,29 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to actual version.
+        /// </summary>
+        public static string PASSFILELIST__DESCRIPTION_ACTUAL_VERSION {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__DESCRIPTION_ACTUAL_VERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to current.
         /// </summary>
         public static string PASSFILELIST__DESCRIPTION_CURRENT {
             get {
                 return ResourceManager.GetString("PASSFILELIST__DESCRIPTION_CURRENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to old local version.
+        /// </summary>
+        public static string PASSFILELIST__DESCRIPTION_LOCAL_CREATED {
+            get {
+                return ResourceManager.GetString("PASSFILELIST__DESCRIPTION_LOCAL_CREATED", resourceCulture);
             }
         }
         

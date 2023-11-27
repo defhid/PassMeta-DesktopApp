@@ -24,7 +24,5 @@ public partial class PassFileRestoreWin : ReactiveWindow<PassFileRestoreWinModel
         {
             ViewElements = { Window = this }
         };
-
-        Opened += async (_, _) => await ViewModel!.LoadAsync();
     }
 }

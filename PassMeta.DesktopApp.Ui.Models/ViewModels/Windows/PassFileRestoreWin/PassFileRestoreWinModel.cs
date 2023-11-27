@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.PassFileContext;
@@ -30,22 +30,8 @@ public class PassFileRestoreWinModel : ReactiveObject
 {
     private readonly PwdPassFile _passFile;
     private readonly bool _ignoreCurrentPath;
-
-    public ObservableCollection<DataFile> FoundList { get; } = new();
-
     private DataFile? _selectedFile;
-
-    public DataFile? SelectedFile
-    {
-        get => _selectedFile;
-        set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
-    }
-
-    public ReactCommand SelectCommand { get; }
-    public ReactCommand ImportCommand { get; }
-    public ReactCommand DownloadCommand { get; }
-    public ReactCommand CloseCommand { get; }
-
+    
     public static IObservable<bool> CanBeDownloaded => Locator.Current.Resolve<IPassMetaClient>().OnlineObservable;
 
     public readonly ViewElements ViewElements = new();
@@ -63,11 +49,26 @@ public class PassFileRestoreWinModel : ReactiveObject
         DownloadCommand = ReactiveCommand.CreateFromTask(DownloadAsync);
 
         CloseCommand = ReactiveCommand.Create(Close);
+
+        Task.Run(LoadAsync);
     }
+    
+    public ObservableCollection<DataFile> FoundList { get; } = new();
+
+    public DataFile? SelectedFile
+    {
+        get => _selectedFile;
+        set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
+    }
+
+    public ReactCommand SelectCommand { get; }
+    public ReactCommand ImportCommand { get; }
+    public ReactCommand DownloadCommand { get; }
+    public ReactCommand CloseCommand { get; }
 
     public async Task LoadAsync()
     {
-        FoundList.Clear();
+        Dispatcher.UIThread.InvokeAsync(() => FoundList.Clear());
 
         var remoteVersions = await Locator.Current.Resolve<IPassFileRemoteService>().GetVersionsAsync(_passFile.Id);
         // TODO: support for restoring remote versions
@@ -82,55 +83,62 @@ public class PassFileRestoreWinModel : ReactiveObject
         var fileRepository = Locator.Current.Resolve<IFileRepositoryFactory>().ForPassFiles(userContext.UserServerId);
         var files = await fileRepository.GetFilesAsync();
 
-        foreach (var filePath in files.OrderBy(x => x))
+        foreach (var fileName in files.OrderBy(x => x))
         {
-            var fileName = Path.GetFileName(filePath);
-            var isOld = fileName.EndsWith(".old");
+            if (!fileName.EndsWith(passfileExt))
+            {
+                continue;
+            }
+
             descriptionParts.Clear();
 
-            if (isOld)
+            var isLocalCreated = fileName.StartsWith("-");
+            if (isLocalCreated)
             {
-                if (!fileName.EndsWith(passfileExt + ".old"))
-                {
-                    continue;
-                }
+                descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_LOCAL_CREATED);
+            }
 
+            if (!int.TryParse(fileName.Split('.').First().Split("v").First(), out var passFileId))
+            {
+                continue;
+            }
+
+            int.TryParse(fileName.Split('.').First().Split("v").Skip(1).FirstOrDefault(), out var passFileVersion);
+
+            var passFile = passFileList.FirstOrDefault(pf => pf.Id == passFileId);
+
+            if (passFile?.Version > passFileVersion)
+            {
                 descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_OLD_VERSION);
             }
-            else if (!fileName.EndsWith(passfileExt))
+            else if (passFile?.Version == passFileVersion)
             {
-                continue;
+                descriptionParts.Push(passFile.Id == _passFile.Id
+                    ? Resources.PASSFILELIST__DESCRIPTION_CURRENT
+                    : Resources.PASSFILELIST__DESCRIPTION_ACTUAL_VERSION );
             }
 
-            if (!int.TryParse(fileName.Split('.').First(), out var passFileId))
-            {
-                continue;
-            }
-
-            if (passFileId == _passFile.Id)
-            {
-                if (!isOld && _ignoreCurrentPath) continue;
-                descriptionParts.Push(Resources.PASSFILELIST__DESCRIPTION_CURRENT);
-            }
-
-            var passFileName = passFileList.FirstOrDefault(pf => pf.Id == passFileId)?.Name;
-
-            descriptionParts.Push(passFileName is null
+            descriptionParts.Push(passFile is null
                 ? Resources.PASSFILELIST__DESCRIPTION_UNKNOWN
-                : $"'{passFileName}'");
+                : $"'{passFile.Name}'");
 
-            FoundList.Add(new DataFile(filePath)
+            var dataFile = new DataFile(fileRepository.GetAbsolutePath(fileName))
             {
+                PassFileId = passFileId,
+                PassFileVersion = passFileVersion,
                 Name = fileName,
                 Description = string.Join(", ", descriptionParts),
-            });
+            };
 
-            if (passFileId == _passFile.Id)
-            {
-                SelectedFile = FoundList.Last();
-                // TODO DataGrid!.ScrollIntoView(SelectedFile, DataGrid.Columns.First());
-            }
+            await Dispatcher.UIThread.InvokeAsync(() => FoundList.Add(dataFile));
         }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+            SelectedFile = FoundList.FirstOrDefault(x =>
+                x.PassFileId == _passFile.Id &&
+                x.PassFileVersion == _passFile.Version));
+        
+        // TODO DataGrid!.ScrollIntoView(SelectedFile, DataGrid.Columns.First());
     }
 
     private void Select()

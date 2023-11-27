@@ -519,9 +519,6 @@
     <data name="PASSFILELIST__DESCRIPTION_OLD_VERSION" xml:space="preserve">
         <value>старая версия</value>
     </data>
-    <data name="PASSFILELIST__DESCRIPTION_CURRENT" xml:space="preserve">
-        <value>текущий</value>
-    </data>
     <data name="PASSFILELIST__DESCRIPTION_UNKNOWN" xml:space="preserve">
         <value>Неизвестный</value>
     </data>
@@ -701,5 +698,14 @@
     </data>
     <data name="STORAGE__ITEM_INFO__WEBSITE_COPIED" xml:space="preserve">
         <value>Адрес скопирован</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_LOCAL_CREATED" xml:space="preserve">
+        <value>старая локальная версия</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_CURRENT" xml:space="preserve">
+        <value>текущий</value>
+    </data>
+    <data name="PASSFILELIST__DESCRIPTION_ACTUAL_VERSION" xml:space="preserve">
+        <value>актуальная версия</value>
     </data>
 </root>
