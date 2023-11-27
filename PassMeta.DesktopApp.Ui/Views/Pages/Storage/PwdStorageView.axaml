@@ -4,14 +4,14 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:const="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
-  xmlns:storagePage="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
+  xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.PwdStorageView"
   mc:Ignorable="d"
   d:DesignWidth="800"
   d:DesignHeight="450">
   <Design.DataContext>
-    <storagePage:PwdStorageModel />
+    <previews:PwdStorageModelPreview />
   </Design.DataContext>
 
   <Grid>

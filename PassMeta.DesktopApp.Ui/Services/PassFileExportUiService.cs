@@ -9,6 +9,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Constants;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 
 namespace PassMeta.DesktopApp.Ui.Services;
@@ -33,11 +34,11 @@ public class PassFileExportUiService<TPassFile, TContent> : IPassFileExportUiSer
     }
 
     /// <inheritdoc />
-    public async Task SelectAndExportAsync(TPassFile passFile, IStorageProvider storageProvider)
+    public async Task SelectAndExportAsync(TPassFile passFile, IHostWindowProvider windowProvider)
     {
         try
         {
-            await SelectAndExportInternalAsync(passFile, storageProvider);
+            await SelectAndExportInternalAsync(passFile, windowProvider.Window.StorageProvider);
         }
         catch (Exception ex)
         {

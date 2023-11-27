@@ -85,6 +85,6 @@ public static class PassFileExtensions
             };
         }
 
-        return string.Join(" - ", dates.Distinct().Select(d => d.ToShortDateTimeString()));
+        return string.Join(" - ", dates.Distinct().Select(d => d.ToLocalTime().ToShortDateTimeString()));
     }
 }

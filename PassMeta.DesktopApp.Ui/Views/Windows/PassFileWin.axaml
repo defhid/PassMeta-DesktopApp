@@ -114,33 +114,23 @@
 
     <Grid
       Grid.Row="1"
-      ColumnDefinitions="Auto,*"
+      ColumnDefinitions="*,Auto"
       VerticalAlignment="Bottom">
-      <Button
-        Grid.Column="0"
-        Margin="0 0 10 0"
-        MinWidth="50"
-        VerticalAlignment="Bottom"
-        HorizontalContentAlignment="Center"
-        Content="{Binding OkBtn.Content}"
-        Command="{Binding OkBtn.Command}"
-        AttachedToVisualTree="OkBtn__OnAttachedToVisualTree" />
-
       <Grid
-        Grid.Column="1"
+        Grid.Column="0"
         RowDefinitions="Auto,Auto">
         <StackPanel
           Grid.Row="0"
           Orientation="Horizontal"
-          HorizontalAlignment="Right">
+          HorizontalAlignment="Left">
           <Button
-            Margin="12 0 0 0"
+            Margin="0 0 12 0"
             Content="{x:Static com:Resources.PASSFILE__BTN_MERGE}"
             IsVisible="{Binding MergeBtn.IsVisible}"
             Command="{Binding MergeBtn.Command}" />
 
           <Button
-            Margin="12 0 0 0"
+            Margin="0 0 12 0"
             Content="{x:Static com:Resources.PASSFILE__BTN_CHANGE_PWD}"
             IsVisible="{Binding ChangePasswordBtn.IsVisible}"
             Command="{Binding ChangePasswordBtn.Command}" />
@@ -149,30 +139,40 @@
         <StackPanel
           Grid.Row="1"
           Orientation="Horizontal"
-          HorizontalAlignment="Right"
+          HorizontalAlignment="Left"
           Margin="0 8 0 0">
           <Button
-            Margin="12 0 0 0"
+            Margin="0 0 12 0"
             Opacity="0.9"
             Content="{x:Static com:Resources.PASSFILE__BTN_EXPORT}"
             IsVisible="{Binding ExportBtn.IsVisible}"
             Command="{Binding ExportBtn.Command}" />
 
           <Button
-            Margin="12 0 0 0"
+            Margin="0 0 12 0"
             Opacity="0.9"
             Content="{x:Static com:Resources.PASSFILE__BTN_RESTORE}"
             IsVisible="{Binding RestoreBtn.IsVisible}"
             Command="{Binding RestoreBtn.Command}" />
 
           <Button
-            Margin="12 0 0 0"
-            Opacity="0.8"
+            Margin="0 0 12 0"
+            Opacity="0.7"
             Content="{x:Static com:Resources.PASSFILE__BTN_DELETE}"
             IsVisible="{Binding DeleteBtn.IsVisible}"
             Command="{Binding DeleteBtn.Command}" />
         </StackPanel>
       </Grid>
+
+      <Button
+        Grid.Column="1"
+        Margin="10 0 0 0"
+        MinWidth="50"
+        VerticalAlignment="Bottom"
+        HorizontalContentAlignment="Center"
+        Content="{Binding OkBtn.Content}"
+        Command="{Binding OkBtn.Command}"
+        AttachedToVisualTree="OkBtn__OnAttachedToVisualTree" />
     </Grid>
   </Grid>
 </Window>

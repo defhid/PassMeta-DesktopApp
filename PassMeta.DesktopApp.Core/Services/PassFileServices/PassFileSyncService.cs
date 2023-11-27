@@ -90,7 +90,7 @@ public class PassFileSyncService : IPassFileSyncService
                 continue;
             }
 
-            local.Mark ^= PassFileMark.AllErrors; // reset errors
+            local.Mark &= ~PassFileMark.AllErrors; // reset errors
             localList.Remove(local);
 
             if (local.IsLocalDeleted())

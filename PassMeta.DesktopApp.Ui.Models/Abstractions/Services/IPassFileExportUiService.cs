@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Avalonia.Platform.Storage;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
+using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 
 namespace PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 
@@ -13,5 +13,5 @@ public interface IPassFileExportUiService<in TPassFile>
     /// <summary>
     /// Select destination file path and export passfile data there.
     /// </summary>
-    Task SelectAndExportAsync(TPassFile passFile, IStorageProvider storageProvider);
+    Task SelectAndExportAsync(TPassFile passFile, IHostWindowProvider windowProvider);
 }

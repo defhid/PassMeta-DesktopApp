@@ -22,6 +22,9 @@ _AES256 multipass (client side only), SHA256_
 #### _General password storage page, editing:_
 ![screenshot](docs/screenshot_storage_edit.png)
 
+#### _Password file info:_
+![screenshot](docs/screenshot_passfile.png)
+
 #### _Random password generator page:_
 ![screenshot](docs/screenshot_generator.png)
 

@@ -1,8 +1,12 @@
+using System;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
+using PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;
+using PassMeta.DesktopApp.Ui.Views.Windows;
 
 namespace PassMeta.DesktopApp.Ui.Services;
 
@@ -18,14 +22,19 @@ public class PassFileOpenUiService<TPassFile> : IPassFileOpenUiService<TPassFile
     }
 
     /// <inheritdoc />
-    public Task ShowInfoAsync(TPassFile passFile, IHostWindowProvider windowProvider)
+    public async Task ShowInfoAsync(TPassFile passFile, IHostWindowProvider windowProvider)
     {
-        var win = windowProvider.Window;
+        var hostWin = windowProvider.Window;
 
-        return Task.CompletedTask;
+        try
+        {
+            var win = new PassFileWin { ViewModel = new PassFileWinModel<TPassFile>(passFile, windowProvider) };
 
-        // var win = new PassFileWin<TPassFile> { ViewModel = new PassFileWinModel<TPassFile>(passFile, windowProvider) };
-        //
-        // await win.ShowDialog(hostWindow);
+            await win.ShowDialog(hostWin);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Failed to open passfile window");
+        }
     }
 }
