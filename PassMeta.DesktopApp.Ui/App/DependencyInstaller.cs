@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Avalonia.Controls.Notifications;
@@ -32,12 +31,11 @@ using PassMeta.DesktopApp.Core.Utils.PassFileContext;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Providers;
 using PassMeta.DesktopApp.Ui.Models.Abstractions.Services;
 using PassMeta.DesktopApp.Ui.Services;
-using ReactiveUI;
 using Splat;
 
 namespace PassMeta.DesktopApp.Ui.App;
 
-public static class DependencyInstaller
+public static partial class DependencyInstaller
 {
     public static void RegisterServices()
     {
@@ -219,11 +217,6 @@ public static class DependencyInstaller
             Resolve<ILogsWriter>()));
 
         // ...
-    }
-
-    public static void RegisterViewsForViewModels()
-    {
-        Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetExecutingAssembly());
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -30,7 +30,7 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;
 /// <summary>
 /// Passfile storage page ViewModel.
 /// </summary>
-public class PwdStorageModel : PageViewModel
+public class PwdStoragePageModel : PageViewModel
 {
     private readonly IPassFileSyncService _pfSyncService = Locator.Current.Resolve<IPassFileSyncService>();
     private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
@@ -43,7 +43,7 @@ public class PwdStorageModel : PageViewModel
     private readonly IPassFileDecryptionHelper _pfDecryptionHelper =
         Locator.Current.Resolve<IPassFileDecryptionHelper>();
 
-    public PwdStorageModel(IScreen hostScreen, IHostWindowProvider windowProvider) : base(hostScreen)
+    public PwdStoragePageModel(IScreen hostScreen, IHostWindowProvider windowProvider) : base(hostScreen)
     {
         SectionRead = new PwdSectionReadModel();
         SectionEdit = new PwdSectionEditModel();

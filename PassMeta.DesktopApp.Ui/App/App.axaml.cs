@@ -30,7 +30,7 @@ public class App : Application
     {
         base.RegisterServices();
         DependencyInstaller.RegisterServices();
-        DependencyInstaller.RegisterViewsForViewModels();
+        DependencyInstaller.RegisterPageViews();
     }
 
     /// <inheritdoc />

@@ -1,22 +1,20 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
-        xmlns:utils="clr-namespace:PassMeta.DesktopApp.Ui.Utils"
-        xmlns:windows="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows;assembly=PassMeta.DesktopApp.Ui.Models"
-        x:Class="PassMeta.DesktopApp.Ui.Views.Windows.ApplicationInfoWindow"
-        mc:Ignorable="d"
-        Width="400"
-        Height="100"
-        CanResize="False"
-        Icon="/Assets/AvaRes/PassMeta.ico"
-        Title="{x:Static com:Resources.APP_INFO__TITLE}"
-        WindowStartupLocation="CenterOwner">
-
-  <Design.DataContext>
-    <windows:AppInfoWinModel />
-  </Design.DataContext>
+<Window
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
+  xmlns:utils="clr-namespace:PassMeta.DesktopApp.Ui.Utils"
+  xmlns:windows="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows;assembly=PassMeta.DesktopApp.Ui.Models"
+  x:Class="PassMeta.DesktopApp.Ui.Views.Windows.ApplicationInfoWindow"
+  x:DataType="windows:AppInfoWinModel"
+  mc:Ignorable="d"
+  Width="400"
+  Height="100"
+  CanResize="False"
+  Icon="/Assets/AvaRes/PassMeta.ico"
+  Title="{x:Static com:Resources.APP_INFO__TITLE}"
+  WindowStartupLocation="CenterOwner">
 
   <Window.Resources>
     <utils:ImageConverter x:Key="ImageConverter" />

@@ -4,7 +4,9 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
+        <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
     
     <ItemGroup>

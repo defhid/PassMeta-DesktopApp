@@ -23,6 +23,6 @@ public static class AppInfoSource
                     (DateTime.Now.Year > CopyrightFirstYear ? "-" + DateTime.Now.Year : string.Empty),
         Version = Assembly.GetAssembly(typeof(AppCulture))!.GetName().Version?.ToString()[..^2] ?? "?",
         Bit = Environment.Is64BitProcess ? "64-bit" : "32-bit",
-        RootPath = Path.GetDirectoryName(Assembly.GetAssembly(typeof(AppInfo))!.Location)!
+        RootPath = AppDomain.CurrentDomain.BaseDirectory
     };
 }

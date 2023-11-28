@@ -2,7 +2,9 @@
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:extra="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.MainWin.Extra;assembly=PassMeta.DesktopApp.Ui.Models"
   x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra.MainPaneButton"
+  x:DataType="extra:MainPaneButtonModel"
   IsVisible="{Binding IsVisible^}">
 
   <Design.DataContext>

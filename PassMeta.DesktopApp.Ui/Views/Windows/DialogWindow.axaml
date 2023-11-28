@@ -16,6 +16,7 @@
   SizeToContent="Height"
   CanResize="False"
   x:Class="PassMeta.DesktopApp.Ui.Views.Windows.DialogWindow"
+  x:DataType="dialogWin:DialogWinModel"
   Icon="/Assets/AvaRes/PassMeta.ico"
   Title="{Binding Title}"
   WindowStartupLocation="CenterOwner">

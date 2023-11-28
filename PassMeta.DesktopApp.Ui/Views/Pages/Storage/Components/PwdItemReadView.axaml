@@ -6,8 +6,10 @@
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
   mc:Ignorable="d" d:DesignWidth="400"
-  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdItemReadView">
+  x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PwdItemReadView"
+  x:DataType="components:PwdItemReadModel">
 
   <Design.DataContext>
     <previews:PwdItemReadModelPreview />

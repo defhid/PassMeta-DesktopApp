@@ -23,27 +23,17 @@ namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 /// <summary>
 /// <see cref="PassFile"/> list ViewModel.
 /// </summary>
-public class PassFileListModel<TPassFile> : ReactiveObject
-    where TPassFile : PassFile
+public abstract class PassFileListModel : ReactiveObject
 {
-    private readonly IPassFileOpenUiService<TPassFile> _pfOpenService =
-        Locator.Current.Resolve<IPassFileOpenUiService<TPassFile>>();
-
-    private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
-    private readonly IHostWindowProvider _windowProvider;
-    private readonly IPassFileContext<TPassFile> _pfContext;
+    private readonly IObservable<bool> _fullModeObservable;
 
     private IReadOnlyList<PassFileCellModel> _list = Array.Empty<PassFileCellModel>();
     private int _selectedIndex = -1;
-    private int _prevSelectedIndex = -1;
     private bool _isExpanded;
-    private readonly IObservable<bool> _fullModeObservable;
     private bool _isReadOnly;
 
-    public PassFileListModel(IHostWindowProvider windowProvider)
+    protected PassFileListModel()
     {
-        _windowProvider = windowProvider;
-        _pfContext = Locator.Current.Resolve<IPassFileContextProvider>().For<TPassFile>();
         _fullModeObservable = this.WhenAnyValue(x => x.IsExpanded);
 
         ExpanderBtn = new BtnState
@@ -62,9 +52,9 @@ public class PassFileListModel<TPassFile> : ReactiveObject
                 : 45),
         };
     }
-
+    
     public BtnState ExpanderBtn { get; }
-
+    
     public bool IsExpanded
     {
         get => _isExpanded;
@@ -80,7 +70,7 @@ public class PassFileListModel<TPassFile> : ReactiveObject
     public IReadOnlyList<PassFileCellModel> List
     {
         get => _list;
-        private set => this.RaiseAndSetIfChanged(ref _list, value);
+        protected set => this.RaiseAndSetIfChanged(ref _list, value);
     }
 
     public int SelectedIndex
@@ -88,21 +78,59 @@ public class PassFileListModel<TPassFile> : ReactiveObject
         get => _selectedIndex;
         set
         {
-            _prevSelectedIndex = _selectedIndex;
+            PrevSelectedIndex = _selectedIndex;
             this.RaiseAndSetIfChanged(ref _selectedIndex, value);
         }
     }
 
-    public TPassFile? GetSelectedPassFile()
-        => _selectedIndex < 0 ? null : (TPassFile)_list[_selectedIndex].PassFile;
+    protected int PrevSelectedIndex { get; private set; } = -1;
 
-    public void RollbackSelectedPassFile()
-        => SelectedIndex = _prevSelectedIndex;
+    protected PassFileCellModel ToCell(PassFile passFile)
+        => new(passFile, _fullModeObservable, ReactiveCommand.CreateFromTask(() => ShowCardAsync(passFile)));
 
+    protected abstract Task ShowCardAsync(PassFile passFile);
+    
     /// <summary>
     /// Add a new passfile.
     /// </summary>
-    public async Task AddAsync()
+    public abstract Task AddAsync();
+}
+
+/// <inheritdoc />
+public class PassFileListModel<TPassFile> : PassFileListModel
+    where TPassFile : PassFile
+{
+    private readonly IPassFileOpenUiService<TPassFile> _pfOpenService =
+        Locator.Current.Resolve<IPassFileOpenUiService<TPassFile>>();
+
+    private readonly IDialogService _dialogService = Locator.Current.Resolve<IDialogService>();
+    private readonly IHostWindowProvider _windowProvider;
+    private readonly IPassFileContext<TPassFile> _pfContext;
+
+    public PassFileListModel(IHostWindowProvider windowProvider)
+    {
+        _windowProvider = windowProvider;
+        _pfContext = Locator.Current.Resolve<IPassFileContextProvider>().For<TPassFile>();
+    }
+
+    public TPassFile? GetSelectedPassFile()
+        => SelectedIndex < 0 ? null : (TPassFile)List[SelectedIndex].PassFile;
+
+    public void RollbackSelectedPassFile()
+        => SelectedIndex = PrevSelectedIndex;
+
+    protected override async Task ShowCardAsync(PassFile passFile)
+    {
+        await _pfOpenService.ShowInfoAsync((TPassFile)passFile, _windowProvider);
+
+        if (!_pfContext.CurrentList.Contains(passFile))
+        {
+            List = List.Where(x => x.PassFile != passFile).ToList();
+        }
+    }
+
+    /// <inheritdoc />
+    public override async Task AddAsync()
     {
         using var preloader = Locator.Current.Resolve<AppLoading>().General.Begin();
 
@@ -136,17 +164,4 @@ public class PassFileListModel<TPassFile> : ReactiveObject
             .OrderBy(x => x, PassFileComparer.Instance)
             .Select(ToCell)
             .ToList();
-
-    private async Task ShowCardAsync(PassFile passFile)
-    {
-        await _pfOpenService.ShowInfoAsync((TPassFile)passFile, _windowProvider);
-
-        if (!_pfContext.CurrentList.Contains(passFile))
-        {
-            List = List.Where(x => x.PassFile != passFile).ToList();
-        }
-    }
-
-    private PassFileCellModel ToCell(TPassFile passFile)
-        => new(passFile, _fullModeObservable, ReactiveCommand.CreateFromTask(() => ShowCardAsync(passFile)));
 }

@@ -9,6 +9,7 @@
   xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:extra="clr-namespace:PassMeta.DesktopApp.Ui.Views.Windows.MainWin.Extra"
   x:Class="PassMeta.DesktopApp.Ui.Views.Windows.MainWin.MainWindow"
+  x:DataType="mainWin:MainWinModel"
   mc:Ignorable="d"
   d:DesignWidth="800"
   d:DesignHeight="500"

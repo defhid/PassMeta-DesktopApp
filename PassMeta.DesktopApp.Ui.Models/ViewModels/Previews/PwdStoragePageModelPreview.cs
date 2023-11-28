@@ -3,9 +3,9 @@ using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage;
 
 namespace PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;
 
-public class PwdStorageModelPreview : PwdStorageModel
+public class PwdStoragePageModelPreview : PwdStoragePageModel
 {
-    public PwdStorageModelPreview() : base(null!, PreviewHostWindowProvider.Instance)
+    public PwdStoragePageModelPreview() : base(null!, PreviewHostWindowProvider.Instance)
     {
     }
 }

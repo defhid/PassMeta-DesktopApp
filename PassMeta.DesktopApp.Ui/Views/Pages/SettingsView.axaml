@@ -5,7 +5,9 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:pages="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages;assembly=PassMeta.DesktopApp.Ui.Models"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.SettingsView"
+  x:DataType="pages:SettingsPageModel"
   mc:Ignorable="d"
   d:DesignWidth="800"
   d:DesignHeight="450">

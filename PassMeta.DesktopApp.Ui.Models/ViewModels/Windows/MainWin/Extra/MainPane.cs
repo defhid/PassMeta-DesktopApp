@@ -52,7 +52,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
                 {
                     AuthPageModel => Account,
                     AccountPageModel => Account,
-                    PwdStorageModel => Storage,
+                    PwdStoragePageModel => Storage,
                     GeneratorPageModel => Generator,
                     JournalPageModel => Journal,
                     LogsPageModel => Logs,
@@ -86,7 +86,7 @@ public sealed class MainPane : ReactiveObject, IActivatableViewModel
             Resources.APP__MENU_BTN__STORAGE,
             "\uE8F1",
             _authSource,
-            () => new PwdStorageModel(hostScreen, HostWindowProvider));
+            () => new PwdStoragePageModel(hostScreen, HostWindowProvider));
 
         Generator = createButton(
             Resources.APP__MENU_BTN__GENERATOR,

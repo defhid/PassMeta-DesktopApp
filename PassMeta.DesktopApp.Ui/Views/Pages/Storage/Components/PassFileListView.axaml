@@ -6,7 +6,9 @@
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:components="clr-namespace:PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components"
   xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:componentModels="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;assembly=PassMeta.DesktopApp.Ui.Models"
   x:Class="PassMeta.DesktopApp.Ui.Views.Pages.Storage.Components.PassFileListView"
+  x:DataType="componentModels:PassFileListModel"
   mc:Ignorable="d"
   d:DesignWidth="250"
   d:DesignHeight="450">

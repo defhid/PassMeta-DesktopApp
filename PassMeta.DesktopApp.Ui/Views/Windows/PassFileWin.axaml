@@ -6,6 +6,7 @@
   xmlns:com="clr-namespace:PassMeta.DesktopApp.Common;assembly=PassMeta.DesktopApp.Common"
   xmlns:constants="clr-namespace:PassMeta.DesktopApp.Ui.Models.Constants;assembly=PassMeta.DesktopApp.Ui.Models"
   xmlns:previews="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Previews;assembly=PassMeta.DesktopApp.Ui.Models"
+  xmlns:passFileWin="clr-namespace:PassMeta.DesktopApp.Ui.Models.ViewModels.Windows.PassFileWin;assembly=PassMeta.DesktopApp.Ui.Models"
   mc:Ignorable="d"
   Width="540"
   MinWidth="540"
@@ -13,6 +14,7 @@
   SizeToContent="Height"
   CanResize="False"
   x:Class="PassMeta.DesktopApp.Ui.Views.Windows.PassFileWin"
+  x:DataType="passFileWin:PassFileWinModel"
   Icon="/Assets/AvaRes/PassMeta.ico"
   Title="{Binding Title^}"
   WindowStartupLocation="CenterOwner">
