@@ -3,8 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
-using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
+using PassMeta.DesktopApp.Common.Models.Dto.Response;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;
 
@@ -23,8 +22,6 @@ internal class RequestBuilder : IRequestWithBodySupportBuilder
 
     internal string? Context { get; private set; }
 
-    internal IValuesMapper<string, string>? BadMapper { get; private set; }
-
     internal bool HandleBad { get; private set; }
 
     /// <summary></summary>
@@ -34,20 +31,9 @@ internal class RequestBuilder : IRequestWithBodySupportBuilder
         Uri = BuildUri(url);
         Method = method;
         Context = null;
-        BadMapper = null;
         HandleBad = false;
     }
-        
-    /// <inheritdoc />
-    public IRequestBuilder WithBadMapping(IValuesMapper<string, string> whatValuesMapper)
-    {
-        if (BadMapper is null)
-            BadMapper = whatValuesMapper;
-        else
-            BadMapper += whatValuesMapper;
-        return this;
-    }
-        
+
     /// <inheritdoc />
     public IRequestBuilder WithBadHandling()
     {
@@ -79,16 +65,17 @@ internal class RequestBuilder : IRequestWithBodySupportBuilder
     }
 
     /// <inheritdoc />
-    public async ValueTask<OkBadResponse?> ExecuteAsync(CancellationToken cancellationToken = default)
-        => await _client.BuildAndExecuteAsync<object>(this, cancellationToken);
+    public async ValueTask<RestResponse> ExecuteAsync(CancellationToken cancellationToken = default)
+        => await Task.Run(
+            () => _client.BuildAndExecuteAsync(this, cancellationToken),
+            cancellationToken);
 
     /// <inheritdoc />
-    public async ValueTask<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>(CancellationToken cancellationToken = default)
-        => await _client.BuildAndExecuteAsync<TResponseData>(this, cancellationToken);
-
-    /// <inheritdoc />
-    public async ValueTask<byte[]?> ExecuteRawAsync(CancellationToken cancellationToken = default)
-        => await _client.BuildAndExecuteRawAsync(this, cancellationToken);
+    public async ValueTask<RestResponse<TResponseData>> ExecuteAsync<TResponseData>(CancellationToken cancellationToken = default)
+        where TResponseData : class
+        => await Task.Run(
+            () => _client.BuildAndExecuteAsync<TResponseData>(this, cancellationToken),
+            cancellationToken);
 
     private Uri? BuildUri(string url)
     {

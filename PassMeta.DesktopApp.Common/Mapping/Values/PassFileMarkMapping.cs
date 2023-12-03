@@ -13,7 +13,7 @@ public static class PassFileMarkMapping
     {
         new(PassFileMark.NeedsMerge, () => Resources.PASSFILE_MARK__NEEDS_MERGE),
         new(PassFileMark.Merged, () => Resources.PASSFILE_MARK__NEEDS_MERGE),
-        new(PassFileMark.DownloadingError, () => Resources.DICT__PASSFILE_MARK__DOWNLOAD_ERR),
+        new(PassFileMark.DownloadingError, () => Resources.PASSFILE_MARK__DOWNLOAD_ERR),
         new(PassFileMark.UploadingError, () => Resources.PASSFILE_MARK__UPLOAD_ERR),
         new(PassFileMark.RemoteDeletingError, () => Resources.PASSFILE_MARK__REMOTE_DELETING_ERR),
         new(PassFileMark.OtherError, () => Resources.PASSFILE_MARK__OTHER_ERR),

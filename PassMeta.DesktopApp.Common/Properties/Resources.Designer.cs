@@ -294,15 +294,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hide.
-        /// </summary>
-        public static string APP_INFO__QUIT_BTN {
-            get {
-                return ResourceManager.GetString("APP_INFO__QUIT_BTN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to About PassMeta DesktopApp.
         /// </summary>
         public static string APP_INFO__TITLE {
@@ -488,123 +479,6 @@ namespace PassMeta.DesktopApp.Common {
         public static string DIALOG__DEFAULT_WARNING_TITLE {
             get {
                 return ResourceManager.GetString("DIALOG__DEFAULT_WARNING_TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to passfile.
-        /// </summary>
-        public static string DICT__PASSFILE {
-            get {
-                return ResourceManager.GetString("DICT__PASSFILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to passfile color.
-        /// </summary>
-        public static string DICT__PASSFILE__COLOR {
-            get {
-                return ResourceManager.GetString("DICT__PASSFILE__COLOR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to passfile content.
-        /// </summary>
-        public static string DICT__PASSFILE__CONTENT {
-            get {
-                return ResourceManager.GetString("DICT__PASSFILE__CONTENT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to timestamp of passfile creation.
-        /// </summary>
-        public static string DICT__PASSFILE__CREATED_ON {
-            get {
-                return ResourceManager.GetString("DICT__PASSFILE__CREATED_ON", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to passfile ID.
-        /// </summary>
-        public static string DICT__PASSFILE__ID {
-            get {
-                return ResourceManager.GetString("DICT__PASSFILE__ID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to passfile name.
-        /// </summary>
-        public static string DICT__PASSFILE__NAME {
-            get {
-                return ResourceManager.GetString("DICT__PASSFILE__NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Downloading error.
-        /// </summary>
-        public static string DICT__PASSFILE_MARK__DOWNLOAD_ERR {
-            get {
-                return ResourceManager.GetString("DICT__PASSFILE_MARK__DOWNLOAD_ERR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to user.
-        /// </summary>
-        public static string DICT__USER {
-            get {
-                return ResourceManager.GetString("DICT__USER", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to name.
-        /// </summary>
-        public static string DICT__USER__FIRST_NAME {
-            get {
-                return ResourceManager.GetString("DICT__USER__FIRST_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to surname.
-        /// </summary>
-        public static string DICT__USER__LAST_NAME {
-            get {
-                return ResourceManager.GetString("DICT__USER__LAST_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to login.
-        /// </summary>
-        public static string DICT__USER__LOGIN {
-            get {
-                return ResourceManager.GetString("DICT__USER__LOGIN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to new password.
-        /// </summary>
-        public static string DICT__USER__PASSWORD {
-            get {
-                return ResourceManager.GetString("DICT__USER__PASSWORD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to old password (confirm).
-        /// </summary>
-        public static string DICT__USER__PASSWORD_CONFIRM {
-            get {
-                return ResourceManager.GetString("DICT__USER__PASSWORD_CONFIRM", resourceCulture);
             }
         }
         
@@ -897,29 +771,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Additional info: .
-        /// </summary>
-        public static string OKBAD_MORE__INFO {
-            get {
-                return ResourceManager.GetString("OKBAD_MORE__INFO", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to New.
         /// </summary>
         public static string PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME {
             get {
                 return ResourceManager.GetString("PASSCONTEXT__DEFAULT_NEW_PASSFILE_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Passphrase is empty.
-        /// </summary>
-        public static string PASSCONTEXT__ERR_EMPTY_PASSPHRASE {
-            get {
-                return ResourceManager.GetString("PASSCONTEXT__ERR_EMPTY_PASSPHRASE", resourceCulture);
             }
         }
         
@@ -1401,6 +1257,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloading error.
+        /// </summary>
+        public static string PASSFILE_MARK__DOWNLOAD_ERR {
+            get {
+                return ResourceManager.GetString("PASSFILE_MARK__DOWNLOAD_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Conflicts are resolved .
         /// </summary>
         public static string PASSFILE_MARK__MERGED {
@@ -1797,15 +1662,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input passphrase for passfile {0}.
-        /// </summary>
-        public static string STORAGE__ASK_PASSPHRASE_FOR_PASSFILE {
-            get {
-                return ResourceManager.GetString("STORAGE__ASK_PASSPHRASE_FOR_PASSFILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do you really want to delete section &apos;{0}&apos;?.
         /// </summary>
         public static string STORAGE__CONFIRM_DELETE_SECTION {
@@ -2032,24 +1888,6 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        public static string STORAGE__SECTION_CONTEXT__DELETE_BTN {
-            get {
-                return ResourceManager.GetString("STORAGE__SECTION_CONTEXT__DELETE_BTN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit.
-        /// </summary>
-        public static string STORAGE__SECTION_CONTEXT__EDIT_BTN {
-            get {
-                return ResourceManager.GetString("STORAGE__SECTION_CONTEXT__EDIT_BTN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         public static string STORAGE__SECTION_LABEL__NAME {
@@ -2122,29 +1960,11 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hide password.
-        /// </summary>
-        public static string UI__HIDE_PASSWORD {
-            get {
-                return ResourceManager.GetString("UI__HIDE_PASSWORD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Paste.
         /// </summary>
         public static string UI__PASTE {
             get {
                 return ResourceManager.GetString("UI__PASTE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show password.
-        /// </summary>
-        public static string UI__SHOW_PASSWORD {
-            get {
-                return ResourceManager.GetString("UI__SHOW_PASSWORD", resourceCulture);
             }
         }
     }

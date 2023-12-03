@@ -71,15 +71,11 @@ public static partial class DependencyInstaller
         
         Register<IAppPresetsProvider, IAppPresetsManager>(new AppPresetsManager());
 
-        Register<IOkBadService>(new OkBadService(
-            Resolve<IDialogService>()));
-
         Register<IPassMetaClient>(new PassMetaClient(
             Resolve<IAppContextManager>(),
             Resolve<IAppConfigProvider>(),
             Resolve<ILogsWriter>(),
-            Resolve<IDialogService>(),
-            Resolve<IOkBadService>()));
+            Resolve<IDialogService>()));
 
         Register<IPassMetaCryptoService>(new PassMetaCryptoService());
 

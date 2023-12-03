@@ -9,14 +9,11 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
 using PassMeta.DesktopApp.Common.Conventions;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
-using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
 namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
@@ -24,7 +21,6 @@ namespace PassMeta.DesktopApp.Core.Services.PassFileServices;
 /// <inheritdoc />
 public class PassFileRemoteService : IPassFileRemoteService
 {
-    private static readonly IValuesMapper<string, string> WhatToStringValuesMapper = PassFileFieldMapping.FieldToName;
     private readonly IPassMetaClient _pmClient;
     private readonly IMapper _mapper;
     private readonly IDialogService _dialogService;
@@ -52,13 +48,13 @@ public class PassFileRemoteService : IPassFileRemoteService
 
         var response = await _pmClient.Begin(PassMetaApi.PassFile.GetList(passFileType))
             .WithBadHandling()
-            .ExecuteAsync<List<PassFileInfoDto>>(cancellationToken);
+            .ExecuteAsync<ListResult<PassFileInfoDto>>(cancellationToken);
 
         _logger.Debug("PasFile list was fetched from the server: {Success}",
             GetIsSuccess(response));
 
-        return response?.Success is true
-            ? Result.Success(response.Data!.Select(_mapper.Map<PassFileInfoDto, TPassFile>))
+        return response.Success
+            ? Result.Success(response.Data!.List.Select(_mapper.Map<PassFileInfoDto, TPassFile>))
             : Result.Failure<IEnumerable<TPassFile>>();
     }
 
@@ -76,7 +72,7 @@ public class PassFileRemoteService : IPassFileRemoteService
         _logger.Debug("PasFile #{Id} info was fetched from the server: {Success}",
             passFile.Id, GetIsSuccess(response));
 
-        return response?.Success is true
+        return response.Success
             ? Result.Success(_mapper.Map<PassFileInfoDto, TPassFile>(response.Data!))
             : Result.Failure<TPassFile>();
     }
@@ -86,13 +82,13 @@ public class PassFileRemoteService : IPassFileRemoteService
     {
         var response = await _pmClient.Begin(PassMetaApi.PassFile.GetVersionList(passFileId))
             .WithBadHandling()
-            .ExecuteAsync<List<PassFileVersionDto>>(cancellationToken);
+            .ExecuteAsync<ListResult<PassFileVersionDto>>(cancellationToken);
 
         _logger.Debug("PasFile #{Id} version list was fetched from the server: {Success}",
             passFileId, GetIsSuccess(response));
 
-        return response?.Success is true
-            ? Result.Success(response.Data!)
+        return response.Success
+            ? Result.Success(response.Data!.List)
             : Result.Failure<IEnumerable<PassFileVersionDto>>();
     }
 
@@ -102,16 +98,14 @@ public class PassFileRemoteService : IPassFileRemoteService
         int version,
         CancellationToken cancellationToken = default)
     {
-        var data = await _pmClient.Begin(PassMetaApi.PassFile.GetVersion(passFileId, version))
+        var result = await _pmClient.Begin(PassMetaApi.PassFile.GetVersion(passFileId, version))
             .WithBadHandling()
-            .ExecuteRawAsync(cancellationToken);
+            .ExecuteAsync<byte[]>(cancellationToken);
 
         _logger.Debug("PasFile #{Id} v{Version} content was fetched from the server: {Success}",
-            passFileId, version, GetIsSuccess(data is not null));
+            passFileId, version, GetIsSuccess(result));
 
-        return data is not null
-            ? Result.Success(data)
-            : Result.Failure<byte[]>();
+        return Result.FromResponse(result);
     }
 
     /// <inheritdoc />
@@ -121,14 +115,13 @@ public class PassFileRemoteService : IPassFileRemoteService
         var response = await _pmClient.Begin(PassMetaApi.PassFile.Post())
             .WithJsonBody(_mapper.Map<PassFile, PassFilePostData>(passFile))
             .WithContext(passFile.GetTitle())
-            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling()
             .ExecuteAsync<PassFileInfoDto>();
 
         _logger.Debug("PassFile #{Id} info was added to the server: {Success}",
             passFile.Id, GetIsSuccess(response));
 
-        return response?.Success is true 
+        return response.Success
             ? Result.Success(_mapper.Map<PassFileInfoDto, TPassFile>(response.Data!)) 
             : Result.Failure<TPassFile>();
     }
@@ -144,7 +137,6 @@ public class PassFileRemoteService : IPassFileRemoteService
                 Color = passFile.Color
             })
             .WithContext(passFile.GetTitle())
-            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling();
 
         var response = await request.ExecuteAsync<PassFileInfoDto>();
@@ -152,7 +144,7 @@ public class PassFileRemoteService : IPassFileRemoteService
         _logger.Debug("PassFile #{Id} info was saved on the server: {Success}",
             passFile.Id, GetIsSuccess(response));
 
-        return response?.Success is true 
+        return response.Success
             ? Result.Success(_mapper.Map<PassFileInfoDto, TPassFile>(response.Data!)) 
             : Result.Failure<TPassFile>();
     }
@@ -171,7 +163,6 @@ public class PassFileRemoteService : IPassFileRemoteService
         var request = _pmClient.Begin(PassMetaApi.PassFile.PostVersion(passFile.Id))
             .WithFormBody(new { smth = passFile.ContentEncrypted })
             .WithContext(passFile.GetTitle())
-            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling();
 
         var response = await request.ExecuteAsync<PassFileInfoDto>();
@@ -179,7 +170,7 @@ public class PassFileRemoteService : IPassFileRemoteService
         _logger.Debug("PassFile #{Id} content was saved on the server: {Success}",
             passFile.Id, GetIsSuccess(response));
 
-        return response?.Success is true
+        return response.Success
             ? Result.Success(_mapper.Map<PassFileInfoDto, TPassFile>(response.Data!))
             : Result.Failure<TPassFile>();
     }
@@ -189,7 +180,6 @@ public class PassFileRemoteService : IPassFileRemoteService
     {
         var request = _pmClient.Begin(PassMetaApi.PassFile.Delete(passFile.Id))
             .WithContext(passFile.GetTitle())
-            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling();
 
         var response = await request.ExecuteAsync();
@@ -200,6 +190,5 @@ public class PassFileRemoteService : IPassFileRemoteService
         return Result.FromResponse(response);
     }
 
-    private static string GetIsSuccess(OkBadResponse? response) => GetIsSuccess(response?.Success is true);
-    private static string GetIsSuccess(bool success) => success ? "SUCCESS" : "FAILURE";
+    private static string GetIsSuccess(RestResponse response) => response.Success ? "SUCCESS" : "FAILURE";
 }

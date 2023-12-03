@@ -44,9 +44,6 @@
     <data name="API__CONNECTION_TIMEOUT_ERR" xml:space="preserve">
         <value>Превышено допустимое время ожидания ответа сервера!</value>
     </data>
-    <data name="OKBAD_MORE__INFO" xml:space="preserve">
-        <value>Доп. информация</value>
-    </data>
     <data name="DIALOG__BTN_CANCEL" xml:space="preserve">
         <value>Отмена</value>
     </data>
@@ -155,9 +152,6 @@
     <data name="STORAGE__NO_ITEMS" xml:space="preserve">
         <value>Пусто</value>
     </data>
-    <data name="STORAGE__SECTION_CONTEXT__DELETE_BTN" xml:space="preserve">
-        <value>Удалить</value>
-    </data>
     <data name="STORAGE__PASSFILE_TOOLTIP__ADD" xml:space="preserve">
         <value>Добавить пакет</value>
     </data>
@@ -182,7 +176,7 @@
     <data name="PASSFILE_MARK__NEEDS_MERGE" xml:space="preserve">
         <value>Требуется решить конфликты</value>
     </data>
-    <data name="DICT__PASSFILE_MARK__DOWNLOAD_ERR" xml:space="preserve">
+    <data name="PASSFILE_MARK__DOWNLOAD_ERR" xml:space="preserve">
         <value>Ошибка скачивания</value>
     </data>
     <data name="PASSFILE_MARK__UPLOAD_ERR" xml:space="preserve">
@@ -290,44 +284,11 @@
     <data name="PASSFILE__TITLE_DELETED" xml:space="preserve">
         <value>Удалённый локально пакет {0}</value>
     </data>
-    <data name="DICT__PASSFILE__CREATED_ON" xml:space="preserve">
-        <value>время создания пакета</value>
-    </data>
-    <data name="DICT__PASSFILE__COLOR" xml:space="preserve">
-        <value>цвет пакета</value>
-    </data>
-    <data name="DICT__PASSFILE__ID" xml:space="preserve">
-        <value>идентификатор пакета</value>
-    </data>
-    <data name="DICT__PASSFILE__NAME" xml:space="preserve">
-        <value>название пакета</value>
-    </data>
-    <data name="DICT__PASSFILE__CONTENT" xml:space="preserve">
-        <value>данные пакета</value>
-    </data>
-    <data name="DICT__USER__FIRST_NAME" xml:space="preserve">
-        <value>имя</value>
-    </data>
-    <data name="DICT__USER__LAST_NAME" xml:space="preserve">
-        <value>фамилия</value>
-    </data>
-    <data name="DICT__USER__LOGIN" xml:space="preserve">
-        <value>логин</value>
-    </data>
-    <data name="DICT__USER__PASSWORD" xml:space="preserve">
-        <value>новый пароль</value>
-    </data>
-    <data name="DICT__USER__PASSWORD_CONFIRM" xml:space="preserve">
-        <value>старый пароль (подтверждение)</value>
-    </data>
     <data name="APP__OFFLINE_MODE" xml:space="preserve">
         <value>Офлайн</value>
     </data>
     <data name="APP__ONLINE_MODE" xml:space="preserve">
         <value>Онлайн</value>
-    </data>
-    <data name="DICT__USER" xml:space="preserve">
-        <value>пользователь</value>
     </data>
     <data name="PASSCONTEXT__INFO_COMMITED" xml:space="preserve">
         <value>Сохранено локально</value>
@@ -356,9 +317,6 @@
     <data name="STORAGE__NO_SECTIONS_FOUND" xml:space="preserve">
         <value>По запросу
 ничего не найдено...</value>
-    </data>
-    <data name="STORAGE__SECTION_CONTEXT__EDIT_BTN" xml:space="preserve">
-        <value>Изменить</value>
     </data>
     <data name="STORAGE__CONFIRM_ROLLBACK" xml:space="preserve">
         <value>Откатить текущие изменения?</value>
@@ -522,9 +480,6 @@
     <data name="PASSFILELIST__DESCRIPTION_UNKNOWN" xml:space="preserve">
         <value>Неизвестный</value>
     </data>
-    <data name="LOG_SECTION__UNKNOWN_SHORT" xml:space="preserve">
-        <value>?</value>
-    </data>
     <data name="PASSFILE__SUCCESS_EXPORT" xml:space="preserve">
         <value>Пакет '{0}' успешно экспортирован в '{1}'</value>
     </data>
@@ -600,12 +555,6 @@
     <data name="PASSMERGE__BTN_TOOLTIP_APPLY" xml:space="preserve">
         <value>Применить</value>
     </data>
-    <data name="UI__HIDE_PASSWORD" xml:space="preserve">
-        <value>Скрыть пароль</value>
-    </data>
-    <data name="UI__SHOW_PASSWORD" xml:space="preserve">
-        <value>Показать пароль</value>
-    </data>
     <data name="SETTINGS__HIDE_PASSWORDS" xml:space="preserve">
         <value>Скрывать пароли</value>
     </data>
@@ -636,9 +585,6 @@
     <data name="APP_INFO__TITLE" xml:space="preserve">
         <value>Информация о PassMeta DesktopApp</value>
     </data>
-    <data name="APP_INFO__QUIT_BTN" xml:space="preserve">
-        <value>Скрыть</value>
-    </data>
     <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
         <value>Сохранить</value>
     </data>
@@ -663,9 +609,6 @@
     <data name="PASSCONTEXT__ERR_OTHER" xml:space="preserve">
         <value>Ошибка при работе контекстного менеджера пакетов (см. логи)</value>
     </data>
-    <data name="DICT__PASSFILE" xml:space="preserve">
-        <value>пакет</value>
-    </data>
     <data name="PASSFILE_MARK__MERGED" xml:space="preserve">
         <value>Конфликты решены</value>
     </data>
@@ -684,12 +627,6 @@
     <data name="STORAGE__SECTION_LABEL__NAME" xml:space="preserve">
         <value>Название</value>
     </data>
-    <data name="PASSCONTEXT__ERR_EMPTY_PASSPHRASE" xml:space="preserve">
-        <value>Пароль не задан</value>
-    </data>
-    <data name="STORAGE__ASK_PASSPHRASE_FOR_PASSFILE" xml:space="preserve">
-        <value>Введите кодовую фразу для пакета {0}</value>
-    </data>
     <data name="PASSFILE__INFO_PASSPHRASE_NOT_CHANGED" xml:space="preserve">
         <value>Кодовая фраза не изменена!</value>
     </data>
@@ -707,5 +644,8 @@
     </data>
     <data name="PASSFILELIST__DESCRIPTION_ACTUAL_VERSION" xml:space="preserve">
         <value>актуальная версия</value>
+    </data>
+    <data name="LOG_SECTION__UNKNOWN_SHORT" xml:space="preserve">
+        <value>?</value>
     </data>
 </root>

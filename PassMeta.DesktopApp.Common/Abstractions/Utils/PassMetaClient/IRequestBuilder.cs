@@ -1,7 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
-using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
+using PassMeta.DesktopApp.Common.Models.Dto.Response;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 
@@ -10,12 +9,6 @@ namespace PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 /// </summary>
 public interface IRequestBuilder
 {
-    /// <summary>
-    /// Add response <see cref="OkBadMore.What"/> mapping.
-    /// </summary>
-    /// <returns>this.</returns>
-    IRequestBuilder WithBadMapping(IValuesMapper<string, string> whatValuesMapper);
-
     /// <summary>
     /// Enable bad response handling (failures showing).
     /// </summary>
@@ -29,22 +22,17 @@ public interface IRequestBuilder
     IRequestBuilder WithContext(string? context);
 
     /// <summary>
-    /// Execute request and return response content bytes.
+    /// Execute request and return deserialized response content.
     /// </summary>
     /// <returns>this.</returns>
-    ValueTask<byte[]?> ExecuteRawAsync(CancellationToken cancellationToken = default);
+    ValueTask<RestResponse> ExecuteAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Execute request and return deserialized response content.
     /// </summary>
     /// <returns>this.</returns>
-    ValueTask<OkBadResponse?> ExecuteAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Execute request and return deserialized response content.
-    /// </summary>
-    /// <returns>this.</returns>
-    ValueTask<OkBadResponse<TResponseData>?> ExecuteAsync<TResponseData>(CancellationToken cancellationToken = default);
+    ValueTask<RestResponse<TResponseData>> ExecuteAsync<TResponseData>(CancellationToken cancellationToken = default)
+        where TResponseData : class;
 }
 
 /// <summary>

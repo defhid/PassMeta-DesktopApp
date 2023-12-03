@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
+using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 
@@ -43,8 +44,10 @@ public class HistoryService : IHistoryService
     {
         var response = await _pmClient.Begin(PassMetaApi.History.GetKinds())
             .WithBadHandling()
-            .ExecuteAsync<List<JournalRecordKindDto>>(cancellationToken);
+            .ExecuteAsync<ListResult<JournalRecordKindDto>>(cancellationToken);
 
-        return Result.FromResponse(response);
+        return response.Success
+            ? Result.Success(response.Data!.List)
+            : Result.Failure<List<JournalRecordKindDto>>(response.GetFullMessage());
     }
 }

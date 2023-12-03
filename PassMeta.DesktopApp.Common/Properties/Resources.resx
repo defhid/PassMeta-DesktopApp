@@ -51,9 +51,6 @@
     <data name="API__CONNECTION_TIMEOUT_ERR" xml:space="preserve">
         <value>Connection timeout error!</value>
     </data>
-    <data name="OKBAD_MORE__INFO" xml:space="preserve">
-        <value>Additional info: </value>
-    </data>
     <data name="DIALOG__BTN_CANCEL" xml:space="preserve">
         <value>Cancel</value>
     </data>
@@ -165,9 +162,6 @@
     <data name="STORAGE__NO_ITEMS" xml:space="preserve">
         <value>No items</value>
     </data>
-    <data name="STORAGE__SECTION_CONTEXT__DELETE_BTN" xml:space="preserve">
-        <value>Delete</value>
-    </data>
     <data name="STORAGE__PASSFILE_TOOLTIP__ADD" xml:space="preserve">
         <value>Add passfile</value>
     </data>
@@ -189,7 +183,7 @@
     <data name="PASSFILE_MARK__NEEDS_MERGE" xml:space="preserve">
         <value>Need to resolve conflicts</value>
     </data>
-    <data name="DICT__PASSFILE_MARK__DOWNLOAD_ERR" xml:space="preserve">
+    <data name="PASSFILE_MARK__DOWNLOAD_ERR" xml:space="preserve">
         <value>Downloading error</value>
     </data>
     <data name="PASSFILE_MARK__UPLOAD_ERR" xml:space="preserve">
@@ -297,44 +291,11 @@
     <data name="PASSFILE__TITLE_DELETED" xml:space="preserve">
         <value>Deleted locally passfile {0}</value>
     </data>
-    <data name="DICT__PASSFILE__ID" xml:space="preserve">
-        <value>passfile ID</value>
-    </data>
-    <data name="DICT__PASSFILE__NAME" xml:space="preserve">
-        <value>passfile name</value>
-    </data>
-    <data name="DICT__PASSFILE__COLOR" xml:space="preserve">
-        <value>passfile color</value>
-    </data>
-    <data name="DICT__PASSFILE__CREATED_ON" xml:space="preserve">
-        <value>timestamp of passfile creation</value>
-    </data>
-    <data name="DICT__PASSFILE__CONTENT" xml:space="preserve">
-        <value>passfile content</value>
-    </data>
-    <data name="DICT__USER__FIRST_NAME" xml:space="preserve">
-        <value>name</value>
-    </data>
-    <data name="DICT__USER__LAST_NAME" xml:space="preserve">
-        <value>surname</value>
-    </data>
-    <data name="DICT__USER__PASSWORD" xml:space="preserve">
-        <value>new password</value>
-    </data>
-    <data name="DICT__USER__LOGIN" xml:space="preserve">
-        <value>login</value>
-    </data>
-    <data name="DICT__USER__PASSWORD_CONFIRM" xml:space="preserve">
-        <value>old password (confirm)</value>
-    </data>
     <data name="APP__ONLINE_MODE" xml:space="preserve">
         <value>Online</value>
     </data>
     <data name="APP__OFFLINE_MODE" xml:space="preserve">
         <value>Offline</value>
-    </data>
-    <data name="DICT__USER" xml:space="preserve">
-        <value>user</value>
     </data>
     <data name="PASSCONTEXT__INFO_COMMITED" xml:space="preserve">
         <value>Saved locally</value>
@@ -363,9 +324,6 @@
     <data name="STORAGE__NO_SECTIONS_FOUND" xml:space="preserve">
         <value>Not found,
 try another keywords...</value>
-    </data>
-    <data name="STORAGE__SECTION_CONTEXT__EDIT_BTN" xml:space="preserve">
-        <value>Edit</value>
     </data>
     <data name="STORAGE__CONFIRM_ROLLBACK" xml:space="preserve">
         <value>Rollback current changes?</value>
@@ -610,12 +568,6 @@ try another keywords...</value>
     <data name="PASSMERGE__BTN_TOOLTIP_APPLY" xml:space="preserve">
         <value>Accept</value>
     </data>
-    <data name="UI__SHOW_PASSWORD" xml:space="preserve">
-        <value>Show password</value>
-    </data>
-    <data name="UI__HIDE_PASSWORD" xml:space="preserve">
-        <value>Hide password</value>
-    </data>
     <data name="SETTINGS__HIDE_PASSWORDS" xml:space="preserve">
         <value>Hide passwords</value>
     </data>
@@ -646,9 +598,6 @@ try another keywords...</value>
     <data name="APP_INFO__TITLE" xml:space="preserve">
         <value>About PassMeta DesktopApp</value>
     </data>
-    <data name="APP_INFO__QUIT_BTN" xml:space="preserve">
-        <value>Hide</value>
-    </data>
     <data name="SETTINGS__SAVE_BTN" xml:space="preserve">
         <value>Save</value>
     </data>
@@ -673,9 +622,6 @@ try another keywords...</value>
     <data name="PASSCONTEXT__ERR_OTHER" xml:space="preserve">
         <value>Passfile context manager error (see logs)</value>
     </data>
-    <data name="DICT__PASSFILE" xml:space="preserve">
-        <value>passfile</value>
-    </data>
     <data name="PASSFILE_MARK__MERGED" xml:space="preserve">
         <value>Conflicts are resolved </value>
     </data>
@@ -693,12 +639,6 @@ try another keywords...</value>
     </data>
     <data name="STORAGE__SECTION_LABEL__URL" xml:space="preserve">
         <value>URL</value>
-    </data>
-    <data name="PASSCONTEXT__ERR_EMPTY_PASSPHRASE" xml:space="preserve">
-        <value>Passphrase is empty</value>
-    </data>
-    <data name="STORAGE__ASK_PASSPHRASE_FOR_PASSFILE" xml:space="preserve">
-        <value>Input passphrase for passfile {0}</value>
     </data>
     <data name="PASSFILE__INFO_PASSPHRASE_NOT_CHANGED" xml:space="preserve">
         <value>Passphrase was not changed!</value>

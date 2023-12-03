@@ -4,8 +4,6 @@ using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.App;
 using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
-using PassMeta.DesktopApp.Common.Abstractions.Utils.ValueMapping;
-using PassMeta.DesktopApp.Common.Mapping.Values;
 using PassMeta.DesktopApp.Common.Models;
 using PassMeta.DesktopApp.Common.Models.Dto.Request;
 using PassMeta.DesktopApp.Common.Models.Entities;
@@ -15,11 +13,6 @@ namespace PassMeta.DesktopApp.Core.Services;
 /// <inheritdoc />
 public class AccountService : IAccountService
 {
-    /// <summary>
-    /// Requests bad mapping.
-    /// </summary>
-    public static readonly IValuesMapper<string, string> WhatToStringValuesMapper = UserFieldMapping.FieldToName;
-
     private readonly IPassMetaClient _passMetaClient;
     private readonly IAppContextManager _appContextManager;
     private readonly IDialogService _dialogService;
@@ -42,7 +35,7 @@ public class AccountService : IAccountService
             .WithBadHandling()
             .ExecuteAsync<User>();
 
-        if (response?.Success is true && _appContextManager.Current.User?.Equals(response.Data) is not true)
+        if (response.Success && _appContextManager.Current.User?.Equals(response.Data) is not true)
         {
             await _appContextManager.ApplyAsync(appContext => appContext.User = response.Data);
         }
@@ -65,11 +58,10 @@ public class AccountService : IAccountService
 
         var response = await _passMetaClient.Begin(PassMetaApi.User.PatchMe())
             .WithJsonBody(data)
-            .WithBadMapping(WhatToStringValuesMapper)
             .WithBadHandling()
             .ExecuteAsync<User>();
 
-        if (response?.Success is not true)
+        if (response.Failure)
         {
             return Result.Failure();
         }

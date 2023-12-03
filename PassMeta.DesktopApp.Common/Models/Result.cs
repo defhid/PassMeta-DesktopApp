@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
+using PassMeta.DesktopApp.Common.Models.Dto.Response;
 
 namespace PassMeta.DesktopApp.Common.Models;
 
@@ -53,7 +53,7 @@ public static class Result
     /// Make success/failure result from response.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IDetailedResult FromResponse(OkBadResponse? response)
+    public static IDetailedResult FromResponse(RestResponse? response)
         => response?.Success is true
             ? new ResultModel()
             : new ResultModel(false, response.GetFullMessage());
@@ -62,7 +62,7 @@ public static class Result
     /// Make success/failure result from response.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IDetailedResult<TData> FromResponse<TData>(OkBadResponse<TData>? response)
+    public static IDetailedResult<TData> FromResponse<TData>(RestResponse<TData>? response)
         => response?.Success is true
             ? new ResultModel<TData>(response.Data!)
             : new ResultModel<TData>(false, response.GetFullMessage());

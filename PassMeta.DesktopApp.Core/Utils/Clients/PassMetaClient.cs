@@ -15,7 +15,7 @@ using PassMeta.DesktopApp.Common.Abstractions.Services;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
-using PassMeta.DesktopApp.Common.Models.Dto.Response.OkBad;
+using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Core.Extensions;
 using PassMeta.DesktopApp.Core.Utils.Json;
 
@@ -27,7 +27,6 @@ public sealed class PassMetaClient : IPassMetaClient
     private readonly BehaviorSubject<bool> _onlineSubject = new(false);
     private readonly ILogsWriter _logger;
     private readonly IDialogService _dialogService;
-    private readonly IOkBadService _okBadService;
     private readonly HttpClient _httpClient;
 
     internal readonly IAppConfigProvider AppConfigProvider;
@@ -40,13 +39,11 @@ public sealed class PassMetaClient : IPassMetaClient
         IAppContextManager appContextManager,
         IAppConfigProvider appConfigProvider,
         ILogsWriter logger,
-        IDialogService dialogService,
-        IOkBadService okBadService)
+        IDialogService dialogService)
     {
         AppConfigProvider = appConfigProvider;
         _logger = logger;
         _dialogService = dialogService;
-        _okBadService = okBadService;
         _httpClient = CreateHttpClient(appContextManager);
     }
 
@@ -104,102 +101,100 @@ public sealed class PassMetaClient : IPassMetaClient
         return Online;
     }
 
-    internal async ValueTask<byte[]?> BuildAndExecuteRawAsync(RequestBuilder requestBuilder, CancellationToken cancellationToken)
+    internal async Task<RestResponse> BuildAndExecuteAsync(
+        RequestBuilder requestBuilder,
+        CancellationToken cancellationToken)
     {
         if (!TryBuildRequestMessage(requestBuilder, out var request))
         {
-            return null;
+            return RestResponseFactory.Bad("Failed to build request");
         }
-
+            
         var context = requestBuilder.Context;
+        RestResponse? failureRestResponse;
 
-        byte[]? successBody;
-        OkBadResponse? failureOkBadResponse;
         try
         {
-            (successBody, failureOkBadResponse) = await SendAsync(
+            (_, failureRestResponse) = await SendAsync(
                 request, context, content => content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.Error(ex, $"Request failed: {request.GetShortInformation()} [{context}]");
             _dialogService.ShowError(ex.Message, context);
-            return null;
+            return RestResponseFactory.Bad("Failed to execute request");
         }
 
-        if (successBody is null)
+        if (failureRestResponse is null)
         {
-            if (requestBuilder.BadMapper is not null)
-                failureOkBadResponse!.More?.ApplyWhatMapping(requestBuilder.BadMapper);
-
-            if (requestBuilder.HandleBad)
-                _okBadService.ShowResponseFailure(failureOkBadResponse!, context);
-
-            return null;
+            return RestResponseFactory.Ok();
         }
 
-        return successBody;
-    }
+        if (requestBuilder.HandleBad)
+            _dialogService.ShowFailure(failureRestResponse, context);
 
-    internal async ValueTask<OkBadResponse<TData>?> BuildAndExecuteAsync<TData>(RequestBuilder requestBuilder, CancellationToken cancellationToken)
+        return failureRestResponse;
+    }
+    
+    internal async Task<RestResponse<TData>> BuildAndExecuteAsync<TData>(
+        RequestBuilder requestBuilder,
+        CancellationToken cancellationToken)
+        where TData : class
     {
         if (!TryBuildRequestMessage(requestBuilder, out var request))
         {
-            return null;
+            return RestResponseFactory.Bad<TData>("Failed to build request");
         }
             
         var context = requestBuilder.Context;
-        byte[]? successBody;
-        OkBadResponse? failureOkBadResponse;
-        OkBadResponse<TData>? successOkBadResponse = null;
+        RestResponse? failureRestResponse;
+        TData? successPayload = null;
 
         try
         {
-            (successBody, failureOkBadResponse) = await SendAsync(
+            (var successBody, failureRestResponse) = await SendAsync(
                 request, context, content => content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
 
             if (successBody is not null)
             {
-                successOkBadResponse = ParseOkBadResponse<TData>(successBody);
+                if (typeof(TData) == typeof(byte[]))
+                {
+                    successPayload = successBody as TData;
+                }
+                else
+                {
+                    successPayload = JsonSerializer.Deserialize<TData>(successBody, SerializerOptions);
+                }
+
+                if (successPayload is null)
+                {
+                    throw new FormatException("Success response has no valid body");
+                }
             }
         }
         catch (Exception ex)
         {
             _logger.Error(ex, $"Request failed: {request.GetShortInformation()} [{context}]");
             _dialogService.ShowError(ex.Message, context);
-            return null;
+            return RestResponseFactory.Bad<TData>("Failed to execute request");
         }
 
-        if (requestBuilder.BadMapper is not null)
+        if (successPayload is not null)
         {
-            failureOkBadResponse?.More?.ApplyWhatMapping(requestBuilder.BadMapper);
-            successOkBadResponse?.More?.ApplyWhatMapping(requestBuilder.BadMapper);
+            return RestResponseFactory.Ok(successPayload);
         }
+        
+        if (requestBuilder.HandleBad)
+            _dialogService.ShowFailure(failureRestResponse!, context);
 
-        if (successBody is null)
-        {
-            if (requestBuilder.HandleBad)
-                _okBadService.ShowResponseFailure(failureOkBadResponse!, context);
-
-            return ResponseFactory.OkBadWithNullData<TData>(failureOkBadResponse!);
-        }
-
-        if (successOkBadResponse!.Success is false)
-        {
-            _logger.Warning("Failure response with success HTTP code: " + Encoding.UTF8.GetString(successBody));
-
-            if (requestBuilder.HandleBad)
-                _okBadService.ShowResponseFailure(successOkBadResponse, context);
-        }
-
-        return successOkBadResponse;
+        return RestResponseFactory.WithNullData<TData>(failureRestResponse!);
     }
 
     /// <returns>
-    /// Success response body and null <see cref="OkBadResponse"/>,
-    /// or null response budy and failure <see cref="OkBadResponse"/>.
+    /// Success response body and null <see cref="RestResponse"/>,
+    /// or null response budy and failure <see cref="RestResponse"/>.
     /// </returns>
-    private async Task<(TBody? SuccessBody, OkBadResponse? FailureResponse)> SendAsync<TBody>(
+    private async Task<(TBody? SuccessBody, RestResponse? FailureResponse)> SendAsync<TBody>(
         HttpRequestMessage message,
         string? context,
         Func<HttpContent, Task<TBody>> handleResponseAsync,
@@ -221,17 +216,22 @@ public sealed class PassMetaClient : IPassMetaClient
                 {
                     SetOnline(false);
                     _logger.Error(message.GetShortInformation() + $"{Resources.API__CONNECTION_TIMEOUT_ERR} [{context}]");
-                    return (null, ResponseFactory.FakeOkBad(false, Resources.API__CONNECTION_TIMEOUT_ERR));
+                    return (null, RestResponseFactory.Bad(Resources.API__CONNECTION_TIMEOUT_ERR));
                 }
                 default:
                 {
                     var responseBody = await response.Content.ReadAsByteArrayAsync(cancellationToken);
-                    var okBadResponse = ParseOkBadResponse<object>(responseBody);
+
+                    var restResponse = JsonSerializer.Deserialize<RestResponse>(responseBody, SerializerOptions);
+                    if (restResponse is null)
+                    {
+                        throw new FormatException("Failure response has no valid body");
+                    }
 
                     SetOnline(true);
                     _logger.Warning($"{message.GetShortInformation()} {response.StatusCode} [{context}] {Encoding.UTF8.GetString(responseBody)}");
 
-                    return (null, okBadResponse);
+                    return (null, restResponse);
                 }
             }
         }
@@ -239,7 +239,7 @@ public sealed class PassMetaClient : IPassMetaClient
         {
             SetOnline(false);
             _logger.Error(ex, $"{message.GetShortInformation()} {Resources.API__CONNECTION_ERR} [{context}]");
-            return (null, ResponseFactory.FakeOkBad(false, Resources.API__CONNECTION_ERR));
+            return (null, RestResponseFactory.Bad(Resources.API__CONNECTION_ERR));
         }
     }
 
@@ -306,12 +306,6 @@ public sealed class PassMetaClient : IPassMetaClient
         }
 
         message.Content = form;
-    }
-
-    private static OkBadResponse<TData> ParseOkBadResponse<TData>(byte[] body)
-    {
-        var okBad = JsonSerializer.Deserialize<OkBadResponse<TData>>(body, SerializerOptions);
-        return okBad ?? throw new FormatException();
     }
 
     private void SetOnline(bool isOnline)
