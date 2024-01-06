@@ -3,7 +3,7 @@
     <Import Project="$(SolutionDir)\.props" />
 
     <ItemGroup>
-      <PackageReference Include="Splat" Version="14.8.6" />
+      <PackageReference Include="Splat" Version="14.8.12" />
       <PackageReference Include="AutoMapper" Version="12.0.1" />
       <PackageReference Include="System.Text.Json" Version="8.0.0" />
     </ItemGroup>

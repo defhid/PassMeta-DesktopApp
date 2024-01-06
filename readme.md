@@ -1,5 +1,5 @@
 # PassMeta Desktop App — *your passwords SAFE*
-#### © 2023 Vladislav Mironov
+#### © 2024 Vladislav Mironov
 
 
 ### About the project

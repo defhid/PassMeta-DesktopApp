@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Enums;
@@ -73,7 +72,7 @@ public static class PassMetaApi
 
         /// Get passfile list.
         /// 
-        public static IHttpRequestBase GetList(PassFileType ofType) => _Get($"passfiles?type_id={(int)ofType}");
+        public static IHttpRequestBase GetList(PassFileType ofType) => _Get($"passfiles?typeId={(int)ofType}");
 
         /// Get passfile.
         ///
@@ -113,29 +112,23 @@ public static class PassMetaApi
         ///
         public static IHttpRequestBase GetList(DateTime month, int pageSize, int pageIndex, ICollection<int>? kinds = null)
         {
-            var kindsFilter = kinds?.Any() is true ? "&kind=" + string.Join(",", kinds) : string.Empty;
+            var kindsFilter = kinds?.Count > 0 ? "&kind=" + string.Join(",", kinds) : string.Empty;
 
-            return _Get($"history/pages/{pageIndex}?month={month:yyyy-MM}-01&page_size={pageSize}{kindsFilter}");
+            return _Get($"history/pages/{pageIndex}?month={month:yyyy-MM}-01&pageSize={pageSize}{kindsFilter}");
         }
     }
         
-    private static IHttpRequestBase _Get(string url) => new HttpRequestBase(HttpMethod.Get, url);
+    private static HttpRequestBase _Get(string url) => new(HttpMethod.Get, url);
 
-    private static IHttpRequestWithBodySupportBase _Post(string url) => new HttpRequestBase(HttpMethod.Post, url);
+    private static HttpRequestBase _Post(string url) => new(HttpMethod.Post, url);
 
-    private static IHttpRequestWithBodySupportBase _Patch(string url) => new HttpRequestBase(HttpMethod.Patch, url);
+    private static HttpRequestBase _Patch(string url) => new(HttpMethod.Patch, url);
 
-    private static IHttpRequestWithBodySupportBase _Delete(string url) => new HttpRequestBase(HttpMethod.Delete, url);
+    private static HttpRequestBase _Delete(string url) => new(HttpMethod.Delete, url);
 }
 
-internal class HttpRequestBase : IHttpRequestWithBodySupportBase
+internal class HttpRequestBase(HttpMethod method, string url) : IHttpRequestWithBodySupportBase
 {
-    public HttpRequestBase(HttpMethod method, string url)
-    {
-        Url = url;
-        Method = method;
-    }
-
-    public string Url { get; }
-    public HttpMethod Method { get; }
+    public string Url { get; } = url;
+    public HttpMethod Method { get; } = method;
 }

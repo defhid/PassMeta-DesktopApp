@@ -17,7 +17,6 @@ using PassMeta.DesktopApp.Common.Abstractions.Utils.PassMetaClient;
 using PassMeta.DesktopApp.Common.Extensions;
 using PassMeta.DesktopApp.Common.Models.Dto.Response;
 using PassMeta.DesktopApp.Core.Extensions;
-using PassMeta.DesktopApp.Core.Utils.Json;
 
 namespace PassMeta.DesktopApp.Core.Utils.Clients;
 
@@ -333,7 +332,7 @@ public sealed class PassMetaClient : IPassMetaClient
 
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
-        PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         WriteIndented = false
     };
 }
