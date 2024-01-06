@@ -30,9 +30,6 @@ public sealed class PassMetaClient : IPassMetaClient
 
     internal readonly IAppConfigProvider AppConfigProvider;
 
-    static PassMetaClient()
-        => ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
-
     /// <summary></summary>
     public PassMetaClient(
         IAppContextManager appContextManager,
@@ -327,6 +324,11 @@ public sealed class PassMetaClient : IPassMetaClient
     private HttpClient CreateHttpClient(IAppContextManager appContextManager)
     {
         var handler = new PassMetaClientHandler(appContextManager, _logger);
+
+        handler.ServerCertificateCustomValidationCallback = (a, b, c, d) =>
+            AppConfigProvider.Current.DevMode ||
+            (ServicePointManager.ServerCertificateValidationCallback?.Invoke(a, b, c, d) ?? true);
+
         return new HttpClient(handler, disposeHandler: true);
     }
 
