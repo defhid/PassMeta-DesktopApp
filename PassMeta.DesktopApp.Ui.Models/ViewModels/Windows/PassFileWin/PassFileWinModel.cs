@@ -91,7 +91,8 @@ public abstract class PassFileWinModel : ReactiveObject
 
         RestoreBtn = new BtnState
         {
-            CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(RestoreAsync))
+            CommandObservable = Observable.Return(ReactiveCommand.CreateFromTask(RestoreAsync)),
+            IsVisibleObservable = Observable.Return(true),
         };
 
         DeleteBtn = new BtnState

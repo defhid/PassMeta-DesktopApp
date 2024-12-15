@@ -211,12 +211,16 @@ public sealed class PassMetaClient : IPassMetaClient
                 case HttpStatusCode.RequestTimeout or HttpStatusCode.GatewayTimeout:
                 {
                     SetOnline(false);
-                    _logger.Error(message.GetShortInformation() + $"{Resources.API__CONNECTION_TIMEOUT_ERR} [{context}]");
+                    _logger.Error(
+                        message.GetShortInformation() + $"{Resources.API__CONNECTION_TIMEOUT_ERR} [{context}]");
                     return (null, RestResponseFactory.Bad(Resources.API__CONNECTION_TIMEOUT_ERR));
                 }
                 default:
                 {
                     var responseBody = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+
+                    _logger.Warning(
+                        $"{message.GetShortInformation()} {response.StatusCode} [{context}] {Encoding.UTF8.GetString(responseBody)}");
 
                     var restResponse = JsonSerializer.Deserialize<RestResponse>(responseBody, SerializerOptions);
                     if (restResponse is null)
@@ -224,12 +228,21 @@ public sealed class PassMetaClient : IPassMetaClient
                         throw new FormatException("Failure response has no valid body");
                     }
 
-                    SetOnline(true);
-                    _logger.Warning($"{message.GetShortInformation()} {response.StatusCode} [{context}] {Encoding.UTF8.GetString(responseBody)}");
+                    if (restResponse.Code == default && string.IsNullOrEmpty(restResponse.Message))
+                    {
+                        SetOnline(false);
+                        return (null, RestResponseFactory.Bad(Resources.API__UNEXPECTED_RESPONSE_ERR));
+                    }
 
+                    SetOnline(true);
                     return (null, restResponse);
                 }
             }
+        }
+        catch (JsonException)
+        {
+            SetOnline(false);
+            return (null, RestResponseFactory.Bad(Resources.API__UNEXPECTED_RESPONSE_ERR));
         }
         catch (HttpRequestException ex)
         {

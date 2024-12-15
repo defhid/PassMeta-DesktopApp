@@ -45,13 +45,13 @@ public class PassFileContentHelper<TPassFile, TContent> : IPassFileContentHelper
         var provideResult = await pfContext.ProvideEncryptedContentAsync(passFile);
         if (provideResult.Bad)
         {
-            return result;
+            return provideResult;
         }
 
         var passPhraseNew = await _dialogService.AskPasswordAsync(Resources.PASSFILE__ASK_PASSPHRASE_NEW);
         if (passPhraseNew.Bad)
         {
-            return result;
+            return passPhraseNew;
         }
 
         passFile.Content = new PassFileContent<TContent>(passFile.Content.Encrypted!, passPhraseNew.Data!);

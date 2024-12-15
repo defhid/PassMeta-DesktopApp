@@ -340,7 +340,7 @@
         <value>Введите НОВУЮ кодовую фразу</value>
     </data>
     <data name="PASSFILE__INFO_PASSPHRASE_CHANGED" xml:space="preserve">
-        <value>Кодовая фраза упешно изменена!</value>
+        <value>Кодовая фраза уcпешно изменена!</value>
     </data>
     <data name="UI__COPY" xml:space="preserve">
         <value>Копировать</value>
@@ -647,5 +647,8 @@
     </data>
     <data name="LOG_SECTION__UNKNOWN_SHORT" xml:space="preserve">
         <value>?</value>
+    </data>
+    <data name="API__UNEXPECTED_RESPONSE_ERR" xml:space="preserve">
+        <value>Получен неожиданный ответ от сервера!</value>
     </data>
 </root>

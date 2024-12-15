@@ -17,7 +17,7 @@ public class PassMetaCryptoService : IPassMetaCryptoService
     /// <summary>
     /// Encryption salt.
     /// </summary>
-    private static readonly byte[] CryptoSalt = Encoding.UTF8.GetBytes("PassMetaFileSalt");
+    private static readonly byte[] CryptoSalt = "PassMetaFileSalt"u8.ToArray();
 
     /// <summary>
     /// Make encryption/decryption key for specific iteration by keyphrase.

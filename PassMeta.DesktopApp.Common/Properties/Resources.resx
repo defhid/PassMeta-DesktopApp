@@ -655,4 +655,7 @@ try another keywords...</value>
     <data name="PASSFILELIST__DESCRIPTION_CURRENT" xml:space="preserve">
         <value>current</value>
     </data>
+    <data name="API__UNEXPECTED_RESPONSE_ERR" xml:space="preserve">
+        <value>Unexpected response error!</value>
+    </data>
 </root>

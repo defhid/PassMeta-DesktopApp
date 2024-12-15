@@ -215,12 +215,13 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
         if (replacePassFile is not null)
         {
-            if (!FindStateWhereCurrentIs(replacePassFile, out var state))
+            if (!FindStateWhereCurrentIs(replacePassFile, out _))
             {
                 return UnexpectedError("Not from actual state");
             }
 
-            state.Current = originPassFile;
+            _states.Remove(replacePassFile.Id);
+            _states[originPassFile.Id] = new PassFileState(replacePassFile, originPassFile);
         }
         else
         {

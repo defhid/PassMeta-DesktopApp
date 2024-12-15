@@ -186,6 +186,15 @@ namespace PassMeta.DesktopApp.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unexpected response error!.
+        /// </summary>
+        public static string API__UNEXPECTED_RESPONSE_ERR {
+            get {
+                return ResourceManager.GetString("API__UNEXPECTED_RESPONSE_ERR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incorrect url! Please, check app settings..
         /// </summary>
         public static string API__URL_ERR {
