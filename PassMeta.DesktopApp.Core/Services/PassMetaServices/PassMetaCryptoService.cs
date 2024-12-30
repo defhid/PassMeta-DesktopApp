@@ -27,7 +27,7 @@ public class PassMetaCryptoService : IPassMetaCryptoService
         var offset = (CryptoK + iteration) % keyPhrase.Length;
         var key = keyPhrase[..offset] + Math.Pow(CryptoK - iteration, iteration % 5) + keyPhrase[offset..];
                         
-        return SHA256.HashData(Encoding.Unicode.GetBytes(key));
+        return SHA256.HashData(Encoding.UTF8.GetBytes(key));
     }
     
     /// <inheritdoc />
