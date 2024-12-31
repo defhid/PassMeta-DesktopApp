@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 
 /// <summary>
@@ -8,10 +11,10 @@ public interface IPassMetaCryptoService
     /// <summary>
     /// Encrypt data from decrypted bytes with key phrase.
     /// </summary>
-    byte[] Encrypt(byte[] data, string keyPhrase);
+    Task<byte[]> EncryptAsync(byte[] data, string keyPhrase, CancellationToken ct = default);
 
     /// <summary>
     /// Decrypt data from encrypted bytes with key phrase.
     /// </summary>
-    byte[] Decrypt(byte[] data, string keyPhrase);
+    Task<byte[]> DecryptAsync(byte[] data, string keyPhrase, CancellationToken ct = default);
 }

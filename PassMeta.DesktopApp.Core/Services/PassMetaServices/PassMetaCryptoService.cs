@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 
 namespace PassMeta.DesktopApp.Core.Services.PassMetaServices;
@@ -31,7 +33,7 @@ public class PassMetaCryptoService : IPassMetaCryptoService
     }
     
     /// <inheritdoc />
-    public byte[] Encrypt(byte[] data, string keyPhrase)
+    public async Task<byte[]> EncryptAsync(byte[] data, string keyPhrase, CancellationToken ct)
     {
         var encryption = data;
 
@@ -44,10 +46,10 @@ public class PassMetaCryptoService : IPassMetaCryptoService
 
             using var encryptor = aes.CreateEncryptor();
             using var ms = new MemoryStream();
-            using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+            await using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
             {
-                cs.Write(encryption, 0, encryption.Length);
-                cs.Flush();
+                await cs.WriteAsync(encryption, ct);
+                await cs.FlushAsync(ct);
             }
 
             encryption = ms.ToArray();
@@ -57,7 +59,7 @@ public class PassMetaCryptoService : IPassMetaCryptoService
     }
 
     /// <inheritdoc />
-    public byte[] Decrypt(byte[] data, string keyPhrase)
+    public async Task<byte[]> DecryptAsync(byte[] data, string keyPhrase, CancellationToken ct)
     {
         var decryption = data;
             
@@ -70,10 +72,10 @@ public class PassMetaCryptoService : IPassMetaCryptoService
 
             using var decryptor = aes.CreateDecryptor();
             using var ms = new MemoryStream(decryption);
-            using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+            await using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
             using var msResult = new MemoryStream();
 
-            cs.CopyTo(msResult);
+            await cs.CopyToAsync(msResult, ct);
             decryption = msResult.ToArray();
         }
 

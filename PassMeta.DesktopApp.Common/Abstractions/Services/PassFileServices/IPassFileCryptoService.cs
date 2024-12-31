@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile;
 
 namespace PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
@@ -15,12 +17,16 @@ public interface IPassFileCryptoService
     /// <param name="passFile">Passfile which data to decrypt.</param>
     /// <param name="passPhrase">Phrase to use for decryption.</param>
     /// <param name="silent">Not to write failure logs.</param>
+    /// <param name="ct">Cancellation token.</param>
     /// <remarks>
     /// Passfile <see cref="PassFileContent{TData}.PassPhrase"/>
     /// or <paramref name="passPhrase"/> parameter must not be null.
     /// </remarks>
-    IDetailedResult Decrypt<TContent>(PassFile<TContent> passFile, string? passPhrase = null, bool silent = false)
-        where TContent : class, new();
+    Task<IDetailedResult> DecryptAsync<TContent>(
+        PassFile<TContent> passFile,
+        string? passPhrase = null,
+        bool silent = false,
+        CancellationToken ct = default) where TContent : class, new();
 
     /// <summary>
     /// Encrypts <see cref="PassFileContent{TData}.Decrypted"/>,
@@ -30,6 +36,8 @@ public interface IPassFileCryptoService
     /// Passfile <see cref="PassFileContent{TData}.PassPhrase"/>
     /// or <paramref name="passPhrase"/> parameter must not be null.
     /// </remarks>
-    IDetailedResult Encrypt<TContent>(PassFile<TContent> passFile, string? passPhrase = null)
-        where TContent : class, new();
+    Task<IDetailedResult> EncryptAsync<TContent>(
+        PassFile<TContent> passFile,
+        string? passPhrase = null,
+        CancellationToken ct = default) where TContent : class, new();
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using PassMeta.DesktopApp.Common;
 using PassMeta.DesktopApp.Common.Abstractions;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassFileServices;
@@ -33,7 +35,7 @@ public class PassFileCryptoService : IPassFileCryptoService
     }
 
     /// <inheritdoc />
-    public IDetailedResult Decrypt<TContent>(PassFile<TContent> passFile, string? passPhrase = null, bool silent = false)
+    public async Task<IDetailedResult> DecryptAsync<TContent>(PassFile<TContent> passFile, string? passPhrase, bool silent, CancellationToken ct)
         where TContent : class, new()
     {
         passPhrase ??= passFile.Content.PassPhrase;
@@ -55,14 +57,16 @@ public class PassFileCryptoService : IPassFileCryptoService
         byte[] contentBytes;
         try
         {
-            contentBytes = _pmCryptoService.Decrypt(passFile.Content.Encrypted, passPhrase);
+            contentBytes = await _pmCryptoService.DecryptAsync(passFile.Content.Encrypted, passPhrase, ct);
         }
         catch (Exception ex)
         {
-            _logger.Debug("Silent passfile #{Id} v{Version} decryption failed: {Ex}", 
-                passFile.Id, passFile.Version, ex.ToString());
-
-            if (!silent)
+            if (silent)
+            {
+                _logger.Debug("Silent passfile #{Id} v{Version} decryption failed: {Ex}", 
+                    passFile.Id, passFile.Version, ex.ToString());
+            }
+            else
             {
                 _logger.Warning($"Passfile #{passFile.Id} v{passFile.Version} decryption failed: {ex.Message}");
             }
@@ -85,7 +89,7 @@ public class PassFileCryptoService : IPassFileCryptoService
     }
 
     /// <inheritdoc />
-    public IDetailedResult Encrypt<TContent>(PassFile<TContent> passFile, string? passPhrase = null)
+    public async Task<IDetailedResult> EncryptAsync<TContent>(PassFile<TContent> passFile, string? passPhrase, CancellationToken ct)
         where TContent : class, new()
     {
         passPhrase ??= passFile.Content.PassPhrase;
@@ -111,13 +115,13 @@ public class PassFileCryptoService : IPassFileCryptoService
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, $"Passfile #{passFile.Id}, v{passFile.Version} deserializing failed");
+            _logger.Error(ex, $"Passfile #{passFile.Id}, v{passFile.Version} serializing failed");
             return EncryptionError;
         }
 
         try
         {
-            var encryptedBytes = _pmCryptoService.Encrypt(contentBytes, passPhrase);
+            var encryptedBytes = await _pmCryptoService.EncryptAsync(contentBytes, passPhrase, ct);
             passFile.Content = new PassFileContent<TContent>(encryptedBytes, passPhrase);
         }
         catch (Exception ex)

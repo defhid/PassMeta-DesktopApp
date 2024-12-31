@@ -89,11 +89,11 @@ public class PassFileImportService : IPassFileImportService
 
         var passPhrase = await TryAskPassPhraseAsync(
             Resources.PASSIMPORT__ASK_PASSPHRASE,
-            Resources.PASSIMPORT__ASK_PASSPHRASE_AGAIN, path, x => 
+            Resources.PASSIMPORT__ASK_PASSPHRASE_AGAIN, path, async x => 
             {
                 try
                 {
-                    contentBytes = _passMetaCryptoService.Decrypt(fileBytes, x);
+                    contentBytes = await _passMetaCryptoService.DecryptAsync(fileBytes, x);
                     return true;
                 }
                 catch
@@ -154,13 +154,13 @@ public class PassFileImportService : IPassFileImportService
     }
 
     private async Task<string?> TryAskPassPhraseAsync(string question, string repeatQuestion, string path,
-        Func<string, bool>? validator = null)
+        Func<string, Task<bool>>? validator = null)
     {
         question = string.Format(question, Path.GetFileName(path));
         repeatQuestion = string.Format(repeatQuestion, Path.GetFileName(path));
 
         var result = await _passPhraseAskHelper.AskLoopedAsync(question, repeatQuestion,
-            x => Task.FromResult(validator?.Invoke(x) ?? true));
+            async x => validator == null || await validator(x));
 
         return result.Data;
     }

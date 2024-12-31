@@ -45,7 +45,7 @@ public class PwdSection
         Id = Id == default ? Guid.NewGuid() : Id;
         Name ??= "?";
         WebsiteUrl ??= string.Empty;
-        Items ??= new List<PwdItem>();
+        Items ??= [];
     }
 
     /// <summary>

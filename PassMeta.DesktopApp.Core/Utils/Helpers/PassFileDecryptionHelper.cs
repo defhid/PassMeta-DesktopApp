@@ -66,12 +66,12 @@ public class PassFileDecryptionHelper : IPassFileDecryptionHelper
 
         if (passFile.Content.PassPhrase is not null)
         {
-            var fastResult = _pfCryptoService.Decrypt(passFile, silent: true);
+            var fastResult = await _pfCryptoService.DecryptAsync(passFile, silent: true);
             if (fastResult.Ok) return fastResult;
         }
 
         await _passPhraseAskHelper.AskLoopedAsync(question, repeatQuestion,
-            x => Task.FromResult(_pfCryptoService.Decrypt(passFile, x).Ok));
+            async x => (await _pfCryptoService.DecryptAsync(passFile, x)).Ok);
 
         return Result.From(passFile.Content.Decrypted is not null);
     }

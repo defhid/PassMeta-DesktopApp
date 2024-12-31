@@ -126,7 +126,7 @@ public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingServic
     {
         if (passFile.Content.PassPhrase is not null)
         {
-            if (_passFileCryptoService.Decrypt(passFile, silent: true).Ok)
+            if ((await _passFileCryptoService.DecryptAsync(passFile, silent: true)).Ok)
             {
                 return true;
             }
@@ -134,7 +134,7 @@ public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingServic
 
         if (localPassFile is not null)
         {
-            if (_passFileCryptoService.Decrypt(passFile, localPassFile.Content.PassPhrase, silent: true).Ok)
+            if ((await _passFileCryptoService.DecryptAsync(passFile, localPassFile.Content.PassPhrase, silent: true)).Ok)
             {
                 return true;
             }
@@ -144,7 +144,7 @@ public class PwdPassFileMergePreparingService : IPwdPassFileMergePreparingServic
 
         while (passPhrase.Ok && (
                    passPhrase.Data == string.Empty ||
-                   _passFileCryptoService.Decrypt(passFile, passPhrase.Data!).Bad))
+                   (await _passFileCryptoService.DecryptAsync(passFile, passPhrase.Data!)).Bad))
         {
             passPhrase = await _dialogService.AskPasswordAsync(askPhraseAgain);
         }

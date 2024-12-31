@@ -89,7 +89,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         : throw new InvalidOperationException("Current list is accessed before loading!"))!;
 
     /// <inheritdoc />
-    public async ValueTask<IResult> LoadListAsync(CancellationToken cancellationToken)
+    public async ValueTask<IResult> LoadListAsync(CancellationToken ct)
     {
         if (_initialized)
         {
@@ -97,7 +97,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
             return Result.Success();
         }
 
-        var result = await _pfLocalStorage.LoadListAsync(_userContext, cancellationToken);
+        var result = await _pfLocalStorage.LoadListAsync(_userContext, ct);
         if (result.Bad)
         {
             return UnexpectedError(result.Message!);
@@ -120,7 +120,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     }
 
     /// <inheritdoc />
-    public async ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken)
+    public async ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken ct)
     {
         if (!FindStateWhereCurrentIs(passFile, out var state))
         {
@@ -128,7 +128,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
         }
 
         var result = await _pfLocalStorage.LoadEncryptedContentAsync(
-            passFile.Type, passFile.Id, passFile.Version, _userContext, cancellationToken);
+            passFile.Type, passFile.Id, passFile.Version, _userContext, ct);
 
         if (result.Bad)
         {
@@ -142,12 +142,11 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
     }
 
     /// <inheritdoc />
-    public async ValueTask<IResult> ProvideEncryptedContentAsync(TPassFile passFile,
-        CancellationToken cancellationToken)
+    public async ValueTask<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken ct)
     {
         if (passFile.Content.Decrypted is not null)
         {
-            var result = _pfCryptoService.Encrypt(passFile);
+            var result = await _pfCryptoService.EncryptAsync(passFile, ct: ct);
             if (result.Bad)
             {
                 return UnexpectedError(result.Message!);
@@ -159,13 +158,13 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
             return Result.Success();
         }
 
-        return await LoadEncryptedContentAsync(passFile, cancellationToken);
+        return await LoadEncryptedContentAsync(passFile, ct);
     }
 
     /// <inheritdoc />
     async ValueTask<IResult<TPassFile>> IPassFileContext<TPassFile>.CreateAsync(
         PassFileCreationArgs args,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         if (_userContext.UserId is null)
         {
@@ -179,7 +178,7 @@ public class PassFileContext<TPassFile, TContent> : IPassFileContext<TPassFile>
 
         const string idSequenceName = "pfid";
 
-        var nextIdResult = await _counter.GetNextValueAsync(idSequenceName, 0L, cancellationToken);
+        var nextIdResult = await _counter.GetNextValueAsync(idSequenceName, 0L, ct);
         if (nextIdResult.Bad)
         {
             return UnexpectedError("Id generation failed").WithNullData<TPassFile>();

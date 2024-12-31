@@ -6,7 +6,7 @@ namespace PassMeta.DesktopApp.Common.Abstractions;
 public interface IResult
 {
     /// <summary>
-    /// Result is succes.
+    /// Result is success.
     /// </summary>
     bool Ok { get; }
 

@@ -30,7 +30,7 @@ public class PwdItem
     /// <summary></summary>
     public PwdItem()
     {
-        Usernames ??= Array.Empty<string>();
+        Usernames ??= [];
         Password ??= string.Empty;
         Remark ??= string.Empty;
     }

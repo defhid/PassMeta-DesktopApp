@@ -39,7 +39,7 @@ public interface IPassFileContext : IDisposable
     /// otherwise execute <see cref="Rollback"/>.
     /// </summary>
     /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
-    ValueTask<IResult> LoadListAsync(CancellationToken cancellationToken = default);
+    ValueTask<IResult> LoadListAsync(CancellationToken ct = default);
 
     /// <summary>
     /// Save all changes.
@@ -66,14 +66,14 @@ public interface IPassFileContext<TPassFile> : IPassFileContext
     /// Load passfile encrypted content of its current version.
     /// </summary>
     /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
-    ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
+    ValueTask<IResult> LoadEncryptedContentAsync(TPassFile passFile, CancellationToken ct = default);
 
     /// <summary>
     /// Load passfile encrypted content of its current version
     /// or encrypt current decrypted content.
     /// </summary>
     /// <remarks>If result is bad, message will be shown by dialog service.</remarks>
-    ValueTask<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken cancellationToken = default);
+    ValueTask<IResult> ProvideEncryptedContentAsync(TPassFile passFile, CancellationToken ct = default);
 
     /// <summary>
     /// Create a new passfile with local id, add it to <see cref="CurrentList"/>.

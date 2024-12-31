@@ -90,7 +90,7 @@ public class PassFileExportService : IPassFileExportService
         {
             if (passFile.Content.Decrypted is not null)
             {
-                var result = _passFileCryptoService.Encrypt(passFile);
+                var result = await _passFileCryptoService.EncryptAsync(passFile);
                 if (result.Bad)
                 {
                     _dialogService.ShowFailure(result.Message!);
@@ -165,7 +165,7 @@ public class PassFileExportService : IPassFileExportService
         var repeatQuestion = string.Format(Resources.PASSEXPORT__ASK_PASSPHRASE_AGAIN, passFile.Name);
         
         await _passPhraseAskHelper.AskLoopedAsync(question, repeatQuestion,
-            x => Task.FromResult(_passFileCryptoService.Decrypt(passFile, x).Bad));
+            async x => (await _passFileCryptoService.DecryptAsync(passFile, x)).Bad);
 
         return passFile.Content.Decrypted is not null;
     }
