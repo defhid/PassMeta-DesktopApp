@@ -46,7 +46,7 @@
           Grid.Row="0" Grid.Column="1"
           Minimum="4"
           Maximum="100"
-          Increment="1"
+          Increment="2"
           MinWidth="110"
           Value="{Binding Length}" />
 

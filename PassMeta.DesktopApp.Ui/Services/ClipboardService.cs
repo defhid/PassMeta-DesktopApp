@@ -26,13 +26,13 @@ public class ClipboardService : IClipboardService
         try
         {
             await TextCopy.ClipboardService.SetTextAsync(text ?? string.Empty);
+            return true;
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Clipboard edit");
+            _logger.Error(ex, "Writing to clipboard failed");
             _dialogService.ShowError(Resources.CLIPBOARD__UNKNOWN_ERR);
+            return false;
         }
-            
-        return true;
     }
 }

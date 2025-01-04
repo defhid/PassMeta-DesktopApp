@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using PassMeta.DesktopApp.Common.Abstractions.Services.PassMetaServices;
 using PassMeta.DesktopApp.Common.Abstractions.Utils.Logging;
@@ -32,7 +31,6 @@ public class PassMetaRandomService : IPassMetaRandomService
         var builder = Enumerable.Repeat(string.Empty, 0);
 
         var letters = lowercase || uppercase;
-        var k = (float)Math.Max((lowercase ? 1 : 0) + (uppercase ? 1 : 0), 1) / 2;
 
         if (!digits && !letters && !special)
         {
@@ -41,21 +39,28 @@ public class PassMetaRandomService : IPassMetaRandomService
 
         try
         {
-            if (digits)
-                builder = builder.Concat(Enumerable.Repeat(digitSet, (int)(5 * k)));
-
             if (lowercase)
                 builder = builder.Concat(Enumerable.Repeat(userFriendlyLowercaseSet, 2));
 
             if (uppercase)
                 builder = builder.Concat(Enumerable.Repeat(userFriendlyUppercaseSet, 2));
 
+            if (digits)
+            {
+                var k = Math.Max((lowercase ? 1 : 0) + (uppercase ? 1 : 0), 1);
+
+                builder = builder.Concat(Enumerable.Repeat(digitSet, k));
+            }
+
             if (special)
-                builder = builder.Concat(Enumerable.Repeat(specialSet, (int)(5 * k)));
+            {
+                var k = Math.Max((lowercase ? 1 : 0) + (uppercase ? 1 : 0) + (digits ? 1 : 0), 1);
+
+                builder = builder.Concat(Enumerable.Repeat(specialSet, k));
+            }
 
             var chars = string.Concat(builder.OrderBy(_ => Random.Next()));
-
-            var stack = new Stack<char>(length);
+            char? prev = null;
 
             var result = new string(Enumerable.Repeat(chars, length * 20)
                 .Select(s => s[Random.Next(s.Length)])
@@ -65,12 +70,15 @@ public class PassMetaRandomService : IPassMetaRandomService
                 .Where(letters || digits
                     ? s =>
                     {
-                        if (stack.TryPeek(out var prev) && specialSet.Contains(prev) && specialSet.Contains(s))
+                        if (prev is not null)
                         {
-                            return false;
+                            if (specialSet.Contains(prev.Value) && specialSet.Contains(s))
+                            {
+                                return false;
+                            }
                         }
 
-                        stack.Push(s);
+                        prev = s;
                         return true;
                     }
                     : _ => true)
