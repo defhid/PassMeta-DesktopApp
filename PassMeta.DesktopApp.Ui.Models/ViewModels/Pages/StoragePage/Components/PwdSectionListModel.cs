@@ -80,7 +80,7 @@ public class PwdSectionListModel : ReactiveObject
     }
 
     public PwdSection? GetSelectedSection()
-        => _selectedIndex < 0 ? null : _fullList[_selectedIndex].Section;
+        => _selectedIndex < 0 ? null : _resultList[_selectedIndex].Section;
 
     public void Add()
     {
@@ -88,6 +88,7 @@ public class PwdSectionListModel : ReactiveObject
         {
             Name = Resources.STORAGE__SECTION_NEW_NAME,
             Mark = PwdSectionMark.Created,
+            Items = [new PwdItem()]
         });
 
         FullList = FullList.Append(cell).ToList();

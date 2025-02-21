@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using PassMeta.DesktopApp.Common.Enums;
 using PassMeta.DesktopApp.Common.Models.Entities.PassFile.Data;
 using ReactiveUI;
 using ReactCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
@@ -21,6 +22,8 @@ public class PwdSectionEditModel : ReactiveObject
     }
 
     public bool IsVisible { get; private set; }
+
+    public bool IsNew { get; private set; }
 
     public ReactCommand AddItemCommand { get; }
 
@@ -48,6 +51,7 @@ public class PwdSectionEditModel : ReactiveObject
         _id = section.Id;
         Name = section.Name;
         WebsiteUrl = section.WebsiteUrl;
+        IsNew = section.Mark.HasFlag(PwdSectionMark.Created) && section.Items.SingleOrDefault()?.Usernames.Length is 0;
 
         foreach (var item in section.Items)
         {

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.ReactiveUI;
 using PassMeta.DesktopApp.Ui.Models.ViewModels.Pages.StoragePage.Components;
 using ReactiveUI;
@@ -49,11 +50,11 @@ public partial class PwdSectionEditView : ReactiveUserControl<PwdSectionEditMode
             return;
         }
 
-        if (ViewModel!.Items.Count == 0)
+        if (ViewModel!.IsNew)
         {
             sectionNameBox.SelectionStart = 0;
             sectionNameBox.SelectionEnd = ViewModel.Name?.Length ?? 0;
-            sectionNameBox.Focus();
+            sectionNameBox.Focus(NavigationMethod.Pointer);
         }
         else
         {
